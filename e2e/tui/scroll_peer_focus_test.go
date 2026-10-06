@@ -13,7 +13,7 @@ import (
 // the focus border on the new window and leaves its viewport where it was, so
 // the focused window can be entirely off its screen.
 //
-// Two real tuios processes on one daemon, three named panes, and the assertion
+// Two real dartuios processes on one daemon, three named panes, and the assertion
 // is what the second client has on screen.
 //
 // NEGATIVE CONTROL: run against the tree before the fix, the second client's
@@ -24,7 +24,7 @@ import (
 func TestScrollingPeerFollowsFocusIntoView(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "strip", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "strip", "--detach"); err != nil {
 		t.Fatalf("create session: %v: %s", err, out)
 	}
 

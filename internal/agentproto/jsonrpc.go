@@ -1,5 +1,5 @@
 // Package agentproto runs a coding agent headless, over a structured protocol,
-// and shows it in a tuios pane.
+// and shows it in a dartuios pane.
 //
 // An agent TUI in a pane is read by its screen, its hooks and its transcript
 // file. Some agents also speak a protocol meant for exactly this: a client
@@ -18,7 +18,7 @@
 // message without it.
 //
 // The client offers the agent nothing beyond the conversation: it advertises no
-// file system and no terminal capability, so the agent cannot ask tuios to read
+// file system and no terminal capability, so the agent cannot ask dartuios to read
 // a file, write one or run a command, and a request for anything the client
 // does not handle is answered with method not found. What the agent does, it
 // does itself, under its own sandbox and approval rules, exactly as it would in

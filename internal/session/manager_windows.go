@@ -9,7 +9,7 @@ import (
 )
 
 // GetSocketPath returns the path to the daemon socket. It refuses when
-// TUIOS_SOCKET names a different socket that no daemon listens on; see
+// DARTUIOS_SOCKET names a different socket that no daemon listens on; see
 // socket_env.go.
 func GetSocketPath() (string, error) {
 	path, err := defaultSocketPath()
@@ -37,12 +37,12 @@ func defaultSocketPath() (string, error) {
 		localAppData = filepath.Join(userProfile, "AppData", "Local")
 	}
 
-	socketDir := filepath.Join(localAppData, "tuios")
+	socketDir := filepath.Join(localAppData, "dartuios")
 	if err := os.MkdirAll(socketDir, 0700); err != nil {
 		return "", fmt.Errorf("failed to create socket directory: %w", err)
 	}
 
-	return filepath.Join(socketDir, "tuios.sock"), nil
+	return filepath.Join(socketDir, "dartuios.sock"), nil
 }
 
 // GetPidFilePath returns the path to the daemon PID file.

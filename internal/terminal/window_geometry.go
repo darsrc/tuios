@@ -1,6 +1,6 @@
 package terminal
 
-import "github.com/Gaurav-Gosain/tuios/internal/ptyspawn"
+import "github.com/darsrc/tuios/internal/ptyspawn"
 
 // contentSize is the drawable box inside an outer rectangle of the given
 // dimensions. Every consumer of a pane's inner size derives it from here: the

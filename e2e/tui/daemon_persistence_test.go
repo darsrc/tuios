@@ -11,7 +11,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// The suite already drives daemon mode through 'tuios new' and 'tuios attach',
+// The suite already drives daemon mode through 'dartuios new' and 'dartuios attach',
 // so subscribe/resubscribe (workspace switching) and two clients on one session
 // have real coverage. These two cover what nothing here reached: a client
 // leaving and coming back to the same session, and a session outliving the
@@ -32,7 +32,7 @@ func TestDetachAndReattachKeepsLayoutAndPaneContent(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-reattach", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-reattach", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 
@@ -68,7 +68,7 @@ func TestDetachAndReattachKeepsLayoutAndPaneContent(t *testing.T) {
 	waitExit(t, first, "after leader d")
 
 	if !sessionListed(t, base, "e2e-reattach") {
-		out, _ := tuiosCLI(t, base, "ls")
+		out, _ := dartuiosCLI(t, base, "ls")
 		t.Fatalf("the session did not survive the detach\nls:\n%s", out)
 	}
 
@@ -113,7 +113,7 @@ func TestDetachAndReattachKeepsScrollback(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-rescroll", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-rescroll", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 
@@ -171,7 +171,7 @@ func TestSessionSurvivesTheDaemonAndSaysItWasRestored(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-restore", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-restore", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 
@@ -190,13 +190,13 @@ func TestSessionSurvivesTheDaemonAndSaysItWasRestored(t *testing.T) {
 	newWindow(t, first)
 
 	// kill-server is synchronous and saves every session on the way out.
-	if out, err := tuiosCLI(t, base, "kill-server"); err != nil {
+	if out, err := dartuiosCLI(t, base, "kill-server"); err != nil {
 		t.Fatalf("kill-server: %v: %s", err, out)
 	}
 	waitExit(t, first, "after kill-server")
 
 	// Starting any session starts a daemon, and a daemon restores on start.
-	if out, err := tuiosCLI(t, base, "new", "e2e-trigger", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-trigger", "--detach"); err != nil {
 		t.Fatalf("start a fresh daemon: %v: %s", err, out)
 	}
 
@@ -212,13 +212,13 @@ func TestSessionSurvivesTheDaemonAndSaysItWasRestored(t *testing.T) {
 		t.Error("a freshly created session is marked restored")
 	}
 
-	// 'tuios ls' has to say it too, since that is where a user looks first.
-	out, err := tuiosCLI(t, base, "ls")
+	// 'dartuios ls' has to say it too, since that is where a user looks first.
+	out, err := dartuiosCLI(t, base, "ls")
 	if err != nil {
 		t.Fatalf("ls: %v: %s", err, out)
 	}
 	if !strings.Contains(out, "restored") {
-		t.Errorf("'tuios ls' does not mention the restored session:\n%s", out)
+		t.Errorf("'dartuios ls' does not mention the restored session:\n%s", out)
 	}
 
 	// And the attach path, before it takes the screen.
@@ -239,7 +239,7 @@ func TestSessionSurvivesTheDaemonAndSaysItWasRestored(t *testing.T) {
 	alive(t, second, "after attaching to the restored session")
 }
 
-// sessionInfo is the part of 'tuios ls --json' these tests read.
+// sessionInfo is the part of 'dartuios ls --json' these tests read.
 type sessionInfo struct {
 	Name        string `json:"name"`
 	WindowCount int    `json:"window_count"`
@@ -253,7 +253,7 @@ func waitForSessionInfo(t *testing.T, base, name string) sessionInfo {
 	deadline := time.Now().Add(bootTimeout)
 	var last string
 	for time.Now().Before(deadline) {
-		out, err := tuiosCLI(t, base, "ls", "--json")
+		out, err := dartuiosCLI(t, base, "ls", "--json")
 		last = out
 		if err == nil {
 			var sessions []sessionInfo

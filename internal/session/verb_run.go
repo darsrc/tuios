@@ -9,7 +9,7 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // The verbs that read a shell's commands: run, wait-for command-finished and
@@ -192,7 +192,7 @@ func (d *Daemon) waitCommandFinishedFor(sessionName, window string, commandSeq *
 // command.
 func noShellIntegration(window string) *verbError {
 	return hintedVerbError(ErrVerbNoShellIntegration, "the shell in window "+echoName(window)+" has not sent OSC 133 marks, so the daemon cannot tell where a command starts and ends", &VerbHint{
-		Command: "tuios wait-for window-output -w " + window + " --pattern <marker>",
+		Command: "dartuios wait-for window-output -w " + window + " --pattern <marker>",
 		Detail:  "Nothing was typed. Turn on the shell's prompt integration (OSC 133), or type with send-text and wait for a marker the command prints.",
 	})
 }
@@ -202,7 +202,7 @@ func noShellIntegration(window string) *verbError {
 // happened to the command line.
 func promptMarksOnly(window, what string) *verbError {
 	return hintedVerbError(ErrVerbNoShellIntegration, "the shell in window "+echoName(window)+" sends prompt marks only: it ran a command without the OSC 133 C mark, so the daemon cannot tell a running command from a prompt", &VerbHint{
-		Command: "tuios doctor shell",
+		Command: "dartuios doctor shell",
 		Detail:  what + " bash needs 4.4 or newer for the C mark (older bash ignores PS0), and a prompt theme that sends only A needs the full integration. Until then, type with send-text and wait for a marker the command prints.",
 	})
 }
@@ -292,7 +292,7 @@ func (d *Daemon) verbRun(cs *connState, params json.RawMessage) (any, *verbError
 	// commands. The claim is held until this call ends.
 	if !pty.runClaim.CompareAndSwap(false, true) {
 		return nil, hintedVerbError(ErrVerbNotAtPrompt, "another run is typing or running in window "+echoName(windowLabelFor(w)), &VerbHint{
-			Command: "tuios wait-for command-finished -s " + sess.Name + " -w " + w.ID + " --command-seq " + strconv.FormatUint(facts.CommandSeq, 10),
+			Command: "dartuios wait-for command-finished -s " + sess.Name + " -w " + w.ID + " --command-seq " + strconv.FormatUint(facts.CommandSeq, 10),
 			Detail:  "Nothing was typed. Wait for that command to finish, then run again, or run in another pane.",
 		})
 	}
@@ -310,7 +310,7 @@ func (d *Daemon) verbRun(cs *connState, params json.RawMessage) (any, *verbError
 			msg += ": it is running " + strconv.Quote(facts.Running)
 		}
 		return nil, hintedVerbError(ErrVerbNotAtPrompt, msg, &VerbHint{
-			Command: "tuios wait-for command-finished -s " + sess.Name + " -w " + w.ID + " --command-seq " + strconv.FormatUint(facts.CommandSeq, 10),
+			Command: "dartuios wait-for command-finished -s " + sess.Name + " -w " + w.ID + " --command-seq " + strconv.FormatUint(facts.CommandSeq, 10),
 			Detail:  "Nothing was typed. Wait for the running command to finish, then run again, or run in another pane.",
 		})
 	}
@@ -337,7 +337,7 @@ func (d *Daemon) verbRun(cs *connState, params json.RawMessage) (any, *verbError
 				detail = "The command was typed and the shell has not reported it running. Look at the pane with capture-pane: the line may sit at the prompt, or the shell may have stopped sending OSC 133 marks."
 			}
 			return nil, hintedVerbError(ErrVerbTimeout, "timed out waiting for the command to finish", &VerbHint{
-				Command: "tuios wait-for command-finished -s " + sess.Name + " -w " + w.ID + " --command-seq " + strconv.FormatUint(baseline, 10),
+				Command: "dartuios wait-for command-finished -s " + sess.Name + " -w " + w.ID + " --command-seq " + strconv.FormatUint(baseline, 10),
 				Detail:  detail,
 			})
 		case <-gone:

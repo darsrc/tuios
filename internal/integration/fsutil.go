@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 )
 
-// BackupSuffix is appended to a file's name for the copy kept before tuios
+// BackupSuffix is appended to a file's name for the copy kept before dartuios
 // first rewrites it.
-const BackupSuffix = ".tuios.bak"
+const BackupSuffix = ".dartuios.bak"
 
 // readOptional reads a file, returning nil and no error when it does not exist.
 func readOptional(path string) ([]byte, error) {
@@ -41,7 +41,7 @@ func resolveWriteTarget(path string) (string, error) {
 	}
 	real, err := filepath.EvalSymlinks(path)
 	if err != nil {
-		return "", fmt.Errorf("%s is a symlink tuios cannot follow, so it was left unchanged: %w", path, err)
+		return "", fmt.Errorf("%s is a symlink dartuios cannot follow, so it was left unchanged: %w", path, err)
 	}
 	return real, nil
 }
@@ -52,9 +52,9 @@ func resolveWriteTarget(path string) (string, error) {
 // target. When path is a symlink the file it points to is the one replaced,
 // so the link itself is kept.
 //
-// The first time tuios rewrites a file, the file as it was is copied to
+// The first time dartuios rewrites a file, the file as it was is copied to
 // path+BackupSuffix. A later write keeps that copy rather than overwriting
-// it, so the backup is always the file from before tuios touched it. Its
+// it, so the backup is always the file from before dartuios touched it. Its
 // permissions are kept.
 func writeAtomic(path string, data []byte) error {
 	target, err := resolveWriteTarget(path)
@@ -81,7 +81,7 @@ func writeAtomic(path string, data []byte) error {
 	} else if !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("failed to read %s: %w", path, err)
 	}
-	tmp, err := os.CreateTemp(dir, "."+filepath.Base(target)+".tuios-*")
+	tmp, err := os.CreateTemp(dir, "."+filepath.Base(target)+".dartuios-*")
 	if err != nil {
 		return fmt.Errorf("failed to write %s: %w", path, err)
 	}

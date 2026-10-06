@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The file action dialogs.
@@ -105,6 +105,7 @@ func (m *OS) renderFileNamePrompt() (string, overlay.Geometry, []overlayRowHit) 
 			{Key: overlay.EnterKey(), Label: "save"},
 			{Key: "esc", Label: "cancel"},
 		},
+		ShownAt: m.dialogShownAt,
 	}.Render(pal)
 	return content, geo, nil
 }
@@ -184,6 +185,7 @@ func (m *OS) renderFileConfirm() (string, overlay.Geometry, []overlayRowHit) {
 			{Key: overlay.EnterKey(), Label: "run"},
 			{Key: "esc", Label: "cancel"},
 		},
+		ShownAt: m.dialogShownAt,
 	}.Render(pal)
 
 	// One rectangle per drawn answer, in drawn order, recorded as it is drawn.

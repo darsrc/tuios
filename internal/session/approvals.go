@@ -14,9 +14,9 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/integration"
-	"github.com/Gaurav-Gosain/tuios/internal/risk"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/integration"
+	"github.com/darsrc/tuios/internal/risk"
 )
 
 // Approvals answered from the Inbox.
@@ -24,7 +24,7 @@ import (
 // A harness with a structured decision channel, Claude Code's PermissionRequest
 // hook or opencode's permission reply, can be told the answer to its permission
 // prompt by the hook instead of asking in its pane. With [agents.approvals]
-// naming the harness, `tuios agent-hook` does that: after reporting the pane as
+// naming the harness, `dartuios agent-hook` does that: after reporting the pane as
 // needs_input it calls request-approval, and the call does not answer until the
 // person answers the Inbox item with reply-approval, or the hold ends. The hook
 // then prints the harness's own decision, or nothing, and a harness that gets
@@ -570,7 +570,7 @@ func (d *Daemon) verbRequestApproval(cs *connState, params json.RawMessage) (any
 		return nil, invalidParam("harness", "harness is required: the id of the harness whose prompt this is, e.g. claude-code")
 	}
 	if p.Window == "" {
-		return nil, invalidParam("window", "window is required: the pane whose prompt is held, normally $TUIOS_PANE_ID")
+		return nil, invalidParam("window", "window is required: the pane whose prompt is held, normally $DARTUIOS_PANE_ID")
 	}
 	if p.Summary == "" {
 		return nil, invalidParam("summary", "summary is required: the line the person answers from, the message the hook reported")
@@ -612,7 +612,7 @@ func (d *Daemon) verbRequestApproval(cs *connState, params json.RawMessage) (any
 	if fromPane, own := d.peerPane(cs); fromPane && own != w.ID {
 		return nil, hintedVerbError(ErrVerbForbidden, "request-approval from inside a pane may only hold that pane's own prompt", &VerbHint{
 			Param:  "window",
-			Detail: "Nothing was held. The hook finds its pane from TUIOS_PANE_ID; a process in one pane cannot open an approval for another.",
+			Detail: "Nothing was held. The hook finds its pane from DARTUIOS_PANE_ID; a process in one pane cannot open an approval for another.",
 		})
 	}
 	if w.AgentState != AgentStateNeedsInput {
@@ -808,7 +808,7 @@ func noHoldError(msg string) *verbError {
 	return hintedVerbError(ErrVerbInvalidParams, msg, &VerbHint{
 		Param:   "request_id",
 		Verb:    "list-attention",
-		Command: "tuios list-attention",
+		Command: "dartuios list-attention",
 		Detail:  "A hold ends when it times out, when the pane moves on, when someone answers it, or when the prompt is handed back to the pane. The harness then asks in its pane, so answer it there.",
 	})
 }
@@ -855,7 +855,7 @@ func (d *Daemon) peerPane(cs *connState) (bool, string) {
 
 // peerPaneWindow places the process on cs: outside every pane, or in one pane,
 // found the way resolve-pane finds one (an ancestor that is a pane's shell,
-// then the controlling terminal) and last by the TUIOS_PANE_ID in its
+// then the controlling terminal) and last by the DARTUIOS_PANE_ID in its
 // environment. A process inside a pane that none of these place gets an empty
 // window, which matches no target, so request-approval fails closed on it.
 func (d *Daemon) peerPaneWindow(cs *connState) (bool, string) {
@@ -883,7 +883,7 @@ func (d *Daemon) peerPaneWindow(cs *connState) (bool, string) {
 			}
 		}
 	}
-	if id, ok := readProcEnvVar(pid, "TUIOS_PANE_ID"); ok && id != "" && d.holdsWindow(id) {
+	if id, ok := readProcEnvVar(pid, "DARTUIOS_PANE_ID"); ok && id != "" && d.holdsWindow(id) {
 		return true, id
 	}
 	return true, ""

@@ -2,9 +2,9 @@
 # Dock component: the kubectl context you are about to run things against.
 #
 #   [dock.custom.k8s]
-#   command   = "~/.config/tuios/dock/kube-context.sh"
+#   command   = "~/.config/dartuios/dock/kube-context.sh"
 #   refresh   = "30s"
-#   on-click  = "tuios new-window k8s kubectl config get-contexts"
+#   on-click  = "dartuios new-window k8s kubectl config get-contexts"
 #   max-width = 28
 #
 # This is the cell that pays for itself the first time it stops you running

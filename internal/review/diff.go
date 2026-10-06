@@ -11,7 +11,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/worktree"
 )
 
 // Base is the commit a diff runs from, and how it was found.

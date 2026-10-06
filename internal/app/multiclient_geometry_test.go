@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // A pane's box is settled across a session's clients (the negotiated reserve),
@@ -16,7 +16,7 @@ import (
 // (a focus switch, alt+n) moved the shared PTYs between the two answers.
 //
 // These tests hold two full clients on one session whose *processes* disagree
-// about the geometry config, which is what a local client and a tuios-web
+// about the geometry config, which is what a local client and a dartuios-web
 // process with different config in force are. Process disagreement is
 // simulated by installing each side's globals before anything runs on that
 // side; after the fix the layout reads session-settled model state, so the

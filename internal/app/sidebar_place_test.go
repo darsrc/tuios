@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // placedClient is a listing in which the daemon has said where each session's
@@ -15,7 +15,7 @@ import (
 func placedClient() *session.TUIClient {
 	c := session.NewTUIClient()
 	c.UpdateSessionCache([]session.SessionInfo{
-		{Name: "session-0", Dir: "tuios", Branch: "main"},
+		{Name: "session-0", Dir: "dartuios", Branch: "main"},
 		{Name: "session-1", Dir: "docs"},
 		{Name: "api", Dir: "payments", Branch: "release"},
 		{Name: "session-2", Dir: "site", Branch: "next", DisplayName: "Site"},
@@ -67,7 +67,7 @@ func TestRailPlaceRidesTheCache(t *testing.T) {
 	// The same sessions, and only one branch differs: a listing that changed
 	// in nothing else is the case the comparison has to catch.
 	m.DaemonClient.UpdateSessionCache([]session.SessionInfo{
-		{Name: "session-0", Dir: "tuios", Branch: "fix/rail"},
+		{Name: "session-0", Dir: "dartuios", Branch: "fix/rail"},
 		{Name: "session-1", Dir: "docs"},
 		{Name: "api", Dir: "payments", Branch: "release"},
 		{Name: "session-2", Dir: "site", Branch: "next", DisplayName: "Site"},
@@ -76,7 +76,7 @@ func TestRailPlaceRidesTheCache(t *testing.T) {
 	if m.sidebarCache.sig == sig {
 		t.Fatal("a branch change did not rebuild the rail")
 	}
-	if !strings.Contains(sessionRow(t, railText(t, m), "tuios"), "fix/rail") {
+	if !strings.Contains(sessionRow(t, railText(t, m), "dartuios"), "fix/rail") {
 		t.Error("the new branch never reached the drawn row")
 	}
 }

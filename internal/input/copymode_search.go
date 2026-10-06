@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // Search-related functions for copy mode (/, ?, n, N, etc.)

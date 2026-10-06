@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
 	"github.com/Gaurav-Gosain/tuitest"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/shot"
 )
 
 // The chrome under a light theme and a dark terminal, at each colour depth and
@@ -30,7 +30,7 @@ import (
 //     read as one more command.
 //
 // Each run saves every overlay as text, styled text and a PNG drawn by
-// tuios's own renderer, under artifactDir. With TUIOS_E2E_QA set the matrix
+// dartuios's own renderer, under artifactDir. With DARTUIOS_E2E_QA set the matrix
 // is the whole QA set (both looks, three depths, two sizes); without it, the
 // runs that hold each finding.
 
@@ -60,7 +60,7 @@ func (r chromeRun) name() string {
 func chromeRuns() []chromeRun {
 	var runs []chromeRun
 	sizes := [][2]int{{120, 40}, {80, 24}}
-	if os.Getenv("TUIOS_E2E_QA") != "" {
+	if os.Getenv("DARTUIOS_E2E_QA") != "" {
 		for _, look := range []chromeLook{lookDark, lookLatte} {
 			for _, size := range sizes {
 				for _, d := range chromeDepths {
@@ -126,7 +126,7 @@ func chromeClient(t *testing.T, r chromeRun) (*tuitest.Terminal, string) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	useShippedLooks(base)
-	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "tuios")
+	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatal(err)
 	}
@@ -146,7 +146,7 @@ func chromeClient(t *testing.T, r chromeRun) (*tuitest.Terminal, string) {
 		{"new", "tests", "--detach"},
 		{"set-agent-state", "-s", "tests", "errored", "--harness", "codex", "-m", "go test ./... failed: 2 packages"},
 	} {
-		if o, err := tuiosCLI(t, base, args...); err != nil {
+		if o, err := dartuiosCLI(t, base, args...); err != nil {
 			t.Fatalf("%v: %v\n%s", args, err, o)
 		}
 	}
@@ -467,7 +467,7 @@ func checkPaletteCount(t *testing.T, term *tuitest.Terminal, s tuitest.Screen, c
 // rail's text fades toward it; on the dark look the text is turned down.
 func checkScrim(t *testing.T, term *tuitest.Terminal, base string, look chromeLook, host *shot.Palette) {
 	t.Helper()
-	if o, err := tuiosCLI(t, base, "set-config", "appearance.modal_dim", "30"); err != nil {
+	if o, err := dartuiosCLI(t, base, "set-config", "appearance.modal_dim", "30"); err != nil {
 		t.Fatalf("set the modal dim: %v\n%s", err, o)
 	}
 	time.Sleep(time.Second)
@@ -520,7 +520,7 @@ func checkScrim(t *testing.T, term *tuitest.Terminal, base string, look chromeLo
 }
 
 // structureInk reports whether fg is overlay.Structure's ink for bg at the
-// run's depth, which is where tuios picks the palette entry at 256 colours.
+// run's depth, which is where dartuios picks the palette entry at 256 colours.
 func structureInk(fg, bg color.Color, depth string) bool {
 	if depth == "256" {
 		prev := overlay.CurrentDepth()
@@ -539,7 +539,7 @@ func structureInk(fg, bg color.Color, depth string) bool {
 // TestReviewLooksOnALightTheme opens the review overlay, which draws on the
 // dialog palette, under catppuccin_latte at each depth and saves it, and
 // holds its file list to a light ground at 256 colours and truecolor. With
-// TUIOS_E2E_QA set it also runs at 80x24 and on the dark look.
+// DARTUIOS_E2E_QA set it also runs at 80x24 and on the dark look.
 //
 // How this could pass wrongly: the ground could be read off a pane rather
 // than the overlay. It is read under the file list's "README", which only
@@ -549,7 +549,7 @@ func TestReviewLooksOnALightTheme(t *testing.T) {
 	for _, d := range chromeDepths {
 		runs = append(runs, chromeRun{lookLatte, d, 120, 40})
 	}
-	if os.Getenv("TUIOS_E2E_QA") != "" {
+	if os.Getenv("DARTUIOS_E2E_QA") != "" {
 		for _, d := range chromeDepths {
 			runs = append(runs, chromeRun{lookLatte, d, 80, 24}, chromeRun{lookDark, d, 120, 40}, chromeRun{lookDark, d, 80, 24})
 		}
@@ -586,4 +586,294 @@ func TestReviewLooksOnALightTheme(t *testing.T) {
 			}
 		})
 	}
+}
+
+// darClient brings a client up in the DAR default chrome with every element
+// the assertions below read on screen at once: one session with two panes (the
+// first focused and the second not, so both the heavy and the light DAR frame
+// are drawn), one more session asking for input, one at rest, and a working
+// agent on the current session whose filament is moving. The shipped looks are
+// the DAR defaults, so no config file is needed.
+func darClient(t *testing.T) (*tuitest.Terminal, string) {
+	t.Helper()
+	const cols, rows = 120, 40
+	base := t.TempDir()
+	killDaemon(t, base)
+	useShippedLooks(base)
+	for _, args := range [][]string{
+		{"new", "dar", "--detach"},
+		{"new-window", "other", "-s", "dar", "--no-focus"},
+		{"new", "alert", "--detach"},
+		{"set-agent-state", "-s", "alert", "needs_input", "--harness", "claude-code", "-m", "approve?"},
+		{"new", "idle", "--detach"},
+		{"set-agent-state", "-s", "dar", "working", "--harness", "claude-code"},
+	} {
+		if out, err := dartuiosCLI(t, base, args...); err != nil {
+			t.Fatalf("%v: %v\n%s", args, err, out)
+		}
+	}
+	term := attachIn(t, base, "dar", startOpts{cols: cols, rows: rows, shippedLooks: true, animations: true})
+	if err := term.WaitFor(func(s tuitest.Screen) bool { return countWindows(s) >= 2 }, bootTimeout); err != nil {
+		t.Fatalf("the two panes never showed: %v\n%s", err, term.Snapshot())
+	}
+	enableTiling(t, term)
+	return term, base
+}
+
+// railRowText is the sidebar's row (the rightmost shippedRail(cols) columns,
+// including the sidebar's left border │), so the gutter mark leads once the
+// border is trimmed.
+func railRowText(s tuitest.Screen, cols, y int) string {
+	var b strings.Builder
+	for x := cols - shippedRail(cols); x < cols; x++ {
+		b.WriteString(s.Cell(x, y).Content)
+	}
+	return b.String()
+}
+
+// railRow is the sidebar row containing name, or -1 when there is none.
+func railRow(s tuitest.Screen, name string) int {
+	cols, rows := s.Size()
+	for y := range rows {
+		if strings.Contains(railRowText(s, cols, y), name) {
+			return y
+		}
+	}
+	return -1
+}
+
+// railMark is the gutter mark (first content cell) of the sidebar row
+// containing name.
+func railMark(s tuitest.Screen, name string) (string, bool) {
+	cols, _ := s.Size()
+	trimmed := strings.TrimLeft(railRowText(s, cols, railRow(s, name)), "│ ")
+	if trimmed == "" {
+		return "", false
+	}
+	return string([]rune(trimmed)[0]), true
+}
+
+// railGlyph is the agent-state cell (second content cell) of the sidebar row
+// containing name — the cell a working agent's filament moves in.
+func railGlyph(s tuitest.Screen, name string) (string, bool) {
+	cols, _ := s.Size()
+	r := []rune(strings.TrimLeft(railRowText(s, cols, railRow(s, name)), "│ "))
+	if len(r) < 2 {
+		return "", false
+	}
+	return string(r[1]), true
+}
+
+// TestDARChromeElements pins the DAR default chrome end to end: the
+// heavy/light frame split, the four rail marks, the anchored and the hard
+// dialog corners, the moving agent filament, the trackless thin scrollbar, and
+// the dock pill caps. Every subtest reads a cell off the one live client.
+func TestDARChromeElements(t *testing.T) {
+	term, base := darClient(t)
+	cols, rows := term.Screen().Size()
+
+	t.Run("frames", func(t *testing.T) {
+		text := term.Screen().Text()
+		if !strings.Contains(text, "┏") {
+			t.Errorf("the focused pane never drew the heavy DAR corner ┏\n%s", term.Snapshot())
+		}
+		if !strings.Contains(text, "┌") {
+			t.Errorf("the unfocused pane never drew the light DAR corner ┌\n%s", term.Snapshot())
+		}
+	})
+
+	t.Run("rail marks", func(t *testing.T) {
+		check := func(name, want string) {
+			t.Helper()
+			got, ok := railMark(term.Screen(), name)
+			if !ok || got != want {
+				t.Errorf("the %q session's rail mark is %q, want %q\n%s", name, got, want, term.Snapshot())
+			}
+		}
+		check("dar", "█")   // current
+		check("alert", "▍") // needs input
+		check("idle", "▏")  // at rest
+		// Hovering the at-rest row steps it up to the hover mark.
+		ry := railRow(term.Screen(), "idle")
+		if ry < 0 {
+			t.Fatalf("no rail row for the at-rest session\n%s", term.Snapshot())
+		}
+		moveMouse(t, term, cols-shippedRail(cols)/2, ry)
+		if err := term.WaitFor(func(scr tuitest.Screen) bool {
+			got, ok := railMark(scr, "idle")
+			return ok && got == "▋"
+		}, uiTimeout); err != nil {
+			t.Errorf("hovering the at-rest session did not raise its mark to ▋: %v\n%s", err, term.Snapshot())
+		}
+	})
+
+	t.Run("dock pill caps", func(t *testing.T) {
+		if !strings.Contains(term.Screen().Text(), "▏ 1 ▕") {
+			t.Errorf("the dock never drew its workspace pill ▏ 1 ▕\n%s", term.Snapshot())
+		}
+	})
+
+	t.Run("working filament", func(t *testing.T) {
+		if railRow(term.Screen(), "dar") < 0 {
+			t.Fatalf("no rail row for the working session\n%s", term.Snapshot())
+		}
+		glyph := func() string {
+			g, _ := railGlyph(term.Screen(), "dar")
+			return g
+		}
+		seen := map[string]bool{glyph(): true}
+		deadline := time.Now().Add(3 * time.Second)
+		for len(seen) < 2 && time.Now().Before(deadline) {
+			time.Sleep(60 * time.Millisecond)
+			seen[glyph()] = true
+		}
+		if len(seen) < 2 {
+			t.Errorf("the working agent's glyph never changed (filament dead): only %v\n%s", seen, term.Snapshot())
+		}
+		// With no working row left, the glyph settles.
+		if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "dar", "idle", "--harness", "claude-code"); err != nil {
+			t.Fatalf("set-agent-state idle: %v\n%s", err, out)
+		}
+		time.Sleep(500 * time.Millisecond)
+		a := glyph()
+		time.Sleep(150 * time.Millisecond)
+		b := glyph()
+		time.Sleep(150 * time.Millisecond)
+		c := glyph()
+		if a != b || b != c {
+			t.Errorf("the glyph is still moving after the working row left: %q %q %q\n%s", a, b, c, term.Snapshot())
+		}
+	})
+
+	t.Run("dialogs", func(t *testing.T) {
+		// An ordinary dialog takes the anchored corners.
+		sendKeys(t, term, "r")
+		if err := term.WaitFor(func(scr tuitest.Screen) bool {
+			return strings.Contains(scr.Text(), "◜")
+		}, uiTimeout); err != nil {
+			t.Fatalf("the rename dialog never drew its anchored corner ◜: %v\n%s", err, term.Snapshot())
+		}
+		if !strings.Contains(term.Screen().Text(), "◝") {
+			t.Errorf("the rename dialog drew ◜ but not ◝\n%s", term.Snapshot())
+		}
+		// The plain dialog is anchored by its corners alone: no box lines. Find
+		// the top-left anchor and assert the cell right of it is not a rule and
+		// the cell below it is not a side.
+		cx, cy := -1, -1
+		for y := range rows {
+			for x := range cols {
+				if term.Screen().Cell(x, y).Content == "◜" {
+					cx, cy = x, y
+					break
+				}
+			}
+			if cx >= 0 {
+				break
+			}
+		}
+		if cx < 0 {
+			t.Fatalf("no anchor ◜ cell to inspect\n%s", term.Snapshot())
+		}
+		if got := term.Screen().Cell(cx+1, cy).Content; got == "─" {
+			t.Errorf("the rename dialog drew a top rule ─ by its anchor; it should be anchored by corners only\n%s", term.Snapshot())
+		}
+		if got := term.Screen().Cell(cx, cy+1).Content; got == "│" {
+			t.Errorf("the rename dialog drew a side │ by its anchor; it should be anchored by corners only\n%s", term.Snapshot())
+		}
+		sendKeys(t, term, tuitest.Esc)
+		if err := term.WaitFor(func(scr tuitest.Screen) bool {
+			return !strings.Contains(scr.Text(), "◜")
+		}, uiTimeout); err != nil {
+			t.Fatalf("the rename dialog would not close: %v\n%s", err, term.Snapshot())
+		}
+		// A destructive dialog takes the hard corners. The unfocused frame
+		// already draws ┌, so count them: the dialog must add one.
+		before := strings.Count(term.Screen().Text(), "┌")
+		sendKeys(t, term, tuitest.Ctrl('b'), "X")
+		if err := term.WaitFor(func(scr tuitest.Screen) bool {
+			return strings.Count(scr.Text(), "┌") > before
+		}, uiTimeout); err != nil {
+			t.Fatalf("the close-session dialog never drew its hard corner ┌: %v\n%s", err, term.Snapshot())
+		}
+		sendKeys(t, term, tuitest.Esc)
+		if err := term.WaitFor(func(scr tuitest.Screen) bool {
+			return strings.Count(scr.Text(), "┌") == before
+		}, uiTimeout); err != nil {
+			t.Fatalf("the close-session dialog would not close: %v\n%s", err, term.Snapshot())
+		}
+	})
+
+	t.Run("scrollbar", func(t *testing.T) {
+		enterTerminalMode(t, term)
+		fillScrollback(t, term, "DARSB", 60)
+		// Scroll back off the live tail so the bar has a position to read.
+		wheelAt(t, term, cols/4, rows/2, tuitest.MouseWheelUp, 20)
+		scr := term.Screen()
+		// The focused pane's frame is the heavy one: its top-left corner is ┏
+		// and its bottom-left is ┗. The bar lives in the content rows between
+		// them, so bracket those out and ignore the chrome the column passes
+		// through above and below.
+		paneRow := func(y int) string {
+			var b strings.Builder
+			for x := 0; x < cols-shippedRail(cols); x++ {
+				b.WriteString(scr.Cell(x, y).Content)
+			}
+			return b.String()
+		}
+		topRow, botRow := -1, -1
+		for y := 0; y < rows; y++ {
+			if strings.Contains(paneRow(y), "┏") {
+				topRow = y
+				break
+			}
+		}
+		for y := rows - 1; y >= 0; y-- {
+			if strings.Contains(paneRow(y), "┗") {
+				botRow = y
+				break
+			}
+		}
+		// The thumb is a contiguous run of ▍ in the focused pane's last content
+		// column. Find the column in the left half that carries the longest run,
+		// and the run's rows.
+		bestCol, runTop, runH := -1, 0, 0
+		for x := 0; x < cols/2; x++ {
+			for y := topRow + 1; y < botRow; y++ {
+				if scr.Cell(x, y).Content != "▍" {
+					continue
+				}
+				top := y
+				for scr.Cell(x, y).Content == "▍" && y < botRow {
+					y++
+				}
+				if h := y - top; h > runH {
+					runH, bestCol, runTop = h, x, top
+				}
+			}
+		}
+		if bestCol < 0 {
+			t.Fatalf("no scrollbar thumb after scrolling back (want a run of ▍)\n%s", term.Snapshot())
+		}
+		// The thin bar is a hairline over the pane's last content column: ▍ on the
+		// thumb, │ on the rest of the track. The heavy track style draws █ with a
+		// blank track, so a ▍ thumb ringed by │ is the thin style by its glyphs.
+		scr = term.Screen()
+		for y := topRow + 1; y < botRow; y++ {
+			if c := scr.Cell(bestCol, y).Content; c != "▍" && c != "│" {
+				t.Fatalf("scrollbar column %d row %d is %q, want the thin bar's ▍ thumb or │ track\n%s", bestCol, y, c, term.Snapshot())
+			}
+		}
+		if runTop > topRow+1 {
+			if c := scr.Cell(bestCol, runTop-1).Content; c != "│" {
+				t.Fatalf("the row above the thumb (row %d) is %q, want the thin track │\n%s", runTop-1, c, term.Snapshot())
+			}
+		}
+		if runTop+runH < botRow {
+			if c := scr.Cell(bestCol, runTop+runH).Content; c != "│" {
+				t.Fatalf("the row below the thumb (row %d) is %q, want the thin track │\n%s", runTop+runH, c, term.Snapshot())
+			}
+		}
+	})
+
+	saveArtifact(t, term, artifactDir(t), "dar-chrome-120x40")
 }

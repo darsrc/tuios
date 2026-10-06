@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// pane is one tuios window seen as a tmux pane.
+// pane is one dartuios window seen as a tmux pane.
 type pane struct {
 	ID        string
 	Num       uint32
@@ -119,7 +119,7 @@ func (v *view) panesOn(ws int) []*pane {
 	return out
 }
 
-// byWindowID finds the pane of a tuios window id.
+// byWindowID finds the pane of a dartuios window id.
 func (v *view) byWindowID(id string) *pane {
 	for i := range v.panes {
 		if v.panes[i].ID == id {
@@ -159,7 +159,7 @@ func (v *view) isSession(name string) bool {
 	return name == v.session || name == "$0"
 }
 
-// paneByID resolves the part after "%": the pane number, or a tuios window id
+// paneByID resolves the part after "%": the pane number, or a dartuios window id
 // or a prefix of one at least four characters long that matches one window.
 func (v *view) paneByID(ref string) (*pane, error) {
 	if n, err := strconv.ParseUint(ref, 10, 32); err == nil {
@@ -422,6 +422,6 @@ func (s *Shim) paneVars(v *view, p *pane) map[string]string {
 	vars["pane_in_mode"] = "0"
 	vars["pane_marked"] = "0"
 	vars["pane_synchronized"] = "0"
-	vars["tuios_window_id"] = p.ID
+	vars["dartuios_window_id"] = p.ID
 	return vars
 }

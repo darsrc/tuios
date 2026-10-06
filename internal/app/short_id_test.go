@@ -3,10 +3,10 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
-// Window IDs are UUIDs when tuios makes them, but a restored session or the
+// Window IDs are UUIDs when dartuios makes them, but a restored session or the
 // daemon wire can hand over anything, and the log lines on the close path used
 // to slice them at 8 unconditionally.
 func TestDeleteWindowSurvivesAShortID(t *testing.T) {

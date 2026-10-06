@@ -24,7 +24,7 @@ func TestTrashOnAnotherDiskNamesTheWayRound(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	other, err := os.MkdirTemp("/dev/shm", "tuios-trash-")
+	other, err := os.MkdirTemp("/dev/shm", "dartuios-trash-")
 	if err != nil {
 		t.Skipf("no second filesystem to test against: %v", err)
 	}

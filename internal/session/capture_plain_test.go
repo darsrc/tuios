@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // captureLineByLine is the plain capture the long way: every scrollback line

@@ -15,9 +15,9 @@ import (
 // cell, and the overrun is then clipped or overpainted by whatever comes next,
 // which is how the close button lost the right half of its X. These tests pin
 // both halves of that contract: the chrome runes must measure one cell, and the
-// font tuios ships must actually have them.
+// font dartuios ships must actually have them.
 
-// windowChromeRunes lists every rune tuios paints into window decorations
+// windowChromeRunes lists every rune dartuios paints into window decorations
 // through the Nerd Font path. Each must be covered by the bundled font.
 func windowChromeRunes(t *testing.T) map[rune]string {
 	t.Helper()

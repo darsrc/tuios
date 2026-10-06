@@ -13,7 +13,7 @@ import (
 
 // moduleSource parses every non-test Go file in the module. The guards that
 // hold the entry points to one construction read the tree rather than call
-// into cmd/tuios, cmd/tuios-web and internal/server, because the thing that
+// into cmd/dartuios, cmd/dartuios-web and internal/server, because the thing that
 // has to hold is "every place that builds one does it the same way", and the
 // failure they guard against is a site written later that does not.
 //

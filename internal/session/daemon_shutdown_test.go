@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // startShutdownTestDaemon starts a daemon like startTestDaemon but hands back

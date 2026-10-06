@@ -22,8 +22,8 @@ type Transport interface {
 
 // exitReporter is implemented by a transport that runs a child process. It
 // separates two failures that look identical from the pipe: the program gave up
-// (ssh could not reach the machine, or the remote tuios is missing), and the
-// program is running but is not a tuios link. Both end the read with no
+// (ssh could not reach the machine, or the remote dartuios is missing), and the
+// program is running but is not a dartuios link. Both end the read with no
 // preamble; only one of them is the machine's fault.
 type exitReporter interface {
 	// Exited reports whether the child has already finished, and its wait
@@ -45,7 +45,7 @@ type Dialer func(ctx context.Context, h Host) (Transport, error)
 // free. A hub daemon has no terminal. A prompt it cannot answer does not ask
 // the user anything, it hangs the link forever, which is the exact failure
 // section 7 forbids. So the daemon's links never prompt: an unknown host key or
-// a missing key fails immediately and `tuios hosts` reports it with ssh's own
+// a missing key fails immediately and `dartuios hosts` reports it with ssh's own
 // words. The user resolves it once by running ssh themselves.
 //
 // ConnectTimeout makes the child give up on a dead machine on its own, so a
@@ -132,7 +132,7 @@ func keepaliveOptions() []string {
 const KeepaliveWindow = sshServerAliveInterval * sshServerAliveCountMax * time.Second
 
 // CommandDialer runs any command and speaks the link over its stdio. SSHDialer
-// is built on it, and a test uses it to run the real `tuios stdio-proxy`
+// is built on it, and a test uses it to run the real `dartuios stdio-proxy`
 // directly, which exercises the framing, the proxy and the daemon socket
 // without needing an ssh server or touching the user's ssh configuration.
 func CommandDialer(name string, args ...string) Dialer {

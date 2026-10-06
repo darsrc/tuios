@@ -33,7 +33,7 @@ func TestRouteToTUISyncTimeout(t *testing.T) {
 }
 
 // TestRenameWindowWithAttachedTUIUpdatesDaemonState reproduces a bug a user hits
-// today: with a TUI attached, "tuios run-command RenameWindow" was routed to the
+// today: with a TUI attached, "dartuios run-command RenameWindow" was routed to the
 // client, which renamed its own copy of the window and reported success. The
 // daemon's state, which every read verb answers from, kept the old name, so the
 // rename reported success and list-windows still showed the old name.

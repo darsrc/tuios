@@ -23,11 +23,11 @@ const (
 	EventCommand = "shell.command"
 	// EventCwd is the shell changing directory. Data: cwd.
 	EventCwd = "shell.cwd"
-	// EventAgentReport is the fake agent reporting its state, for tuios and
+	// EventAgentReport is the fake agent reporting its state, for dartuios and
 	// not for the page: the browser build turns it into app.AgentReportMsg.
 	// Data: state, message, kind, harness.
 	EventAgentReport = "agent.report"
-	// EventTapePlay asks tuios to play a tape, from `tuios tape play`. The
+	// EventTapePlay asks dartuios to play a tape, from `dartuios tape play`. The
 	// browser build turns it into app.PlayTapeMsg. Data: name, script.
 	EventTapePlay = "tape.play"
 )
@@ -112,5 +112,5 @@ func (t *TTY) Printf(format string, args ...any) { t.Print(fmt.Sprintf(format, a
 
 // Emit reports an event from this guest's window.
 func (t *TTY) Emit(typ string, data map[string]any) {
-	emit(Event{Type: typ, WindowID: t.env["TUIOS_WINDOW_ID"], Data: data})
+	emit(Event{Type: typ, WindowID: t.env["DARTUIOS_WINDOW_ID"], Data: data})
 }

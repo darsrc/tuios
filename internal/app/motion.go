@@ -8,9 +8,9 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Motion is the decorative animation the frame carries on top of what it

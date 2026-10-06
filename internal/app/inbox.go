@@ -12,12 +12,12 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/sound"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/sound"
 )
 
 // The Inbox on the client: a mirror of the daemon's attention queue (see
@@ -329,7 +329,7 @@ func inboxWatchOnce(ctx context.Context, dial inboxDial, out chan<- tea.Msg) (bo
 		return false, err
 	}
 	// Once per watch, which is once per attach and once per reconnect, so a
-	// daemon restarted with a newer tuios is noticed: whether the person's
+	// daemon restarted with a newer dartuios is noticed: whether the person's
 	// snooze, undo and unread can be sent to it.
 	probe := func(verb string, params map[string]any) ([]byte, error) {
 		return client.CallWithTimeout(verb, params, 5*time.Second)

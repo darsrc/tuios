@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	"github.com/Gaurav-Gosain/tuitest"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // ghostTarget is the row the fixture settles on, and ghostStale differs from it
@@ -34,7 +34,7 @@ const (
 // handing the whole row over in a single write.
 //
 // The bracket is what makes the assertion meaningful. A guest that does not ask
-// for its frame to be held has no claim on being shown whole: tuios applies the
+// for its frame to be held has no claim on being shown whole: dartuios applies the
 // bytes as they arrive and composes from whatever it has, exactly as a terminal
 // does. A guest that does ask must never be composed mid-frame, and must never
 // be presented mid-frame either.
@@ -60,7 +60,7 @@ var (
 	syncEnd   = []byte("\x1b[?2026l")
 )
 
-// ghostGate records tuios's output once the setup keystrokes are done, so the
+// ghostGate records dartuios's output once the setup keystrokes are done, so the
 // recording is a pure output stream that can be replayed into an emulator.
 type ghostGate struct {
 	mu sync.Mutex
@@ -89,7 +89,7 @@ func (g *ghostGate) bytes() []byte {
 // line a full-screen guest was rewriting in place appeared on screen with stale
 // characters woven through the new ones, while the lines around it were fine.
 //
-// The cause was not what tuios computed but how it handed the frame over. The
+// The cause was not what dartuios computed but how it handed the frame over. The
 // renderer writes only the cells that changed, so a frame is a cursor move and a
 // run of characters; a host presenting partway through one shows the leading
 // cells carrying the new text and the rest still carrying the old. On the
@@ -100,7 +100,7 @@ func (g *ghostGate) bytes() []byte {
 //
 // bubbletea brackets frames in DEC 2026 itself, but only once the host answers a
 // DECRQM query for the mode, and it never even asks over SSH or on Apple
-// Terminal. tuios now brackets its own frames, which does not depend on an
+// Terminal. dartuios now brackets its own frames, which does not depend on an
 // answer.
 //
 // The assertion is on the bytes, not on a sampled screen. Sampling a host
@@ -141,14 +141,14 @@ func TestGhostTextFramesArePresentedWhole(t *testing.T) {
 	time.Sleep(10 * time.Second)
 	stream := g.bytes()
 	if len(stream) == 0 {
-		t.Fatalf("tuios wrote nothing to the host\n%s", term.Snapshot())
+		t.Fatalf("dartuios wrote nothing to the host\n%s", term.Snapshot())
 	}
 
 	// Every frame must be bracketed. An unbracketed frame is one the host is
 	// free to present halfway through.
 	brackets := bytes.Count(stream, syncBegin)
 	if brackets == 0 {
-		t.Fatalf("not one of the %d bytes tuios wrote to the host was inside a "+
+		t.Fatalf("not one of the %d bytes dartuios wrote to the host was inside a "+
 			"synchronized update: every frame can be presented half-written",
 			len(stream))
 	}

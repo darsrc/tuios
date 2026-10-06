@@ -2,10 +2,10 @@ package input
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // handleMouseClick handles mouse click events
@@ -211,7 +211,7 @@ func handleMouseClick(msg tea.MouseClickMsg, o *app.OS) (*app.OS, tea.Cmd) {
 	// because ctrl+left already means multi-select and alt+left means nothing
 	// else, so there is no click-versus-drag question to answer. Grabbing at once
 	// also sets Dragging on the press, which is what keeps the motion filter in
-	// cmd/tuios from dropping the very motion that would move the pane.
+	// cmd/dartuios from dropping the very motion that would move the pane.
 	//
 	// Placed above the guest forwarding below, exactly as ctrl+drag is, so the
 	// gesture works over a pane whose app asked for mouse tracking. That does
@@ -270,7 +270,7 @@ func handleMouseClick(msg tea.MouseClickMsg, o *app.OS) (*app.OS, tea.Cmd) {
 	// modifier, which xterm has meant by it for decades, so it is the one
 	// modifier a user already expects to reach past a program that is tracking
 	// the mouse. That is also why this sits above the forwarding below rather
-	// than under it: holding shift is the user saying the click is tuios's.
+	// than under it: holding shift is the user saying the click is dartuios's.
 	//
 	// A plain click is deliberately not this. A left press on a pane is already
 	// how you focus it, start typing in it, and select text in it, and a browser

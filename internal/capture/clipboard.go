@@ -18,7 +18,7 @@ import (
 // the clipboard, and the rule learned from the PR #133 review is that only a
 // process actually sitting on the user's machine may do it. The CLI qualifies:
 // it reaches the daemon over a unix socket, so the two are the same machine.
-// An SSH client attached to a tuios ssh server does not, and never calls this.
+// An SSH client attached to a dartuios ssh server does not, and never calls this.
 //
 // Detection is gated on the display environment and cached, the helper is
 // given a bounded deadline, and a failure degrades to the file path plus a

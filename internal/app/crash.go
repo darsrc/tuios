@@ -12,12 +12,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/release"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/release"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
-// What tuios does when it reaches a state it should not have reached.
+// What dartuios does when it reaches a state it should not have reached.
 //
 // The panic barriers came first and the report came second, which is the wrong
 // way round and is why this file exists. Update and the graphics flush have
@@ -25,7 +25,7 @@ import (
 // the in-app log, and a file lands in the state directory. None of that reaches
 // the person at the keyboard. LogError draws nothing (see os_notify.go: the log
 // ring is only visible behind leader D l), so the whole of what a user saw when
-// tuios hit an impossible state was one frame that did not update. A bug nobody
+// dartuios hit an impossible state was one frame that did not update. A bug nobody
 // can see is a bug nobody reports.
 //
 // A CrashReport is the snapshot the overlay draws and the clipboard carries. It
@@ -138,7 +138,7 @@ func orUnknown(s string) string {
 
 // CrashLogDir returns the directory for crash logs.
 func CrashLogDir() string {
-	return filepath.Join(xdg.StateHome, "tuios")
+	return filepath.Join(xdg.StateHome, "dartuios")
 }
 
 // NewCrashReport builds a report from a recovered panic and a set of facts.
@@ -162,7 +162,7 @@ func crashHeadFacts(where string) []CrashFact {
 	version, commit := buildIdentity()
 	return []CrashFact{
 		{Label: "Caught while", Value: where},
-		{Label: "tuios", Value: version},
+		{Label: "dartuios", Value: version},
 		{Label: "Commit", Value: commit},
 	}
 }
@@ -212,7 +212,7 @@ func (r *CrashReport) Markdown(stackLines int) string {
 	}
 	var b strings.Builder
 	b.WriteString("### What happened\n\n")
-	b.WriteString("tuios reached a state it does not expect and recovered from it.\n\n")
+	b.WriteString("dartuios reached a state it does not expect and recovered from it.\n\n")
 	b.WriteString("```\n")
 	b.WriteString(r.Panic)
 	b.WriteString("\n```\n\n### Details\n\n")
@@ -232,7 +232,7 @@ func (r *CrashReport) Markdown(stackLines int) string {
 	}
 	b.WriteString("```\n")
 	if trimmed > 0 && r.LogPath != "" {
-		b.WriteString("\nThe whole trace is in `" + r.LogPath + "` on the machine that ran tuios.\n")
+		b.WriteString("\nThe whole trace is in `" + r.LogPath + "` on the machine that ran dartuios.\n")
 	}
 	return b.String()
 }
@@ -250,7 +250,7 @@ func clipStack(stack string, n int) (string, int) {
 	return strings.Join(lines[:n], "\n"), len(lines) - n
 }
 
-// issueURLLimit is the longest issue URL tuios will build.
+// issueURLLimit is the longest issue URL dartuios will build.
 //
 // A prefilled issue is a GET, so the whole report travels in the query string,
 // and every hop has an opinion about how long that may be. Browsers stop
@@ -292,7 +292,7 @@ func (r *CrashReport) IssueURL() string {
 // shortBody is the issue body for a report too large to carry its own trace.
 func (r *CrashReport) shortBody() string {
 	var b strings.Builder
-	b.WriteString("### What happened\n\ntuios reached a state it does not expect.\n\n")
+	b.WriteString("### What happened\n\ndartuios reached a state it does not expect.\n\n")
 	b.WriteString("The report is too large for a prefilled issue. ")
 	b.WriteString("Press c in the crash overlay to copy it, then paste it here.\n\n")
 	if r.LogPath != "" {
@@ -327,7 +327,7 @@ func WriteCrashLog(report *CrashReport) string {
 	path := filepath.Join(dir, filename)
 
 	var b strings.Builder
-	b.WriteString("tuios crash report\n==================\n\n")
+	b.WriteString("dartuios crash report\n==================\n\n")
 	fmt.Fprintf(&b, "Time:    %s\n", report.When.Format(time.RFC3339))
 	for _, f := range report.Facts {
 		fmt.Fprintf(&b, "%-9s%s\n", f.Label+":", f.Value)
@@ -348,16 +348,16 @@ func WriteCrashLog(report *CrashReport) string {
 // build and the machine.
 //
 // The rule this function is written to: a crash report carries the shape of the
-// session and never its contents. What tuios is doing is a bug report; what the
-// user is doing is theirs. So the counts, the modes, the sizes and tuios' own
+// session and never its contents. What dartuios is doing is a bug report; what the
+// user is doing is theirs. So the counts, the modes, the sizes and dartuios' own
 // action names go in, and pane contents, scrollback, the working directory,
 // window and pane titles, the session name and the environment stay out. Every
 // one of those five can hold a hostname, a token, a client's name or a path
 // that says who someone works for, and none of them has ever helped place a
 // panic in a stack trace.
 //
-// The panic message itself is the one judgement call. It is written by tuios,
-// not by the user, so it carries tuios' own vocabulary; and a report without it
+// The panic message itself is the one judgement call. It is written by dartuios,
+// not by the user, so it carries dartuios' own vocabulary; and a report without it
 // says nothing at all. It goes in.
 //
 // This runs from inside a recover, on a model that has just failed, so it
@@ -394,7 +394,7 @@ func (m *OS) crashFacts(where string) (facts []CrashFact) {
 }
 
 // clientKind names where the person looking at this screen is sitting. It is
-// the first thing a bug report needs, because a third of tuios behaves
+// the first thing a bug report needs, because a third of dartuios behaves
 // differently across the three.
 func (m *OS) clientKind() string {
 	switch {
@@ -436,8 +436,8 @@ func (m *OS) crashPaneCount() string {
 
 // crashRecentActions lists the keybind actions this client last ran.
 //
-// This is as close to "how to reproduce" as tuios can honestly get from a
-// session that was not being recorded. They are tuios' own action names, the
+// This is as close to "how to reproduce" as dartuios can honestly get from a
+// session that was not being recorded. They are dartuios' own action names, the
 // same words the keybind table uses, so a maintainer can follow them; they are
 // not keystrokes and they are not text, so nothing the user typed is in here.
 func (m *OS) crashRecentActions() string {
@@ -450,11 +450,11 @@ func (m *OS) crashRecentActions() string {
 
 // crashTapeState says whether a replayable script of this session exists.
 //
-// A tape is the only artifact tuios has that can actually reproduce a bug, and
+// A tape is the only artifact dartuios has that can actually reproduce a bug, and
 // it exists only when the user chose to record. When one is running the report
 // says so, because that recording is worth more than everything else in the
 // report put together. When one is not, the report says nothing rather than
-// implying tuios could have replayed this and did not.
+// implying dartuios could have replayed this and did not.
 func (m *OS) crashTapeState() string {
 	if m.TapeRecorder != nil && m.TapeRecorder.IsRecording() {
 		return "recording, save it after you dismiss this"

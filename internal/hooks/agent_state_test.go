@@ -16,7 +16,7 @@ func TestAgentStateHookEnvironmentContract(t *testing.T) {
 	out := filepath.Join(dir, "env")
 
 	m := NewManager()
-	m.Register(AfterAgentState, "env | grep '^TUIOS_' | sort > "+out)
+	m.Register(AfterAgentState, "env | grep '^DARTUIOS_' | sort > "+out)
 	m.Fire(AfterAgentState, Context{
 		WindowID:       "w-1",
 		WindowName:     "build",
@@ -35,15 +35,15 @@ func TestAgentStateHookEnvironmentContract(t *testing.T) {
 	}
 	got := string(data)
 	for _, want := range []string{
-		"TUIOS_EVENT=after-agent-state",
-		"TUIOS_WINDOW_ID=w-1",
-		"TUIOS_WINDOW_NAME=build",
-		"TUIOS_WORKSPACE=3",
-		"TUIOS_SESSION_ID=main",
-		"TUIOS_AGENT_STATE=needs_input",
-		"TUIOS_AGENT_PREV_STATE=working",
-		"TUIOS_AGENT_HARNESS=claude",
-		"TUIOS_AGENT_MESSAGE=awaiting approval",
+		"DARTUIOS_EVENT=after-agent-state",
+		"DARTUIOS_WINDOW_ID=w-1",
+		"DARTUIOS_WINDOW_NAME=build",
+		"DARTUIOS_WORKSPACE=3",
+		"DARTUIOS_SESSION_ID=main",
+		"DARTUIOS_AGENT_STATE=needs_input",
+		"DARTUIOS_AGENT_PREV_STATE=working",
+		"DARTUIOS_AGENT_HARNESS=claude",
+		"DARTUIOS_AGENT_MESSAGE=awaiting approval",
 	} {
 		if !strings.Contains(got, want) {
 			t.Errorf("missing %q from the hook environment:\n%s", want, got)
@@ -59,7 +59,7 @@ func TestAgentStateHookMessageWithShellMetacharacters(t *testing.T) {
 	nasty := `"; rm -rf $HOME; echo '`
 
 	m := NewManager()
-	m.Register(AfterAgentState, `printf '%s' "$TUIOS_AGENT_MESSAGE" > `+out)
+	m.Register(AfterAgentState, `printf '%s' "$DARTUIOS_AGENT_MESSAGE" > `+out)
 	m.Fire(AfterAgentState, Context{AgentMessage: nasty})
 	m.Wait()
 

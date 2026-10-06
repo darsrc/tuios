@@ -8,12 +8,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/debuglog"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/debuglog"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 func kittyPassthroughLog(format string, args ...any) {
-	if os.Getenv("TUIOS_DEBUG_INTERNAL") != "1" {
+	if os.Getenv("DARTUIOS_DEBUG_INTERNAL") != "1" {
 		return
 	}
 	f, err := debuglog.Open(debuglog.Path)
@@ -57,7 +57,7 @@ type KittyPassthrough struct {
 	imageIDMap map[string]map[uint32]uint32 // maps (windowID, guestImageID) -> hostImageID
 	// virtualImages holds the host ids this window has virtual placements for,
 	// as (windowID -> set of hostImageID). A virtual placement is not a
-	// placement tuios positions, so it is not in `placements` and the teardown
+	// placement dartuios positions, so it is not in `placements` and the teardown
 	// there misses it, exactly as it misses the remote-video images below.
 	// This is what gets those images deleted when the window goes away.
 	virtualImages map[string]map[uint32]bool
@@ -392,9 +392,9 @@ type WindowPositionInfo struct {
 	// It is not the same box as the screen, and the difference is the whole
 	// reason it is here. A pane is allowed to hang past this box (a floating
 	// pane is only clamped far enough to keep a strip of it reachable), and
-	// every cell tuios composes for such a pane still stops at the boundary,
+	// every cell dartuios composes for such a pane still stops at the boundary,
 	// because the rail and the dock are drawn over the pane layer. A kitty
-	// placement is the one thing on screen tuios does not draw: the host paints
+	// placement is the one thing on screen dartuios does not draw: the host paints
 	// it over the finished frame, so unless the reserve reaches the placement
 	// arithmetic the image runs straight over the rail.
 	//

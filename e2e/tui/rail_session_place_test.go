@@ -30,8 +30,8 @@ func TestRailLabelsAnUnnamedSessionByItsDirectory(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// A generated name, exactly as `tuios new` with no argument hands out.
-	if out, err := tuiosCLI(t, base, "new", "session-0", "--detach"); err != nil {
+	// A generated name, exactly as `dartuios new` with no argument hands out.
+	if out, err := dartuiosCLI(t, base, "new", "session-0", "--detach"); err != nil {
 		t.Fatalf("create session-0: %v: %s", err, out)
 	}
 	term := attachIn(t, base, "session-0", startOpts{})

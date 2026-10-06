@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // boxTopLeft is the first cell of the box a session draws around a pane, with
@@ -26,7 +26,7 @@ func boxTopLeft(t *testing.T, m *OS, win *terminal.Window) string {
 // TestOneClientsSettingsStopAtThatClient is the whole point of Settings being a
 // field rather than a wall of package variables.
 //
-// `tuios ssh` and tuios-web each run ONE process with one goroutine per
+// `dartuios ssh` and dartuios-web each run ONE process with one goroutine per
 // connection. Before this, the settings panel wrote package globals on every
 // keypress, so a person who picked a different border style picked it for every
 // other client attached to that server, on sessions they had never heard of.
@@ -39,7 +39,7 @@ func boxTopLeft(t *testing.T, m *OS, win *terminal.Window) string {
 // &config.Global and make Settings.GetBorderForStyle read config.Global's
 // BorderStyle (the old design for this one setting). The frame assertion fails
 // with "the other session's pane is drawing Bob's border: corner \"╔\", was
-// \"╭\"", which is the bug as it was reported.
+// \"┏\"", which is the bug as it was reported.
 func TestOneClientsSettingsStopAtThatClient(t *testing.T) {
 	alice := NewOS(OSOptions{UserConfig: config.DefaultConfig(), ConfigReadOnly: true})
 	bob := NewOS(OSOptions{UserConfig: config.DefaultConfig(), ConfigReadOnly: true})
@@ -72,8 +72,8 @@ func TestOneClientsSettingsStopAtThatClient(t *testing.T) {
 	}
 
 	// Alice did not, in any of the four.
-	if got := alice.Settings.BorderStyle; got != "rounded" {
-		t.Errorf("border style crossed sessions: Alice reads %q, want rounded", got)
+	if got := alice.Settings.BorderStyle; got != config.BorderStyleDAR {
+		t.Errorf("border style crossed sessions: Alice reads %q, want %q", got, config.BorderStyleDAR)
 	}
 	if got := alice.Settings.ZenMode; got != config.ZenModeDisabled {
 		t.Errorf("zen mode crossed sessions: Alice reads %q, want disabled", got)

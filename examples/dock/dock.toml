@@ -1,5 +1,5 @@
-# All five recipes wired up. Paste into ~/.config/tuios/config.toml and put the
-# scripts in ~/.config/tuios/dock/.
+# All five recipes wired up. Paste into ~/.config/dartuios/config.toml and put the
+# scripts in ~/.config/dartuios/dock/.
 #
 # Nothing here is required. Delete the [dock] table entirely and the bar draws
 # exactly what it drew before components existed.
@@ -16,31 +16,31 @@ format = "15:04"
 # The branch of the focused pane's directory. Free at idle: it only runs when
 # focus moves.
 [dock.custom.branch]
-command = "~/.config/tuios/dock/git-branch.sh"
+command = "~/.config/dartuios/dock/git-branch.sh"
 refresh = "event:after-focus-change,after-attach"
-on-click = "tuios new-window log -- git log --oneline -20"
+on-click = "dartuios new-window log -- git log --oneline -20"
 
 # What the agents are doing. The reason the feature exists: with several agents
 # in several panes, whether one is waiting on you is the thing you cannot see.
 [dock.custom.agents]
-command = "~/.config/tuios/dock/agents.sh"
+command = "~/.config/dartuios/dock/agents.sh"
 refresh = "event:after-agent-state"
-on-click = "tuios list-windows"
+on-click = "dartuios list-windows"
 max-width = 32
 
 # Unread mail, pushed by inotifywait rather than polled.
 [dock.custom.inbox]
-command = "~/.config/tuios/dock/inbox.sh"
+command = "~/.config/dartuios/dock/inbox.sh"
 refresh = "push"
 
 # The context you are about to run kubectl against.
 [dock.custom.k8s]
-command = "~/.config/tuios/dock/kube-context.sh"
+command = "~/.config/dartuios/dock/kube-context.sh"
 refresh = "30s"
 max-width = 28
 
 # Charge, once a minute. Hides itself on a machine with no battery.
 [dock.custom.battery]
-command = "~/.config/tuios/dock/battery.sh"
+command = "~/.config/dartuios/dock/battery.sh"
 refresh = "60s"
 max-width = 8

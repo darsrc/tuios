@@ -3,9 +3,9 @@
 // The server is started against an isolated XDG tree holding one config file
 // (SEEDED_CONFIG in playwright.config.mjs), every value of which is
 // deliberately not a default. Attaching over the web is meant to give the same
-// tuios as attaching locally, so each test here names a setting and reads the
+// dartuios as attaching locally, so each test here names a setting and reads the
 // terminal buffer for the thing it should have changed. A default on screen is
-// the file having been ignored, which is what tuios-web did with everything
+// the file having been ignored, which is what dartuios-web did with everything
 // that reaches the client through a package global.
 //
 // Claims are made against the buffer, never a pixel: the headless GL is

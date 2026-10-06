@@ -3,9 +3,9 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // TestAllKeysAreAskedForWhileBindingsReadKeys pins issue #202. Alternate-key

@@ -50,7 +50,7 @@ func IsProcedural(r rune) bool {
 	case r >= 0xE0B0 && r <= 0xE0B7:
 		return true
 	case r == 0x21B5:
-		// The Enter key in tuios's own key hints. Go Mono, the embedded
+		// The Enter key in dartuios's own key hints. Go Mono, the embedded
 		// fallback, has no glyph for it, nor do common coding fonts, so a
 		// capture of an Inbox would otherwise show a box where the key is.
 		return true

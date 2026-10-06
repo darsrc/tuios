@@ -13,13 +13,13 @@
 // panel-relative rectangles of its interactive regions (title bar, tabs, body
 // origin), so a host can hit-test mouse events without duplicating layout math.
 //
-// This package is also where tuios keeps its colour tokens: the Palette, the
+// This package is also where dartuios keeps its colour tokens: the Palette, the
 // rules that derive and contrast-check it (Derive), the per-depth rules
 // (depth.go), the perceptual blend (oklab.go) and the one focus and hover rule
 // every list follows (rows.go). Render code takes its colours from here and
 // from the theme package, never from a literal; a lint holds it to that.
 //
-// The package holds no tuios state and depends only on lipgloss, the charm x
+// The package holds no dartuios state and depends only on lipgloss, the charm x
 // packages and the standard library, so it can be lifted out into a standalone
 // module.
 package overlay

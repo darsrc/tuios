@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // withAutoEnterTerminalOnFocus sets the policy on one session. The setting is
@@ -18,7 +18,7 @@ func withAutoEnterTerminalOnFocus(o *app.OS, mode config.AutoEnterTerminalPolicy
 
 // twoPaneWM is two tiled panes in window-management mode, with the real
 // keybind registry, so Tab / 1-9 / Alt+arrows travel the same HandleKeyPress
-// path cmd/tuios registers.
+// path cmd/dartuios registers.
 func twoPaneWM(t *testing.T) *app.OS {
 	t.Helper()
 	o := osWithBindings(t, func(*config.KeybindingsConfig) {})

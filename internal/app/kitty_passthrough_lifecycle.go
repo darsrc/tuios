@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 func (kp *KittyPassthrough) OnWindowMove(windowID string, newX, newY, contentOffsetX, contentOffsetY int, scrollbackLen, scrollOffset, viewportHeight int) {
@@ -156,7 +156,7 @@ func (m *OS) setupKittyPassthrough(window *terminal.Window) {
 
 	// Kitty Unicode placeholder cells name their image in their foreground
 	// colour, using the id the guest chose. The host knows that image by an id
-	// tuios allocated, so the emulator rewrites the colour as the cells are
+	// dartuios allocated, so the emulator rewrites the colour as the cells are
 	// built. Installed here because this is where the window and the
 	// passthrough are introduced to each other.
 	window.Terminal.SetKittyImageIDTranslator(func(guestID uint32) (uint32, bool) {

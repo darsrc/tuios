@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
-	"github.com/Gaurav-Gosain/tuios/internal/tape/trust"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/tape/trust"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // tapeReviewViewportRows is how many lines of tape content the review dialog

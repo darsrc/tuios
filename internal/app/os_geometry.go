@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // Snap snaps the window at index i to the specified position.
@@ -71,6 +71,81 @@ func (m *OS) SnapZoneAt(x, y int) SnapQuarter {
 		return SnapRight
 	}
 	return NoSnap
+}
+
+// SnapBesideAt splits a pane when another pane is dropped near the center of
+// one of its edges. It returns true when the pointer selected a pane edge.
+func (m *OS) SnapBesideAt(dragIndex, x, y int) bool {
+	if dragIndex < 0 || dragIndex >= len(m.Windows) {
+		return false
+	}
+
+	const edge = 4
+	for targetIndex := len(m.Windows) - 1; targetIndex >= 0; targetIndex-- {
+		if targetIndex == dragIndex {
+			continue
+		}
+		target := m.Windows[targetIndex]
+		if target == nil || target.Minimized || target.Workspace != m.CurrentWorkspace ||
+			x < target.X || x >= target.X+target.Width || y < target.Y || y >= target.Y+target.Height {
+			continue
+		}
+
+		centerX := target.X + target.Width/2
+		centerY := target.Y + target.Height/2
+		middleWidth := max(1, target.Width/3)
+		middleHeight := max(1, target.Height/3)
+		verticalSide := y >= centerY-middleHeight/2 && y < centerY+(middleHeight+1)/2
+		horizontalSide := x >= centerX-middleWidth/2 && x < centerX+(middleWidth+1)/2
+
+		side := NoSnap
+		switch {
+		case verticalSide && x < target.X+edge:
+			side = SnapLeft
+		case verticalSide && x >= target.X+target.Width-edge:
+			side = SnapRight
+		case horizontalSide && y < target.Y+edge:
+			side = SnapTopLeft
+		case horizontalSide && y >= target.Y+target.Height-edge:
+			side = SnapBottomLeft
+		default:
+			continue
+		}
+
+		left, top := target.X, target.Y
+		dropX, dropY := target.X, target.Y
+		switch side {
+		case SnapLeft:
+			dropX = left
+			left += target.Width / 2
+		case SnapRight:
+			dropX = left + target.Width/2
+		case SnapTopLeft:
+			dropY = top
+			top += target.Height / 2
+		case SnapBottomLeft:
+			dropY = top + target.Height/2
+		}
+		newWidth, newHeight := target.Width/2, target.Height
+		if side == SnapTopLeft || side == SnapBottomLeft {
+			newWidth, newHeight = target.Width, target.Height/2
+		}
+		if newWidth < config.DefaultWindowWidth || newHeight < config.DefaultWindowHeight {
+			return false
+		}
+
+		dragged := m.Windows[dragIndex]
+		m.CancelAnimationsForWindow(target)
+		m.CancelAnimationsForWindow(dragged)
+		target.X, target.Y, target.Width, target.Height = left, top, newWidth, newHeight
+		target.Resize(newWidth, newHeight)
+		target.MarkPositionDirty()
+		dragged.X, dragged.Y, dragged.Width, dragged.Height = dropX, dropY, newWidth, newHeight
+		dragged.Resize(newWidth, newHeight)
+		dragged.MarkPositionDirty()
+		return true
+	}
+	return false
 }
 
 func (m *OS) calculateSnapBounds(quarter SnapQuarter) (x, y, width, height int) {
@@ -375,7 +450,7 @@ func (m *OS) sidebarStoredWidth() int {
 // sidebarWidthPreference is the expanded width this session asks for: the one
 // dragged or synced, falling back to the configured default when nobody has
 // asked for anything. It is model state rather than a global because the rail
-// is shared with the session's other clients and because one tuios-web process
+// is shared with the session's other clients and because one dartuios-web process
 // serves several sessions at once, where a global is one drag away from
 // resizing a rail nobody touched.
 func (m *OS) sidebarWidthPreference() int {

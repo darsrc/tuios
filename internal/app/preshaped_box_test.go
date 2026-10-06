@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The border box may skip lipgloss's word wrap only when the pane body is
@@ -52,7 +52,7 @@ func preShapedWindow(t *testing.T, id, text string) *terminal.Window {
 }
 
 // withoutPreShaping runs fn with the border box forced back through the wrap,
-// which is what TUIOS_NO_PRESHAPED does for a running client.
+// which is what DARTUIOS_NO_PRESHAPED does for a running client.
 func withoutPreShaping(t *testing.T, fn func()) {
 	t.Helper()
 	preShapedDisabled = true

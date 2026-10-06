@@ -39,7 +39,7 @@ type Numstat struct {
 // from a copy (a split index keeps part of itself beside the original), starts
 // from HEAD instead, which hashes every tracked file.
 func SnapshotTree(ctx context.Context, path string) (string, error) {
-	tmp, err := os.CreateTemp("", "tuios-index-*")
+	tmp, err := os.CreateTemp("", "dartuios-index-*")
 	if err != nil {
 		return "", err
 	}

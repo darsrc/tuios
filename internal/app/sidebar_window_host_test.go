@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // TestAPaneWhoseLinkIsLostSaysSoInTheRail: while the link to its machine is

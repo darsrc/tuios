@@ -17,7 +17,7 @@ import (
 // environment to trust instead, detection answers dumb, and every pane of the
 // session kept TERM=dumb for its life: clear did nothing, and less and vim ran
 // without cursor movement, even after a person attached from a real terminal.
-// The panes are drawn by tuios's emulator, not by the command's stdout, and a
+// The panes are drawn by dartuios's emulator, not by the command's stdout, and a
 // session made by attaching or by the new-session verb already got the daemon's
 // xterm-256color. GitHub's runners set TERM=dumb, which is how
 // TestScreenshotDrawsAStraightBorderWithoutNotches found it: its clear left the
@@ -42,10 +42,10 @@ func TestSessionMadeWithoutATerminalGivesItsPanesARealTerm(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	scriptEnv := []string{"TERM=dumb", "COLORTERM="}
-	if out, err := tuiosCLIEnv(t, base, scriptEnv, "new", session, "--detach"); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, scriptEnv, "new", session, "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLIEnv(t, base, scriptEnv, "send-keys", "-s", session, "-l",
+	if out, err := dartuiosCLIEnv(t, base, scriptEnv, "send-keys", "-s", session, "-l",
 		`printf 'TERM=%s COLORTERM=%s END\n' "$TERM" "$COLORTERM"`+"\r"); err != nil {
 		t.Fatalf("ask the shell for its TERM: %v\n%s", err, out)
 	}
@@ -53,7 +53,7 @@ func TestSessionMadeWithoutATerminalGivesItsPanesARealTerm(t *testing.T) {
 	var pane, got string
 	deadline := time.Now().Add(shellTimeout)
 	for got == "" {
-		pane, _ = tuiosCLIEnv(t, base, scriptEnv, "capture-pane", "-s", session)
+		pane, _ = dartuiosCLIEnv(t, base, scriptEnv, "capture-pane", "-s", session)
 		for _, line := range strings.Split(pane, "\n") {
 			if line = strings.TrimSpace(line); strings.HasPrefix(line, "TERM=") && strings.HasSuffix(line, " END") &&
 				!strings.Contains(line, "%s") {
@@ -73,6 +73,6 @@ func TestSessionMadeWithoutATerminalGivesItsPanesARealTerm(t *testing.T) {
 
 	if want := "TERM=xterm-256color COLORTERM=truecolor"; got != want {
 		t.Errorf("a session made by a command with no terminal gave its pane %q, want %q: "+
-			"the pane is drawn by tuios, not by the command's stdout\n%s", got, want, pane)
+			"the pane is drawn by dartuios, not by the command's stdout\n%s", got, want, pane)
 	}
 }

@@ -1,4 +1,4 @@
-// Package testutil provides testing utilities for TUIOS, including a fake shell
+// Package testutil provides testing utilities for dartuios, including a fake shell
 // that produces predictable output and sends/receives ANSI sequences.
 package testutil
 

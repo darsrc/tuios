@@ -3,9 +3,9 @@ package app
 import (
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The unread bit on a finished pane, herdr's best idea: "done" means the agent

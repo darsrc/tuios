@@ -10,17 +10,17 @@ import (
 	"unicode/utf8"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // sidebarRestoredTag is the rail's marker for a session rebuilt from saved
 // state, shared with every other surface that shows it.
 const sidebarRestoredTag = session.RestoredTag
 
-// The sidebar is drawn as chrome in tuios's own visual language rather than as
+// The sidebar is drawn as chrome in dartuios's own visual language rather than as
 // a filled panel: rows sit directly on the terminal background (like the dock),
 // a single muted rule in the window-border character separates the rail from
 // the panes, and emphasis is carried by the same pills the dock uses.
@@ -334,8 +334,8 @@ func sidebarSeverityColor(state string, pal overlay.Palette) color.Color {
 // trailing whitespace; and the cursor, the one thing being steered, was the
 // quietest mark on the rail. A margin strip scans without painting, which frees
 // the only band on a resting screen for the pointer and the keyboard cursor.
-func sidebarGutter(current bool, state string, bg color.Color, pal overlay.Palette, s *config.Settings) string {
-	return sidebarGutterTinted(current, state, nil, bg, pal, s)
+func sidebarGutter(current, hover bool, state string, bg color.Color, pal overlay.Palette, s *config.Settings) string {
+	return sidebarGutterTinted(current, hover, state, nil, bg, pal, s)
 }
 
 // railFocusTint is the colour a focus mark burns: the identity the caller
@@ -352,14 +352,19 @@ func railFocusTint(tint color.Color, pal overlay.Palette) color.Color {
 // of the caller's choosing: the focused pane's gutter burns the accent the user
 // gave that pane, so the row wears exactly one identity bar instead of an
 // accent chip beside a focus mark. tint nil falls back to the rail accent.
-func sidebarGutterTinted(current bool, state string, tint, bg color.Color, pal overlay.Palette, s *config.Settings) string {
+func sidebarGutterTinted(current, hover bool, state string, tint, bg color.Color, pal overlay.Palette, s *config.Settings) string {
 	switch {
 	case current:
 		return sidebarStyle(bg, railFocusTint(tint, pal)).Render(s.GetRailFocusMark())
+	case hover:
+		// The pointer lands on the row's ground, and the mark steps up from the
+		// resting bullet to say where the pointer is. DAR changes colour, so the
+		// band carries the state and the mark only gains weight.
+		return sidebarStyle(bg, nil).Render(s.GetRailHoverMark())
 	case sidebarAttention(state):
 		return sidebarStyle(bg, sidebarSeverityColor(state, pal)).Render(s.GetRailAttentionMark())
 	default:
-		return sidebarStyle(bg, nil).Render(" ")
+		return sidebarStyle(bg, nil).Render(s.GetRailBullet())
 	}
 }
 
@@ -618,13 +623,16 @@ const sidebarNameCol = 3
 // sidebarGlyph returns the styled agent-state glyph for a row, or a single
 // space on the row background when there is no state or glyphs are disabled,
 // so rows stay aligned. It always occupies exactly one cell.
-func sidebarGlyph(state string, doneSeen bool, bg color.Color, pal overlay.Palette, s *config.Settings) string {
+func sidebarGlyph(state string, doneSeen bool, bg color.Color, pal overlay.Palette, s *config.Settings, filament rune) string {
 	if !s.SidebarShowGlyphs {
 		return sidebarStyle(bg, nil).Render(" ")
 	}
 	g := agentStateIndicator(sidebarGlyphState(state, doneSeen))
 	if g == "" {
 		return sidebarStyle(bg, nil).Render(" ")
+	}
+	if sidebarGlyphState(state, doneSeen) == "working" {
+		g = workingGlyph(filament)
 	}
 	return sidebarStyle(bg, sidebarStateColor(state, doneSeen, pal)).Render(g)
 }
@@ -2336,7 +2344,7 @@ func (m *OS) sidebarSessionRow(node sessiontree.Node, variant, cw int, pal overl
 
 	glyph := sidebarQuietDotTinted(dotTint(tint, pal, stated), rowBg, pal, &m.Settings)
 	if stated {
-		glyph = sidebarGlyph(node.AgentState, node.DoneSeen, rowBg, pal, &m.Settings)
+		glyph = sidebarGlyph(node.AgentState, node.DoneSeen, rowBg, pal, &m.Settings, m.filamentFrame)
 	}
 
 	// The right-hand slot, in the order it is drawn. The restored tag says the
@@ -2410,7 +2418,7 @@ func (m *OS) sidebarSessionRow(node sessiontree.Node, variant, cw int, pal overl
 	name := sidebarStyle(rowBg, fg).Bold(sidebarAttention(node.AgentState)).
 		Render(m.sidebarMarquee("s:"+node.ID, title, max(avail, 1), st.Cursor)) + branch
 
-	gutter := sidebarGutterTinted(node.IsCurrent, node.AgentState, tint, rowBg, pal, &m.Settings)
+	gutter := sidebarGutterTinted(node.IsCurrent, st.Hover, node.AgentState, tint, rowBg, pal, &m.Settings)
 	if tint != nil && stated && !node.IsCurrent && !sidebarAttention(node.AgentState) {
 		gutter = sidebarStyle(rowBg, tint).Render(accentMark())
 	}
@@ -2435,7 +2443,7 @@ func (m *OS) sidebarTerminalRow(e sidebarTerminalEntry, cw int, pal overlay.Pale
 		title = "shell"
 	}
 
-	gutter := sidebarGutter(false, e.State, rowBg, pal, &m.Settings)
+	gutter := sidebarGutter(false, st.Hover, e.State, rowBg, pal, &m.Settings)
 	if !peeked {
 		// The focus mark is the session's own colour. The rail is one object, and a
 		// session marked magenta two rows above its focused pane marked blue reads
@@ -2454,7 +2462,7 @@ func (m *OS) sidebarTerminalRow(e sidebarTerminalEntry, cw int, pal overlay.Pale
 		}
 		switch {
 		case e.Focused:
-			gutter = sidebarGutterTinted(true, e.State, tint, rowBg, pal, &m.Settings)
+			gutter = sidebarGutterTinted(true, st.Hover, e.State, tint, rowBg, pal, &m.Settings)
 		case accented && !sidebarAttention(e.State):
 			gutter = sidebarStyle(rowBg, tint).Render(accentMark())
 		}
@@ -2500,7 +2508,7 @@ func (m *OS) sidebarTerminalRow(e sidebarTerminalEntry, cw int, pal overlay.Pale
 
 	name := sidebarStyle(rowBg, fg).Bold(sidebarAttention(e.State)).
 		Render(m.sidebarMarquee("t:"+e.WindowID, title, sidebarNameAvail(cw, rightW), st.lit()))
-	return sidebarComposeRow(gutter, sidebarGlyph(e.State, e.DoneSeen, rowBg, pal, &m.Settings), name, right, cw, rowBg)
+	return sidebarComposeRow(gutter, sidebarGlyph(e.State, e.DoneSeen, rowBg, pal, &m.Settings, m.filamentFrame), name, right, cw, rowBg)
 }
 
 // sidebarTerminalHostLabel is what a pane row says about its machine: the
@@ -2850,7 +2858,7 @@ func (m *OS) sidebarAgentRow(e sidebarAgentEntry, variant, cw int, pal overlay.P
 	// foreign rows only, so it says "not from here" on a terminal with no colour
 	// and says which session on one with colour. It is the answer the prefix
 	// gives in words and gives up first when the row runs out of room.
-	gutter := sidebarGutter(false, e.State, rowBg, pal, &m.Settings)
+	gutter := sidebarGutter(false, st.Hover, e.State, rowBg, pal, &m.Settings)
 	if e.Foreign && !sidebarAttention(e.State) {
 		if tint := m.agentIdentityTint(e, m.rowGround(rowBg)); tint != nil {
 			gutter = sidebarStyle(rowBg, tint).Render(accentMark())
@@ -2859,11 +2867,11 @@ func (m *OS) sidebarAgentRow(e sidebarAgentEntry, variant, cw int, pal overlay.P
 	// On a compact rail this is the pane's only row, so it carries the focus
 	// mark the terminals row would have.
 	if e.Focused && m.GetSidebarWidth() <= sidebarCompactWidth && sidebarLayoutHas(sidebarSectionTerminals, &m.Settings) {
-		gutter = sidebarGutterTinted(true, e.State, m.sessionTint(e.SessionID, m.rowGround(rowBg)), rowBg, pal, &m.Settings)
+		gutter = sidebarGutterTinted(true, st.Hover, e.State, m.sessionTint(e.SessionID, m.rowGround(rowBg)), rowBg, pal, &m.Settings)
 	}
 	body := shown +
 		m.sidebarTokenStyle(nameStyle, plan.Name, pal).Render(m.sidebarMarquee("a:"+e.SessionID+"/"+e.WindowID, name, nameRoom, st.Cursor)) +
 		after
 	return sidebarComposeRow(gutter,
-		sidebarGlyph(e.State, e.DoneSeen, rowBg, pal, &m.Settings), body, right, cw, rowBg), lipgloss.Width(body)
+		sidebarGlyph(e.State, e.DoneSeen, rowBg, pal, &m.Settings, m.filamentFrame), body, right, cw, rowBg), lipgloss.Width(body)
 }

@@ -3,8 +3,8 @@ package input
 import (
 	"fmt"
 
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // forwardPasteToFocused sends paste text to the focused window's PTY, wrapping it in
@@ -16,7 +16,7 @@ import (
 // when its own app has bracketed paste on: a shell with it on and a program with
 // it off must each see the paste the way they asked for it.
 //
-// It is used both by TUIOS's own clipboard paste (which layers notifications on top)
+// It is used both by dartuios's own clipboard paste (which layers notifications on top)
 // and by the incoming-terminal-paste path, where a tea.PasteMsg is passthrough input
 // (for example an fcitx5 IME commit) and must be delivered silently.
 //
@@ -75,7 +75,7 @@ func sendPaste(w *terminal.Window, text string) error {
 }
 
 // handleClipboardPaste processes stored clipboard content and sends it to the focused
-// terminal, notifying the user of the result. This is the path for TUIOS's own paste
+// terminal, notifying the user of the result. This is the path for dartuios's own paste
 // actions (Cmd/Ctrl+V and the OSC 52 clipboard read response), not for incoming
 // terminal paste.
 func handleClipboardPaste(o *app.OS) {

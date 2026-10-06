@@ -4,8 +4,8 @@ import (
 	"maps"
 	"sync"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // BorderStyleGlyphs is the appearance.border_style value meaning "take the
@@ -17,6 +17,10 @@ import (
 // on screen or in get-config to say why. This way both settings are always live
 // and the one that is in charge is the one the user named.
 const BorderStyleGlyphs = "glyphs"
+
+// BorderStyleDAR is the appearance.border_style value meaning "the DAR frame":
+// a light box-drawn line at rest that goes heavy where something is focused.
+const BorderStyleDAR = "dar"
 
 // glyphOr returns the active set's glyph for one role, or a default: the ASCII
 // one in a terminal that cannot draw more, and the shipped one otherwise.
@@ -41,17 +45,24 @@ func (s *Settings) glyphOr(role func(*theme.GlyphSet) string, def, asciiDef stri
 
 // GetRailFocusMark is the one-cell gutter mark saying "you are here".
 func (s *Settings) GetRailFocusMark() string {
-	return s.glyphOr(func(g *theme.GlyphSet) string { return g.Focus }, "▎", ">")
+	return s.glyphOr(func(g *theme.GlyphSet) string { return g.Focus }, "█", ">")
+}
+
+// GetRailHoverMark is the gutter mark a row under the pointer carries. It sits
+// between the focus mark and the bullet in weight, so the pointer reads as
+// "close" without claiming the row.
+func (s *Settings) GetRailHoverMark() string {
+	return s.glyphOr(func(g *theme.GlyphSet) string { return g.RailHover }, "▋", "-")
 }
 
 // GetRailAttentionMark is the gutter mark saying "this one wants a human".
 func (s *Settings) GetRailAttentionMark() string {
-	return s.glyphOr(func(g *theme.GlyphSet) string { return g.Attention }, "▎", "!")
+	return s.glyphOr(func(g *theme.GlyphSet) string { return g.Attention }, "▍", "!")
 }
 
 // GetRailBullet is the quiet mark a resting row carries.
 func (s *Settings) GetRailBullet() string {
-	return s.glyphOr(func(g *theme.GlyphSet) string { return g.Bullet }, "·", ".")
+	return s.glyphOr(func(g *theme.GlyphSet) string { return g.Bullet }, "▏", ".")
 }
 
 // GetRailTreeBranch is the mark in front of a grouped row that has a sibling
@@ -166,6 +177,7 @@ func (s *Settings) ResolvedGlyphs() map[string]string {
 		"arrow_left":      s.GetDockWorkspaceMoreLeft(),
 		"arrow_right":     s.GetDockWorkspaceMoreRight(),
 		"focus":           s.GetRailFocusMark(),
+		"rail_hover":      s.GetRailHoverMark(),
 		"attention":       s.GetRailAttentionMark(),
 		"bullet":          s.GetRailBullet(),
 		"add":             s.GetRailAddGlyph(),
@@ -183,6 +195,10 @@ func (s *Settings) ResolvedGlyphs() map[string]string {
 		"ellipsis":        overlay.Ellipsis(),
 		"sigil":           overlay.SigilMark(),
 		"dash_rule":       overlay.DashRuleGlyph(),
+		"anchor_tl":       overlay.AnchorTL(),
+		"anchor_tr":       overlay.AnchorTR(),
+		"anchor_bl":       overlay.AnchorBL(),
+		"anchor_br":       overlay.AnchorBR(),
 	}
 	// The border is reported through the set's own resolution rather than
 	// through GetBorderForStyle, because the two answer different questions.
@@ -190,7 +206,9 @@ func (s *Settings) ResolvedGlyphs() map[string]string {
 	// answer unless border_style is "glyphs"; this says what the set would
 	// draw, which is what a caller inspecting a set is asking. The describe
 	// verb reports border_style alongside so the caller can tell whether the
-	// two are currently the same thing.
+	// two are currently the same thing. border_focused is the focused frame's
+	// answer under border_style = "glyphs": the set's border_focused over the
+	// set's border, so the two are reported side by side the same way.
 	b := s.glyphSetBorder()
 	maps.Copy(out, map[string]string{
 		"border.top": b.Top, "border.bottom": b.Bottom,
@@ -200,6 +218,16 @@ func (s *Settings) ResolvedGlyphs() map[string]string {
 		"border.middle": b.Middle, "border.middle_top": b.MiddleTop,
 		"border.middle_bottom": b.MiddleBottom,
 		"border.middle_left":   b.MiddleLeft, "border.middle_right": b.MiddleRight,
+	})
+	bf := s.glyphSetBorderFocused()
+	maps.Copy(out, map[string]string{
+		"border_focused.top": bf.Top, "border_focused.bottom": bf.Bottom,
+		"border_focused.left": bf.Left, "border_focused.right": bf.Right,
+		"border_focused.top_left": bf.TopLeft, "border_focused.top_right": bf.TopRight,
+		"border_focused.bottom_left": bf.BottomLeft, "border_focused.bottom_right": bf.BottomRight,
+		"border_focused.middle": bf.Middle, "border_focused.middle_top": bf.MiddleTop,
+		"border_focused.middle_bottom": bf.MiddleBottom,
+		"border_focused.middle_left":   bf.MiddleLeft, "border_focused.middle_right": bf.MiddleRight,
 	})
 	return out
 }

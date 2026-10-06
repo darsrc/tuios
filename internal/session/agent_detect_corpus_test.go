@@ -24,7 +24,7 @@ const nameList = "(name list)"
 
 // detectionCorpus is the table the matcher is held to. The false positives are
 // the ones a maintainer reported from daily use, reproduced under a real PTY on
-// 2026-09-09; the true positives are the harnesses tuios ships manifests for,
+// 2026-09-09; the true positives are the harnesses dartuios ships manifests for,
 // launched the way their installers launch them.
 var detectionCorpus = []corpusCase{
 	// --- False positives. None of these runs an agent. ---

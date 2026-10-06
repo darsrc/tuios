@@ -274,7 +274,7 @@ func TestRestrictedSubscribeCarriesOnlyTheSessionsItReaches(t *testing.T) {
 // TestRestrictedResumeFromAnEvictedSeqGivesTheBaseline: a scope own subscriber
 // whose session was quiet while another session pushed its seq out of the
 // ring gets a gap marker and nothing else, and an ack whose seq is past every
-// event it missed and counts no replayed events. tuios mcp resumes from that
+// event it missed and counts no replayed events. dartuios mcp resumes from that
 // seq; if the ack gave anything less, the caller could never move past the gap.
 func TestRestrictedResumeFromAnEvictedSeqGivesTheBaseline(t *testing.T) {
 	d, sp, a1, _, _ := scopeFixture(t)
@@ -361,11 +361,11 @@ func TestPaneTokenIsExportedAndNamesOneWindow(t *testing.T) {
 	}
 	t.Cleanup(sess.Stop)
 	env := sess.buildEnv("win-1", false)
-	idx := slices.IndexFunc(env, func(s string) bool { return strings.HasPrefix(s, "TUIOS_PANE_TOKEN=") })
+	idx := slices.IndexFunc(env, func(s string) bool { return strings.HasPrefix(s, "DARTUIOS_PANE_TOKEN=") })
 	if idx < 0 {
-		t.Fatalf("no TUIOS_PANE_TOKEN in the pane environment: %v", env)
+		t.Fatalf("no DARTUIOS_PANE_TOKEN in the pane environment: %v", env)
 	}
-	tok := strings.TrimPrefix(env[idx], "TUIOS_PANE_TOKEN=")
+	tok := strings.TrimPrefix(env[idx], "DARTUIOS_PANE_TOKEN=")
 	if !m.VerifyPaneToken("win-1", tok) {
 		t.Error("the exported token does not verify for its own window")
 	}

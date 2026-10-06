@@ -101,7 +101,7 @@ func resizeBurst(p *PTY, clients int, span, gap time.Duration) (int, int) {
 // keeps signals arriving through the whole startup and loads the machine, which
 // stretches that moment the way the loaded machine the crash was first seen
 // on did. Before the change it killed 2 to 5 of every 400 to 1000 shells; see
-// e2e/tui/NEGATIVE_CONTROLS.md. TUIOS_RESIZE_BURST_PANES raises the count for
+// e2e/tui/NEGATIVE_CONTROLS.md. DARTUIOS_RESIZE_BURST_PANES raises the count for
 // a longer campaign.
 func TestResizeBurstAtStartupLeavesBash32Alive(t *testing.T) {
 	if testing.Short() {
@@ -112,7 +112,7 @@ func TestResizeBurstAtStartupLeavesBash32Alive(t *testing.T) {
 		t.Skip("no bash 3.x on this machine; its SIGWINCH handling is what this reproduces")
 	}
 	panes := 400
-	if n, err := strconv.Atoi(os.Getenv("TUIOS_RESIZE_BURST_PANES")); err == nil && n > 0 {
+	if n, err := strconv.Atoi(os.Getenv("DARTUIOS_RESIZE_BURST_PANES")); err == nil && n > 0 {
 		panes = n
 	}
 	const parallel = 32

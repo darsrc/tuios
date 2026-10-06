@@ -302,7 +302,7 @@ func (e *Emulator) handlePaletteColor(data []byte) {
 // what they were before the guest touched them. Bare OSC 104 resets all of
 // them.
 //
-// What "before" means is the user's terminal, or the user's tuios theme when
+// What "before" means is the user's terminal, or the user's dartuios theme when
 // one is active, so the reset clears the guest layer and leaves the theme
 // layer standing.
 func (e *Emulator) handleResetPaletteColor(data []byte) {

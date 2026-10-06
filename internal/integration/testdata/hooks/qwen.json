@@ -86,7 +86,7 @@
   },
   {
     "name": "a Gemini CLI hook in the same pane is foreign",
-    "env": {"TUIOS_AGENT": "gemini-cli"},
+    "env": {"DARTUIOS_AGENT": "gemini-cli"},
     "payload": {"hook_event_name": "SessionStart", "session_id": "qw-1"},
     "skip": "foreign harness"
   }

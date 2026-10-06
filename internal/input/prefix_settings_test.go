@@ -7,11 +7,11 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // legacyConfig loads src as the user's config.toml. The XDG search paths are
@@ -25,10 +25,10 @@ func legacyConfig(t *testing.T, src string) *config.UserConfig {
 	t.Cleanup(xdg.Reload)
 	t.Setenv("XDG_CONFIG_HOME", dir)
 	xdg.Reload()
-	if err := os.MkdirAll(filepath.Join(dir, "tuios"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(dir, "dartuios"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "tuios", "config.toml"), []byte(src), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "dartuios", "config.toml"), []byte(src), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	cfg, err := config.LoadUserConfig()

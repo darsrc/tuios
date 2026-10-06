@@ -29,10 +29,10 @@ const (
 	// StatusNoDaemon means ssh and the proxy worked and the remote machine has
 	// no daemon running. Nothing is wrong with the link.
 	StatusNoDaemon Status = "no_daemon"
-	// StatusNoBinary means ssh worked and the link could not find tuios on the
+	// StatusNoBinary means ssh worked and the link could not find dartuios on the
 	// machine: not on the PATH, not at any known install path, and not
 	// through the login shell. The fix is on that machine, or is --command.
-	StatusNoBinary Status = "no_tuios"
+	StatusNoBinary Status = "no_dartuios"
 	// StatusIncompatible means the remote daemon speaks a control protocol this
 	// build does not serve. Section 8: skew is normal, so it is reported as its
 	// own state with both versions rather than as a failure.
@@ -71,7 +71,7 @@ type link struct {
 	mu     sync.Mutex
 	status Status
 	// reason is the short sentence shown to a user. It is plain English on
-	// purpose: it lands in `tuios hosts` and in the sidebar.
+	// purpose: it lands in `dartuios hosts` and in the sidebar.
 	reason  string
 	detail  string
 	shake   Handshake
@@ -100,7 +100,7 @@ type link struct {
 	// tearDown ends the current attempt. The supervisor waits on it.
 	tearDown func()
 
-	// resolved is the tuios path the probe found on this host. It is kept for
+	// resolved is the dartuios path the probe found on this host. It is kept for
 	// the life of the link so a redial runs it directly instead of probing
 	// again, and dropped when a dial that used it reached the machine and
 	// still found no program there. Unused when the host has a configured
@@ -267,11 +267,11 @@ func (l *link) attempt(ctx context.Context) bool {
 				// nothing. That is a state of the machine, not of the link,
 				// and it is reported as its own status so the listing says
 				// where the problem is.
-				l.set(StatusNoBinary, "The link cannot find tuios on the host.", trimDetail(tr.Diagnostic()))
+				l.set(StatusNoBinary, "The link cannot find dartuios on the host.", trimDetail(tr.Diagnostic()))
 			case exited:
 				l.set(StatusUnreachable, "The host did not answer.", trimDetail(tr.Diagnostic()))
 			default:
-				l.set(StatusUnreachable, "The host did not answer as a tuios link.", trimDetail(tr.Diagnostic()))
+				l.set(StatusUnreachable, "The host did not answer as a dartuios link.", trimDetail(tr.Diagnostic()))
 			}
 			// A cached path that reached the machine and ran nothing is
 			// stale: the binary moved or was removed. The next dial probes
@@ -396,13 +396,13 @@ func lossCause(tr Transport, muxErr error) (reason, detail string) {
 	exited, code := awaitChildExit(tr)
 	switch {
 	case exited && code == sshExitCode:
-		return "The connection to the host ended. tuios is connecting again.", diag
+		return "The connection to the host ended. dartuios is connecting again.", diag
 	case exited:
-		return "The tuios on the host stopped. tuios is connecting again.", trimDetail(joinDetail(diag, fmt.Sprintf("the remote command exited with %d", code)))
+		return "The dartuios on the host stopped. dartuios is connecting again.", trimDetail(joinDetail(diag, fmt.Sprintf("the remote command exited with %d", code)))
 	case muxErr != nil && !errors.Is(muxErr, io.EOF) && !errors.Is(muxErr, io.ErrUnexpectedEOF) && !errors.Is(muxErr, ErrLinkClosed):
-		return "The host sent something this link cannot read. tuios is connecting again.", trimDetail(joinDetail(muxErr.Error(), diag))
+		return "The host sent something this link cannot read. dartuios is connecting again.", trimDetail(joinDetail(muxErr.Error(), diag))
 	default:
-		return "The link to the host closed. tuios is connecting again.", diag
+		return "The link to the host closed. dartuios is connecting again.", diag
 	}
 }
 
@@ -414,9 +414,9 @@ func (l *link) logf(format string, args ...any) {
 }
 
 // awaitChildExit tells the two no-preamble failures apart. A child that has
-// already exited is ssh giving up, or the remote tuios being missing, and its
+// already exited is ssh giving up, or the remote dartuios being missing, and its
 // stderr says which. A child still running that never identified itself
-// reached something that is not a tuios proxy. The exit code comes back with
+// reached something that is not a dartuios proxy. The exit code comes back with
 // the answer, because it is what says whether ssh reached the machine.
 //
 // A transport that is not a child process is reported as still running, which
@@ -485,10 +485,10 @@ func handshake(ctx context.Context, c *caller, opts Options) (Handshake, *handsh
 			// The proxy answered and then closed the control stream without a
 			// word, which is what it does when it cannot reach the daemon
 			// socket. On a fresh link nothing else closes that stream, so this
-			// is the machine being up with tuios not running on it.
+			// is the machine being up with dartuios not running on it.
 			return Handshake{}, &handshakeError{
 				status: StatusNoDaemon,
-				reason: "The host is up and no tuios daemon is running on it.",
+				reason: "The host is up and no dartuios daemon is running on it.",
 			}
 		case errors.Is(err, context.DeadlineExceeded), errors.Is(err, context.Canceled):
 			return Handshake{}, &handshakeError{
@@ -518,7 +518,7 @@ func handshake(ctx context.Context, c *caller, opts Options) (Handshake, *handsh
 				status: StatusIncompatible,
 				reason: fmt.Sprintf("The host speaks control protocol %d and this daemon serves %d to %d.",
 					shake.Protocol, opts.MinVerbProtocol, opts.VerbProtocol),
-				detail: "Upgrade tuios on one of the two machines.",
+				detail: "Upgrade dartuios on one of the two machines.",
 			}
 		}
 	}

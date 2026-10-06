@@ -3,11 +3,11 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestAgentsControlsDefaultOnAGarbageStateFile: the file is shared with whatever
-// tuios the user runs next, and a value this build does not know must read back
+// dartuios the user runs next, and a value this build does not know must read back
 // as the default rather than emptying the section.
 func TestAgentsControlsDefaultOnAGarbageStateFile(t *testing.T) {
 	m := &OS{Settings: config.Global, SidebarAgentFilter: "nonsense", SidebarAgentSort: "nonsense"}

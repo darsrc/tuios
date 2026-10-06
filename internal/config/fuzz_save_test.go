@@ -9,7 +9,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
-// Fuzzing the save half of the config: tuios writes the config file itself
+// Fuzzing the save half of the config: dartuios writes the config file itself
 // (set-option with persist, the settings panel), so what it writes has to load
 // back as the config it wrote.
 //
@@ -54,7 +54,7 @@ func FuzzConfigSaveRoundTrip(f *testing.F) {
 		if err != nil {
 			return
 		}
-		out, err := renderConfigFile(cfg, "/tmp/tuios-fuzz/config.toml")
+		out, err := renderConfigFile(cfg, "/tmp/dartuios-fuzz/config.toml")
 		if err != nil {
 			t.Fatalf("a config that loaded cannot be saved: %v\nsource:\n%s", err, src)
 		}
@@ -66,7 +66,7 @@ func FuzzConfigSaveRoundTrip(f *testing.F) {
 			t.Fatalf("the saved config loads as a different config (-loaded +reloaded):\n%s\nsource:\n%s",
 				clip(diff), clip(src))
 		}
-		out2, err := renderConfigFile(again, "/tmp/tuios-fuzz/config.toml")
+		out2, err := renderConfigFile(again, "/tmp/dartuios-fuzz/config.toml")
 		if err != nil {
 			t.Fatalf("the reloaded config cannot be saved: %v", err)
 		}

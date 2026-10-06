@@ -1,4 +1,4 @@
-# TUIOS Demo with WaitUntilRegex
+# dartuios Demo with WaitUntilRegex
 # This script demonstrates the WaitUntilRegex command for conditional execution
 
 # Disable animations for consistent playback

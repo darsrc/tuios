@@ -1,9 +1,9 @@
-// Package federation carries the link layer between one tuios daemon and the
+// Package federation carries the link layer between one dartuios daemon and the
 // daemons of other machines the user has named in config.
 //
 // The shape: the local daemon is a hub that dials out over ssh, remote daemons
 // are passive and never dial back, and there is no mesh. A link is an
-// `ssh <addr> tuios stdio-proxy` child process whose stdio carries the framing
+// `ssh <addr> dartuios stdio-proxy` child process whose stdio carries the framing
 // in this file, multiplexed so one ssh connection can hold several logical
 // streams: the control stream, and one per connection a client opens through
 // open-host-connection.

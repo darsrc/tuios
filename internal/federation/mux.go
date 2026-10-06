@@ -13,9 +13,9 @@ import (
 // login can print a banner, a shell rc file can echo, and either would be read
 // as a frame header and kill the link with an unreadable error. The hub skips
 // lines until it sees this one, so noise ahead of the proxy is discarded and
-// noise that never ends is reported as "this host did not answer as a tuios
+// noise that never ends is reported as "this host did not answer as a dartuios
 // link" instead of as a framing failure.
-const LinkPreamble = "TUIOS-LINK 1"
+const LinkPreamble = "dartuios-LINK 1"
 
 // preambleScanLimit bounds how much junk the hub reads while looking for the
 // preamble. A remote that never sends it is a misconfiguration, not something

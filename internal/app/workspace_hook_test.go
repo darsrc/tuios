@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hooks"
 )
 
 // after-workspace-switch was a valid, documented hook event that config

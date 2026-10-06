@@ -7,8 +7,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/guestenv"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/guestenv"
 )
 
 // Manager manages all persistent sessions for a user.
@@ -36,11 +36,11 @@ type Manager struct {
 	// spawn time through HerdrEnv. See herdr_compat.go.
 	herdrSocket atomic.Pointer[string]
 	herdrMode   atomic.Pointer[string]
-	// paneTokenKey signs the TUIOS_PANE_TOKEN every pane is started with. It
+	// paneTokenKey signs the DARTUIOS_PANE_TOKEN every pane is started with. It
 	// is picked at random for each manager and never leaves memory. See
 	// pane_token.go.
 	paneTokenKey []byte
-	// grants holds what every local pane may do through tuios, and the
+	// grants holds what every local pane may do through dartuios, and the
 	// [agents.permissions] default. It is stamped into every session made
 	// here. See pane_grants.go.
 	grants *paneGrantTable
@@ -124,7 +124,7 @@ func (m *Manager) SetHerdrProtocol(mode string) {
 
 // HerdrEnv is the herdr environment a pane that runs command (nil for the
 // user's shell) is started with, nil for none: HERDR_ENV, HERDR_SOCKET_PATH
-// naming tuios's own socket, and HERDR_PANE_ID naming the pane. A pane gets
+// naming dartuios's own socket, and HERDR_PANE_ID naming the pane. A pane gets
 // it when the daemon listens on the socket, [agents] herdr_protocol is not
 // off, and the pane starts a harness known to report over it or the mode is
 // always. See herdr_compat.go for why a shell pane is not told by default.
@@ -146,7 +146,7 @@ func (m *Manager) HerdrEnv(windowID string, command []string) []string {
 	return []string{"HERDR_ENV=1", "HERDR_SOCKET_PATH=" + sock, "HERDR_PANE_ID=" + windowID}
 }
 
-// HostName is the name this machine gives itself, for TUIOS_HOST: the
+// HostName is the name this machine gives itself, for DARTUIOS_HOST: the
 // hostname the operating system reports, or "" when it reports none.
 func (m *Manager) HostName() string {
 	h, err := os.Hostname()
@@ -189,7 +189,7 @@ func (m *Manager) CreateSession(name string, cfg *SessionConfig, width, height i
 	}
 
 	// Stamp the daemon socket path so shells spawned in this session can find the
-	// daemon (exported as TUIOS_SOCKET) without every caller having to know it.
+	// daemon (exported as DARTUIOS_SOCKET) without every caller having to know it.
 	if cfg == nil {
 		cfg = &SessionConfig{}
 	}

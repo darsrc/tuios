@@ -8,8 +8,8 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // TestEveryProgramTakesTheSharedOptions holds every tea.NewProgram in the
@@ -84,7 +84,7 @@ func TestEveryProgramTakesTheSharedOptions(t *testing.T) {
 			// to supply the input and size, and it runs a wrapper model the
 			// shared filter does not recognise, so it installs one that
 			// unwraps and calls FilterMouseMotion.
-			if path == "cmd/tuios-wasm/main_js.go" &&
+			if path == "cmd/dartuios-wasm/main_js.go" &&
 				(name == "WithInput" || name == "WithWindowSize" || name == "WithFilter") {
 				return true
 			}

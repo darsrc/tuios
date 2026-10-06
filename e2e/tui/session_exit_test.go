@@ -12,13 +12,13 @@ import (
 )
 
 // startInLogged is startIn returning the path of the raw PTY log as well, so a
-// test can read what tuios printed to stdout after the TUI exited (the
+// test can read what dartuios printed to stdout after the TUI exited (the
 // detach/kill message lands there, past the alt-screen reset).
 //
 // It used to be a second copy of startIn's environment, and a copy is where a
 // harness fix goes missing: the seven tests that start here ran without the
 // output-only host stream and without fish's completion directory. Every
-// caller attaches, and TUIOS_NO_DAEMON only decides what a bare "tuios" does,
+// caller attaches, and DARTUIOS_NO_DAEMON only decides what a bare "dartuios" does,
 // so daemonDefault keeps their environment exactly what it was.
 func startInLogged(t *testing.T, base string, o startOpts) (*tuitest.Terminal, string) {
 	t.Helper()
@@ -38,7 +38,7 @@ func waitExit(t *testing.T, term *tuitest.Terminal, what string) int {
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
-	t.Fatalf("%s: tuios never exited\n%s", what, term.Snapshot())
+	t.Fatalf("%s: dartuios never exited\n%s", what, term.Snapshot())
 	return -1
 }
 
@@ -47,7 +47,7 @@ func waitExit(t *testing.T, term *tuitest.Terminal, what string) int {
 // and a session that only exists there is not one anybody can talk to.
 func sessionListed(t *testing.T, base, name string) bool {
 	t.Helper()
-	out, _ := tuiosCLI(t, base, "ls", "--json")
+	out, _ := dartuiosCLI(t, base, "ls", "--json")
 	var sessions []struct {
 		Name  string `json:"name"`
 		Saved bool   `json:"saved"`
@@ -70,7 +70,7 @@ func TestLeaderQuitKillsSession(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "repro-kill", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "repro-kill", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 
@@ -98,7 +98,7 @@ func TestLeaderQuitKillsSession(t *testing.T) {
 	// Give the daemon a moment to process the kill.
 	time.Sleep(300 * time.Millisecond)
 	if sessionListed(t, base, "repro-kill") {
-		out, _ := tuiosCLI(t, base, "ls")
+		out, _ := dartuiosCLI(t, base, "ls")
 		t.Fatalf("BUG1: session 'repro-kill' still exists after leader q (q did not kill)\nls:\n%s", out)
 	}
 
@@ -124,7 +124,7 @@ func TestLeaderQuitConfirm(t *testing.T) {
 
 	// Turn on the always-confirm-quit preference through the config file, which
 	// the attach path reads via ApplyAppearanceConfig.
-	cfgPath := filepath.Join(base, "XDG_CONFIG_HOME", "tuios", "config.toml")
+	cfgPath := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios", "config.toml")
 	if err := os.MkdirAll(filepath.Dir(cfgPath), 0o700); err != nil {
 		t.Fatalf("mkdir config dir: %v", err)
 	}
@@ -132,7 +132,7 @@ func TestLeaderQuitConfirm(t *testing.T) {
 		t.Fatalf("write config: %v", err)
 	}
 
-	if out, err := tuiosCLI(t, base, "new", "repro-confirm", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "repro-confirm", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 
@@ -191,7 +191,7 @@ func TestLeaderDetachKeepsSession(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "repro-detach", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "repro-detach", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 
@@ -210,7 +210,7 @@ func TestLeaderDetachKeepsSession(t *testing.T) {
 	time.Sleep(300 * time.Millisecond)
 
 	if !sessionListed(t, base, "repro-detach") {
-		out, _ := tuiosCLI(t, base, "ls")
+		out, _ := dartuiosCLI(t, base, "ls")
 		t.Fatalf("leader d killed the session (should detach)\nls:\n%s", out)
 	}
 	logBytes, _ := os.ReadFile(logPath)
@@ -223,10 +223,10 @@ func TestExitMessageNamesCurrentSession(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "session-0", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "session-0", "--detach"); err != nil {
 		t.Fatalf("create session-0: %v: %s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "new", "myproj", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "myproj", "--detach"); err != nil {
 		t.Fatalf("create myproj: %v: %s", err, out)
 	}
 

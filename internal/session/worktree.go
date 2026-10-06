@@ -3,7 +3,7 @@ package session
 import (
 	"os"
 
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/worktree"
 )
 
 // A worktree session is a session whose directory is a linked git worktree.
@@ -12,7 +12,7 @@ import (
 // again without re-deriving where it came from.
 //
 // The record has two sources. The worktree verbs write it when they create
-// the worktree, and mark it managed: tuios made it, so tuios may remove it.
+// the worktree, and mark it managed: dartuios made it, so dartuios may remove it.
 // Every other session gets it by detection from its first window's directory,
 // which is read from files and never from git. A detected record follows the
 // directory: when the shell moves out of the worktree the record goes with it.
@@ -23,7 +23,7 @@ import (
 // and it is copied onto SessionInfo for the listing.
 type WorktreeInfo struct {
 	worktree.Info
-	// Base is the ref the branch was created from, when tuios created it.
+	// Base is the ref the branch was created from, when dartuios created it.
 	Base string `json:"base,omitempty"`
 	// Group names the fan-out this session belongs to: the branch stem the
 	// siblings share. Empty for a worktree made on its own.
@@ -33,7 +33,7 @@ type WorktreeInfo struct {
 	// own session reaches the sessions its session launched. Empty when the
 	// fan came from outside every pane, and on a record from before the field.
 	LaunchedFrom string `json:"launched_from,omitempty"`
-	// Managed marks a worktree tuios created under its own directory.
+	// Managed marks a worktree dartuios created under its own directory.
 	Managed bool `json:"managed,omitempty"`
 	// Prompt is the text a fan-out delivers to the agent in this session.
 	Prompt string `json:"prompt,omitempty"`
@@ -106,7 +106,7 @@ const (
 	// still be in the agent's input box. See prompt_gate.go.
 	PromptStalled = "stalled"
 	// PromptHeld is a prompt still waiting after the agent has not been
-	// ready for a while (agentHeldAfter), at a screen tuios does not
+	// ready for a while (agentHeldAfter), at a screen dartuios does not
 	// recognise. It is typed as soon as the agent is ready, and the Inbox
 	// holds a question for the pane meanwhile. It ends sent, stalled or
 	// not_sent like a pending one.

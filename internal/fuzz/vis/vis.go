@@ -20,8 +20,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/fuzz"
+	"github.com/darsrc/tuios/internal/overlay"
 )
 
 // Cadence defaults. Thirty frames a second is what a terminal recording wants;

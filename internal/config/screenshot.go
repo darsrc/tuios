@@ -14,7 +14,7 @@ type ScreenshotConfig struct {
 	Format      string `toml:"format"`       // png | svg | ansi | html | txt (default: png)
 	Copy        *bool  `toml:"copy"`         // attempt a clipboard copy after capture (default: true)
 	Preview     *bool  `toml:"preview"`      // open the preview panel after capture (default: true)
-	Directory   string `toml:"directory"`    // where files land (default: ~/Pictures/tuios)
+	Directory   string `toml:"directory"`    // where files land (default: ~/Pictures/dartuios)
 	Frame       string `toml:"frame"`        // window | plain | none (default: window)
 	Background  string `toml:"background"`   // auto | none | hex | hex..hex (default: auto)
 	Padding     *int   `toml:"padding"`      // px around the card, 0..128 (default: 48)
@@ -31,7 +31,7 @@ type ScreenshotConfig struct {
 // Screenshot defaults, one source for DefaultConfig and the accessors.
 const (
 	ScreenshotDefaultFormat      = "png"
-	ScreenshotDefaultDirectory   = "~/Pictures/tuios"
+	ScreenshotDefaultDirectory   = "~/Pictures/dartuios"
 	ScreenshotDefaultFrame       = "window"
 	ScreenshotDefaultBackground  = "auto"
 	ScreenshotDefaultPadding     = 48

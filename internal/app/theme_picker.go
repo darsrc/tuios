@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
-	"github.com/Gaurav-Gosain/tuios/pkg/fuzzy"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/theme"
+	"github.com/darsrc/tuios/pkg/fuzzy"
 )
 
 // themePickerItems returns the theme ids offered by the picker, filtered by the

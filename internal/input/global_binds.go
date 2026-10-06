@@ -2,15 +2,15 @@ package input
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // sectionAction resolves a key press against one registry section, trying every
 // spelling the terminal might have sent it as.
 //
 // This is what replaced the hand-rolled isCtrlP and isLauncherKey matchers, and
-// it has to keep the property they existed for. One physical chord reaches tuios
+// it has to keep the property they existed for. One physical chord reaches dartuios
 // under several names depending on what the host negotiated: Ctrl+P stringifies
 // to "ctrl+p" under the legacy control byte and CSI-u, to "p" under Kitty
 // associated-text reporting, and to "ctrl+P" under alternate-key reporting.
@@ -32,7 +32,7 @@ func sectionAction(msg tea.KeyPressMsg, o *app.OS, lookup sectionLookup) string 
 // mode and terminal mode alike, and reports whether the key was consumed.
 //
 // The palette and the launcher used to be literals in both mode handlers. As
-// literals they were invisible to `tuios keybinds doctor`, unrebindable, and
+// literals they were invisible to `dartuios keybinds doctor`, unrebindable, and
 // silently ahead of anything a user had put on the same key.
 //
 // They then became two cases of a switch here, which fixed that and left a

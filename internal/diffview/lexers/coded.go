@@ -3,7 +3,7 @@
 package lexers
 
 // The lexers chroma defines in Go rather than XML, which its lexers package
-// holds and tuios no longer imports. The rules are copied from chroma
+// holds and dartuios no longer imports. The rules are copied from chroma
 // v2.27.0 (lexers/go.go and lexers/markdown.go), MIT licensed; the licence
 // is in COPYING. They differ from chroma's only in taking the
 // registry they are registered in, where chroma's use its global one.

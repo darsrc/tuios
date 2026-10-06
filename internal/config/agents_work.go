@@ -32,12 +32,12 @@ import (
 //
 // They are file-plane config like the rest of [agents]: read from the file and
 // again when it changes, and never settable with set-option, so a pane cannot
-// switch the risk rules off through tuios. Every field has a default, so a
+// switch the risk rules off through dartuios. Every field has a default, so a
 // file without any of them behaves as the defaults below say.
 
 // RiskConfig is the [agents.approvals.risk] table.
 type RiskConfig struct {
-	// Builtin keeps the rules tuios ships. Unset means true.
+	// Builtin keeps the rules dartuios ships. Unset means true.
 	Builtin *bool `toml:"builtin,omitempty"`
 	// PanesMayAllow lets a pane holding the respond grant allow an approval
 	// that matched a rule. Off by default: such a pane may deny it and not

@@ -11,7 +11,7 @@ import (
 //
 // A workspace's number is its identity. It is what the window's Workspace field
 // carries, what WorkspaceFocus and WorkspaceTrees are keyed by, what leader+1..9
-// and opt+1..9 press, what every verb takes, what TUIOS_WORKSPACE exports to a
+// and opt+1..9 press, what every verb takes, what DARTUIOS_WORKSPACE exports to a
 // hook, and what a resurrected session comes back addressed by. Renumbering on a
 // drag would have to move all of that at once and would break every one of those
 // addresses for a gesture that meant "put this one first".

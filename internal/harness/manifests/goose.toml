@@ -18,7 +18,7 @@ exe_glob = ["**/.local/bin/goose", "**/Cellar/block-goose-cli/**/goose", "**/blo
 
 # The screen carries goose's whole state. Its hooks (plugins under
 # ~/.agents/plugins) have no event for a prompt that waits on the person
-# (github.com/aaif-goose/goose issue 12007), so tuios has no hook integration
+# (github.com/aaif-goose/goose issue 12007), so dartuios has no hook integration
 # for it, and a working report from a hook would outrank the screen that shows
 # the prompt.
 #

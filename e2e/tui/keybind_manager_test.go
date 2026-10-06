@@ -38,7 +38,7 @@ func openKeybindManager(t *testing.T, term *tuitest.Terminal) {
 // its own clash.
 func TestKeybindManagerShowsARealConflictOnScreen(t *testing.T) {
 	base := t.TempDir()
-	cfgDir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	cfgDir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(cfgDir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -119,7 +119,7 @@ func TestStockConfigOpensNoConflicts(t *testing.T) {
 	}
 }
 
-// The guests tab's headline case: tuios's leader is tmux's prefix, and tuios
+// The guests tab's headline case: dartuios's leader is tmux's prefix, and dartuios
 // takes it before the pane sees it.
 func TestKeybindManagerShowsTheGuestClash(t *testing.T) {
 	term, _ := start(t, startOpts{})

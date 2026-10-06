@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 func sidebarSides() []string { return []string{"left", "right", ""} }
@@ -19,7 +19,12 @@ func TestDividerCellsStayInTheStylesOwnGlyphs(t *testing.T) {
 			for _, side := range sidebarSides() {
 				t.Run(fmt.Sprintf("%s/%s-dock/%s", style, dock, sidebarName(side)), func(t *testing.T) {
 					m := extentOSStyled(t, 4, dock, side, style)
-					own := styleGlyphs(config.Global.GetBorderForStyle())
+					// The focused pane is outlined in the style's own focused weight, so a
+					// divider that falls on its perimeter carries that style's heavy
+					// glyphs. Both weights belong to this style; a glyph outside the
+					// union is borrowed from a foreign one.
+					own := styleGlyphs(config.Global.GetBorderForStyle()) +
+						styleGlyphs(config.Global.GetFocusedBorderForStyle())
 					g := frameCells(t, m)
 					for _, c := range dividerCells(m) {
 						if got := cellAt(g, c.X, c.Y); !strings.ContainsRune(own, got) {

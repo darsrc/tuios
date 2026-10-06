@@ -17,13 +17,13 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// The harness integrations, end to end: the real tuios agent-hook, the real
+// The harness integrations, end to end: the real dartuios agent-hook, the real
 // plugins run by node against a stand-in for the harness's plugin API, a
 // stand-in Crush that speaks herdr's protocol the way Crush does, and a
 // stand-in Codex that chooses OSC 9 or the bell the way Codex does, each
 // against a real daemon, with a real client attached where the result is
 // something a person sees. Every test writes what the pane went through to a
-// log under TUIOS_E2E_FRAMES, beside the frames it saves.
+// log under DARTUIOS_E2E_FRAMES, beside the frames it saves.
 
 // agentStateJSON is what get-agent-state --json says about a pane.
 type agentStateJSON struct {
@@ -37,7 +37,7 @@ type agentStateJSON struct {
 // readAgentState reads a pane's agent state, the zero value when it cannot.
 func readAgentState(t *testing.T, base, session, window string) agentStateJSON {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "get-agent-state", "--json", "-s", session, "-w", window)
+	out, err := dartuiosCLI(t, base, "get-agent-state", "--json", "-s", session, "-w", window)
 	var st agentStateJSON
 	if err == nil {
 		_ = json.Unmarshal([]byte(out), &st)
@@ -59,7 +59,7 @@ func (l *stateLog) add(format string, args ...any) {
 // save writes the log beside the frames, when frames are kept.
 func (l *stateLog) save(t *testing.T) {
 	t.Helper()
-	dir := os.Getenv("TUIOS_E2E_FRAMES")
+	dir := os.Getenv("DARTUIOS_E2E_FRAMES")
 	if dir == "" {
 		return
 	}
@@ -91,7 +91,7 @@ func waitAgentState(t *testing.T, base, session, window, state, harness string, 
 // the command line, and returns what it printed.
 func runHook(t *testing.T, base, harness, session, window, payload string) string {
 	t.Helper()
-	cmd := exec.Command(tuiosBin, "agent-hook", harness, "--session", session, "--window", window)
+	cmd := exec.Command(dartuiosBin, "agent-hook", harness, "--session", session, "--window", window)
 	cmd.Dir = workDirIn(t, base)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -109,7 +109,7 @@ func runHook(t *testing.T, base, harness, session, window, payload string) strin
 // windowID is the id of the window named name.
 func windowID(t *testing.T, base, session, name string) string {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "list-windows", "--json", "-s", session)
+	out, err := dartuiosCLI(t, base, "list-windows", "--json", "-s", session)
 	if err != nil {
 		t.Fatalf("list-windows: %v\n%s", err, out)
 	}
@@ -140,7 +140,7 @@ func agentSessions(t *testing.T, env ...string) (*tuitest.Terminal, string) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	for _, name := range []string{"e2e-home", "e2e-agent"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create session %s: %v\n%s", name, err, out)
 		}
 	}
@@ -192,7 +192,7 @@ func TestHookIntegrationsReportTheTurn(t *testing.T) {
 	}
 	for _, tc := range cases {
 		log := &stateLog{name: "hook-turn-" + tc.harness}
-		if out, err := tuiosCLI(t, base, "new-window", tc.harness, "-s", "e2e-agent", "--no-focus"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new-window", tc.harness, "-s", "e2e-agent", "--no-focus"); err != nil {
 			t.Fatalf("new-window: %v\n%s", err, out)
 		}
 		win := windowID(t, base, "e2e-agent", tc.harness)
@@ -220,7 +220,7 @@ func TestHookIntegrationsReportTheTurn(t *testing.T) {
 func TestQwenApprovalFromTheInbox(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "tuios")
+	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -228,7 +228,7 @@ func TestQwenApprovalFromTheInbox(t *testing.T) {
 		t.Fatalf("write config: %v", err)
 	}
 	for _, name := range []string{"e2e-home", "e2e-agent"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create session %s: %v\n%s", name, err, out)
 		}
 	}
@@ -244,7 +244,7 @@ func TestQwenApprovalFromTheInbox(t *testing.T) {
 	}
 	time.Sleep(insertGuard)
 
-	hook := exec.Command(tuiosBin, "agent-hook", "qwen", "--session", "e2e-agent", "--window", "0")
+	hook := exec.Command(dartuiosBin, "agent-hook", "qwen", "--session", "e2e-agent", "--window", "0")
 	hook.Dir = workDirIn(t, base)
 	hook.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -311,9 +311,9 @@ func TestQwenApprovalFromTheInbox(t *testing.T) {
 	alive(t, term, "after answering a Qwen Code approval")
 }
 
-// pluginDriver loads a real plugin tuios installed, under node, with a
+// pluginDriver loads a real plugin dartuios installed, under node, with a
 // stand-in for the harness's plugin API, and emits the events the test writes
-// to it, one JSON line each. The plugin runs the real tuios agent-hook for
+// to it, one JSON line each. The plugin runs the real dartuios agent-hook for
 // every event, against the test's daemon, for the pane named in the
 // environment.
 type pluginDriver struct {
@@ -363,7 +363,7 @@ func realNode() (string, error) {
 	return nodePath, nodeErr
 }
 
-// startPlugin renders harness's plugin with tuios integration install and
+// startPlugin renders harness's plugin with dartuios integration install and
 // starts it under the driver script, which knows each harness's API shape.
 func startPlugin(t *testing.T, base, harness, session, window string) *pluginDriver {
 	t.Helper()
@@ -380,20 +380,20 @@ func startPlugin(t *testing.T, base, harness, session, window string) *pluginDri
 	switch harness {
 	case "pi":
 		mustMkdir(filepath.Join(home, ".pi", "agent"))
-		file = filepath.Join(home, ".pi", "agent", "extensions", "tuios-agent-state.ts")
+		file = filepath.Join(home, ".pi", "agent", "extensions", "dartuios-agent-state.ts")
 	case "omp":
 		dir := filepath.Join(home, ".omp", "agent")
 		env[1] = "PI_CODING_AGENT_DIR=" + dir
 		mustMkdir(dir)
-		file = filepath.Join(dir, "extensions", "tuios-omp-agent-state.ts")
+		file = filepath.Join(dir, "extensions", "dartuios-omp-agent-state.ts")
 	case "amp":
 		mustMkdir(filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "amp"))
-		file = filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "amp", "plugins", "tuios-agent-state.ts")
+		file = filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "amp", "plugins", "dartuios-agent-state.ts")
 	case "opencode":
 		mustMkdir(filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "opencode"))
-		file = filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "opencode", "plugins", "tuios-agent-state.js")
+		file = filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "opencode", "plugins", "dartuios-agent-state.js")
 	}
-	if out, err := tuiosCLIEnv(t, base, env, "integration", "install", harness, "--command", tuiosBin); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, env, "integration", "install", harness, "--command", dartuiosBin); err != nil {
 		t.Fatalf("integration install %s: %v\n%s", harness, err, out)
 	}
 	driver := filepath.Join("testdata", "plugindriver.mjs")
@@ -407,7 +407,7 @@ func startPlugin(t *testing.T, base, harness, session, window string) *pluginDri
 	// After the isolation keys, so this plugin's own HOME wins over the
 	// suite's.
 	cmd.Env = append(cmd.Env, env...)
-	cmd.Env = append(cmd.Env, "TUIOS_ENV=1", "TUIOS_SESSION="+session, "TUIOS_PANE_ID="+window)
+	cmd.Env = append(cmd.Env, "DARTUIOS_ENV=1", "DARTUIOS_SESSION="+session, "DARTUIOS_PANE_ID="+window)
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		t.Fatal(err)
@@ -529,7 +529,7 @@ func TestPluginsReportBlockingPrompts(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.harness, func(t *testing.T) {
 			log := &stateLog{name: "plugin-prompts-" + tc.harness}
-			if out, err := tuiosCLI(t, base, "new-window", tc.harness, "-s", "e2e-agent", "--no-focus"); err != nil {
+			if out, err := dartuiosCLI(t, base, "new-window", tc.harness, "-s", "e2e-agent", "--no-focus"); err != nil {
 				t.Fatalf("new-window: %v\n%s", err, out)
 			}
 			win := windowID(t, base, "e2e-agent", tc.harness)
@@ -539,14 +539,14 @@ func TestPluginsReportBlockingPrompts(t *testing.T) {
 				dir := filepath.Join(home, "."+tc.harness, "agent")
 				env := []string{"HOME=" + home, "PI_CODING_AGENT_DIR=" + dir, "CLAUDE_CONFIG_DIR=", "CODEX_HOME="}
 				if tc.harness == "omp" {
-					out, err := tuiosCLIEnv(t, base, env, "integration", "install", "pi")
+					out, err := dartuiosCLIEnv(t, base, env, "integration", "install", "pi")
 					if err == nil || !strings.Contains(out, "agent directory") {
 						t.Fatalf("install pi should refuse OMP's agent directory: %v\n%s", err, out)
 					}
 				}
 				mustMkdir(filepath.Join(home, ".claude"))
 				mustMkdir(filepath.Join(home, ".codex"))
-				out, err := tuiosCLIEnv(t, base, env, "integration", "install", "--all", "--command", tuiosBin)
+				out, err := dartuiosCLIEnv(t, base, env, "integration", "install", "--all", "--command", dartuiosBin)
 				if err != nil {
 					t.Fatalf("install --all with PI_CODING_AGENT_DIR: %v\n%s", err, out)
 				}
@@ -558,9 +558,9 @@ func TestPluginsReportBlockingPrompts(t *testing.T) {
 						t.Fatalf("install --all did not install %s: %v\n%s", path, err, out)
 					}
 				}
-				foreignFile := "tuios-omp-agent-state.ts"
+				foreignFile := "dartuios-omp-agent-state.ts"
 				if tc.harness == "omp" {
-					foreignFile = "tuios-agent-state.ts"
+					foreignFile = "dartuios-agent-state.ts"
 				}
 				if _, err := os.Stat(filepath.Join(dir, "extensions", foreignFile)); !os.IsNotExist(err) {
 					t.Fatalf("install --all left the other harness's extension in %s: %v", dir, err)
@@ -609,9 +609,9 @@ func buildFakeCrush(t *testing.T) string {
 
 // TestHerdrProtocolReportsACrushPane starts a stand-in Crush in a pane of a
 // real daemon. It reports over herdr's protocol exactly as Crush's own client
-// does, only because the pane told it where: tuios's own socket, never
+// does, only because the pane told it where: dartuios's own socket, never
 // herdr's. Its reports move the pane through idle, working, needs_input and
-// done, a stale seq is dropped, a report for another pane and a method tuios
+// done, a stale seq is dropped, a report for another pane and a method dartuios
 // does not answer are refused, and release clears the pane. A shell pane in
 // the same session is not told it is a herdr pane.
 //
@@ -622,7 +622,7 @@ func TestHerdrProtocolReportsACrushPane(t *testing.T) {
 	term, base := agentSessions(t)
 	crush := buildFakeCrush(t)
 	log := &stateLog{name: "herdr-protocol-crush"}
-	if out, err := tuiosCLI(t, base, "new-window", "crush", "-s", "e2e-agent", "--no-focus", "--", crush); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "crush", "-s", "e2e-agent", "--no-focus", "--", crush); err != nil {
 		t.Fatalf("new-window: %v\n%s", err, out)
 	}
 	win := windowID(t, base, "e2e-agent", "crush")
@@ -635,7 +635,7 @@ func TestHerdrProtocolReportsACrushPane(t *testing.T) {
 
 	send := func(word string) {
 		t.Helper()
-		if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", win, word+"\n"); err != nil {
+		if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", win, word+"\n"); err != nil {
 			t.Fatalf("send-text: %v\n%s", err, out)
 		}
 	}
@@ -675,10 +675,10 @@ func TestHerdrProtocolReportsACrushPane(t *testing.T) {
 	waitAgentState(t, base, "e2e-agent", win, "none", "", log, "release, none")
 
 	// A shell is not a herdr pane.
-	if out, err := tuiosCLI(t, base, "new-window", "shell", "-s", "e2e-agent", "--no-focus"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "shell", "-s", "e2e-agent", "--no-focus"); err != nil {
 		t.Fatalf("new-window: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", "shell", "echo HE=${HERDR_ENV:-unset} HS=${HERDR_SOCKET_PATH:-unset} HP=${HERDR_PANE_ID:-unset}\n"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", "shell", "echo HE=${HERDR_ENV:-unset} HS=${HERDR_SOCKET_PATH:-unset} HP=${HERDR_PANE_ID:-unset}\n"); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	out = waitCapture(t, base, "e2e-agent", "shell", "HE=unset HS=unset HP=unset")
@@ -696,20 +696,20 @@ func TestHerdrProtocolReportsACrushPane(t *testing.T) {
 func TestHerdrProtocolAlwaysTellsShellPanes(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "tuios")
+	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "dartuios")
 	mustMkdir(dir)
 	cfg := filepath.Join(dir, "config.toml")
 	if err := os.WriteFile(cfg, []byte("[agents]\nherdr_protocol = \"always\"\n"), 0o600); err != nil {
 		t.Fatalf("write config: %v", err)
 	}
-	if out, err := tuiosCLI(t, base, "new", "e2e-agent", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-agent", "--detach"); err != nil {
 		t.Fatalf("create session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "new-window", "shell", "-s", "e2e-agent"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "shell", "-s", "e2e-agent"); err != nil {
 		t.Fatalf("new-window: %v\n%s", err, out)
 	}
 	win := windowID(t, base, "e2e-agent", "shell")
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", "shell", "echo HE=${HERDR_ENV:-unset} HP=${HERDR_PANE_ID:-unset}\n"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", "shell", "echo HE=${HERDR_ENV:-unset} HP=${HERDR_PANE_ID:-unset}\n"); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	waitCapture(t, base, "e2e-agent", "shell", "HE=1 HP="+win)
@@ -723,7 +723,7 @@ func TestHerdrProtocolAlwaysTellsShellPanes(t *testing.T) {
 	deadline := time.Now().Add(uiTimeout)
 	for i := 0; ; i++ {
 		name := "crush" + itoa(i)
-		if out, err := tuiosCLI(t, base, "new-window", name, "-s", "e2e-agent", "--no-focus", "--", crush); err != nil {
+		if out, err := dartuiosCLI(t, base, "new-window", name, "-s", "e2e-agent", "--no-focus", "--", crush); err != nil {
 			t.Fatalf("new-window: %v\n%s", err, out)
 		}
 		out := waitCapture(t, base, "e2e-agent", name, "HERDR_ENV=")
@@ -752,7 +752,7 @@ func firstLineWith(s, sub string) string {
 // Codex's own notification code does, on a terminal with neither kitty
 // graphics nor sixel. The pane is told a terminal Codex sends OSC 9 to, so
 // the notification's text reaches the attached client. A shell pane beside it
-// is still told TUIOS.
+// is still told dartuios.
 //
 // The stand-in notifies when a turn ends, after it is sent a prompt, as Codex
 // does, and the prompt is sent only once the client shows the pane. A
@@ -762,12 +762,12 @@ func firstLineWith(s, sub string) string {
 // enough to do that, and the toast never appeared.
 //
 // Negative control: with TermProgramFor answering TermProgram's name for
-// Codex too, the stand-in sees TUIOS and rings the bell instead, and the test
+// Codex too, the stand-in sees dartuios and rings the bell instead, and the test
 // fails on the name the pane was told.
 func TestCodexPaneNotificationsArrive(t *testing.T) {
 	// The terminal the suite drives answers kitty graphics, so the client is
 	// told the host has neither protocol, which is the host this is about.
-	term, base := agentSessions(t, "TUIOS_KITTY_GRAPHICS=0", "TUIOS_SIXEL_GRAPHICS=0")
+	term, base := agentSessions(t, "DARTUIOS_KITTY_GRAPHICS=0", "DARTUIOS_SIXEL_GRAPHICS=0")
 	log := &stateLog{name: "codex-notification"}
 	dir := t.TempDir()
 	codex := filepath.Join(dir, "codex")
@@ -786,13 +786,13 @@ exec cat
 	if err := os.WriteFile(codex, []byte(script), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if out, err := tuiosCLI(t, base, "new-window", "codex", "-s", "e2e-home", "--", codex); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "codex", "-s", "e2e-home", "--", codex); err != nil {
 		t.Fatalf("new-window: %v\n%s", err, out)
 	}
 	if err := term.WaitForText("CODEX-SAW", uiTimeout); err != nil {
 		t.Fatalf("the client never showed the Codex pane: %v\n%s", err, term.Snapshot())
 	}
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-home", "-w", "codex", "finish the turn\n"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-home", "-w", "codex", "finish the turn\n"); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	out := waitCapture(t, base, "e2e-home", "codex", "CODEX-NOTIFIED")
@@ -807,14 +807,14 @@ exec cat
 	}
 	saveFrame(t, term, "codex-notification")
 
-	if out, err := tuiosCLI(t, base, "new-window", "shell", "-s", "e2e-home", "--no-focus"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "shell", "-s", "e2e-home", "--no-focus"); err != nil {
 		t.Fatalf("new-window: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-home", "-w", "shell", "echo SHELL-SAW TERM_PROGRAM=$TERM_PROGRAM\n"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-home", "-w", "shell", "echo SHELL-SAW TERM_PROGRAM=$TERM_PROGRAM\n"); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
-	out = waitCapture(t, base, "e2e-home", "shell", "SHELL-SAW TERM_PROGRAM=TUIOS")
-	log.add("shell pane: %s", firstLineWith(out, "SHELL-SAW TERM_PROGRAM=TUIOS"))
+	out = waitCapture(t, base, "e2e-home", "shell", "SHELL-SAW TERM_PROGRAM=dartuios")
+	log.add("shell pane: %s", firstLineWith(out, "SHELL-SAW TERM_PROGRAM=dartuios"))
 	log.save(t)
 	alive(t, term, "after the Codex notification")
 }
@@ -831,7 +831,7 @@ exec cat
 // detector's list of bare agent names, the Go tool reads as an unnamed agent
 // that is working, and the last check fails.
 func TestGooseIsRecognisedWhereItsInstallerPutsIt(t *testing.T) {
-	t.Setenv("TUIOS_AGENT_DETECT_SECONDS", "1")
+	t.Setenv("DARTUIOS_AGENT_DETECT_SECONDS", "1")
 	term, base := agentSessions(t)
 	log := &stateLog{name: "goose-manifest"}
 	root := t.TempDir()
@@ -843,32 +843,32 @@ func TestGooseIsRecognisedWhereItsInstallerPutsIt(t *testing.T) {
 			t.Fatalf("build fakegoose: %v\n%s", err, out)
 		}
 	}
-	if out, err := tuiosCLI(t, base, "new-window", "goose", "-s", "e2e-agent", "--no-focus", "--", installed); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "goose", "-s", "e2e-agent", "--no-focus", "--", installed); err != nil {
 		t.Fatalf("new-window: %v\n%s", err, out)
 	}
 	win := windowID(t, base, "e2e-agent", "goose")
 	waitCapture(t, base, "e2e-agent", "goose", "fake goose started")
 	waitAgentState(t, base, "e2e-agent", win, "working", "goose", log, "recognised")
 	// The prompt comes after goose has started, as a tool call does.
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", win, "ask\n"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", win, "ask\n"); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	st := waitAgentState(t, base, "e2e-agent", win, "needs_input", "goose", log, "approval prompt on screen")
 	if st.Source != "screen" {
 		t.Errorf("the block came from %s, want the screen rules", st.Source)
 	}
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", win, "y\n"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", win, "y\n"); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	waitAgentState(t, base, "e2e-agent", win, "working", "goose", log, "answered, spinner on screen")
 
-	if out, err := tuiosCLI(t, base, "new-window", "migrate", "-s", "e2e-agent", "--no-focus", "--", elsewhere); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "migrate", "-s", "e2e-agent", "--no-focus", "--", elsewhere); err != nil {
 		t.Fatalf("new-window: %v\n%s", err, out)
 	}
 	other := windowID(t, base, "e2e-agent", "migrate")
 	waitCapture(t, base, "e2e-agent", "migrate", "fake goose started")
 	time.Sleep(2 * time.Second)
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", other, "ask\n"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", other, "ask\n"); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	waitCapture(t, base, "e2e-agent", "migrate", "Goose would like to call the above tool")

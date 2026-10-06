@@ -1,7 +1,7 @@
 package session
 
 import (
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // Desktop notifications from a pane, read as agent state.

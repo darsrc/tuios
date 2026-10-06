@@ -11,7 +11,7 @@ import (
 	gh "go.mitchellh.com/libghostty"
 )
 
-// This file holds the scanner hooks: the sequences tuios observes or owns on
+// This file holds the scanner hooks: the sequences dartuios observes or owns on
 // top of libghostty. Hooks run with mu held, at a point where libghostty has
 // consumed every byte preceding the sequence, so grid and cursor queries are
 // consistent with the guest's view at that moment.
@@ -255,7 +255,7 @@ func (t *GhosttyTerminal) activeKittyState() *KittyState {
 	return t.kittyMain
 }
 
-// handleOSC routes the OSC families tuios owns. Returning true forwards the
+// handleOSC routes the OSC families dartuios owns. Returning true forwards the
 // sequence to libghostty.
 func (t *GhosttyTerminal) handleOSC(number int, payload []byte) bool {
 	switch number {
@@ -411,7 +411,7 @@ func (t *GhosttyTerminal) handleSemanticZoneOSC(payload []byte) {
 	})
 }
 
-// handleKittyAPC runs tuios's kitty pipeline on an intercepted APC. The
+// handleKittyAPC runs dartuios's kitty pipeline on an intercepted APC. The
 // sequence never reaches libghostty: the passthrough pipeline is its only
 // consumer, exactly as in the pure emulator when a passthrough func is set.
 func (t *GhosttyTerminal) handleKittyAPC(payload []byte) {

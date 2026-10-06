@@ -1,12 +1,12 @@
-# Builds tuios for the browser, the files behind tuios.dev/learn, and
+# Builds dartuios for the browser, the files behind dartuios.dev/learn, and
 # uploads them as the learn-web artifact. It runs on pull requests too, so the
 # js/wasm build cannot quietly stop compiling.
 name: learn-web
 
-# cmd/tuios-wasm imports internal/app, which pulls in almost every package
+# cmd/dartuios-wasm imports internal/app, which pulls in almost every package
 # under internal/ and pkg/ (go list -deps shows 33 of them under GOOS=js), so
 # the filter is those trees as a whole. What it leaves out is what the js build
-# never reads: cmd/tuios, cmd/tuios-web, e2e, docs and the rest of the repo.
+# never reads: cmd/dartuios, cmd/dartuios-web, e2e, docs and the rest of the repo.
 on:
   push:
     branches: [main]
@@ -15,7 +15,7 @@ on:
       - "go.sum"
       - "internal/**"
       - "pkg/**"
-      - "cmd/tuios-wasm/**"
+      - "cmd/dartuios-wasm/**"
       - ".github/workflows/learn-web.yml"
   pull_request:
     paths: *learn-web-paths
@@ -60,14 +60,14 @@ jobs:
         run: go test -count=1 ./internal/webshell/ ./internal/learn/
 
       - name: Build
-        run: cmd/tuios-wasm/build.sh learn-web
+        run: cmd/dartuios-wasm/build.sh learn-web
 
       - name: Smoke test in headless Chromium
         run: |
           npm install --prefix "$RUNNER_TEMP/pw" playwright-core
           "$RUNNER_TEMP/pw/node_modules/.bin/playwright-core" install --with-deps chromium
           PLAYWRIGHT_CORE="$RUNNER_TEMP/pw/node_modules/playwright-core/index.mjs" \
-            node cmd/tuios-wasm/smoke.mjs learn-web "$RUNNER_TEMP/smoke.png"
+            node cmd/dartuios-wasm/smoke.mjs learn-web "$RUNNER_TEMP/smoke.png"
 
       - uses: actions/upload-artifact@v7
         with:

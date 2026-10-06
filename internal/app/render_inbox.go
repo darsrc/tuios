@@ -10,11 +10,11 @@ import (
 	"unicode"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // inboxWidth is the Inbox overlay's preferred inner width: a row carries a
@@ -101,7 +101,7 @@ func (m *OS) renderInbox() (string, overlay.Geometry, []overlayRowHit) {
 		lines := inboxEmptyLines
 		switch {
 		case st.Unsupported:
-			lines = []string{"This daemon has no Inbox.", "Restart it with a newer tuios: tuios kill-server"}
+			lines = []string{"This daemon has no Inbox.", "Restart it with a newer dartuios: dartuios kill-server"}
 		case st.Filter == session.AttentionMail:
 			lines = []string{"No unread mail for you.", "m opens the mailbox, with every thread between agents too."}
 		case st.Select != "" && len(st.Items) > 0:
@@ -109,7 +109,7 @@ func (m *OS) renderInbox() (string, overlay.Geometry, []overlayRowHit) {
 		case st.Filter != "":
 			lines = []string{"Nothing under " + inboxGroupTitle(st.Filter) + ".", "f shows the next kind, and then all of them."}
 		case !m.IsDaemonSession:
-			lines = []string{"The Inbox needs the daemon.", "", "Start a daemon session with: tuios new"}
+			lines = []string{"The Inbox needs the daemon.", "", "Start a daemon session with: dartuios new"}
 		}
 		if len(st.life.Snoozed) > 0 && !st.life.ShowSnoozed && st.Select == "" {
 			lines = append(slices.Clone(lines), "", m.inboxSnoozedNote())

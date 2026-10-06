@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestClientKindDerivesTheClientFlags pins what each kind implies. The flags
@@ -57,9 +57,9 @@ func TestClientKindDerivesTheClientFlags(t *testing.T) {
 // literal in one of these directories that names another kind, or none, is a
 // client built by hand, which is what the kind exists to end.
 var entryPointKinds = map[string]string{
-	"cmd/tuios/":       "ClientLocal",
-	"internal/server/": "ClientSSH",
-	"cmd/tuios-web/":   "ClientBrowser",
+	"cmd/dartuios/":     "ClientLocal",
+	"internal/server/":  "ClientSSH",
+	"cmd/dartuios-web/": "ClientBrowser",
 }
 
 // TestEveryEntryPointNamesItsClientKind holds every app.OSOptions literal

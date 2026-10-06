@@ -24,7 +24,7 @@ func railClient(t *testing.T, session, config string, o startOpts) (*tuitest.Ter
 	base := t.TempDir()
 	killDaemon(t, base)
 	writeConfig(t, base, config)
-	if out, err := tuiosCLI(t, base, "new", session, "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", session, "--detach"); err != nil {
 		t.Fatalf("create %s: %v: %s", session, err, out)
 	}
 	o.args = append([]string{"attach", session}, o.args...)
@@ -66,7 +66,7 @@ func TestBlockedAgentAlertCarriesTheQuestion(t *testing.T) {
 	// The lowest-ranked claim there is, naming the harness: it gives the screen
 	// tier rules to run and nothing that outranks it, which is the state an
 	// unhooked harness sits in once the detector has seen its binary.
-	if out, err := tuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e", "-w", "REVIEW",
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e", "-w", "REVIEW",
 		"--source", "stall", "--harness", "claude-code"); err != nil {
 		t.Fatalf("set-agent-state failed: %v\n%s", err, out)
 	}
@@ -145,10 +145,10 @@ func TestAgentsHeaderShowsBlockedAndDone(t *testing.T) {
 	renameWindow(t, term, "REVIEW")
 	newWindow(t, term)
 	renameWindow(t, term, "BUILD")
-	if out, err := tuiosCLI(t, base, "set-agent-state", "needs_input", "-s", "e2e", "-w", "REVIEW"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "needs_input", "-s", "e2e", "-w", "REVIEW"); err != nil {
 		t.Fatalf("set-agent-state failed: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-agent-state", "done", "-s", "e2e", "-w", "BUILD"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "done", "-s", "e2e", "-w", "BUILD"); err != nil {
 		t.Fatalf("set-agent-state failed: %v\n%s", err, out)
 	}
 	// BUILD is the focused pane, and focusing a finished pane is what marks it
@@ -161,10 +161,10 @@ func TestAgentsHeaderShowsBlockedAndDone(t *testing.T) {
 	// the client has moved off BUILD. A BUILD turn that lands before that
 	// finishes in front of the user and is rightly seen.
 	waitForFocusedPane(t, base, "e2e", "REVIEW")
-	if out, err := tuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e", "-w", "BUILD"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e", "-w", "BUILD"); err != nil {
 		t.Fatalf("set-agent-state failed: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-agent-state", "done", "-s", "e2e", "-w", "BUILD"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "done", "-s", "e2e", "-w", "BUILD"); err != nil {
 		t.Fatalf("set-agent-state failed: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -183,7 +183,7 @@ func waitForFocusedPane(t *testing.T, base, session, name string) {
 	var last string
 	deadline := time.Now().Add(uiTimeout)
 	for time.Now().Before(deadline) {
-		out, err := tuiosCLI(t, base, "list-windows", "--json", "--session", session)
+		out, err := dartuiosCLI(t, base, "list-windows", "--json", "--session", session)
 		last = out
 		var list struct {
 			Windows []struct {
@@ -228,7 +228,7 @@ bold = true
 	// assertion reads are the rows the names were given.
 	waitForAll(t, term, uiTimeout, "both renamed panes on the rail", "REVIEW", "BUILD")
 	for _, w := range []string{"REVIEW", "BUILD"} {
-		if out, err := tuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e", "-w", w); err != nil {
+		if out, err := dartuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e", "-w", w); err != nil {
 			t.Fatalf("set-agent-state failed: %v\n%s", err, out)
 		}
 	}
@@ -281,7 +281,7 @@ func TestDividerDragMovesTheSplitAndPersists(t *testing.T) {
 		renameWindow(t, term, name)
 	}
 	for _, name := range names {
-		if out, err := tuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e", "-w", name); err != nil {
+		if out, err := dartuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e", "-w", name); err != nil {
 			t.Fatalf("set-agent-state failed: %v\n%s", err, out)
 		}
 	}
@@ -311,7 +311,7 @@ func TestDividerDragMovesTheSplitAndPersists(t *testing.T) {
 	}
 	saveFrame(t, term, "178-dragged")
 
-	statePath := filepath.Join(base, "XDG_STATE_HOME", "tuios", "sidebar.json")
+	statePath := filepath.Join(base, "XDG_STATE_HOME", "dartuios", "sidebar.json")
 	var st struct {
 		SectionSplit int `json:"section_split"`
 	}

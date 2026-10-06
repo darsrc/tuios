@@ -43,7 +43,7 @@ any_of   = [
   { all = ["approve"], any = ["allow all for this session", "allow all for every session", "allow file for every session", "deny with feedback"] },
 ]
 
-# tuios-authored, from a live pane: an unauthenticated amp stops on
+# dartuios-authored, from a live pane: an unauthenticated amp stops on
 #   Would you like to log in to Amp? [(y)es, (n)o]:
 # and waits. herdr has no rule for it, but it is the same class of prompt as a
 # directory trust question: painted once, then silence.

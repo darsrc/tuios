@@ -4,11 +4,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // agentMarkStates are the states that draw a mark, in the order the docs list
@@ -84,8 +84,8 @@ func TestAgentMarksAreOneCharacterPerMeaning(t *testing.T) {
 // palette, the session switcher and the aggregate view.
 func TestReadFinishedPaneLooksTheSameEverywhere(t *testing.T) {
 	pal := theme.UI()
-	unread, _ := agentMark("done", false, pal)
-	read, readInk := agentMark("done", true, pal)
+	unread, _ := agentMark("done", false, pal, 0)
+	read, readInk := agentMark("done", true, pal, 0)
 	if unread != agentStateIndicator("done") {
 		t.Errorf("an unread finished pane draws %q, want done's %q", unread, agentStateIndicator("done"))
 	}

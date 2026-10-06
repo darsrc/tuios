@@ -30,7 +30,7 @@ import (
 // clockTestCapture is a screen of plain text, one cell per character, which is
 // all these tests need of a capture.
 func clockTestCapture(width, height int) [][]tfx.InputCell {
-	const line = "tuios screensaver frame rate "
+	const line = "dartuios screensaver frame rate "
 	capture := make([][]tfx.InputCell, height)
 	for y := range capture {
 		capture[y] = make([]tfx.InputCell, width)

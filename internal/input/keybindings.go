@@ -11,8 +11,8 @@ import (
 	"unicode"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // runtimeIsDarwin reports whether the process is running on macOS.
@@ -431,7 +431,7 @@ func vtKeyFromBubbletea(msg tea.KeyPressMsg) vt.KeyPressEvent {
 }
 
 // paneMsg is the key press as a pane is sent it: msg with the base-layout key
-// the host sent put back. readKey takes it off for tuios's own reading, but
+// the host sent put back. readKey takes it off for dartuios's own reading, but
 // both encoders need it: for alternate keys, for the control code of a Ctrl
 // chord on a letter outside ASCII, and for shiftedCode to tell a real shifted
 // key from the decoder's copy of the base key.

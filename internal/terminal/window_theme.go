@@ -3,8 +3,8 @@ package terminal
 import (
 	"image/color"
 
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // applyTheme sets the active theme's colors on an emulator, or clears them to

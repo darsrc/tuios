@@ -1,10 +1,10 @@
 package input
 
-// Local input latency: the keystroke tuios answers by itself.
+// Local input latency: the keystroke dartuios answers by itself.
 //
 // This is the floor of the whole audit. A key that switches pane never leaves
 // the process: no socket, no PTY, no guest, no coalescer. Whatever it costs is
-// what tuios adds to a keystroke before any of the distributed machinery is
+// what dartuios adds to a keystroke before any of the distributed machinery is
 // involved, and the gap between this and the echo number in internal/app is
 // what the daemon and the guest are worth.
 //
@@ -19,7 +19,7 @@ package input
 // EXCLUDES: the host terminal, bubbletea's stdin decode, and the diff written
 // back to the tty.
 //
-//	go test ./internal/input/ -run TestLatencyLocal -v   (needs TUIOS_PERF=1)
+//	go test ./internal/input/ -run TestLatencyLocal -v   (needs DARTUIOS_PERF=1)
 
 import (
 	"fmt"
@@ -28,14 +28,14 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/perf"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/perf"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 const (
-	latencyEnv  = "TUIOS_PERF"
+	latencyEnv  = "DARTUIOS_PERF"
 	latencyRuns = 500
 
 	// latCols and latRows are the maintainer's real host size, the same one the

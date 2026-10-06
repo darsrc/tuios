@@ -9,9 +9,9 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // Replying to an agent: a one-line editor under the Inbox list that queues a
@@ -314,7 +314,7 @@ func (m *OS) applyInboxReplied(msg InboxRepliedMsg) {
 			switch callErr.Code {
 			case session.ErrVerbUnknownVerb:
 				m.Inbox.reply.noQueue = true
-				m.ShowNotification("This daemon cannot queue a reply. Restart it with a newer tuios: tuios kill-server", "error", m.Settings.NotificationDuration*2)
+				m.ShowNotification("This daemon cannot queue a reply. Restart it with a newer dartuios: dartuios kill-server", "error", m.Settings.NotificationDuration*2)
 				return
 			case session.ErrVerbQueueFull:
 				m.ShowNotification(msg.Who+" already has as many messages queued as [agents.queue] max allows. Nothing was queued", "error", m.Settings.NotificationDuration*2)
@@ -456,7 +456,7 @@ func (m *OS) applyInboxQueueDropped(msg InboxQueueDroppedMsg) {
 		var callErr *session.VerbCallError
 		if errors.As(msg.Err, &callErr) && callErr.Code == session.ErrVerbUnknownVerb {
 			m.Inbox.reply.noQueue = true
-			m.ShowNotification("This daemon has no queue. Restart it with a newer tuios: tuios kill-server", "error", m.Settings.NotificationDuration*2)
+			m.ShowNotification("This daemon has no queue. Restart it with a newer dartuios: dartuios kill-server", "error", m.Settings.NotificationDuration*2)
 			return
 		}
 		m.ShowNotification("Nothing was dropped: "+msg.Err.Error(), "error", m.Settings.NotificationDuration*2)

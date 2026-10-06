@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // TestFullyVisibleWindowBoxFitsItsRectangle is the contract GetCanvas relies

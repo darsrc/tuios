@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The collapsed strip says everything in two cells, which is enough to steer by
@@ -171,7 +171,7 @@ func sidebarTooltipAgentLabel(e sidebarAgentEntry) string {
 	return label
 }
 
-// sidebarStateWords is the one phrase for each agent state, wherever tuios
+// sidebarStateWords is the one phrase for each agent state, wherever dartuios
 // spells a state out rather than drawing its mark: the rail's tooltips and
 // need token, the dock's alerts, the Inbox, the close dialog and the header
 // count. needs_input is "needs you" and done is "done"; they were "need input",

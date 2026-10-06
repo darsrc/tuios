@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 )
 
-// HoldModeAction is the keybinding whose key, while physically held, puts tuios
+// HoldModeAction is the keybinding whose key, while physically held, puts dartuios
 // in window-management mode and hands the previous mode back on release.
 const HoldModeAction = "hold_window_mode"
 
@@ -56,7 +56,7 @@ func (m *OS) HoldModeKey() string {
 
 // HoldModeNeedsAllKeys reports whether the configured trigger is a modifier key.
 // A terminal only reports those as keys of their own under the Kitty protocol's
-// report-all-keys-as-escape-codes flag, which is why tuios asks for it only when
+// report-all-keys-as-escape-codes flag, which is why dartuios asks for it only when
 // the trigger needs it: it turns every keystroke in the session into an escape
 // code, and that is too much to impose on someone not using this.
 func (m *OS) HoldModeNeedsAllKeys() bool {

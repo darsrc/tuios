@@ -3,7 +3,7 @@ package webshell
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/tape"
 )
 
 // TestEveryTapeParses keeps the tapes in the demo's filesystem playable.

@@ -4,11 +4,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // #196: every surface that switches sessions has to send the switch to the

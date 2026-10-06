@@ -29,13 +29,13 @@ func TestUnknownStateDrawsItsMarkAndAgesItsEvidence(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	useShippedLooks(base)
-	if out, err := tuiosCLI(t, base, "new", "unk", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "unk", "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-window", "-s", "unk", "--name", pane); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-window", "-s", "unk", "--name", pane); err != nil {
 		t.Fatalf("name the pane: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "unk", "-w", pane, "unknown", "--harness", "claude-code"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "unk", "-w", pane, "unknown", "--harness", "claude-code"); err != nil {
 		t.Fatalf("set-agent-state unknown: %v\n%s", err, out)
 	}
 	setAt := time.Now()
@@ -64,7 +64,7 @@ func TestUnknownStateDrawsItsMarkAndAgesItsEvidence(t *testing.T) {
 
 	age := func(args ...string) float64 {
 		t.Helper()
-		out, err := tuiosCLI(t, base, args...)
+		out, err := dartuiosCLI(t, base, args...)
 		if err != nil {
 			t.Fatalf("%s: %v\n%s", args[0], err, out)
 		}

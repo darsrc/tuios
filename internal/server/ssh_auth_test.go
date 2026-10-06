@@ -166,18 +166,18 @@ func TestAuthorizedKeysSearchOrder(t *testing.T) {
 		t.Fatalf("want the ~/.ssh file, got %q", keys.Path)
 	}
 
-	// The TUIOS file wins when both exist.
+	// The dartuios file wins when both exist.
 	writeFile(t, configPath, configLine, 0o600)
 	keys, err = LoadAuthorizedKeys("")
 	if err != nil {
 		t.Fatalf("load with both files: %v", err)
 	}
 	if keys.Path != configPath {
-		t.Fatalf("want the tuios file to win, got %q", keys.Path)
+		t.Fatalf("want the dartuios file to win, got %q", keys.Path)
 	}
 }
 
-// TestPlanSSHAuth is the gate, table driven the way cmd/tuios-web's
+// TestPlanSSHAuth is the gate, table driven the way cmd/dartuios-web's
 // TestCheckTransportSecurity is, and over the same three axes: what the address
 // is, what is configured, and whether the operator opted out.
 func TestPlanSSHAuth(t *testing.T) {
@@ -400,7 +400,7 @@ func TestSSHServerWithNoKeysStillTakesAKeylessClient(t *testing.T) {
 	assertPaintsAFrame(t, client)
 }
 
-// assertPaintsAFrame proves the connection is a working TUIOS session rather
+// assertPaintsAFrame proves the connection is a working dartuios session rather
 // than an open socket: it asks for a PTY, starts the shell, and waits for the
 // first frame.
 func assertPaintsAFrame(t *testing.T, client *gossh.Client) {

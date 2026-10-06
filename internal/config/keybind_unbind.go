@@ -20,7 +20,7 @@ import (
 //
 // The two things a user means by unbinding are both reached from here:
 //
-//   - Take one key away from tuios so the program in the pane gets it. That is
+//   - Take one key away from dartuios so the program in the pane gets it. That is
 //     FreeKey, which strips the key from every action in every scope, because a
 //     key half-freed still never reaches the pane.
 //   - Leave an action with no key at all. That is UnbindAction, or UnbindKey on

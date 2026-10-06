@@ -164,7 +164,7 @@ type respawnCall struct {
 // requests until the running command exits, and returns its exit status.
 func RunPane(o PaneOptions) int {
 	if o.Window == "" {
-		fmt.Fprintln(os.Stderr, "tuios tmux-pane: TUIOS_PANE_ID is unset; the holder runs as a tuios pane's process")
+		fmt.Fprintln(os.Stderr, "dartuios tmux-pane: DARTUIOS_PANE_ID is unset; the holder runs as a dartuios pane's process")
 		return 1
 	}
 	// Signals from the terminal are for the command, not for the holder,
@@ -191,7 +191,7 @@ func RunPane(o PaneOptions) int {
 	// holder.
 	if EnsureDir(o.Dir) == nil && EnsureDir(filepath.Join(o.Dir, "p")) == nil {
 		// Keep the tmux link pointing at this binary, for a pane opened by
-		// `tuios tmux` with no launcher run before it.
+		// `dartuios tmux` with no launcher run before it.
 		if exe, err := os.Executable(); err == nil {
 			if r, err := filepath.EvalSymlinks(exe); err == nil {
 				exe = r

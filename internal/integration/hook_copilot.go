@@ -3,7 +3,7 @@ package integration
 // The GitHub Copilot CLI event map. Source: the hooks reference
 // (https://docs.github.com/en/copilot/reference/hooks-reference, the
 // content/copilot/reference/hooks-reference.md page of github/docs), read for
-// this change. The hook file is tuios's own ~/.copilot/hooks/tuios.json.
+// this change. The hook file is dartuios's own ~/.copilot/hooks/dartuios.json.
 //
 // Events registered with their PascalCase names get payloads in the VS Code
 // shape: hook_event_name and session_id in snake case. The notification event

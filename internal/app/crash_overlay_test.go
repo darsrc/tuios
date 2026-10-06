@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The package's TestMain already points every XDG base at a throwaway tree (see
@@ -64,7 +64,7 @@ func TestUpdatePanicPutsTheCrashOverlayOnScreen(t *testing.T) {
 
 	frame := m.View().Content
 	for _, want := range []string{
-		"tuios hit a bug",
+		"dartuios hit a bug",
 		"the pane index was -1",
 		"Your panes and your session are still running",
 		"copy report",
@@ -94,7 +94,7 @@ func TestRenderPanicPutsTheCrashOverlayOnScreen(t *testing.T) {
 	if !m.CrashActive() {
 		t.Fatalf("a panic while drawing did not put the crash overlay on screen:\n%s", frame)
 	}
-	for _, want := range []string{"tuios hit a bug", "drawing the screen", "copy report"} {
+	for _, want := range []string{"dartuios hit a bug", "drawing the screen", "copy report"} {
 		if !strings.Contains(frame, want) {
 			t.Fatalf("the crash frame never says %q:\n%s", want, frame)
 		}
@@ -129,7 +129,7 @@ func TestCrashOverlaySurvivesADismissOnABrokenModel(t *testing.T) {
 	if !m.CrashActive() {
 		t.Fatalf("the overlay did not come back for a model that still cannot draw:\n%s", frame)
 	}
-	if !strings.Contains(frame, "tuios hit a bug") {
+	if !strings.Contains(frame, "dartuios hit a bug") {
 		t.Fatalf("the second frame is not the crash overlay:\n%s", frame)
 	}
 }
@@ -321,8 +321,8 @@ func TestCrashOverlayDrawsOnABrokenModel(t *testing.T) {
 func TestIssueURLStaysShortEnoughToOpen(t *testing.T) {
 	var huge strings.Builder
 	for i := range 4000 {
-		huge.WriteString("github.com/Gaurav-Gosain/tuios/internal/app.(*OS).frame")
-		huge.WriteString("\n\t/home/x/tuios/internal/app/render.go:")
+		huge.WriteString("github.com/darsrc/tuios/internal/app.(*OS).frame")
+		huge.WriteString("\n\t/home/x/dartuios/internal/app/render.go:")
 		huge.WriteString(strings.Repeat("9", 4))
 		huge.WriteString(" +0x1c4\n")
 		_ = i
@@ -339,7 +339,7 @@ func TestIssueURLStaysShortEnoughToOpen(t *testing.T) {
 	if len(got) > issueURLLimit {
 		t.Fatalf("the issue URL is %d bytes, over the %d limit", len(got), issueURLLimit)
 	}
-	if !strings.HasPrefix(got, "https://github.com/Gaurav-Gosain/tuios/issues/new?") {
+	if !strings.HasPrefix(got, "https://github.com/darsrc/tuios/issues/new?") {
 		t.Fatalf("not a new-issue address: %.80s", got)
 	}
 	for _, want := range []string{"title=", "body=", "labels=bug"} {

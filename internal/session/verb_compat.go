@@ -85,7 +85,7 @@ type ProtocolMismatchError struct {
 
 func (e *ProtocolMismatchError) Error() string {
 	var b strings.Builder
-	b.WriteString("The running TUIOS daemon does not speak this client's control protocol")
+	b.WriteString("The running dartuios daemon does not speak this client's control protocol")
 
 	switch {
 	case e.DaemonVersion != "" && e.ClientVersion != "":
@@ -102,14 +102,14 @@ func (e *ProtocolMismatchError) Error() string {
 	// Which side to move is the one thing the user cannot work out for
 	// themselves, so say it rather than always blaming the daemon.
 	if e.DaemonProtocol > e.ClientProtocol && e.ClientProtocol > 0 {
-		b.WriteString(".\nMost likely cause: the daemon is newer than this binary, so an older tuios is on the path.")
-		b.WriteString("\nFix: upgrade tuios, or run 'tuios kill-server' and start again with the version you want.")
+		b.WriteString(".\nMost likely cause: the daemon is newer than this binary, so an older dartuios is on the path.")
+		b.WriteString("\nFix: upgrade dartuios, or run 'dartuios kill-server' and start again with the version you want.")
 	} else {
-		b.WriteString(".\nMost likely cause: TUIOS was upgraded while the daemon kept running, so the old daemon is still serving the socket.")
-		b.WriteString("\nFix: run 'tuios kill-server', then run this command again.")
+		b.WriteString(".\nMost likely cause: dartuios was upgraded while the daemon kept running, so the old daemon is still serving the socket.")
+		b.WriteString("\nFix: run 'dartuios kill-server', then run this command again.")
 	}
 	if e.Sessions > 0 {
-		fmt.Fprintf(&b, "\nNote: the daemon is holding %d session(s). They are saved and restored when it restarts (see 'tuios resurrect').", e.Sessions)
+		fmt.Fprintf(&b, "\nNote: the daemon is holding %d session(s). They are saved and restored when it restarts (see 'dartuios resurrect').", e.Sessions)
 	}
 	if e.DaemonPID > 0 {
 		fmt.Fprintf(&b, "\nDaemon PID: %d.", e.DaemonPID)
@@ -128,7 +128,7 @@ func (e *ProtocolMismatchError) Unwrap() error { return e.Cause }
 // protocol promises.
 func (c *VerbClient) handshake(clientVersion string) (*DaemonHandshake, error) {
 	raw, err := c.Call("hello", map[string]any{
-		"client":   "tuios",
+		"client":   "dartuios",
 		"version":  clientVersion,
 		"protocol": VerbProtocolVersion,
 	})

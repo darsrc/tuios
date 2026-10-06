@@ -9,8 +9,8 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/gitstate"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/gitstate"
+	"github.com/darsrc/tuios/internal/overlay"
 )
 
 // The rail's git section: which repository the focused pane is in, which branch
@@ -232,7 +232,7 @@ func (m *OS) sidebarGitRow(row gitRowSpec, cw int, pal overlay.Palette, st sideb
 	}
 	name := sidebarStyle(rowBg, ink).Render(
 		overlay.Truncate(printableTitle(row.Name), sidebarNameAvailIn(cw, rightW, indent)))
-	gutter := sidebarGutter(false, "", rowBg, pal, &m.Settings)
+	gutter := sidebarGutter(false, st.Hover, "", rowBg, pal, &m.Settings)
 	return sidebarComposeGroupRow(indent, gutter, glyph, name, right, cw, rowBg)
 }
 

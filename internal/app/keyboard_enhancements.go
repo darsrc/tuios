@@ -5,9 +5,9 @@ import (
 	"github.com/charmbracelet/x/ansi"
 )
 
-// keyboardEnhancements is what tuios asks the host terminal for through the
+// keyboardEnhancements is what dartuios asks the host terminal for through the
 // Kitty keyboard protocol. Bubble Tea already requests key disambiguation on
-// every view; these are the additions tuios has a use for.
+// every view; these are the additions dartuios has a use for.
 //
 // The request is made from the view because that is where Bubble Tea reads it:
 // changing what is asked for re-runs the negotiation and the answer arrives as a
@@ -19,12 +19,12 @@ func (m *OS) keyboardEnhancements() tea.KeyboardEnhancements {
 		// the layout produced. That is what lets a chord be recognised when the
 		// OS composed something else out of it, which is the whole of the macOS
 		// Option problem, and it fixes the same class of miss on any non-US
-		// layout. It only ever adds subparameters to a report tuios already
+		// layout. It only ever adds subparameters to a report dartuios already
 		// parses.
 		ReportAlternateKeys: true,
 	}
 	// A pane that pushed the event-type flag is asking to be told when a key
-	// comes up, and tuios cannot pass on what it never receives: unless the host
+	// comes up, and dartuios cannot pass on what it never receives: unless the host
 	// is asked for releases too, the pane sees an endless press. That is fatal
 	// for a compositor in a pane, whose Wayland clients hold the key down and let
 	// xkb repeat it until a release arrives, and it is why the request tracks the
@@ -46,7 +46,7 @@ func (m *OS) keyboardEnhancements() tea.KeyboardEnhancements {
 	// Alternate-key reporting only adds the base key to a key the terminal
 	// already sends as an escape code, and a plain letter is sent as text. So
 	// with a Ukrainian layout the I key after the leader arrives as a bare "ш"
-	// with nothing behind it, and no binding can answer. While tuios itself
+	// with nothing behind it, and no binding can answer. While dartuios itself
 	// reads the next key (window mode, a prefix, the rail, an overlay), every
 	// key is asked for as an escape code, with its text alongside so a field
 	// being typed into still gets the character. A pane with the keyboard is
@@ -71,7 +71,7 @@ func (m *OS) keyboardEnhancements() tea.KeyboardEnhancements {
 	return enhancements
 }
 
-// KeysGoToBindings reports whether the next key is matched against tuios
+// KeysGoToBindings reports whether the next key is matched against dartuios
 // bindings rather than typed into the focused pane. It is true everywhere but
 // terminal mode with nothing in front of the pane: no prefix pending or about to
 // repeat, no rail focus, no overlay and no copy mode.
@@ -114,7 +114,7 @@ func (m *OS) NoteKeyboardEnhancements(msg tea.KeyboardEnhancementsMsg) {
 	}
 }
 
-// AllKeysPending reports whether tuios has asked the host for every key as an
+// AllKeysPending reports whether dartuios has asked the host for every key as an
 // escape code and the host has not yet said it switched.
 //
 // Bubble Tea queries the flags (CSI ? u) after every change, and the answer

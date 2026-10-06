@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hooks"
 )
 
 // Session-side hooks.
@@ -31,7 +31,7 @@ import (
 //     layout stays client-side too, because tiling runs in the attached
 //     renderer and no daemon-side operation can change it.
 //
-// A standalone tuios (no daemon) is unaffected: it is the whole system, so it
+// A standalone dartuios (no daemon) is unaffected: it is the whole system, so it
 // keeps firing everything itself.
 //
 // Firing happens off the session's event sink, which is fed by the state diff
@@ -132,7 +132,7 @@ func (g *agentHookGate) stop() {
 //
 // Every place that builds a DaemonConfig calls this rather than assigning the
 // three fields itself. There are three such places and they are easy to miss:
-// `tuios daemon`, the ssh server's in-process daemon, and tuios-web's. A daemon
+// `dartuios daemon`, the ssh server's in-process daemon, and dartuios-web's. A daemon
 // started by one of them without hooks is worse than one with no hooks at all,
 // because an attached client leaves the session-side events to the daemon, so
 // the commands would stop running rather than run twice.

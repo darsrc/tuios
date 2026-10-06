@@ -1,4 +1,4 @@
-module github.com/Gaurav-Gosain/tuios/e2e/tui
+module github.com/darsrc/tuios/e2e/tui
 
 go 1.26.6
 
@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	github.com/Gaurav-Gosain/tuios v0.0.0
+	github.com/darsrc/tuios v0.0.0
 	github.com/charmbracelet/colorprofile v0.4.3 // indirect
 	github.com/charmbracelet/ultraviolet v0.0.0-20260812204455-68fa937c71be
 	github.com/charmbracelet/x/ansi v0.11.8
@@ -37,4 +37,4 @@ require (
 	golang.org/x/sys v0.47.0 // indirect
 )
 
-replace github.com/Gaurav-Gosain/tuios => ../..
+replace github.com/darsrc/tuios => ../..

@@ -23,7 +23,7 @@ func TestKittyImageSurvivesAltScreenWithHistory(t *testing.T) {
 	stream := &hostStream{}
 	term, _ := start(t, startOpts{
 		cols: 120, rows: 40,
-		env: []string{"TUIOS_KITTY_GRAPHICS=1", "TUIOS_SIXEL_GRAPHICS=0", "TUIOS_DEBUG_INTERNAL=" + os.Getenv("TUIOS_DEBUG_INTERNAL")},
+		env: []string{"DARTUIOS_KITTY_GRAPHICS=1", "DARTUIOS_SIXEL_GRAPHICS=0", "DARTUIOS_DEBUG_INTERNAL=" + os.Getenv("DARTUIOS_DEBUG_INTERNAL")},
 		out: stream,
 	})
 	waitBoot(t, term)
@@ -61,7 +61,7 @@ func TestKittyImageSurvivesAltScreenWithHistory(t *testing.T) {
 	}
 	time.Sleep(2 * time.Second)
 
-	if dump := os.Getenv("TUIOS_KITTY_CAPTURE"); dump != "" {
+	if dump := os.Getenv("DARTUIOS_KITTY_CAPTURE"); dump != "" {
 		_ = os.WriteFile(dump, stream.bytes(), 0o644)
 	}
 

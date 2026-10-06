@@ -9,9 +9,9 @@ import "testing"
 // read. With the switch off, which is every run but a debugging one, a
 // keystroke must not allocate here at all.
 func TestSendInputAllocatesNothingWithoutDebug(t *testing.T) {
-	t.Setenv("TUIOS_DEBUG_INTERNAL", "")
+	t.Setenv("DARTUIOS_DEBUG_INTERNAL", "")
 	if debugInternal() {
-		t.Skip("TUIOS_DEBUG_INTERNAL was read as set before this test ran")
+		t.Skip("DARTUIOS_DEBUG_INTERNAL was read as set before this test ran")
 	}
 	key := []byte("x")
 

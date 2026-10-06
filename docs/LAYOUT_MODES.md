@@ -1,6 +1,6 @@
 # Layout Modes and Window Navigation
 
-Tiling in TUIOS has three layout modes, and there are two navigation features
+Tiling in dartuios has three layout modes, and there are two navigation features
 that are easy to miss because they have no default keybinding: the aggregate
 view and multifocus. This document covers all of them.
 
@@ -243,8 +243,8 @@ would go to the focused window's shell is also sent to each window in the set.
 A paste goes to each window in the set too. Each window gets the paste as a
 bracketed paste only when the program in that window turned bracketed paste on.
 A paste into a scrolled window returns it to live output first, as a typed key
-does. In copy mode TUIOS drops the paste.
-Keys handled by TUIOS itself (the leader key and its chords, overlays, workspace
+does. In copy mode dartuios drops the paste.
+Keys handled by dartuios itself (the leader key and its chords, overlays, workspace
 switches, copy mode) are not broadcast, because they never reach the forwarding
 path.
 
@@ -306,26 +306,26 @@ The formats:
   fenced code block.
 - **json**: An array with one object for each pane:
   `{"pane": N, "window_id": "...", "title": "...", "lines": ["..."]}`. The pane
-  number is the index that `tuios list-windows --json` shows.
+  number is the index that `dartuios list-windows --json` shows.
 
 The format starts as the value of `appearance.selection.multi_format` (default
 `plain`). `Tab` changes it until you leave multi copy mode.
 
 `Y` opens a prompt at the bottom of the focused pane. The default path is
-`~/tuios-copy-<date>-<time>.<ext>`, with `txt`, `md` or `json` for the format.
+`~/dartuios-copy-<date>-<time>.<ext>`, with `txt`, `md` or `json` for the format.
 Type or paste a path. Press `Enter` to save, or press `Esc` to cancel.
 
 - A relative path starts in the directory of the focused pane, when its shell
   reports one. Otherwise it starts in your home directory. The line above the
   prompt shows the full path.
-- tuios does not write over a file that exists. It tells you when the folder
+- dartuios does not write over a file that exists. It tells you when the folder
   does not exist or when the path is a folder.
 - The dock shows the path of the file it wrote. In the browser client and over
-  SSH, the file is on the machine that runs tuios, and the dock names that
+  SSH, the file is on the machine that runs dartuios, and the dock names that
   machine.
 
 A pane title can come from a remote shell. In the markdown and json formats,
-tuios removes control, bidirectional and zero-width characters from the title
+dartuios removes control, bidirectional and zero-width characters from the title
 and limits it to 200 characters.
 
 Limits:

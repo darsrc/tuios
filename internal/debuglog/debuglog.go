@@ -1,4 +1,4 @@
-// Package debuglog opens the diagnostic logs that TUIOS_DEBUG_INTERNAL=1
+// Package debuglog opens the diagnostic logs that DARTUIOS_DEBUG_INTERNAL=1
 // turns on.
 //
 // The logs sit at fixed names under /tmp so a developer knows where to look,
@@ -14,9 +14,9 @@ import "os"
 
 const (
 	// Path is the general debug log.
-	Path = "/tmp/tuios-debug.log"
+	Path = "/tmp/dartuios-debug.log"
 	// EventsPath is the input event log, which records keystrokes.
-	EventsPath = "/tmp/tuios-events.log"
+	EventsPath = "/tmp/dartuios-events.log"
 )
 
 // Open opens path for appending, creating it with mode 0600. The caller

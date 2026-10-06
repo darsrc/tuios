@@ -5,7 +5,7 @@
 # herdr's evidence is Grok Build 0.2.101 source and 1.0.34 live pane reads.
 #
 # Not ported: herdr's background_work_chip_working, which reads the top line
-# of the screen, and the tuios tail is read from the bottom. herdr's two
+# of the screen, and the dartuios tail is read from the bottom. herdr's two
 # osc_progress rules read OSC 9;4 the way its published meaning already does
 # ("4;1;-1" busy, "4;0;0" idle), so the daemon's own progress mapping covers
 # them.

@@ -12,7 +12,7 @@
 #
 #   Mode. A pane only receives text in terminal mode, and prefix actions such as
 #   rename hand the keyboard back to window management when they finish. Text
-#   typed a moment too early is not text, it is keybindings: a stray "tuios "
+#   typed a moment too early is not text, it is keybindings: a stray "dartuios "
 #   once read as t-u-i-o-s and toggled tiling off mid-recording. Every block of
 #   shell input below is preceded by Enter, which enters terminal mode from
 #   window management and costs nothing but a blank prompt line if the session
@@ -21,16 +21,16 @@
 #   Order. Panes are split while they are still empty, and the top pane keeps
 #   the full width of the screen. Splitting a pane that already holds output
 #   rewraps it, and a half-drawn logo in the corner of the frame reads as a bug
-#   in tuios rather than as a terminal doing what terminals do. Losing height
+#   in dartuios rather than as a terminal doing what terminals do. Losing height
 #   only scrolls, which is why the first split is the horizontal one.
 #
-#   Reach. Two of tuios's bindings cannot be spelled in a tape file, because vhs
+#   Reach. Two of dartuios's bindings cannot be spelled in a tape file, because vhs
 #   has no Alt+Space or Alt+Escape. The launcher is opened from its command
 #   palette row instead, which prints the alt+space shortcut on screen anyway.
 #
 Output "demo.gif"
 
-Require tuios
+Require dartuios
 
 Set Shell "fish"
 Set FontFamily "JetBrainsMono Nerd Font Mono"
@@ -46,20 +46,20 @@ Set Theme "TokyoNight"
 Set Framerate 22
 Set TypingSpeed 35ms
 
-Env XDG_CONFIG_HOME "/tmp/tuios-demo/config"
-Env XDG_RUNTIME_DIR "/tmp/tuios-demo/run"
-Env XDG_STATE_HOME "/tmp/tuios-demo/state"
-Env XDG_DATA_HOME "/tmp/tuios-demo/data"
-Env XDG_CACHE_HOME "/tmp/tuios-demo/cache"
+Env XDG_CONFIG_HOME "/tmp/dartuios-demo/config"
+Env XDG_RUNTIME_DIR "/tmp/dartuios-demo/run"
+Env XDG_STATE_HOME "/tmp/dartuios-demo/state"
+Env XDG_DATA_HOME "/tmp/dartuios-demo/data"
+Env XDG_CACHE_HOME "/tmp/dartuios-demo/cache"
 # The panes take their shell from here, not from Set Shell above, which only
 # decides what vhs itself starts.
 Env SHELL "/usr/bin/fish"
 # Note for anyone re-recording this: the launcher draws an icon beside each
 # application on a terminal that speaks the kitty graphics protocol, and vhs
 # does not. It renders a picture the guest sends straight through, which is why
-# the fastfetch logo below arrives intact, but not the placements tuios makes
+# the fastfetch logo below arrives intact, but not the placements dartuios makes
 # for itself, so the launcher here is the text-only form. Forcing the capability
-# with TUIOS_KITTY_GRAPHICS=1 does not help: it reserves the icon column and
+# with DARTUIOS_KITTY_GRAPHICS=1 does not help: it reserves the icon column and
 # then leaves it empty, which looks worse than not offering it. Record on a real
 # ghostty or kitty if the icons are the point.
 # The greeting is four lines of nothing in a pane this size.
@@ -70,12 +70,12 @@ Env DIRENV_LOG_FORMAT ""
 # The working directory, off camera. Everything else is prepared by
 # record-demo.sh before vhs starts.
 Hide
-Type "cd /tmp/tuios-demo/work; clear"
+Type "cd /tmp/dartuios-demo/work; clear"
 Enter
 Sleep 1s
 Show
 
-Type "tuios"
+Type "dartuios"
 Enter
 Sleep 3s
 
@@ -123,7 +123,7 @@ Sleep 800ms
 # A pane reports what it is doing, and the rail picks it up.
 Enter
 Sleep 700ms
-Type "tuios set-agent-state working -w claude -m 'refactoring the tiler'"
+Type "dartuios set-agent-state working -w claude -m 'refactoring the tiler'"
 Enter
 Sleep 2200ms
 
@@ -156,7 +156,7 @@ Sleep 600ms
 # theme still unchanged. Enter commits, which is also what writes it to the
 # config copy made above.
 #
-# The theme is a dark one on purpose. tuios does not paint a background of its
+# The theme is a dark one on purpose. dartuios does not paint a background of its
 # own, it recolours what the panes draw and its own accents, so a light theme
 # against a dark host terminal changes almost nothing on screen: the first take
 # of this beat applied catppuccin_latte and looked, on film, like nothing had

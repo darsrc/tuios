@@ -13,7 +13,7 @@ import (
 //
 // An addr is anything ssh understands, and the thing most people already have
 // is an ssh_config alias. Reading ~/.ssh/config for its Host names turns "what
-// do I type here" into a list to pick from, without tuios guessing anything.
+// do I type here" into a list to pick from, without dartuios guessing anything.
 //
 // Three rules keep this honest, and they are the whole design.
 //

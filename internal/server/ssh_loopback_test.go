@@ -19,7 +19,7 @@ func TestIsLoopbackAddr(t *testing.T) {
 		{"a remote peer", &net.TCPAddr{IP: net.ParseIP("10.0.0.5"), Port: 41234}, false},
 		{"a link-local peer is not loopback", &net.TCPAddr{IP: net.ParseIP("169.254.1.1"), Port: 41234}, false},
 		{"nil is not loopback", nil, false},
-		{"a unix socket has no port to split, so it is local", &net.UnixAddr{Name: "/run/user/1000/tuios.sock", Net: "unix"}, true},
+		{"a unix socket has no port to split, so it is local", &net.UnixAddr{Name: "/run/user/1000/dartuios.sock", Net: "unix"}, true},
 	}
 
 	for _, tc := range cases {

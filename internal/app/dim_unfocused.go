@@ -5,9 +5,9 @@ import (
 
 	uv "github.com/charmbracelet/ultraviolet"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // Dimming an unfocused pane's content is the one appearance question the frame
@@ -61,7 +61,7 @@ func paneDim(isFocused bool, s *config.Settings) int {
 // A run is typically a whole word or a whole line.
 //
 // A cell carrying the terminal's default colour is left alone unless a theme is
-// set. Untheme, tuios emits colour indices and the host terminal decides what
+// set. Untheme, dartuios emits colour indices and the host terminal decides what
 // they look like, so there is no RGB here to carry anywhere; guessing one would
 // replace the user's own palette with ours on the panes they are not looking
 // at, which is a stranger result than not dimming.

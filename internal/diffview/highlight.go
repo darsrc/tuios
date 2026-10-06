@@ -9,7 +9,7 @@ import (
 
 	"github.com/alecthomas/chroma/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/diffview/lexers"
+	"github.com/darsrc/tuios/internal/diffview/lexers"
 )
 
 // Limits past which a text is drawn plain rather than tokenised. chroma's

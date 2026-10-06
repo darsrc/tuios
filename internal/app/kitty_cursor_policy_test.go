@@ -7,10 +7,10 @@ import (
 	"testing"
 )
 
-// Every placement tuios sends the host has to carry C=1.
+// Every placement dartuios sends the host has to carry C=1.
 //
 // The protocol's default is C=0, which moves the cursor to after the image's
-// bottom right cell. tuios places images anywhere in a pane, including its last
+// bottom right cell. dartuios places images anywhere in a pane, including its last
 // rows, so that move runs past the bottom of the screen and the host terminal
 // scrolls to make room. The save and restore around a placement put the cursor
 // back; they cannot put back a scroll. Every frame after it is then drawn one

@@ -1,12 +1,12 @@
 package tuie2e
 
 // End-to-end DOOM-fire throughput: a pane cats a full-screen truecolor
-// repaint stream as fast as tuios will drain it, and the wall clock from
+// repaint stream as fast as dartuios will drain it, and the wall clock from
 // start to the completion marker is the whole pipeline's consumption rate:
 // PTY read, emulator parse, damage, render. Run against a pure-Go and a
 // ghostty-tagged binary to compare backends end to end:
 //
-//	TUIOS_E2E=1 TUIOS_PERF=1 go test -run TestPerfDoomFireStream -v ./...
+//	DARTUIOS_E2E=1 DARTUIOS_PERF=1 go test -run TestPerfDoomFireStream -v ./...
 
 import (
 	"fmt"
@@ -85,13 +85,13 @@ func TestPerfDoomFireStream(t *testing.T) {
 // TestPerfDoomFireGame runs the real DOOM-fire binary in a pane and reads
 // its own fps counter off the screen. Unlike the cat-flood variant, the game
 // paces itself on the terminal's consumption, so the emulator's parse cost
-// is on the frame path. Point TUIOS_PERF_DOOMFIRE_BIN at a DOOM-fire-zig
+// is on the frame path. Point DARTUIOS_PERF_DOOMFIRE_BIN at a DOOM-fire-zig
 // binary to enable it.
 func TestPerfDoomFireGame(t *testing.T) {
 	perfGate(t)
-	game := os.Getenv("TUIOS_PERF_DOOMFIRE_BIN")
+	game := os.Getenv("DARTUIOS_PERF_DOOMFIRE_BIN")
 	if game == "" {
-		t.Skip("TUIOS_PERF_DOOMFIRE_BIN not set")
+		t.Skip("DARTUIOS_PERF_DOOMFIRE_BIN not set")
 	}
 
 	term, _ := start(t, startOpts{
@@ -132,5 +132,5 @@ func TestPerfDoomFireGame(t *testing.T) {
 	if m == nil {
 		t.Fatalf("no fps counter on screen:\n%s", snap)
 	}
-	t.Logf("doomfire game fps inside tuios: %s", m[1])
+	t.Logf("doomfire game fps inside dartuios: %s", m[1])
 }

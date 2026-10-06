@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // fakeDaemon answers exactly one binary handshake with the welcome it is given,
@@ -63,7 +63,7 @@ func fakeDaemonReplying(t *testing.T, replyType MessageType, welcome *WelcomePay
 }
 
 // TestClientRefusesADaemonSpeakingAnotherProtocol is the release case: a user
-// upgrades tuios while their daemon keeps running, and a new client meets a
+// upgrades dartuios while their daemon keeps running, and a new client meets a
 // daemon that does not speak its wire protocol.
 //
 // An unchecked version field is worse than no field, because it implies a check
@@ -90,7 +90,7 @@ func TestClientRefusesADaemonSpeakingAnotherProtocol(t *testing.T) {
 	if mismatch.DaemonProtocol != ProtocolVersion+1 || mismatch.ClientProtocol != ProtocolVersion {
 		t.Fatalf("the error does not carry both versions: %+v", mismatch)
 	}
-	for _, want := range []string{"9.9.9", "0.8.0", "tuios kill-server"} {
+	for _, want := range []string{"9.9.9", "0.8.0", "dartuios kill-server"} {
 		if !strings.Contains(err.Error(), want) {
 			t.Fatalf("the message a user sees does not mention %q:\n%s", want, err.Error())
 		}
@@ -132,7 +132,7 @@ func TestClientRefusesADaemonThatPredatesTheVersionField(t *testing.T) {
 	if mismatch.DaemonProtocol != LegacyProtocolVersion {
 		t.Fatalf("silence should read as protocol %d, got %d", LegacyProtocolVersion, mismatch.DaemonProtocol)
 	}
-	if !strings.Contains(err.Error(), "tuios kill-server") {
+	if !strings.Contains(err.Error(), "dartuios kill-server") {
 		t.Fatalf("the message a user sees does not name the fix:\n%s", err.Error())
 	}
 }
@@ -159,7 +159,7 @@ func TestClientRefusesTheRealV070Numbering(t *testing.T) {
 	if _, ok := errors.AsType[*ProtocolMismatchError](err); !ok {
 		t.Fatalf("expected a *ProtocolMismatchError, got %T: %v", err, err)
 	}
-	for _, want := range []string{"0.8.0", "tuios kill-server"} {
+	for _, want := range []string{"0.8.0", "dartuios kill-server"} {
 		if !strings.Contains(err.Error(), want) {
 			t.Fatalf("the message a user sees does not mention %q:\n%s", want, err.Error())
 		}
@@ -216,7 +216,7 @@ func TestDaemonAnswersAHello(t *testing.T) {
 		if err := resp.ParsePayload(&errPayload); err != nil {
 			t.Fatalf("parse error reply: %v", err)
 		}
-		if !strings.Contains(errPayload.Message, "tuios kill-server") {
+		if !strings.Contains(errPayload.Message, "dartuios kill-server") {
 			t.Fatalf("the daemon's refusal does not name the fix: %s", errPayload.Message)
 		}
 	})
@@ -230,7 +230,7 @@ func TestDaemonAnswersAHello(t *testing.T) {
 		if err := resp.ParsePayload(&errPayload); err != nil {
 			t.Fatalf("parse error reply: %v", err)
 		}
-		if !strings.Contains(errPayload.Message, "tuios kill-server") {
+		if !strings.Contains(errPayload.Message, "dartuios kill-server") {
 			t.Fatalf("the daemon's refusal does not name the fix: %s", errPayload.Message)
 		}
 	})

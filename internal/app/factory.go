@@ -5,11 +5,11 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/pkg/applist"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/pkg/applist"
 )
 
 // OSOptions configures the creation of an OS instance.
@@ -36,7 +36,7 @@ type OSOptions struct {
 	BrowserClient bool
 
 	// LearnMode runs the session as the guided tour in the browser build
-	// (cmd/tuios-wasm): quitting shows a note instead of ending the program,
+	// (cmd/dartuios-wasm): quitting shows a note instead of ending the program,
 	// and actions the demo cannot do say so instead of failing. See
 	// learn_mode.go.
 	LearnMode bool
@@ -48,7 +48,7 @@ type OSOptions struct {
 
 	// ConfigReadOnly makes the settings page apply changes to this session only
 	// and never write the config file. Set it wherever the person driving the
-	// session is not the person whose config file it is: tuios-web serves a
+	// session is not the person whose config file it is: dartuios-web serves a
 	// network client, and several of them at once, each holding the snapshot it
 	// loaded when it connected, so a save would write one client's stale view
 	// of the whole file over the operator's and over every other client's.
@@ -107,7 +107,7 @@ type OSOptions struct {
 	GraphicsRemoteClient bool
 
 	// RemoteClient marks a client process that is not on the user's machine:
-	// the tuios ssh server and tuios-web both run the TUI beside the daemon,
+	// the dartuios ssh server and dartuios-web both run the TUI beside the daemon,
 	// with the user at the far end of a network. Anything that would touch the
 	// host's own desktop, a clipboard helper or a file viewer, has to know,
 	// because doing it here would act on the server's desktop and not on the
@@ -115,7 +115,7 @@ type OSOptions struct {
 	RemoteClient bool
 
 	// TouchClient says the pointer driving this session is a finger, which
-	// widens the gestures that are aimed at a single cell. Only tuios-web can
+	// widens the gestures that are aimed at a single cell. Only dartuios-web can
 	// know this, and only from the browser that connected.
 	TouchClient bool
 
@@ -267,7 +267,7 @@ func NewOS(opts OSOptions) *OS {
 		Caps:        caps,
 	})
 
-	// Tell the terminal package what tuios can forward, so shells spawned
+	// Tell the terminal package what dartuios can forward, so shells spawned
 	// locally advertise a terminal identity their image tools recognise. The
 	// passthroughs are the source of truth here: they already fold detection
 	// and the force flag together, and a nil passthrough means no forwarding.
@@ -304,7 +304,7 @@ func NewOS(opts OSOptions) *OS {
 		if opts.BrowserClient {
 			os.ConfigWarnings = append(os.ConfigWarnings, browserAlertWarnings(cfg)...)
 			os.ConfigWarnings = append(os.ConfigWarnings,
-				remoteDockComponentWarning(cfg, "tuios-web")...)
+				remoteDockComponentWarning(cfg, "dartuios-web")...)
 		}
 		if opts.IsSSHMode {
 			os.ConfigWarnings = append(os.ConfigWarnings,

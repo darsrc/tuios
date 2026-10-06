@@ -8,10 +8,10 @@ import (
 	"net"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/federation"
 )
 
-// The proxy's half of a link connection: `tuios stdio-proxy` calls
+// The proxy's half of a link connection: `dartuios stdio-proxy` calls
 // DialForLink once for every stream the hub opens.
 
 // linkDialTimeout bounds one dial of a socket on this machine, and the

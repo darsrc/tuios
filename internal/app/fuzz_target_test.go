@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/fuzz"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The in-process fuzz target. It drives a real OS through the real
@@ -128,7 +128,7 @@ func (f *fuzzOS) Reset() error {
 	// No daemon client, on purpose. The panes are daemon-backed windows, which
 	// is what gives them an emulator and a resize hook without forking a shell,
 	// but the transport is left out: a client with no connection panics inside
-	// its own send, which would be reported as a finding in tuios and is not
+	// its own send, which would be reported as a finding in dartuios and is not
 	// one. The daemon protocol is the PTY target's job, and that one runs a
 	// real daemon. Everything this oracle reads is client-side, and the PTY
 	// announcement it depends on arrives through DaemonResizeFunc per pane.
@@ -309,7 +309,7 @@ func (f *fuzzOS) Apply(a fuzz.Action) error {
 		// reserves, so the panes have to be re-laid out into the region that
 		// leaves them; writing the field alone left them tiled for the old band
 		// and the rail painted over the pane beneath it, which is a finding
-		// about this file rather than about tuios.
+		// about this file rather than about dartuios.
 		m.SidebarSetCollapsed(!m.SidebarCollapsed)
 	case fuzz.SidebarPosition:
 		m.Settings.SidebarPosition = []string{"left", "right"}[a.A%2]

@@ -26,7 +26,7 @@ import (
 //
 // Everything here goes through the real transport. The ssh stand-in drops
 // ssh's options and runs the command locally with the far machine's XDG
-// directories, so `ssh build tuios stdio-proxy` reaches a second real daemon
+// directories, so `ssh build dartuios stdio-proxy` reaches a second real daemon
 // over a real pipe. No network is used and nothing reads the developer's ssh
 // configuration.
 //
@@ -70,7 +70,7 @@ func attachOnBuild(t *testing.T, base string, env []string, farSession string) *
 // child dying looks like from this machine.
 func breakTheLink(t *testing.T) {
 	t.Helper()
-	out, err := exec.Command("pkill", "-f", tuiosBin+" stdio-proxy").CombinedOutput()
+	out, err := exec.Command("pkill", "-f", dartuiosBin+" stdio-proxy").CombinedOutput()
 	if err != nil {
 		t.Fatalf("kill the link's proxy: %v\n%s", err, out)
 	}
@@ -91,10 +91,10 @@ func TestAHostSessionStaysAttached(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
-	if out, err := tuiosCLI(t, remote, "new", "far-steady", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-steady", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 	term := attachOnBuild(t, base, env, "far-steady")
@@ -115,7 +115,7 @@ func TestAHostSessionStaysAttached(t *testing.T) {
 		}
 		time.Sleep(500 * time.Millisecond)
 	}
-	if out, _ := tuiosCLI(t, base, "hosts"); strings.Contains(out, "the link dropped") {
+	if out, _ := dartuiosCLI(t, base, "hosts"); strings.Contains(out, "the link dropped") {
 		t.Fatalf("ASSERTION: the link dropped while nothing was wrong with it:\n%s", out)
 	}
 	t.Logf("a session on build, still attached after 25 seconds:\n%s", term.Snapshot())
@@ -132,10 +132,10 @@ func TestALinkThatDropsIsDialedAgainAndThePaneComesBack(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
-	if out, err := tuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 	term := attachOnBuild(t, base, env, "far-shell")
@@ -181,7 +181,7 @@ func TestALinkThatDropsIsDialedAgainAndThePaneComesBack(t *testing.T) {
 	if out := remoteSessionsListed(t, remote); !strings.Contains(out, "far-shell") {
 		t.Fatalf("ASSERTION: the far session did not survive:\n%s", out)
 	}
-	if out, _ := tuiosCLI(t, base, "ls"); strings.Contains(out, "far-shell") {
+	if out, _ := dartuiosCLI(t, base, "ls"); strings.Contains(out, "far-shell") {
 		t.Fatalf("ASSERTION: the reconnect made a session on this machine instead of going back to the one on build:\n%s", out)
 	}
 	noNestedClient(t, "far-shell")
@@ -200,10 +200,10 @@ func TestAScrolledPaneIsStillScrolledAfterAReconnect(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
-	if out, err := tuiosCLI(t, remote, "new", "far-scroll", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-scroll", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 	term := attachOnBuild(t, base, env, "far-scroll")
@@ -249,10 +249,10 @@ func TestAHostThatNeverComesBackGivesUpAndSaysWhy(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh, "TUIOS_HOST_RECONNECT_BUDGET=8s"}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh, "DARTUIOS_HOST_RECONNECT_BUDGET=8s"}
 
-	if out, err := tuiosCLI(t, remote, "new", "far-gone", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-gone", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 	term := attachOnBuild(t, base, env, "far-gone")
@@ -301,10 +301,10 @@ func TestTheDaemonSaysWhyALinkDropped(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
-	if out, err := tuiosCLI(t, remote, "new", "far-witness", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-witness", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 	term := attachOnBuild(t, base, env, "far-witness")
@@ -317,7 +317,7 @@ func TestTheDaemonSaysWhyALinkDropped(t *testing.T) {
 	deadline := time.Now().Add(30 * time.Second)
 	var last string
 	for time.Now().Before(deadline) {
-		out, _ := tuiosCLI(t, base, "hosts")
+		out, _ := dartuiosCLI(t, base, "hosts")
 		last = out
 		if strings.Contains(out, "the link dropped") {
 			break
@@ -330,5 +330,5 @@ func TestTheDaemonSaysWhyALinkDropped(t *testing.T) {
 	if !strings.Contains(last, "connecting again") {
 		t.Errorf("ASSERTION: the listing does not say what happened to the link:\n%s", last)
 	}
-	t.Logf("tuios hosts after a drop:\n%s", last)
+	t.Logf("dartuios hosts after a drop:\n%s", last)
 }

@@ -19,7 +19,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // Call is what the rules read.
@@ -184,7 +184,7 @@ func (r Rule) matches(call Call, text string, cmds []command) bool {
 	return false
 }
 
-// ParseSummary splits the line tuios's own hooks report for an approval,
+// ParseSummary splits the line dartuios's own hooks report for an approval,
 // "approve <Tool>: <what>", into the tool and what it acts on. A line of any
 // other form is returned whole with no tool, which the shell rules read as a
 // command.

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/listnav"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/listnav"
 )
 
 // # File actions on the rail
@@ -22,7 +22,7 @@ import (
 //
 // Not in the rail. A create prompt, a rename field and a delete confirmation
 // each have to show a name and a question, and the rail has about twenty-two
-// columns left after its gutter and its glyph. "Delete /home/g/dev/tuios/in…?"
+// columns left after its gutter and its glyph. "Delete /home/g/dev/dartuios/in…?"
 // with the answer off the bottom is not a confirmation, it is a shape that
 // looks like one.
 //

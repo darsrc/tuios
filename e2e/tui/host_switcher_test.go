@@ -48,10 +48,10 @@ func TestSwitcherCrossesMachines(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
-	if out, err := tuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 
@@ -67,7 +67,7 @@ func TestSwitcherCrossesMachines(t *testing.T) {
 	openSwitcherOn(t, term, "far-shell @ build", "far")
 	waitRailCurrent(t, term, "far-shell")
 	noSwitchFailure(t, term, "going to build,")
-	if out, _ := tuiosCLI(t, base, "ls"); strings.Contains(out, "far-shell") {
+	if out, _ := dartuiosCLI(t, base, "ls"); strings.Contains(out, "far-shell") {
 		t.Fatalf("ASSERTION: this machine's daemon made a session called far-shell, so the switch never left it:\n%s", out)
 	}
 	t.Logf("on build:\n%s", term.Snapshot())

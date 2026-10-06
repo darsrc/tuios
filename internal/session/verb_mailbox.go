@@ -17,7 +17,7 @@ import (
 // The daemon already has an event hub, so the first question was whether it
 // already did this. It does not, and the reason is worth writing down: the hub
 // delivers only to connections subscribed at the instant of publish and keeps no
-// backfill, while an agent drives tuios through one-shot CLI calls and is almost
+// backfill, while an agent drives dartuios through one-shot CLI calls and is almost
 // never subscribed. Store-and-forward is the single thing the hub cannot do.
 // Everything around it, delivery, filtering and blocking reads, is still the
 // hub's, which is why this is a ring and four verbs rather than a broker.

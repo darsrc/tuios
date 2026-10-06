@@ -3,13 +3,13 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestNewOS_DoesNotClobberAppearanceGlobals is a regression test for the config
 // reload bug: NewOS used to call LoadUserConfig a second time, re-applying the
 // file's appearance over CLI flags already reconciled at startup (e.g.
-// `tuios --no-animations` starting with animations on). NewOS must now use the
+// `dartuios --no-animations` starting with animations on). NewOS must now use the
 // passed-in config without mutating any appearance package global.
 func TestNewOS_DoesNotClobberAppearanceGlobals(t *testing.T) {
 	original := config.Global.Motion

@@ -115,7 +115,7 @@ func TestUnbindingFromTheOverlayReachesTheConfigFile(t *testing.T) {
 		t.Fatalf("nothing was reported after ctrl+d: %v\n%s", err, term.Snapshot())
 	}
 
-	path := filepath.Join(base, "XDG_CONFIG_HOME", "tuios", "config.toml")
+	path := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios", "config.toml")
 	if err := term.WaitFor(func(tuitest.Screen) bool {
 		data, err := os.ReadFile(path) // #nosec G304 - the test's own isolation root
 		return err == nil && strings.Contains(string(data), "toggle_zoom = []")

@@ -5,8 +5,8 @@ import (
 	"strconv"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 const sessionSwitcherWidth = 58
@@ -17,7 +17,7 @@ func (m *OS) renderSessionSwitcher() (string, overlay.Geometry, []overlayRowHit)
 	// Daemon-only feature.
 	if !m.IsDaemonSession || m.DaemonClient == nil {
 		return m.simpleOverlayPanel("Sessions",
-			[]string{"Sessions need the daemon.", "", "Start a daemon session with: tuios new"},
+			[]string{"Sessions need the daemon.", "", "Start a daemon session with: dartuios new"},
 			[]overlay.Hint{{Key: "esc", Label: "close"}})
 	}
 
@@ -96,7 +96,7 @@ func (m *OS) sessionSwitcherRow(item sessiontree.Node, selected bool, rowBg colo
 	// the way the rail draws it.
 	down := item.Host != "" && !m.hostIsUp(item.Host)
 	right := overlay.Style(rowBg).Foreground(pal.FgMute).Render(panePlural(item.WindowCount))
-	if glyph, glyphColor := agentMark(item.AgentState, item.DoneSeen, pal); glyph != "" && !down {
+	if glyph, glyphColor := agentMark(item.AgentState, item.DoneSeen, pal, m.filamentFrame); glyph != "" && !down {
 		right += overlay.Style(rowBg).Foreground(glyphColor).
 			Bold(sidebarAttention(item.AgentState)).Render(" " + glyph)
 	}

@@ -1,8 +1,8 @@
 # Hooks
 
-The docs site has the same reference: https://tuios.dev/docs/hooks
+The docs site has the same reference: https://dartuios.dev/docs/hooks
 
-Ten events, each running a shell command with `TUIOS_*` environment variables carrying the facts. This page lists every event and every variable. Hooks are read once at startup from the `[hooks]` table.
+Ten events, each running a shell command with `DARTUIOS_*` environment variables carrying the facts. This page lists every event and every variable. Hooks are read once at startup from the `[hooks]` table.
 
 ## Which side runs a hook
 
@@ -25,7 +25,7 @@ The window set, the focused window, the current workspace and a pane's agent sta
 
 A client's terminal size, its attach and its detach belong to that one client, and the layout is computed by the attached renderer. Those stay in the client. Three clients attaching is three attaches.
 
-A tuios with no daemon runs every hook itself.
+A dartuios with no daemon runs every hook itself.
 
 ## The table and what a hook gets
 
@@ -33,8 +33,8 @@ Each event takes one command or a list of them, run with `sh -c`:
 
 ```toml
 [hooks]
-after-new-window  = "notify-send 'tuios' \"new window $TUIOS_WINDOW_NAME\""
-after-agent-state = ["sh ~/.config/tuios/hooks/phone.sh"]
+after-new-window  = "notify-send 'dartuios' \"new window $DARTUIOS_WINDOW_NAME\""
+after-agent-state = ["sh ~/.config/dartuios/hooks/phone.sh"]
 ```
 
 Every command gets these variables. A variable that does not describe the event
@@ -42,42 +42,42 @@ is empty, or 0 for a number, so a script can read all of them:
 
 | Variable | What it holds |
 |---|---|
-| `TUIOS_EVENT` | The event name |
-| `TUIOS_SESSION_ID` | The session's name |
-| `TUIOS_WINDOW_ID`, `TUIOS_WINDOW_NAME` | The window the event is about |
-| `TUIOS_WORKSPACE`, `TUIOS_PREV_WORKSPACE` | The workspace, and the one before an `after-workspace-switch` |
-| `TUIOS_LAYOUT` | The layout after an `after-layout-change` |
-| `TUIOS_WIDTH`, `TUIOS_HEIGHT` | The size after an `after-resize` |
-| `TUIOS_AGENT_STATE`, `TUIOS_AGENT_PREV_STATE` | For `after-agent-state`: the state the pane moved to and from |
-| `TUIOS_AGENT_HARNESS`, `TUIOS_AGENT_MESSAGE` | For `after-agent-state`: the harness and the message that came with the state |
-| `TUIOS_COMMAND`, `TUIOS_EXIT_CODE`, `TUIOS_DURATION_MS` | For `after-command-finished`, below |
+| `DARTUIOS_EVENT` | The event name |
+| `DARTUIOS_SESSION_ID` | The session's name |
+| `DARTUIOS_WINDOW_ID`, `DARTUIOS_WINDOW_NAME` | The window the event is about |
+| `DARTUIOS_WORKSPACE`, `DARTUIOS_PREV_WORKSPACE` | The workspace, and the one before an `after-workspace-switch` |
+| `DARTUIOS_LAYOUT` | The layout after an `after-layout-change` |
+| `DARTUIOS_WIDTH`, `DARTUIOS_HEIGHT` | The size after an `after-resize` |
+| `DARTUIOS_AGENT_STATE`, `DARTUIOS_AGENT_PREV_STATE` | For `after-agent-state`: the state the pane moved to and from |
+| `DARTUIOS_AGENT_HARNESS`, `DARTUIOS_AGENT_MESSAGE` | For `after-agent-state`: the harness and the message that came with the state |
+| `DARTUIOS_COMMAND`, `DARTUIOS_EXIT_CODE`, `DARTUIOS_DURATION_MS` | For `after-command-finished`, below |
 
 `after-agent-state` fires only for the transitions `[notifications.agent]`
 alerts on (`needs_input`, `errored` and `done` by default), after its
 `settle_seconds`, outside its `quiet_hours`, and not for the pane an attached
 client is showing when `suppress_focused` is on. A terminal that reports focus
-events tells tuios when its window loses focus, and while every attached
+events tells dartuios when its window loses focus, and while every attached
 client's terminal is out of focus nobody counts as looking, so the hook fires
-for the shown pane too. `tuios session-info` shows this as `host focus`. Because the daemon runs it, it
-fires with nobody attached, which is how to reach a phone: `tuios --skill
-recipes` has a working ntfy hook. `TUIOS_AGENT_MESSAGE` is the agent's own text,
+for the shown pane too. `dartuios session-info` shows this as `host focus`. Because the daemon runs it, it
+fires with nobody attached, which is how to reach a phone: `dartuios --skill
+recipes` has a working ntfy hook. `DARTUIOS_AGENT_MESSAGE` is the agent's own text,
 so think before a hook sends it off the machine.
 
 `after-command-finished` fires when a pane's shell reports, through its OSC 133
 prompt marks, that a command finished. A shell without that integration never
-fires it. It gets `TUIOS_COMMAND` (the command line, cut to 512 bytes with
-likely secrets masked), `TUIOS_EXIT_CODE` (empty when the shell sent no status)
-and `TUIOS_DURATION_MS`. Every other event gets those three empty. A tuios with
+fires it. It gets `DARTUIOS_COMMAND` (the command line, cut to 512 bytes with
+likely secrets masked), `DARTUIOS_EXIT_CODE` (empty when the shell sent no status)
+and `DARTUIOS_DURATION_MS`. Every other event gets those three empty. A dartuios with
 no daemon does not fire it, since only the daemon follows the marks.
 
-The daemon reads the `[hooks]` table when it starts. Restart the daemon with `tuios kill-server` after you change a hook the daemon runs. The daemon does not reload hooks when the file changes.
+The daemon reads the `[hooks]` table when it starts. Restart the daemon with `dartuios kill-server` after you change a hook the daemon runs. The daemon does not reload hooks when the file changes.
 
-A hook the daemon runs gets the daemon's environment, not your shell's. A daemon started by `tuios new` keeps the environment of that first shell. Put full paths in the command when in doubt.
+A hook the daemon runs gets the daemon's environment, not your shell's. A daemon started by `dartuios new` keeps the environment of that first shell. Put full paths in the command when in doubt.
 
 ## When a hook does not fire
 
 ```sh
-tuios list-hooks
+dartuios list-hooks
 ```
 
 Every registered command, with how many times it ran, its last exit code, when it last ran and its last error.
@@ -86,4 +86,4 @@ Every registered command, with how many times it ran, its last exit code, when i
 - `RUNS` of 0 means the command is fine and the event never happened.
 - A non-zero exit means the command ran and failed. The error says why.
 
-The daemon also logs a warning for every failing hook, with the exit code and the last 1 KiB of stderr. Run `tuios daemon --log-level=basic` to see one line per firing as well.
+The daemon also logs a warning for every failing hook, with the exit code and the last 1 KiB of stderr. Run `dartuios daemon --log-level=basic` to see one line per firing as well.

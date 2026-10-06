@@ -60,7 +60,7 @@ func writeFakeSSHMulti(t *testing.T, dir string, bases map[string]string) string
 // routes by: host h is at someone@hbox.
 func writeMachinesConfig(t *testing.T, base string, hosts []string) {
 	t.Helper()
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -68,7 +68,7 @@ func writeMachinesConfig(t *testing.T, base string, hosts []string) {
 	for _, h := range hosts {
 		body.WriteString("[hosts." + h + "]\n")
 		body.WriteString("addr = \"someone@" + h + "box\"\n")
-		body.WriteString("command = \"" + tuiosBin + "\"\n")
+		body.WriteString("command = \"" + dartuiosBin + "\"\n")
 		body.WriteString("connect_timeout = 5\n\n")
 	}
 	if err := os.WriteFile(filepath.Join(dir, "config.toml"), []byte(body.String()), 0o600); err != nil {
@@ -79,7 +79,7 @@ func writeMachinesConfig(t *testing.T, base string, hosts []string) {
 // writeHostAddrs writes a [hosts] table of name to address.
 func writeHostAddrs(t *testing.T, base string, hosts map[string]string) {
 	t.Helper()
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -87,7 +87,7 @@ func writeHostAddrs(t *testing.T, base string, hosts map[string]string) {
 	for name, addr := range hosts {
 		body.WriteString("[hosts." + name + "]\n")
 		body.WriteString("addr = \"" + addr + "\"\n")
-		body.WriteString("command = \"" + tuiosBin + "\"\n")
+		body.WriteString("command = \"" + dartuiosBin + "\"\n")
 		body.WriteString("connect_timeout = 5\n\n")
 	}
 	if err := os.WriteFile(filepath.Join(dir, "config.toml"), []byte(body.String()), 0o600); err != nil {
@@ -123,7 +123,7 @@ func startGlobalFleetWith(t *testing.T, alphaHosts map[string]string) *globalFle
 		"someone@betabox":  f.beta,
 		"someone@herebox":  f.here,
 	})
-	f.env = []string{"TUIOS_SSH=" + ssh}
+	f.env = []string{"DARTUIOS_SSH=" + ssh}
 	f.machine = map[string]string{
 		filepath.Base(f.here):  "here",
 		filepath.Base(f.alpha): "alpha",
@@ -131,13 +131,13 @@ func startGlobalFleetWith(t *testing.T, alphaHosts map[string]string) *globalFle
 	}
 	writeHostAddrs(t, f.alpha, alphaHosts)
 	for _, r := range []string{f.beta, f.alpha} {
-		if out, err := tuiosCLIEnv(t, r, f.env, "new", "far", "--detach"); err != nil {
+		if out, err := dartuiosCLIEnv(t, r, f.env, "new", "far", "--detach"); err != nil {
 			t.Fatalf("start a far daemon: %v\n%s", err, out)
 		}
 	}
 	writeMachinesConfig(t, f.here, []string{"alpha", "beta"})
 	killDaemon(t, f.here)
-	if out, err := tuiosCLIEnv(t, f.here, f.env, "new", "home", "--detach"); err != nil {
+	if out, err := dartuiosCLIEnv(t, f.here, f.env, "new", "home", "--detach"); err != nil {
 		t.Fatalf("start this machine's daemon: %v\n%s", err, out)
 	}
 	waitForHostListing(t, f.here, func(s string) bool {
@@ -146,7 +146,7 @@ func startGlobalFleetWith(t *testing.T, alphaHosts map[string]string) *globalFle
 	return f
 }
 
-// hostLineUp reports whether the `tuios hosts` line for name says up.
+// hostLineUp reports whether the `dartuios hosts` line for name says up.
 func hostLineUp(listing, name string) bool {
 	for _, line := range strings.Split(listing, "\n") {
 		fields := strings.Fields(strings.ReplaceAll(line, "│", " "))
@@ -389,10 +389,10 @@ func waitNewWindow(t *testing.T, base string, env []string, sess string, before 
 	return "", "", false
 }
 
-// pickLoops is how many picks each test makes. TUIOS_E2E_PICK_LOOPS raises it
+// pickLoops is how many picks each test makes. DARTUIOS_E2E_PICK_LOOPS raises it
 // for a soak.
 func pickLoops(def int) int {
-	if n, err := strconv.Atoi(os.Getenv("TUIOS_E2E_PICK_LOOPS")); err == nil && n > 0 {
+	if n, err := strconv.Atoi(os.Getenv("DARTUIOS_E2E_PICK_LOOPS")); err == nil && n > 0 {
 		return n
 	}
 	return def
@@ -411,7 +411,7 @@ func pickHow(i int, path, label string, click bool) string {
 // picker, by keyboard and by click, for every machine, many times over.
 func TestAPaneInAGlobalSessionRunsOnThePickedMachine(t *testing.T) {
 	f := startGlobalFleet(t)
-	if out, err := tuiosCLIEnv(t, f.here, f.env, "new", "global", "--global"); err != nil {
+	if out, err := dartuiosCLIEnv(t, f.here, f.env, "new", "global", "--global"); err != nil {
 		t.Fatalf("create the global session: %v\n%s", err, out)
 	}
 	term := startIn(t, f.here, startOpts{args: []string{"attach", "global"}, env: f.env})
@@ -465,7 +465,7 @@ func TestAHostHoldsManyPanes(t *testing.T) {
 		var ids []string
 		for i := range panes {
 			before := sessionWindowHosts(t, f.here, f.env, "home")
-			out, err := tuiosCLIEnv(t, f.here, f.env, "new-window", "-s", "home", "--host", "alpha")
+			out, err := dartuiosCLIEnv(t, f.here, f.env, "new-window", "-s", "home", "--host", "alpha")
 			if err != nil {
 				t.Fatalf("ASSERTION: round %d, pane %d on alpha was refused: %v\n%s", round+1, i+1, err, out)
 			}
@@ -479,7 +479,7 @@ func TestAHostHoldsManyPanes(t *testing.T) {
 			t.Fatalf("ASSERTION: the last pane runs on %s, not alpha", got)
 		}
 		for _, id := range ids {
-			if out, err := tuiosCLIEnv(t, f.here, f.env, "run-command", "-s", "home", "CloseWindow", id); err != nil {
+			if out, err := dartuiosCLIEnv(t, f.here, f.env, "run-command", "-s", "home", "CloseWindow", id); err != nil {
 				t.Fatalf("close %s: %v\n%s", id, err, out)
 			}
 		}
@@ -496,7 +496,7 @@ func takeOffline(t *testing.T, dir, addr string) {
 	breakTheLink(t)
 }
 
-// cliWithin is tuiosCLIEnv with a deadline, for the reads a wait loop polls.
+// cliWithin is dartuiosCLIEnv with a deadline, for the reads a wait loop polls.
 // A daemon that stops answering then shows as a failed read, and the loop's
 // own deadline still holds.
 func cliWithin(t *testing.T, base string, env []string, args ...string) (string, error) {
@@ -504,7 +504,7 @@ func cliWithin(t *testing.T, base string, env []string, args ...string) (string,
 	pinPreV080Looks(t, base)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	cmd := exec.CommandContext(ctx, tuiosBin, args...)
+	cmd := exec.CommandContext(ctx, dartuiosBin, args...)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
 		cmd.Env = append(cmd.Env, key+"="+xdgDir(base, key))

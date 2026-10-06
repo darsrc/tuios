@@ -9,7 +9,7 @@ import (
 
 // TestGhosttyClipboardWriteEffectFires covers the clipboard-write effect.
 //
-// tuios answers OSC 52 itself in handleOSC and never forwards it, so the only
+// dartuios answers OSC 52 itself in handleOSC and never forwards it, so the only
 // clipboard writes that reach libghostty are the iTerm2 OSC 1337 Copy form and
 // the Kitty OSC 5522 protocol.
 func TestGhosttyClipboardWriteEffectFires(t *testing.T) {

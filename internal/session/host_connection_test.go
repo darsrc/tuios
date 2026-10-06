@@ -14,9 +14,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // A connection through a host, proved with two real daemons in one process.

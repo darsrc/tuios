@@ -1,16 +1,16 @@
 //go:build e2e
 
-// Package e2e drives a real tuios daemon end to end over its unix socket,
+// Package e2e drives a real dartuios daemon end to end over its unix socket,
 // exercising the JSON verb control plane and session resurrection the way an
 // external scripting client would: raw socket writes, no in-process shortcuts.
 //
 // These tests are behind the "e2e" build tag because they spawn real daemons
 // and real shells. Run them with:
 //
-//	go build -o /tmp/tuios ./cmd/tuios
-//	TUIOS_BIN=/tmp/tuios go test -tags e2e ./e2e/...
+//	go build -o /tmp/dartuios ./cmd/dartuios
+//	DARTUIOS_BIN=/tmp/dartuios go test -tags e2e ./e2e/...
 //
-// When TUIOS_BIN is unset the tests build the binary themselves into a temp
+// When DARTUIOS_BIN is unset the tests build the binary themselves into a temp
 // directory, so a bare "go test -tags e2e ./e2e/..." also works.
 //
 // Every test runs in a hermetic environment: XDG_RUNTIME_DIR (which holds the
@@ -37,7 +37,7 @@ import (
 // harness
 // ---------------------------------------------------------------------------
 
-// env is one isolated tuios installation: a binary plus a private set of XDG
+// env is one isolated dartuios installation: a binary plus a private set of XDG
 // directories. Everything a test does routes through it.
 type env struct {
 	t      *testing.T
@@ -46,16 +46,16 @@ type env struct {
 	socket string
 }
 
-// newEnv locates or builds the tuios binary and prepares isolated XDG dirs.
+// newEnv locates or builds the dartuios binary and prepares isolated XDG dirs.
 func newEnv(t *testing.T) *env {
 	t.Helper()
 
-	bin := os.Getenv("TUIOS_BIN")
+	bin := os.Getenv("DARTUIOS_BIN")
 	if bin == "" {
-		bin = buildTuios(t)
+		bin = buildDartuios(t)
 	}
 	if _, err := os.Stat(bin); err != nil {
-		t.Skipf("tuios binary not usable at %q: %v", bin, err)
+		t.Skipf("dartuios binary not usable at %q: %v", bin, err)
 	}
 
 	base := t.TempDir()
@@ -76,33 +76,33 @@ func newEnv(t *testing.T) *env {
 		bin:  bin,
 		dirs: dirs,
 		// The daemon socket path is derived from XDG_RUNTIME_DIR.
-		socket: filepath.Join(dirs["XDG_RUNTIME_DIR"], "tuios", "tuios.sock"),
+		socket: filepath.Join(dirs["XDG_RUNTIME_DIR"], "dartuios", "dartuios.sock"),
 	}
 	t.Cleanup(e.killServer)
 	return e
 }
 
-// buildTuios compiles the binary under test once per test that needs it.
-func buildTuios(t *testing.T) string {
+// buildDartuios compiles the binary under test once per test that needs it.
+func buildDartuios(t *testing.T) string {
 	t.Helper()
-	out := filepath.Join(t.TempDir(), "tuios")
-	cmd := exec.Command("go", "build", "-o", out, "./cmd/tuios")
+	out := filepath.Join(t.TempDir(), "dartuios")
+	cmd := exec.Command("go", "build", "-o", out, "./cmd/dartuios")
 	cmd.Dir = ".."
 	if b, err := cmd.CombinedOutput(); err != nil {
-		t.Fatalf("building tuios: %v\n%s", err, b)
+		t.Fatalf("building dartuios: %v\n%s", err, b)
 	}
 	return out
 }
 
-// environ returns the isolated environment for a tuios subprocess.
+// environ returns the isolated environment for a dartuios subprocess.
 func (e *env) environ() []string {
 	out := append([]string{}, os.Environ()...)
 	// Drop any inherited XDG vars so ours are authoritative, and a pane's
-	// TUIOS_SOCKET, which names the person's daemon.
+	// DARTUIOS_SOCKET, which names the person's daemon.
 	filtered := out[:0]
 	for _, kv := range out {
 		name := strings.SplitN(kv, "=", 2)[0]
-		if name == "TUIOS_SOCKET" {
+		if name == "DARTUIOS_SOCKET" {
 			continue
 		}
 		if _, isOverridden := e.dirs[name]; !isOverridden {
@@ -117,7 +117,7 @@ func (e *env) environ() []string {
 	return append(out, "SHELL=/bin/sh", "TERM=xterm-256color")
 }
 
-// run executes a tuios subcommand and returns its combined output.
+// run executes a dartuios subcommand and returns its combined output.
 func (e *env) run(args ...string) (string, error) {
 	e.t.Helper()
 	cmd := exec.Command(e.bin, args...)
@@ -126,12 +126,12 @@ func (e *env) run(args ...string) (string, error) {
 	return string(b), err
 }
 
-// mustRun executes a tuios subcommand and fails the test if it errors.
+// mustRun executes a dartuios subcommand and fails the test if it errors.
 func (e *env) mustRun(args ...string) string {
 	e.t.Helper()
 	out, err := e.run(args...)
 	if err != nil {
-		e.t.Fatalf("tuios %s: %v\n%s", strings.Join(args, " "), err, out)
+		e.t.Fatalf("dartuios %s: %v\n%s", strings.Join(args, " "), err, out)
 	}
 	return out
 }
@@ -162,7 +162,7 @@ func (e *env) killServer() {
 // test raced it. Waiting for two identical readings keeps teardown deterministic.
 // Best effort: it returns on timeout, since callers use it during cleanup.
 func (e *env) awaitStateSettled(timeout time.Duration) {
-	dir := filepath.Join(e.dirs["XDG_STATE_HOME"], "tuios", "sessions")
+	dir := filepath.Join(e.dirs["XDG_STATE_HOME"], "dartuios", "sessions")
 
 	read := func() string {
 		entries, err := os.ReadDir(dir)
@@ -195,7 +195,7 @@ func (e *env) awaitStateSettled(timeout time.Duration) {
 // refused. The daemon closes its listener at the top of shutdown and only unlinks
 // the socket at the very end, after the final resurrection saves (see
 // Daemon.shutdown), so an unconnectable socket does not yet mean state has been
-// persisted while a removed one does. This is the same signal 'tuios kill-server'
+// persisted while a removed one does. This is the same signal 'dartuios kill-server'
 // waits on. Best effort: it returns on timeout rather than failing, since callers
 // use it during cleanup.
 func (e *env) awaitDaemonGone(timeout time.Duration) {
@@ -215,7 +215,7 @@ func (e *env) awaitDaemonGone(timeout time.Duration) {
 // are waiting on the periodic saver.
 func (e *env) waitForStateFile(session string, timeout time.Duration) string {
 	e.t.Helper()
-	path := filepath.Join(e.dirs["XDG_STATE_HOME"], "tuios", "sessions", session+".json")
+	path := filepath.Join(e.dirs["XDG_STATE_HOME"], "dartuios", "sessions", session+".json")
 	deadline := time.Now().Add(timeout)
 	for time.Now().Before(deadline) {
 		if _, err := os.Stat(path); err == nil {
@@ -497,7 +497,7 @@ func TestKillServerIsSynchronous(t *testing.T) {
 
 	// Delete anything the periodic saver has already written, so a state file
 	// seen after kill-server can only have been written by the shutdown path.
-	stateDir := filepath.Join(e.dirs["XDG_STATE_HOME"], "tuios", "sessions")
+	stateDir := filepath.Join(e.dirs["XDG_STATE_HOME"], "dartuios", "sessions")
 	statePath := filepath.Join(stateDir, "synckill.json")
 	if err := os.Remove(statePath); err != nil && !os.IsNotExist(err) {
 		t.Fatalf("clearing pre-shutdown state: %v", err)
@@ -556,7 +556,7 @@ func TestResurrectionAcrossDaemonRestart(t *testing.T) {
 
 	// The state file must actually exist, otherwise the restore below would be
 	// vacuously true.
-	stateDir := filepath.Join(e.dirs["XDG_STATE_HOME"], "tuios", "sessions")
+	stateDir := filepath.Join(e.dirs["XDG_STATE_HOME"], "dartuios", "sessions")
 	e.awaitDaemonGone(15 * time.Second)
 	e.waitForStateFile("revive", 15*time.Second)
 
@@ -721,8 +721,8 @@ func TestHelloReportsTheProtocolRange(t *testing.T) {
 		t.Errorf("code = %v, want protocol_mismatch", errObj["code"])
 	}
 	hint, _ := errObj["hint"].(map[string]any)
-	if cmd, _ := hint["command"].(string); cmd != "tuios kill-server" {
-		t.Errorf("hint command = %v, want tuios kill-server", hint["command"])
+	if cmd, _ := hint["command"].(string); cmd != "dartuios kill-server" {
+		t.Errorf("hint command = %v, want dartuios kill-server", hint["command"])
 	}
 }
 
@@ -801,7 +801,7 @@ func TestCLIExplainsAMissingDaemon(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected list-windows to fail with no daemon, got: %s", out)
 	}
-	for _, want := range []string{"daemon is not running", "Most likely cause", "Fix:", "tuios new"} {
+	for _, want := range []string{"daemon is not running", "Most likely cause", "Fix:", "dartuios new"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("output missing %q:\n%s", want, out)
 		}

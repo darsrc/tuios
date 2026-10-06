@@ -7,9 +7,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // cdProbe is a pane whose writes are recorded instead of reaching a PTY, so a
@@ -95,7 +95,7 @@ func TestFolderClickCanCdThePane(t *testing.T) {
 }
 
 // TestFileViewRowsFitTheRail. Every rail row is exactly the reserved width, and
-// a listing is the one place names arrive from outside tuios entirely: a file
+// a listing is the one place names arrive from outside dartuios entirely: a file
 // can be named anything, at any length.
 func TestFileViewRowsFitTheRail(t *testing.T) {
 	dir := t.TempDir()

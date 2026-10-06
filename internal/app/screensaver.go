@@ -6,9 +6,9 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	tfx "github.com/Gaurav-Gosain/tuiffects"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/shot"
 )
 
 // The screen saver animates a snapshot of the screen after a spell with no

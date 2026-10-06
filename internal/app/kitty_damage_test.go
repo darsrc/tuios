@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // withAnimatingHost installs a host that advertises frame edits, which is what
@@ -293,7 +293,7 @@ func assertHostShowsFrame(t *testing.T, host *replayHost, want []byte, width, he
 }
 
 // TestBitmapPatchRoundTripReproducesFrame is the property the whole damage path
-// exists to keep: whatever tuios sends as frame edits, a correct kitty host
+// exists to keep: whatever dartuios sends as frame edits, a correct kitty host
 // applying them ends up holding exactly the bitmap the guest drew.
 func TestBitmapPatchRoundTripReproducesFrame(t *testing.T) {
 	cases := []struct {

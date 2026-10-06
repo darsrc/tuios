@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // TestScrollbackLinesReachesTheDaemon follows appearance.scrollback_lines from

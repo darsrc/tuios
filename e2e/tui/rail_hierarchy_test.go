@@ -65,9 +65,9 @@ func boldAt(s tuitest.Screen, col, row int) bool {
 
 // writeHierarchyConfig names a rail width, one host the stand-in reaches and
 // one that cannot be reached.
-func writeHierarchyConfig(t *testing.T, base, tuiosPath, remoteCommand string, width int) {
+func writeHierarchyConfig(t *testing.T, base, dartuiosPath, remoteCommand string, width int) {
 	t.Helper()
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -78,12 +78,12 @@ func writeHierarchyConfig(t *testing.T, base, tuiosPath, remoteCommand string, w
 		"connect_timeout = 5\n\n" +
 		"[hosts.work]\n" +
 		"addr = \"someone@poweredoff\"\n" +
-		"command = \"/nonexistent/tuios\"\n" +
+		"command = \"/nonexistent/dartuios\"\n" +
 		"connect_timeout = 2\n"
 	if err := os.WriteFile(filepath.Join(dir, "config.toml"), []byte(body), 0o600); err != nil {
 		t.Fatalf("write config: %v", err)
 	}
-	_ = tuiosPath
+	_ = dartuiosPath
 }
 
 // TestTheRailReadsMachinesAsHeadings is the whole visual claim, on a real
@@ -98,14 +98,14 @@ func TestTheRailReadsMachinesAsHeadings(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeHierarchyConfig(t, base, tuiosBin, tuiosBin, 28)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeHierarchyConfig(t, base, dartuiosBin, dartuiosBin, 28)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
-	if out, err := tuiosCLI(t, remote, "new", "session-0", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "session-0", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 
-	term := startIn(t, base, startOpts{args: []string{"new", "tuios"}, env: env})
+	term := startIn(t, base, startOpts{args: []string{"new", "dartuios"}, env: env})
 	waitBoot(t, term)
 	toggleSidebarViaPalette(t, term)
 
@@ -215,13 +215,13 @@ func TestTheNarrowRailKeepsTheStep(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeHierarchyConfig(t, base, tuiosBin, tuiosBin, railNarrowWidth)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeHierarchyConfig(t, base, dartuiosBin, dartuiosBin, railNarrowWidth)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
-	if out, err := tuiosCLI(t, remote, "new", "session-0", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "session-0", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
-	term := startIn(t, base, startOpts{args: []string{"new", "tuios"}, env: env})
+	term := startIn(t, base, startOpts{args: []string{"new", "dartuios"}, env: env})
 	waitBoot(t, term)
 	toggleSidebarViaPalette(t, term)
 
@@ -273,9 +273,9 @@ func TestTheRailOfOneMachineIsUnchanged(t *testing.T) {
 func TestAMachineHeaderOffersItsMoveRows(t *testing.T) {
 	base := t.TempDir()
 	ssh := writeFakeSSH(t, base)
-	writeHostsConfig(t, base, tuiosBin)
+	writeHostsConfig(t, base, dartuiosBin)
 
-	term := startIn(t, base, startOpts{args: []string{"new", "fed-menu"}, env: []string{"TUIOS_SSH=" + ssh}})
+	term := startIn(t, base, startOpts{args: []string{"new", "fed-menu"}, env: []string{"DARTUIOS_SSH=" + ssh}})
 	waitBoot(t, term)
 	toggleSidebarViaPalette(t, term)
 
@@ -347,14 +347,14 @@ func TestTheNarrowRailNamesAMachineWhole(t *testing.T) {
 			base := t.TempDir()
 			remote := remoteMachine(t)
 			ssh := writeFakeSSHTo(t, base, remote)
-			writeHierarchyConfig(t, base, tuiosBin, tuiosBin, tc.width)
-			env := []string{"TUIOS_SSH=" + ssh}
+			writeHierarchyConfig(t, base, dartuiosBin, dartuiosBin, tc.width)
+			env := []string{"DARTUIOS_SSH=" + ssh}
 			// A daemon on the far side, so oci answers.
-			if out, err := tuiosCLI(t, remote, "new", "session-0", "--detach"); err != nil {
+			if out, err := dartuiosCLI(t, remote, "new", "session-0", "--detach"); err != nil {
 				t.Fatalf("create the far session: %v\n%s", err, out)
 			}
 
-			term := startIn(t, base, startOpts{args: []string{"new", "tuios"}, env: env})
+			term := startIn(t, base, startOpts{args: []string{"new", "dartuios"}, env: env})
 			waitBoot(t, term)
 			toggleSidebarViaPalette(t, term)
 

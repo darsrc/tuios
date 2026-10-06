@@ -12,7 +12,7 @@ import (
 
 // TestRichRowReplyAndRecap drives the rich agent row, the reply editor and the
 // away recap end to end, with Claude Code hook payloads through the real
-// `tuios agent-hook`:
+// `dartuios agent-hook`:
 //
 //   - a working agent's rail row says what it is doing now (Bash: go test);
 //   - r on its rail row opens the reply editor, enter queues the reply as the
@@ -32,7 +32,7 @@ func TestRichRowReplyAndRecap(t *testing.T) {
 	base := t.TempDir()
 	writeConfig(t, base, "[appearance.sidebar]\nenabled = true\n\n[agents.recap]\naway = \"1s\"\n")
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "e2e-rows", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-rows", "--detach"); err != nil {
 		t.Fatalf("create the agent's session: %v\n%s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-rows"}})
@@ -47,7 +47,7 @@ func TestRichRowReplyAndRecap(t *testing.T) {
 
 	hook := func(payload string) {
 		t.Helper()
-		cmd := exec.Command(tuiosBin, "agent-hook", "claude-code", "--session", "e2e-rows", "--window", "0", "--timeout", "10s")
+		cmd := exec.Command(dartuiosBin, "agent-hook", "claude-code", "--session", "e2e-rows", "--window", "0", "--timeout", "10s")
 		cmd.Dir = workDirIn(t, base)
 		cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 		for _, key := range xdgKeys {
@@ -83,9 +83,9 @@ func TestRichRowReplyAndRecap(t *testing.T) {
 	}
 	waitText(t, term, "the queued figure on the row", "1 queued")
 	saveFrame(t, term, "rail-row-queued")
-	out, err := tuiosCLI(t, base, "queue", "ls", "-s", "e2e-rows")
+	out, err := dartuiosCLI(t, base, "queue", "ls", "-s", "e2e-rows")
 	if err != nil || !strings.Contains(out, "human") || !strings.Contains(out, "echo r9c1e") {
-		t.Fatalf("tuios queue ls = %q (%v), want the person's reply waiting", out, err)
+		t.Fatalf("dartuios queue ls = %q (%v), want the person's reply waiting", out, err)
 	}
 
 	// x on the same row drops the reply, and u a moment later queues it
@@ -97,16 +97,16 @@ func TestRichRowReplyAndRecap(t *testing.T) {
 	if err := term.WaitFor(func(s tuitest.Screen) bool { return !strings.Contains(s.Text(), "1 queued") }, uiTimeout); err != nil {
 		t.Fatalf("the queued figure stayed after x dropped the reply: %v\n%s", err, term.Snapshot())
 	}
-	if out, err := tuiosCLI(t, base, "queue", "ls", "-s", "e2e-rows"); err != nil || strings.Contains(out, "echo r9c1e") {
-		t.Fatalf("tuios queue ls = %q (%v) after x, want the reply gone", out, err)
+	if out, err := dartuiosCLI(t, base, "queue", "ls", "-s", "e2e-rows"); err != nil || strings.Contains(out, "echo r9c1e") {
+		t.Fatalf("dartuios queue ls = %q (%v) after x, want the reply gone", out, err)
 	}
 	if err := term.SendKeys("u"); err != nil {
 		t.Fatal(err)
 	}
 	waitText(t, term, "the queued figure after the undo", "1 queued")
-	out, err = tuiosCLI(t, base, "queue", "ls", "-s", "e2e-rows")
+	out, err = dartuiosCLI(t, base, "queue", "ls", "-s", "e2e-rows")
 	if err != nil || !strings.Contains(out, "human") || !strings.Contains(out, "echo r9c1e") {
-		t.Fatalf("tuios queue ls = %q (%v) after u, want the reply waiting again as the person", out, err)
+		t.Fatalf("dartuios queue ls = %q (%v) after u, want the reply waiting again as the person", out, err)
 	}
 	if err := term.SendKeys(tuitest.Esc); err != nil {
 		t.Fatal(err)
@@ -128,7 +128,7 @@ func TestRichRowReplyAndRecap(t *testing.T) {
 	hook(`{"hook_event_name":"Stop","session_id":"e2e-rows","last_assistant_message":"Added retry with backoff."}`)
 	deadline := time.Now().Add(uiTimeout)
 	for {
-		out, _ := tuiosCLI(t, base, "queue", "ls", "-s", "e2e-rows")
+		out, _ := dartuiosCLI(t, base, "queue", "ls", "-s", "e2e-rows")
 		if !strings.Contains(out, "waiting") {
 			break
 		}

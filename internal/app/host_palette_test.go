@@ -3,13 +3,13 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/capture"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/capture"
+	"github.com/darsrc/tuios/internal/shot"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // A palette index cannot say what colour it is: only the terminal drawing it
-// can. Everything tuios renders unthemed comes out as indices, so anything that
+// can. Everything dartuios renders unthemed comes out as indices, so anything that
 // turns a finished frame back into cells of its own has to ask the host or
 // guess. It guessed with the xterm defaults, where index 4 is a navy so dark it
 // is hard to read, and the screen saver over an unthemed session redrew every

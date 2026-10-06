@@ -6,7 +6,7 @@ import (
 )
 
 // TestRenderTerminalDoesNotReenterIOLock is the regression test for the freeze
-// that made tuios unusable: the whole UI would wedge at zero CPU within seconds
+// that made dartuios unusable: the whole UI would wedge at zero CPU within seconds
 // of a shell producing output, in both daemon and standalone mode.
 //
 // renderTerminal takes window.RLockIO() for the duration of its cell walk. It

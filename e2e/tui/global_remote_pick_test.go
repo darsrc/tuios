@@ -186,7 +186,7 @@ func TestFromAlphaAHostOnlyThisMachineKnowsIsNotOffered(t *testing.T) {
 // alphaLink is a host alpha must report up before the picks start.
 func remoteGlobalPicks(t *testing.T, f *globalFleet, alphaLink string, rows, wants, absent []string) {
 	t.Helper()
-	if out, err := tuiosCLIEnv(t, f.alpha, f.env, "new", "global", "--global"); err != nil {
+	if out, err := dartuiosCLIEnv(t, f.alpha, f.env, "new", "global", "--global"); err != nil {
 		t.Fatalf("create alpha's global session: %v\n%s", err, out)
 	}
 	waitForHostListing(t, f.alpha, func(s string) bool { return hostLineUp(s, alphaLink) },
@@ -249,7 +249,7 @@ func remoteGlobalPicks(t *testing.T, f *globalFleet, alphaLink string, rows, wan
 // link states up to a minute old.
 func TestAPickOfAHostWhoseLinkIsDownSaysSo(t *testing.T) {
 	f := startGlobalFleet(t)
-	if out, err := tuiosCLIEnv(t, f.here, f.env, "new", "global", "--global"); err != nil {
+	if out, err := dartuiosCLIEnv(t, f.here, f.env, "new", "global", "--global"); err != nil {
 		t.Fatalf("create the global session: %v\n%s", err, out)
 	}
 	term := startIn(t, f.here, startOpts{args: []string{"attach", "global"}, env: f.env})

@@ -28,7 +28,7 @@ func waitCapture(t *testing.T, base, session, window string, markers ...string) 
 	deadline := time.Now().Add(uiTimeout)
 	var out string
 	for {
-		out, _ = tuiosCLI(t, base, "capture-pane", "-s", session, "-w", window)
+		out, _ = dartuiosCLI(t, base, "capture-pane", "-s", session, "-w", window)
 		if containsAll(out, markers...) {
 			return out
 		}
@@ -53,7 +53,7 @@ func TestProtocolPaneTurnAndInboxApproval(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	fake := buildFakeACP(t)
-	if out, err := tuiosCLI(t, base, "new", "e2e-home", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-home", "--detach"); err != nil {
 		t.Fatalf("create the attached session: %v\n%s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-home"}})
@@ -68,7 +68,7 @@ func TestProtocolPaneTurnAndInboxApproval(t *testing.T) {
 	}
 	time.Sleep(insertGuard)
 
-	out, err := tuiosCLI(t, base, "start-agent", fake, "--protocol", "acp", "-s", "e2e-agent", "--name", "helper", "--prompt", "hello there")
+	out, err := dartuiosCLI(t, base, "start-agent", fake, "--protocol", "acp", "-s", "e2e-agent", "--name", "helper", "--prompt", "hello there")
 	if err != nil {
 		t.Fatalf("start-agent: %v\n%s", err, out)
 	}
@@ -83,7 +83,7 @@ func TestProtocolPaneTurnAndInboxApproval(t *testing.T) {
 		t.Errorf("the agent wrote to the pane past the transcript:\n%s", pane)
 	}
 
-	raw, err := tuiosCLI(t, base, "list-agents", "-s", "e2e-agent", "--json")
+	raw, err := dartuiosCLI(t, base, "list-agents", "-s", "e2e-agent", "--json")
 	if err != nil {
 		t.Fatalf("list-agents: %v\n%s", err, raw)
 	}
@@ -102,7 +102,7 @@ func TestProtocolPaneTurnAndInboxApproval(t *testing.T) {
 	}
 	// The window title is the name the pane was given: the agent's OSC
 	// sequence did not set it.
-	raw, _ = tuiosCLI(t, base, "list-windows", "-s", "e2e-agent", "--json")
+	raw, _ = dartuiosCLI(t, base, "list-windows", "-s", "e2e-agent", "--json")
 	var windows struct {
 		Windows []struct {
 			Title string `json:"title"`
@@ -112,7 +112,7 @@ func TestProtocolPaneTurnAndInboxApproval(t *testing.T) {
 		t.Errorf("the window title is not the pane's name (%v):\n%s", err, raw)
 	}
 
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", "helper", "please run the tests\n"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-agent", "-w", "helper", "please run the tests\n"); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	waitCapture(t, base, "e2e-agent", "helper", "permission execute: go test ./...", "1 Allow")

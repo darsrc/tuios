@@ -9,11 +9,11 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/Gaurav-Gosain/tuios/internal/guestenv"
+	"github.com/darsrc/tuios/internal/guestenv"
 )
 
-// Client connects to the TUIOS daemon for one-shot request/response control
-// messages (used by the tuios CLI). It does not stream an interactive session.
+// Client connects to the dartuios daemon for one-shot request/response control
+// messages (used by the dartuios CLI). It does not stream an interactive session.
 type Client struct {
 	conn    net.Conn
 	version string
@@ -206,7 +206,7 @@ func (c *Client) sendHello() error {
 	// A command with no terminal on stdout (a script, a service, CI, an agent)
 	// detects NoTTY and answers dumb, and a session it creates would keep
 	// TERM=dumb in every pane for its life, although the panes are drawn by
-	// tuios and not by this stdout. It names no TERM instead, so the daemon
+	// dartuios and not by this stdout. It names no TERM instead, so the daemon
 	// gives the xterm-256color and truecolor an attached client's session and
 	// the new-session verb already get. A real terminal that answers dumb
 	// keeps its answer, as it does for a standalone window.

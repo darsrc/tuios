@@ -243,14 +243,14 @@ type daemonSessionInfo struct {
 	Success          bool   `json:"success"`
 }
 
-// tuiosOut runs a tuios subcommand and returns its stdout alone.
+// dartuiosOut runs a dartuios subcommand and returns its stdout alone.
 //
-// tuiosCLI merges stderr in, which is right for a command whose failure message
+// dartuiosCLI merges stderr in, which is right for a command whose failure message
 // is the interesting part and wrong for capture-pane, where the result is a
 // pane's literal content and a stray warning would be parsed as if the pane had
 // printed it.
-func tuiosOut(base string, args ...string) (string, error) {
-	cmd := exec.Command(tuiosBin, args...)
+func dartuiosOut(base string, args ...string) (string, error) {
+	cmd := exec.Command(dartuiosBin, args...)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
 		cmd.Env = append(cmd.Env, key+"="+xdgDir(base, key))
@@ -268,7 +268,7 @@ func tuiosOut(base string, args ...string) (string, error) {
 // daemonJSON runs a read verb and decodes it.
 func daemonJSON[T any](base string, args ...string) (T, error) {
 	var v T
-	out, err := tuiosOut(base, append(args, "--json")...)
+	out, err := dartuiosOut(base, append(args, "--json")...)
 	if err != nil {
 		return v, err
 	}
@@ -288,7 +288,7 @@ func daemonInfo(base, session string) (daemonSessionInfo, error) {
 
 // daemonPane is the daemon's own render of one pane's visible grid, as rows.
 func daemonPane(base, session, window string) ([]string, error) {
-	out, err := tuiosOut(base, "capture-pane", "-s", session, "-w", window)
+	out, err := dartuiosOut(base, "capture-pane", "-s", session, "-w", window)
 	if err != nil {
 		return nil, err
 	}
@@ -299,7 +299,7 @@ func daemonPane(base, session, window string) ([]string, error) {
 // included. lines counts from the last row with content, so a pane sitting idle
 // under a screenful of blanks still gives back its real output.
 func daemonScrollback(base, session, window string, lines int) ([]string, error) {
-	out, err := tuiosOut(base, "capture-pane", "-s", session, "-w", window,
+	out, err := dartuiosOut(base, "capture-pane", "-s", session, "-w", window,
 		"--scrollback", "--lines", strconv.Itoa(lines))
 	if err != nil {
 		return nil, err
@@ -356,7 +356,7 @@ func paneEmitCmd(s string) string {
 // in. Typing it at the client instead would be typing at whatever the client
 // currently routes keys to, which during a fuzz run is not knowable.
 func paneSend(base, session, window, text string) error {
-	_, err := tuiosOut(base, "send-text", "-s", session, "-w", window, text)
+	_, err := dartuiosOut(base, "send-text", "-s", session, "-w", window, text)
 	return err
 }
 

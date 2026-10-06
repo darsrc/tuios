@@ -9,9 +9,9 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/tape/trust"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/tape/trust"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // tapeDetectDebounce is how long the focused window's working directory must
@@ -110,10 +110,10 @@ func (m *OS) setupCwdWatch(window *terminal.Window) {
 }
 
 // tapeAutorunMode returns the effective tape autorun mode, honoring the
-// TUIOS_TAPE_AUTORUN environment override (useful for CI or demos) over the
+// DARTUIOS_TAPE_AUTORUN environment override (useful for CI or demos) over the
 // config, and falling back to the safe default.
 func (m *OS) tapeAutorunMode() string {
-	if env := strings.TrimSpace(os.Getenv("TUIOS_TAPE_AUTORUN")); env != "" {
+	if env := strings.TrimSpace(os.Getenv("DARTUIOS_TAPE_AUTORUN")); env != "" {
 		if slices.Contains(config.TapeAutorunModes, env) {
 			return env
 		}
@@ -165,7 +165,7 @@ func (m *OS) onCwdChange(msg CwdChangedMsg) tea.Cmd {
 
 	dir, ok := localCwdPath(msg.Cwd)
 	if !ok {
-		// Unparsable or remote (non-local host): tuios cannot read or verify a
+		// Unparsable or remote (non-local host): dartuios cannot read or verify a
 		// remote file, so it neither prompts nor scans.
 		return nil
 	}
@@ -228,7 +228,7 @@ func isLocalHost(host string) bool {
 	return false
 }
 
-// evaluateTapeDir checks whether dir carries a .tuios.tape and, if so, updates
+// evaluateTapeDir checks whether dir carries a .dartuios.tape and, if so, updates
 // the passive indicator and (once per directory per run) shows a passive banner.
 //
 // This is the entire user-visible surface of stage 1. It stats the directory,

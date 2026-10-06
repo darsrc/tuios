@@ -95,7 +95,7 @@ type Node struct {
 	// machine its process runs on is lost. Empty everywhere else.
 	HostLink string
 	// HostStatus is a KindHost header's link state, as the federation package
-	// names it ("up", "unreachable", "no_daemon", "no_tuios", "incompatible",
+	// names it ("up", "unreachable", "no_daemon", "no_dartuios", "incompatible",
 	// "connecting"). Empty on every other node.
 	HostStatus string
 	// HostNote is the one plain sentence a host header shows when it is not up.
@@ -187,7 +187,7 @@ type SessionInput struct {
 	DisplayName string
 	// Dir is where the session's focused pane is, as a short label, and it is
 	// the title when there is no DisplayName. The caller offers it only for a
-	// session whose name tuios made up: a name a person chose says more than a
+	// session whose name dartuios made up: a name a person chose says more than a
 	// directory does. Branch is the git branch there, and follows whichever
 	// title wins.
 	Dir         string

@@ -6,7 +6,7 @@ import "net"
 // IsLoopbackHost reports whether a bind address keeps traffic inside this
 // machine.
 //
-// Both servers gate on this: tuios-web refuses a non-loopback bind in clear
+// Both servers gate on this: dartuios-web refuses a non-loopback bind in clear
 // text, and the SSH server refuses one with no authentication. They share this
 // one function because "is this address on the network" is the one question
 // they must agree on.

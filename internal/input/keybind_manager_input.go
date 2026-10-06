@@ -4,7 +4,7 @@ import (
 	"unicode/utf8"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/app"
 )
 
 // handleKeybindManagerInput handles keyboard input while the keybind manager is
@@ -59,7 +59,7 @@ func handleKeybindManagerInput(msg tea.KeyPressMsg, o *app.OS) (*app.OS, tea.Cmd
 		// Narrow on the list, wide on the recorder. On the Bindings tab there is
 		// a row under the cursor naming one action, so that is what is unbound.
 		// On the Record tab the only thing named is the key itself, and the
-		// question the recorder was opened to answer is whether tuios takes it,
+		// question the recorder was opened to answer is whether dartuios takes it,
 		// so freeing it everywhere is what the answer is for.
 		switch o.KeybindTab {
 		case app.KeybindTabRecord:

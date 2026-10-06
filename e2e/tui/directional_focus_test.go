@@ -38,7 +38,7 @@ type focusedRect struct {
 
 func focusedLayout(t *testing.T, base, session string) ([]focusedRect, string) {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "list-windows", "--json", "--session", session)
+	out, err := dartuiosCLI(t, base, "list-windows", "--json", "--session", session)
 	if err != nil {
 		t.Fatalf("list-windows: %v\n%s", err, out)
 	}

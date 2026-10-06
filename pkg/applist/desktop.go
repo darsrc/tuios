@@ -30,7 +30,7 @@ package applist
 //   - Actions: each name in Actions= must have a matching
 //     [Desktop Action <name>] group. They are surfaced as entries of their own.
 //
-// Desktop entries are a Linux and BSD concept, and tuios also builds for
+// Desktop entries are a Linux and BSD concept, and dartuios also builds for
 // Windows, which is why this file is unix-only.
 
 import (
@@ -81,7 +81,7 @@ type DesktopEntry struct {
 	// empty.
 	Icon string
 	// Terminal reports Terminal=true: the program has no window of its own and
-	// must be run inside a terminal emulator. tuios is one, so these are the
+	// must be run inside a terminal emulator. dartuios is one, so these are the
 	// entries it can host natively.
 	Terminal bool
 	// Keywords are the localized Keywords, extra words a person might search by
@@ -364,7 +364,7 @@ func DesktopDirs() []string {
 // currentDesktops is $XDG_CURRENT_DESKTOP as the colon-separated list it
 // actually is.
 //
-// tuios deliberately does not substitute its own name here. The point of
+// dartuios deliberately does not substitute its own name here. The point of
 // reading desktop entries is to offer the applications the user's normal
 // launcher offers, and claiming to be a desktop nobody has heard of would hide
 // every entry carrying OnlyShowIn=GNOME and friends.

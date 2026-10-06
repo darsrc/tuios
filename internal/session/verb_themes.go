@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // A theme is the half of the appearance that list-options cannot describe. The
@@ -106,7 +106,7 @@ func (d *Daemon) verbListThemes(_ *connState, params json.RawMessage) (any, *ver
 			return nil, hintedVerbError(ErrVerbOptionNotFound, "no theme named "+echoName(p.Theme), &VerbHint{
 				Param:      "theme",
 				Verb:       "list-themes",
-				Command:    "tuios list-themes --filter " + p.Theme,
+				Command:    "dartuios list-themes --filter " + p.Theme,
 				DidYouMean: closestMatch(p.Theme, all),
 				Detail: "the id is in neither the built-in registry nor " + themesDir +
 					". Write <id>.json there to add it.",

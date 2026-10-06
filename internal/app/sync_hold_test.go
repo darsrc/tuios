@@ -7,12 +7,12 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The synchronized-output contract (DEC private mode 2026) is one sentence: a
 // guest that wraps an update in 2026h/2026l must never be shown a frame from
-// the middle of it. tuios honours it by holding the window's last complete
+// the middle of it. dartuios honours it by holding the window's last complete
 // layer, and the hold is only as good as what is left to hold with.
 //
 // These tests are deterministic. The emulator is written to synchronously and
@@ -22,7 +22,7 @@ import (
 // the way one real user action does and asserts the same thing.
 
 // paintCompleteFrame paints a complete two-line frame, the last thing the guest
-// finished and the only thing tuios is allowed to show until the next update
+// finished and the only thing dartuios is allowed to show until the next update
 // closes.
 func paintCompleteFrame(t *testing.T, win *terminal.Window) {
 	t.Helper()
@@ -76,7 +76,7 @@ var invalidations = []struct {
 
 // TestSyncHoldSurvivesCacheInvalidation is the defect. With a cached layer to
 // hold, the renderer honours the guest's open update. The layer is not the
-// guest's state though, it is tuios's, and any layout action drops it. The
+// guest's state though, it is dartuios's, and any layout action drops it. The
 // frame composed next reads the emulator mid-update and presents half of it.
 func TestSyncHoldSurvivesCacheInvalidation(t *testing.T) {
 	for _, inv := range invalidations {

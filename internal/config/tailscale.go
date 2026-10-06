@@ -1,6 +1,6 @@
 package config
 
-import "github.com/Gaurav-Gosain/tuios/internal/federation"
+import "github.com/darsrc/tuios/internal/federation"
 
 // The [tailscale] table: which machines on your tailnet are offered as
 // addresses when you add a host.
@@ -9,8 +9,8 @@ import "github.com/Gaurav-Gosain/tuios/internal/federation"
 //	user = "ubuntu"
 //	exclude = ["*-pad-*"]
 //
-// It changes what tuios suggests and nothing else. No machine is ever added on
-// its own, no tailnet address is dialled by tuios itself, and a machine with no
+// It changes what dartuios suggests and nothing else. No machine is ever added on
+// its own, no tailnet address is dialled by dartuios itself, and a machine with no
 // tailscale on it behaves exactly as it did before this table existed. A host
 // added from this list is reached over ssh like every other host, which already
 // works across a tailnet because a MagicDNS name resolves like any other name.
@@ -20,7 +20,7 @@ import "github.com/Gaurav-Gosain/tuios/internal/federation"
 // single settable path.
 //
 // See internal/federation's tailnet.go for what each field does to the list,
-// and `tuios hosts tailnet` to see the answer for your own tailnet, including
+// and `dartuios hosts tailnet` to see the answer for your own tailnet, including
 // every machine that was left out and the reason it was.
 
 // TailscaleConfig is the [tailscale] table.
@@ -44,7 +44,7 @@ type TailscaleConfig struct {
 	//	build = "ubuntu"
 	Users map[string]string `toml:"users,omitempty"`
 	// OS are the operating systems to offer. Default is the ones that can run
-	// a tuios daemon, which is what keeps a phone out of the list. An empty
+	// a dartuios daemon, which is what keeps a phone out of the list. An empty
 	// list offers every machine.
 	OS []string `toml:"os,omitempty"`
 	// Offline offers machines the control plane says are not connected.

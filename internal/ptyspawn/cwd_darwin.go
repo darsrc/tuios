@@ -15,7 +15,7 @@ import (
 // CGO_ENABLED=0 build the release uses. It costs a couple of microseconds.
 //
 // It answers only for a process the effective uid may inspect, which is the
-// right boundary: every pane tuios owns is a child of this process, and a pid
+// right boundary: every pane dartuios owns is a child of this process, and a pid
 // belonging to somebody else is one this build has no business reading.
 func ProcessCwd(pid int) (string, bool) {
 	if pid <= 0 {

@@ -4,15 +4,15 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/listnav"
-	"github.com/Gaurav-Gosain/tuios/pkg/applist"
-	"github.com/Gaurav-Gosain/tuios/pkg/fuzzy"
+	"github.com/darsrc/tuios/internal/listnav"
+	"github.com/darsrc/tuios/pkg/applist"
+	"github.com/darsrc/tuios/pkg/fuzzy"
 )
 
 // The launcher is its own overlay rather than a tier inside the command
 // palette, because the two lists answer different questions.
 //
-// A palette row is a verb tuios performs: Split Vertical, Toggle Zoom, Switch
+// A palette row is a verb dartuios performs: Split Vertical, Toggle Zoom, Switch
 // Session. A launcher row is a thing you start. Ranking them against each other
 // means one query straddles both ideas, and the palette had to carry a constant
 // (paletteRunPenalty) whose whole job was to stop "new" from offering newgrp
@@ -305,7 +305,7 @@ func (m *OS) LauncherRun(idx int) tea.Cmd {
 }
 
 // LauncherType opens a new pane with the selected program's command line typed
-// at the shell's prompt, entered by the user rather than by tuios. This is Tab.
+// at the shell's prompt, entered by the user rather than by dartuios. This is Tab.
 //
 // Run and type are the same choice made per invocation, not a setting: the same
 // person wants htop to just start and ffmpeg to be waiting on the prompt so

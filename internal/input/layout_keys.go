@@ -8,7 +8,7 @@ import (
 
 // Layout independence.
 //
-// A key reaches tuios as the character the active layout produced, so with a
+// A key reaches dartuios as the character the active layout produced, so with a
 // Ukrainian layout the I key arrives as "ш" and nothing is bound to that. The
 // Kitty keyboard protocol's alternate-key reporting also names the key at the
 // same position on a US layout (the base-layout key), which Bubble Tea puts in
@@ -64,7 +64,7 @@ func producedKey(msg tea.KeyPressMsg) tea.KeyPressMsg {
 	return msg
 }
 
-// readKey is msg as tuios reads it: spelled by the key the layout produced.
+// readKey is msg as dartuios reads it: spelled by the key the layout produced.
 // Bubble Tea spells a chord from its base-layout key when the terminal sent
 // one, so on any Latin layout other than US a Ctrl or Alt chord read as the
 // US key at its position wherever msg.String() was compared. Taking that key
@@ -114,7 +114,7 @@ func isASCII(s string) bool {
 }
 
 // isModifierKeyPress reports whether msg is a modifier or lock key pressed on
-// its own. A terminal only sends these in report-all-keys mode, which tuios
+// its own. A terminal only sends these in report-all-keys mode, which dartuios
 // asks for while it reads keys itself. Such a press is not a command, so it
 // must not end a pending prefix or reach a binding.
 func isModifierKeyPress(msg tea.KeyPressMsg) bool {

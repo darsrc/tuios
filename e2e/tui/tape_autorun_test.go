@@ -10,7 +10,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// writeProjectTape creates a project directory under base with a .tuios.tape and
+// writeProjectTape creates a project directory under base with a .dartuios.tape and
 // returns its absolute path. The directory is 0700 so it passes the trust
 // hygiene checks.
 func writeProjectTape(t *testing.T, base, name, content string) string {
@@ -19,14 +19,14 @@ func writeProjectTape(t *testing.T, base, name, content string) string {
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir project dir: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, ".tuios.tape"), []byte(content), 0o600); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, ".dartuios.tape"), []byte(content), 0o600); err != nil {
 		t.Fatalf("write tape: %v", err)
 	}
 	return dir
 }
 
 // enterProjectDir cd's the focused shell into dir and emits an OSC 7
-// working-directory report, which is what tuios keys project-tape detection off.
+// working-directory report, which is what dartuios keys project-tape detection off.
 // A bare `cd` under /bin/sh does not emit OSC 7, so the test emits it explicitly,
 // exactly as an OSC-7-aware shell would.
 func enterProjectDir(t *testing.T, term *tuitest.Terminal, dir string) {
@@ -37,10 +37,10 @@ func enterProjectDir(t *testing.T, term *tuitest.Terminal, dir string) {
 	}
 }
 
-// lsHasSession reports whether `tuios ls` lists a session with the given name.
+// lsHasSession reports whether `dartuios ls` lists a session with the given name.
 func lsHasSession(t *testing.T, base, name string) bool {
 	t.Helper()
-	out, _ := tuiosCLI(t, base, "ls")
+	out, _ := dartuiosCLI(t, base, "ls")
 	return strings.Contains(out, name)
 }
 
@@ -48,11 +48,11 @@ func lsHasSession(t *testing.T, base, name string) bool {
 func contains(s, sub string) bool { return strings.Contains(s, sub) }
 
 // writeTapeConfigFile writes a config.toml with the given [tape] body into the
-// isolated XDG_CONFIG_HOME, before tuios starts, so the setting is in effect at
+// isolated XDG_CONFIG_HOME, before dartuios starts, so the setting is in effect at
 // boot.
 func writeTapeConfigFile(t *testing.T, base, tapeBody string) {
 	t.Helper()
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config dir: %v", err)
 	}
@@ -273,9 +273,9 @@ func TestProjectTapeSessionScopeBuildsSession(t *testing.T) {
 	waitWindowCount(t, c2, 3, "fresh client on the built session")
 
 	// Trust persisted.
-	storePath := filepath.Join(base, "XDG_DATA_HOME", "tuios", "tape-trust.toml")
+	storePath := filepath.Join(base, "XDG_DATA_HOME", "dartuios", "tape-trust.toml")
 	data, _ := os.ReadFile(storePath)
-	if !contains(string(data), "[[trusted]]") || !contains(string(data), ".tuios.tape") {
+	if !contains(string(data), "[[trusted]]") || !contains(string(data), ".dartuios.tape") {
 		t.Fatalf("trust was not persisted to %s:\n%s", storePath, string(data))
 	}
 	alive(t, term, "after Trust and run built the project session")
@@ -287,13 +287,13 @@ func assertPaneRan(t *testing.T, base, session, window, marker string) {
 	t.Helper()
 	deadline := time.Now().Add(uiTimeout)
 	for time.Now().Before(deadline) {
-		out, err := tuiosCLI(t, base, "capture-pane", "--session", session, "--window", window)
+		out, err := dartuiosCLI(t, base, "capture-pane", "--session", session, "--window", window)
 		if err == nil && contains(out, marker) {
 			return
 		}
 		time.Sleep(200 * time.Millisecond)
 	}
-	out, _ := tuiosCLI(t, base, "capture-pane", "--session", session, "--window", window)
+	out, _ := dartuiosCLI(t, base, "capture-pane", "--session", session, "--window", window)
 	t.Fatalf("pane %q of session %q never showed %q (command did not run there):\n%s", window, session, marker, out)
 }
 
@@ -301,7 +301,7 @@ func assertPaneRan(t *testing.T, base, session, window, marker string) {
 // screen: even in autorun = auto, an untrusted tape never runs and never
 // auto-opens a dialog. It only surfaces the passive banner.
 func TestProjectTapeUntrustedNeverAutoRuns(t *testing.T) {
-	term, base := start(t, startOpts{args: []string{"new", "scratch"}, env: []string{"TUIOS_TAPE_AUTORUN=auto"}})
+	term, base := start(t, startOpts{args: []string{"new", "scratch"}, env: []string{"DARTUIOS_TAPE_AUTORUN=auto"}})
 	killDaemon(t, base)
 
 	const sessionName = "autoproj"

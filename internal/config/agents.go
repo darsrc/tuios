@@ -2,7 +2,7 @@ package config
 
 import "strings"
 
-// The [agents] table: how tuios treats the coding agents in its panes.
+// The [agents] table: how dartuios treats the coding agents in its panes.
 //
 //	[agents.approvals]
 //	enabled = ["claude-code", "opencode"]
@@ -21,7 +21,7 @@ type AgentsConfig struct {
 	// Approvals is the [agents.approvals] table. See ApprovalsConfig.
 	Approvals ApprovalsConfig `toml:"approvals,omitempty"`
 	// Permissions is the [agents.permissions] table: what a process in a
-	// pane may do through tuios. See pane_grants.go.
+	// pane may do through dartuios. See pane_grants.go.
 	Permissions PermissionsConfig `toml:"permissions,omitempty"`
 	// Recap is the [agents.recap] table: the summary of what an agent did
 	// while the person was away. See agents_work.go.
@@ -29,7 +29,7 @@ type AgentsConfig struct {
 	// Queue is the [agents.queue] table: messages waiting to be typed to an
 	// agent when it comes to rest. See agents_work.go.
 	Queue QueueConfig `toml:"queue,omitempty"`
-	// HerdrProtocol says which panes are told about the socket tuios accepts
+	// HerdrProtocol says which panes are told about the socket dartuios accepts
 	// herdr's pane state protocol on, which Crush reports to by itself:
 	// "agents" (the default) for a pane that starts such a harness directly,
 	// "always" for every pane, so one started from a shell reports too, and
@@ -71,7 +71,7 @@ type ApprovalsConfig struct {
 	Enabled []string `toml:"enabled,omitempty"`
 	// HoldSeconds is how long a hook waits for an answer before it gives the
 	// prompt back to the harness. Zero means the default, 120. The daemon
-	// keeps it between 10 and 300, and the Claude Code hook tuios installs
+	// keeps it between 10 and 300, and the Claude Code hook dartuios installs
 	// allows 310 seconds, so a hold never outlives the hook.
 	HoldSeconds int `toml:"hold_seconds,omitempty"`
 	// HoldPlans also hands a plan an agent in plan mode asks to have

@@ -1,13 +1,13 @@
 package integration
 
 // The maps for Amp, Kimi Code CLI and Pi, the three harnesses outside the
-// first four whose hooks cover the whole turn, so tuios takes the pane's state
+// first four whose hooks cover the whole turn, so dartuios takes the pane's state
 // from them.
 
 // The Amp event map. Amp loads TypeScript plugins from ~/.config/amp/plugins
 // (https://ampcode.com/manual/plugin-api, read for this change). The plugin
-// tuios installs (assets/amp/tuios-agent-state.ts) subscribes to
-// session.start, agent.start, agent.end and tool.result, and runs `tuios
+// dartuios installs (assets/amp/dartuios-agent-state.ts) subscribes to
+// session.start, agent.start, agent.end and tool.result, and runs `dartuios
 // agent-hook amp` with the event, the thread id and agent.end's status.
 //
 // A question Amp asks with its built-in ask_user_choice tool (built in since
@@ -150,7 +150,7 @@ func piTurnStart(id, event string, p fields) (Decision, bool) {
 
 // The Pi event map. Pi loads TypeScript extensions from
 // ~/.pi/agent/extensions (PI_CODING_AGENT_DIR overrides the agent directory).
-// The extension tuios installs (assets/pi/tuios-agent-state.ts) listens to
+// The extension dartuios installs (assets/pi/dartuios-agent-state.ts) listens to
 // session_start, agent_start and agent_settled, the events herdr's working Pi
 // extension uses (src/integration/assets/pi/herdr-agent-state.ts), and to
 // ui_prompt_start and ui_prompt_end, which Pi emits around every blocking

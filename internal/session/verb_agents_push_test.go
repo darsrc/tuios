@@ -20,7 +20,7 @@ func attachMailClient(t *testing.T, name string) chan AgentMailPayload {
 		t.Fatalf("attach: %v", err)
 	}
 	// Pushes are demuxed by the read loop, which the attach itself does not
-	// start; cmd/tuios starts it once the handshake is done, as here.
+	// start; cmd/dartuios starts it once the handshake is done, as here.
 	c.StartReadLoop()
 	return got
 }

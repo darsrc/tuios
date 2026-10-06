@@ -9,9 +9,9 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The compare view: the attempts of the reviewed pane's fan side by side,
@@ -452,7 +452,7 @@ func (m *OS) applyReviewKept(msg ReviewKeptMsg) tea.Cmd {
 	}
 	kind := "info"
 	if len(left) > 0 {
-		text += " Left " + strings.Join(left, "; ") + ". tuios fan keep --stash moves uncommitted work aside."
+		text += " Left " + strings.Join(left, "; ") + ". dartuios fan keep --stash moves uncommitted work aside."
 		kind = "error"
 	}
 	m.reviewNotify(text, kind, m.Settings.NotificationDuration*2)

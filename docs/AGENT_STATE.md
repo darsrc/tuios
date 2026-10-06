@@ -1,11 +1,11 @@
-# Agents in tuios
+# Agents in dartuios
 
-This is the guide to running coding agents in tuios, and to agents that drive
-tuios. It starts with what you get and how to set it up, then maps every agent
+This is the guide to running coding agents in dartuios, and to agents that drive
+dartuios. It starts with what you get and how to set it up, then maps every agent
 feature to where it is described, then gives the reference.
 
-An agent reading this from inside a pane wants `tuios --skill` instead: a short
-core, and `tuios --skill TOPIC` for the rest. It ships in the binary, so it
+An agent reading this from inside a pane wants `dartuios --skill` instead: a short
+core, and `dartuios --skill TOPIC` for the rest. It ships in the binary, so it
 matches the build.
 
 ## What you get
@@ -13,7 +13,7 @@ matches the build.
 - **One state per pane.** Every pane running an agent shows `working`,
   `needs_input`, `idle`, `done` or `errored`, as a shape in its title and as a
   row on the rail, so no state rests on colour alone. The
-  agent reports it through a hook tuios installs, and tuios falls back to
+  agent reports it through a hook dartuios installs, and dartuios falls back to
   reading the process, the screen and the title when nothing reports.
 - **One place to look.** The Inbox (`ctrl+b i`) lists everything waiting for
   you in every session on every machine: approvals, questions, mail, errors,
@@ -24,24 +24,24 @@ matches the build.
   questions. Everything one agent reads from another is fenced as data. Only
   you can answer a prompt or speak as `human`, and a reply from you is marked
   verified.
-- **Fleets.** `tuios fan` starts one prompt in several agents, each in its own
-  git worktree. `tuios start-agent` starts one helper beside you. Selectors
+- **Fleets.** `dartuios fan` starts one prompt in several agents, each in its own
+  git worktree. `dartuios start-agent` starts one helper beside you. Selectors
   address a whole group.
-- **Other machines.** Agents, worktrees and the Inbox work across `tuios hosts`,
-  and `tuios worktree pull` brings the work back.
+- **Other machines.** Agents, worktrees and the Inbox work across `dartuios hosts`,
+  and `dartuios worktree pull` brings the work back.
 - **Limits you set.** Pane grants say what an agent's pane may do through
-  tuios. Link policy says what another machine may do here.
-- **Other ways in.** `tuios mcp` serves the same surface as MCP tools, the tmux
+  dartuios. Link policy says what another machine may do here.
+- **Other ways in.** `dartuios mcp` serves the same surface as MCP tools, the tmux
   shim runs tools that only know tmux (such as Claude Code agent teams), and
-  `tuios subscribe` streams every change.
+  `dartuios subscribe` streams every change.
 
 ## Set it up
 
 1. Wire each harness you use to report its state and its conversation id:
 
    ```bash
-   tuios integration install claude-code    # or codex, gemini-cli, opencode, ..., or --all
-   tuios doctor agents                      # what is installed, and agent panes missing one
+   dartuios integration install claude-code    # or codex, gemini-cli, opencode, ..., or --all
+   dartuios doctor agents                      # what is installed, and agent panes missing one
    ```
 
 2. Learn two keys: `ctrl+b i` opens the Inbox and `ctrl+b o` goes to the
@@ -49,7 +49,7 @@ matches the build.
    it off keeps it off; turn it on with:
 
    ```bash
-   tuios set-config appearance.sidebar.enabled true
+   dartuios set-config appearance.sidebar.enabled true
    ```
 
 3. Optional: let the Inbox answer permission prompts, so you do not have to go
@@ -70,14 +70,14 @@ matches the build.
    ```
 
 5. Optional: give your agents the tools. Either the skill, which an agent reads
-   with `tuios --skill`, or MCP:
+   with `dartuios --skill`, or MCP:
 
    ```bash
-   tuios integration install claude-code --mcp
+   dartuios integration install claude-code --mcp
    ```
 
 6. Optional: an alert on your phone when an agent needs you, with nobody
-   attached: an `after-agent-state` hook ([HOOKS.md](HOOKS.md); `tuios --skill
+   attached: an `after-agent-state` hook ([HOOKS.md](HOOKS.md); `dartuios --skill
    recipes` has a working one).
 
 ## Where to find what
@@ -94,7 +94,7 @@ matches the build.
 | Run agents on other machines | [Other machines](#other-machines), [SESSIONS.md](SESSIONS.md#agents-and-worktrees-on-another-machine) |
 | Limit what an agent may do | [What a pane may do](#what-a-pane-may-do), [Who can act as the person](#who-can-act-as-the-person), [CONFIGURATION.md](CONFIGURATION.md#what-another-machine-may-do-here) |
 | Get alerts, or reach a phone | [Alerts](#alerts), [HOOKS.md](HOOKS.md) |
-| Drive tuios from an agent | `tuios --skill`, [The MCP server](#the-mcp-server), [TMUX_SHIM.md](TMUX_SHIM.md), [protocol.md](protocol.md) |
+| Drive dartuios from an agent | `dartuios --skill`, [The MCP server](#the-mcp-server), [TMUX_SHIM.md](TMUX_SHIM.md), [protocol.md](protocol.md) |
 | Look up a command | [CLI_REFERENCE.md](CLI_REFERENCE.md) |
 
 ## Agents talking to agents
@@ -104,42 +104,42 @@ Four verbs carry everything between agents and the person:
 
 | Verb | What it does |
 | --- | --- |
-| `tuios send-agent-message` | Leaves a message in a pane's inbox, or `human`'s, without touching its keyboard. Threads with `--reply-to`, files with `--attach` or the session stash |
-| `tuios read-agent-messages`, `tuios wait-for agent-message` | Read the inbox, or block until mail arrives |
-| `tuios ask-agent` | Types a question at an agent that is at its prompt, submits it, and returns what the pane printed. Refuses a pane on `needs_input` (`agent_blocked`), since the text would answer its prompt |
-| `tuios ask-human` | Puts a question with fixed answers in the Inbox and returns your answer |
+| `dartuios send-agent-message` | Leaves a message in a pane's inbox, or `human`'s, without touching its keyboard. Threads with `--reply-to`, files with `--attach` or the session stash |
+| `dartuios read-agent-messages`, `dartuios wait-for agent-message` | Read the inbox, or block until mail arrives |
+| `dartuios ask-agent` | Types a question at an agent that is at its prompt, submits it, and returns what the pane printed. Refuses a pane on `needs_input` (`agent_blocked`), since the text would answer its prompt |
+| `dartuios ask-human` | Puts a question with fixed answers in the Inbox and returns your answer |
 
 What keeps it safe: every body an agent reads is fenced as untrusted data and
 `--from` is a claim; a pane cannot send as `human`, and your replies carry
 `verified_human`; a pane cannot address itself, a cycle of asks is refused, and
 a sender is rate limited. Mail lives in memory, 256 messages per session, and
-dies with the daemon. `tuios --skill mail` has the whole contract.
+dies with the daemon. `dartuios --skill mail` has the whole contract.
 
 ## Fleets
 
 | Command | What it does |
 | --- | --- |
-| `tuios worktree new BRANCH --agent claude` | A git worktree and a session in it, with an agent. The rail groups these by repository |
-| `tuios fan N --agent claude 'PROMPT'` | N worktrees, an agent in each, and the prompt typed into each once it is at its prompt. `--agent 'claude,codex'` mixes agents, `--prompt` repeated gives each its own |
-| `tuios start-agent claude --name reviewer` | One agent in a new pane beside you, returning once it is ready. `--protocol acp` or `codex` runs it headless |
-| `tuios worktree ls`, `tuios worktree diff`, `tuios fan keep SESSION` | Watch them, read what one changed, keep one and remove the rest without losing uncommitted work |
-| `tuios fan compare SESSION`, `tuios fan verify SESSION -- CMD`, `tuios fan diff A B` | Every attempt side by side with its changes and last check, one check run in all of them, and what two did differently |
-| `tuios review [SESSION]`, `tuios review note FILE:LINE 'TEXT'`, `tuios review send` | What the agent in a pane changed against its base, notes on its lines, and the notes sent to it as one message when it rests. See [Reviewing an agent's changes](#reviewing-an-agents-changes) |
+| `dartuios worktree new BRANCH --agent claude` | A git worktree and a session in it, with an agent. The rail groups these by repository |
+| `dartuios fan N --agent claude 'PROMPT'` | N worktrees, an agent in each, and the prompt typed into each once it is at its prompt. `--agent 'claude,codex'` mixes agents, `--prompt` repeated gives each its own |
+| `dartuios start-agent claude --name reviewer` | One agent in a new pane beside you, returning once it is ready. `--protocol acp` or `codex` runs it headless |
+| `dartuios worktree ls`, `dartuios worktree diff`, `dartuios fan keep SESSION` | Watch them, read what one changed, keep one and remove the rest without losing uncommitted work |
+| `dartuios fan compare SESSION`, `dartuios fan verify SESSION -- CMD`, `dartuios fan diff A B` | Every attempt side by side with its changes and last check, one check run in all of them, and what two did differently |
+| `dartuios review [SESSION]`, `dartuios review note FILE:LINE 'TEXT'`, `dartuios review send` | What the agent in a pane changed against its base, notes on its lines, and the notes sent to it as one message when it rests. See [Reviewing an agent's changes](#reviewing-an-agents-changes) |
 | `--select 'group:fan/retry needs:you'` | Address every agent pane a selector matches, on `list-agents`, `list-attention`, `wait-for`, `send-agent-message` and `ask-agent` |
 | `--grants read,write` | On `fan`, `start-agent` and `new-window`: what the new panes may do |
 
 A prompt that cannot be typed because the agent is stuck on a first-run choice
 turns into an Inbox question after 30 seconds. See
-[CLI_REFERENCE.md](CLI_REFERENCE.md#tuios-fan) for the flags and
-`tuios --skill fleet` for the agent's view.
+[CLI_REFERENCE.md](CLI_REFERENCE.md#dartuios-fan) for the flags and
+`dartuios --skill fleet` for the agent's view.
 
 ## Other machines
 
-With `tuios hosts add NAME ADDR`, the daemon keeps an ssh link to that machine.
+With `dartuios hosts add NAME ADDR`, the daemon keeps an ssh link to that machine.
 Its agents appear on the rail and in `list-agents --all-hosts`, what waits there
 is in your Inbox, `-s HOST:SESSION` and `-w HOST:SESSION:WINDOW` reach it from
 any command, and `fan`, `worktree` and `start-agent` take `--host`.
-`tuios worktree pull HOST:SESSION` brings a worktree's commits and uncommitted
+`dartuios worktree pull HOST:SESSION` brings a worktree's commits and uncommitted
 work into a new worktree here. Mail to a machine whose link is down waits and is
 sent when it is back. Each machine's `[hosts]` table decides what the others
 may do there; answering prompts is off by default. See
@@ -193,7 +193,7 @@ have to know which states mean it.
 `question`, for a pane on `needs_input`. A screen, title or notify rule
 supplies it from its `kind` (named in the manifest, or guessed from the rule's
 words), and a report supplies it with the `kind` param of `set-agent-state`, as
-`tuios agent-hook` does. A report that carries no kind has it guessed from the
+`dartuios agent-hook` does. A report that carries no kind has it guessed from the
 reported message the same way: a message that mentions approval, permission,
 allowing, proceeding, confirming or trust reads as `approval`, anything else as
 `question`. An empty message gives an empty `blocked_by`, which means the
@@ -222,7 +222,7 @@ reaches `idle` instead (see [Screen rules](#screen-rules)); for any other, pass 
 send a fan prompt with `send-text` once the pane is at its prompt.
 
 Once `ask-agent` or `fan` has typed a prompt and sent Enter, the state is also
-how tuios knows the prompt was taken. The pane has five seconds to turn
+how dartuios knows the prompt was taken. The pane has five seconds to turn
 `working` or `needs_input`, or to finish a turn (`completion_seq` goes up). A
 pane whose harness has no screen or title rule that reports `working` can show
 it by printing anything instead. For a harness that has one, output is not
@@ -250,20 +250,20 @@ would call `send-keys` or `capture-pane`:
 
 ```sh
 # From inside a pane
-tuios set-agent-state working
-tuios set-agent-state needs_input -m "awaiting approval"
-tuios set-agent-state done
-tuios set-agent-state none          # clear it
+dartuios set-agent-state working
+dartuios set-agent-state needs_input -m "awaiting approval"
+dartuios set-agent-state done
+dartuios set-agent-state none          # clear it
 ```
 
 Read it back with `get-agent-state`:
 
 ```sh
-tuios get-agent-state               # prints the state name
-tuios get-agent-state -w build --json
+dartuios get-agent-state               # prints the state name
+dartuios get-agent-state -w build --json
 ```
 
-Both are ordinary control-protocol verbs, so they appear in `tuios list-verbs`
+Both are ordinary control-protocol verbs, so they appear in `dartuios list-verbs`
 and can be called over the daemon socket directly. `list-windows --json` also
 reports each window's `agent_state`, so a cross-session view can read every
 pane's state in one call.
@@ -272,45 +272,45 @@ Targeting follows the same rules as the other window verbs: `-s`/`--session`
 selects the session (default: most recently active), `-w`/`--window` selects the
 window by id or name (default: the focused window).
 
-`set-agent-state` is tuios's contract, and the one to build on: it is
-documented, versioned with the verb protocol, and it is what `tuios agent-hook`
-and every integration tuios installs call. A pane finds the daemon through
-`TUIOS_SOCKET` and names itself with `TUIOS_PANE_ID` (see
+`set-agent-state` is dartuios's contract, and the one to build on: it is
+documented, versioned with the verb protocol, and it is what `dartuios agent-hook`
+and every integration dartuios installs call. A pane finds the daemon through
+`DARTUIOS_SOCKET` and names itself with `DARTUIOS_PANE_ID` (see
 [Environment](#environment)).
 
 ### herdr's pane state protocol
 
-tuios also accepts the reports some harnesses already send to herdr, another
+dartuios also accepts the reports some harnesses already send to herdr, another
 multiplexer for coding agents, so they work with no install step. Crush sends
 them natively when it finds herdr's environment in its pane. It is an input
-only: tuios answers nothing else a herdr client could ask.
+only: dartuios answers nothing else a herdr client could ask.
 
 A pane that is to report this way is started with:
 
 | Variable | Value |
 | --- | --- |
 | `HERDR_ENV` | `1` |
-| `HERDR_SOCKET_PATH` | `<daemon socket>.herdr`, a socket of tuios's own, owner only |
-| `HERDR_PANE_ID` | the pane's window id, the same as `TUIOS_PANE_ID` |
+| `HERDR_SOCKET_PATH` | `<daemon socket>.herdr`, a socket of dartuios's own, owner only |
+| `HERDR_PANE_ID` | the pane's window id, the same as `DARTUIOS_PANE_ID` |
 
 herdr reads `HERDR_SOCKET_PATH` as the path of its own server and
-`HERDR_ENV=1` as "inside herdr", so tuios sets them only where they are wanted:
-in a pane that starts Crush directly (`tuios new-window NAME crush`,
+`HERDR_ENV=1` as "inside herdr", so dartuios sets them only where they are wanted:
+in a pane that starts Crush directly (`dartuios new-window NAME crush`,
 `start-agent crush`, `fan --agent crush`), or in every pane with
 `herdr_protocol = "always"` in `[agents]` (see
 [the configuration reference](CONFIGURATION.md#harnesses-that-report-to-herdr)).
-A shell pane is not told it is a herdr pane by default, and tuios never listens
+A shell pane is not told it is a herdr pane by default, and dartuios never listens
 on herdr's own socket, so a real herdr on the same machine is untouched. The
-other way round, a tuios started inside a herdr pane does not pass that pane's
+other way round, a dartuios started inside a herdr pane does not pass that pane's
 `HERDR_ENV`, `HERDR_PANE_ID`, `HERDR_TAB_ID` or `HERDR_WORKSPACE_ID` on to its
-own panes, the way it does not pass on `TMUX`, so an agent in a tuios pane never
+own panes, the way it does not pass on `TMUX`, so an agent in a dartuios pane never
 sets the state of the herdr pane around it.
 
 The wire is herdr's: one JSON object per connection on one line, `{"id",
 "method", "params"}`, answered with one line, `{"id", "result": {"type":
 "ok"}}` or `{"id", "error": {"code", "message"}}`, and the connection closes.
 
-| Method | What tuios does |
+| Method | What dartuios does |
 | --- | --- |
 | `pane.report_agent` `state: working` | `working` |
 | `pane.report_agent` `state: blocked` | `needs_input`, with `message` when sent. For Crush, which reports `blocked` only on a permission request, kind `approval` |
@@ -322,7 +322,7 @@ The wire is herdr's: one JSON object per connection on one line, `{"id",
 | anything else | error `unsupported` |
 
 Each report goes through `set-agent-state` with source `report`, the harness
-named by `agent` when tuios knows it, and `agent_session_id` when sent, so it
+named by `agent` when dartuios knows it, and `agent_session_id` when sent, so it
 has the same rank, guards and alerts as a hook's report. A report whose `seq`
 is not above the last one from the same `source` for the pane is dropped
 without an error, as herdr does; Crush seeds its `seq` from the clock, so a
@@ -375,7 +375,7 @@ and `stall` is a timer. For identity, `get-agent-state`, `list-agents` and
 | `report`    | `certain`    | The harness named itself with `--harness`            |
 | `manifest`  | `strong`     | A manifest rule matched the process's own identity   |
 | `list`      | `strong`     | The built-in or user name list matched its name      |
-| `hint`      | `strong`     | `TUIOS_AGENT` on the foreground process named it     |
+| `hint`      | `strong`     | `DARTUIOS_AGENT` on the foreground process named it     |
 | (empty)     | `none`       | Nothing has named a harness                          |
 
 A screen rule never names a harness, and a word inside an argument never counts
@@ -433,7 +433,7 @@ claim its own source already holds (same state, message and harness) writes
 nothing: no new stamp, no version bump, no push. Before this, a spinner frame
 left in the title restamped its `working` claim on every look, so the claim never
 went two seconds unrefreshed and the prompt under it never showed. A hook or a
-`tuios set-agent-state` caller repeating itself still restamps, since that is a
+`dartuios set-agent-state` caller repeating itself still restamps, since that is a
 source actively reporting.
 
 The override is a loan. It records the claim it displaced, and the next look that
@@ -502,25 +502,25 @@ is not a descendant of the pane, and an agent run under `go run` or `cargo run`,
 since build tools are not walked. For those, name the harness on the wrapper:
 
 ```sh
-TUIOS_AGENT=claude-code docker run -it sandbox claude
-TUIOS_AGENT=codex ssh devbox codex
+DARTUIOS_AGENT=claude-code docker run -it sandbox claude
+DARTUIOS_AGENT=codex ssh devbox codex
 ```
 
 When neither the foreground process nor anything behind it is recognised, the
-detector reads `TUIOS_AGENT` from that process's environment (`/proc/<pid>/environ`
+detector reads `DARTUIOS_AGENT` from that process's environment (`/proc/<pid>/environ`
 on Linux, `kern.procargs2` on macOS) and, if it names a manifest by id or by
 program name, attributes the pane to that harness with identity `hint`, so its
 screen and title rules run. A real agent binary always wins over the hint, a
 value naming no manifest is ignored, and a process whose environment cannot be
 read (another user's, or one of macOS's own platform binaries) has no hint.
 Only this one variable is read. `explain-agent-detect` reports the match as
-"named by TUIOS_AGENT=<id> on pid N". Set it per command, not in the pane's
+"named by DARTUIOS_AGENT=<id> on pid N". Set it per command, not in the pane's
 shell profile, or every program the pane runs is taken for that agent.
 
 ### Teammates opened through the tmux shim
 
 A pane that [the tmux shim](TMUX_SHIM.md) opens, a Claude Code teammate say,
-runs `tuios tmux-pane` as its process, and the holder runs the teammate. The
+runs `dartuios tmux-pane` as its process, and the holder runs the teammate. The
 holder gives its command a process group of its own and makes it the
 terminal's foreground group, so the detector reads the teammate (or the
 `sh -c` running it, which it walks as a wrapper) exactly as it reads an agent
@@ -592,15 +592,15 @@ a harness reporting for itself still works.
 ### Seeing what the detector saw
 
 ```
-tuios explain-agent-detect                 # the focused pane
-tuios explain-agent-detect -w build --json
+dartuios explain-agent-detect                 # the focused pane
+dartuios explain-agent-detect -w build --json
 ```
 
 It leads with a verdict in plain words and the evidence it rests on:
 
 ```
 This pane runs claude-code behind timeout.
-  The foreground process timeout is a wrapper, so tuios read the processes behind it.
+  The foreground process timeout is a wrapper, so dartuios read the processes behind it.
   The process claude matched the manifest claude-code on comm=claude.
   A process name is strong evidence.
 ```
@@ -611,7 +611,7 @@ or, for a pane that is not an agent, every word it saw and did not count:
 This pane does not run an agent. The foreground process is build.sh.
   The process build.sh is a wrapper. None of the 1 processes behind it is an agent.
 
-words tuios saw and did not count:
+words dartuios saw and did not count:
   The argument "/home/u/dev/crush/scripts/build.sh" contains the word "crush". A word inside an argument is not evidence.
 ```
 
@@ -633,14 +633,14 @@ agent_binaries = ["myagent"]     # more names to treat as agents, added to the b
 ```
 
 Each has an environment variable the daemon reads as it starts.
-`TUIOS_AGENT_AUTODETECT` (`0`, `false`, `no` or `off` turns detection off) and
-`TUIOS_AGENT_DETECT_SECONDS` (`0` or less turns it off) count only when the
-option is unset; `TUIOS_AGENT_BINARIES`, comma separated, is added to the
+`DARTUIOS_AGENT_AUTODETECT` (`0`, `false`, `no` or `off` turns detection off) and
+`DARTUIOS_AGENT_DETECT_SECONDS` (`0` or less turns it off) count only when the
+option is unset; `DARTUIOS_AGENT_BINARIES`, comma separated, is added to the
 option's list. A name
 from `agent_binaries` marks the pane as an agent by its process name alone,
 with no manifest behind it, so it gets no screen or title rules; a manifest in
 the user directory (see [Your own manifests](#your-own-manifests)) is the way to
-teach tuios a harness properly.
+teach dartuios a harness properly.
 
 ## Screen rules
 
@@ -810,9 +810,9 @@ Writing a rule against text nobody can see is guesswork, so there is a command
 for it:
 
 ```
-tuios explain-agent-screen                              # the focused pane
-tuios explain-agent-screen -w build --harness codex     # try another harness's rules
-tuios explain-agent-screen --lines 20 --json            # look further up
+dartuios explain-agent-screen                              # the focused pane
+dartuios explain-agent-screen -w build --harness codex     # try another harness's rules
+dartuios explain-agent-screen --lines 20 --json            # look further up
 ```
 
 It prints the pane's tail exactly as the classifier reads it, then every rule of
@@ -825,8 +825,8 @@ with the pane's title and its last OSC 9;4 progress report.
 
 ### Your own manifests
 
-A manifest dropped in `$XDG_CONFIG_HOME/tuios/harnesses` (`~/.config/tuios/harnesses`
-when the variable is unset), or in the directory `TUIOS_HARNESS_DIR` names, is
+A manifest dropped in `$XDG_CONFIG_HOME/dartuios/harnesses` (`~/.config/dartuios/harnesses`
+when the variable is unset), or in the directory `DARTUIOS_HARNESS_DIR` names, is
 loaded when the daemon starts. A new id adds a harness. An id a bundled manifest
 already has replaces that manifest whole: its detect, screen, title, notify,
 transcript and input blocks alike, and a block the user file leaves out is gone
@@ -835,7 +835,7 @@ by and its priority means something only next to the rules around it. To change
 one rule, copy the bundled file from `internal/harness/manifests` and edit the
 copy.
 
-`tuios doctor agents` lists the manifests loaded from that directory, says which
+`dartuios doctor agents` lists the manifests loaded from that directory, says which
 replace a bundled one, and names every file there that failed to load and why.
 `explain-agent-screen` reports `manifest_source` and `replaces_bundled` for the
 pane's harness.
@@ -844,7 +844,7 @@ To draft a manifest from one of herdr's, run
 `go run ./internal/harness/herdrconv path/to/herdr/agent.toml`. It carries
 herdr's nested gates and regions as they are, sends title and progress rules to
 the `[title]` block, and names every rule it drops and why: an `unknown` rule
-(tuios has no "leave the state alone" rule), a region tuios has no equivalent
+(dartuios has no "leave the state alone" rule), a region dartuios has no equivalent
 for (`top_non_empty_lines(N)`, Codex's prompt-marker regions), or an idle rule
 without the proof the loader asks for. Over herdr's 22 manifests it carries 128
 of 141 rules; before nested gates it carried 100, several of them only
@@ -853,7 +853,7 @@ approximated by flattening.
 ## Title rules
 
 The window title is the other thing an agent publishes about itself, with OSC 0
-or OSC 2, and tuios kept the string for the window's name without ever reading
+or OSC 2, and dartuios kept the string for the window's name without ever reading
 it. Codex writes `Action Required` there when it is waiting on a person. Claude
 Code puts a spinner there while it works.
 
@@ -911,7 +911,7 @@ attributed, and why the silence timer still demotes a pane that stops drawing:
 the timer's own last look ignores a `working` title, because a spinner that has
 not turned for the whole stall window is a frame left behind, not an answer.
 An idle title rule goes through the same confirmation gate as an idle screen
-rule. `tuios explain-agent-screen` prints the pane's title and what the title
+rule. `dartuios explain-agent-screen` prints the pane's title and what the title
 rules made of it beside the screen half, which is the way to write one.
 
 ### Progress rules
@@ -1007,7 +1007,7 @@ The fallback is strictly secondary to explicit reporting:
 - It never promotes a pane into `working`; only an explicit report does that.
 
 The silence window defaults to 30 seconds. Override it with the
-`TUIOS_AGENT_STALL_SECONDS` environment variable when starting the daemon; set it
+`DARTUIOS_AGENT_STALL_SECONDS` environment variable when starting the daemon; set it
 to `0` (or a negative value) to disable the heuristic entirely.
 
 ## Finished turns
@@ -1037,7 +1037,7 @@ counts as seen.
 
 ## Indicator
 
-tuios draws a one-cell mark for each pane's state. It is the same mark, in the
+dartuios draws a one-cell mark for each pane's state. It is the same mark, in the
 same colour, on every surface that shows a state: the rail and its collapsed
 strip, the window title, the command palette, the session switcher, the
 aggregate view, the Inbox and the dock's notifications.
@@ -1095,7 +1095,7 @@ has been seen, the client leaves out:
 Nothing is removed: every key, the palette's `@` filter and every option work
 the same before and after. An agent counts as seen once any pane in any session
 this client can see has an agent state or a named harness, the Inbox holds an
-item, mail arrives, or `tuios integration install` has put tuios's hooks into a
+item, mail arrives, or `dartuios integration install` has put dartuios's hooks into a
 harness on this machine (read once at start). The client remembers it in its
 rail state (`agents_seen` in `sidebar.json`), so the controls stay once they
 have appeared. The rail's agents section already stayed hidden until an agent
@@ -1219,12 +1219,12 @@ A pane can report short facts about its agent with `set-agent-meta`: the
 model, how full its context is, the cost of the turn, a one-line summary.
 
 ```sh
-tuios set-agent-meta -w "$TUIOS_PANE_ID" --source statusline --ttl 60s model=opus context=42%
+dartuios set-agent-meta -w "$DARTUIOS_PANE_ID" --source statusline --ttl 60s model=opus context=42%
 ```
 
 The `meta` row token draws every key on the second line, values only, in the
 order the pane first reported them, so write values that read on their own
-(`42% ctx` rather than `42`). It leaves out the keys tuios feeds itself
+(`42% ctx` rather than `42`). It leaves out the keys dartuios feeds itself
 (`now`, `prompt`, `model`, `context`, `cost` and `plan`), which have tokens of
 their own, so the model and the cost of every agent are not on every row; it
 drew them until the rich rows landed. `$name` places one key, and `meta` then
@@ -1259,7 +1259,7 @@ The Claude Code and Codex hooks feed three keys from what the agent does (see
 - `model`: the model the harness named (Codex names it on every event), unless
   the pane already shows that model from another feed.
 
-`now` and `prompt` are tuios's own: `set-agent-meta` refuses them, and its
+`now` and `prompt` are dartuios's own: `set-agent-meta` refuses them, and its
 `--clear` leaves them. Writing a key the value it already holds changes
 nothing and sends nothing to attached clients, and a TTL is renewed only once
 less than half of it is left, so a status line may write on every tick.
@@ -1273,8 +1273,8 @@ token draws nothing.
 
 | Feed | Keys | Source | How it is turned on |
 | ---- | ---- | ------ | ------------------- |
-| Claude Code's status line, through `tuios agent-statusline` | `model`, `context`, `cost` | `statusline` | `tuios integration install claude-code --statusline` (opt in) |
-| The opencode and Kilo plugin, through `tuios agent-statusline` | `model`, `cost` (the sum of the session's assistant messages) | `statusline` | the plugin `integration install opencode` writes |
+| Claude Code's status line, through `dartuios agent-statusline` | `model`, `context`, `cost` | `statusline` | `dartuios integration install claude-code --statusline` (opt in) |
+| The opencode and Kilo plugin, through `dartuios agent-statusline` | `model`, `cost` (the sum of the session's assistant messages) | `statusline` | the plugin `integration install opencode` writes |
 | A protocol pane (`start-agent --protocol`) | `model`, `context`, `plan` from Codex; `model`, `context`, `cost`, `plan` from ACP | `protocol` | always |
 
 The status line feed is opt in because Claude Code has one status line slot
@@ -1301,9 +1301,9 @@ it. A pane whose harness has no hooks, and a plain shell, has none and costs
 nothing.
 
 ```sh
-tuios agent-log -w api                       # the entries, oldest first
-tuios agent-log -w api --since 30m --recap   # a summary of the last half hour
-tuios agent-log -w api --json                # the verb's answer, for a script
+dartuios agent-log -w api                       # the entries, oldest first
+dartuios agent-log -w api --since 30m --recap   # a summary of the last half hour
+dartuios agent-log -w api --json                # the verb's answer, for a script
 ```
 
 ```
@@ -1370,7 +1370,7 @@ the dock says only the turns this client counted and the Inbox shows the
 turn's own line.
 
 `[agents.recap] mode` says where it shows: `toast` (the default) in the dock
-and the Inbox, `inbox` only in the Inbox, and `off` only in `tuios agent-log
+and the Inbox, `inbox` only in the Inbox, and `off` only in `dartuios agent-log
 --recap`. Nothing runs on a timer: the Inbox reads a recap when a finished
 item comes under the cursor, and the dock reads one when focus lands on the
 pane.
@@ -1382,8 +1382,8 @@ daemon: approvals and questions an agent is blocked on, questions an agent put
 to you with `ask-human`, mail an agent wrote to you, agents that errored,
 conversations a daemon restart left to resume, and finished turns you have not
 looked at. The daemon
-keeps it, so it is the same list in every client, in `tuios list-attention`,
-and in the `attention` events of `tuios subscribe`. See
+keeps it, so it is the same list in every client, in `dartuios list-attention`,
+and in the `attention` events of `dartuios subscribe`. See
 [list-attention](protocol.md#list-attention) for the fields and the rules for
 when an item opens and closes. In short, an item closes by itself when what
 opened it stops being true: the agent leaves `needs_input` or `errored`, the
@@ -1397,7 +1397,7 @@ place in the order, because the wait did not start again.
 
 An agent `fan` or `start-agent` started that has not shown it is at its
 prompt for 30 seconds, and is not on `needs_input`, gets a question too: "waiting
-at a screen tuios does not recognise: look at the pane and answer it". It is
+at a screen dartuios does not recognise: look at the pane and answer it". It is
 most often a first-run choice, such as a theme picker, that no rule reads and
 only you can answer. The question goes when the agent's state changes, or when
 its first prompt is typed or given up on; `fan` types the prompt as soon as
@@ -1462,7 +1462,7 @@ fence with the same gutter.
 
 Mail to you and notices alert under `[notifications.mail]`. A key the table
 leaves out follows the same key in `[notifications.agent]`, so a config
-without the table alerts as before. `tuios set-config notifications.mail.dock ""`
+without the table alerts as before. `dartuios set-config notifications.mail.dock ""`
 clears a key, and `get-config` then prints `(follows notifications.agent.dock)`. Sound mode, cooldown, cue files and quiet
 hours always come from `[notifications.agent]`. `between_agents` is off by
 default, and a message between two agents then counts only on the rail row of
@@ -1483,7 +1483,7 @@ Resume, Done, each with its count, and oldest first inside a group. Questions
 holds both a question an agent's prompt asks and one put with `ask-human`; they
 were two groups, "Questions" and "Asked you", and `f` now steps over the
 second. A row names its session as the rail does, by its display name, or by
-its directory when tuios made the name up. A row carries
+its directory when dartuios made the name up. A row carries
 its kind's glyph, the pane's name, what it said, and on the right its session
 and how long it has waited (`12m`, `3h`). The heading, the name and the wait are
 text, so nothing depends on colour, and the ASCII glyph set covers the marks.
@@ -1504,11 +1504,11 @@ rows, as it did before.
 
 ### Questions an agent asks you
 
-An agent, or any script, that needs a decision calls `tuios ask-human` with a
+An agent, or any script, that needs a decision calls `dartuios ask-human` with a
 question and its answers:
 
 ```sh
-tuios ask-human 'Deploy the branch to staging?' -o yes -o no -o later
+dartuios ask-human 'Deploy the branch to staging?' -o yes -o no -o later
 ```
 
 The question is a row under Questions in the Inbox, and the call waits for you:
@@ -1560,7 +1560,7 @@ that blocks on `build` is a row here, reading `build:api` on the right, and
 raises the same dock message, notification and sound a local one does, naming
 the machine. Enter on it attaches that session on `build` in this client and
 lands on the pane; on mail it opens the thread there. The prefix then `o`
-visits it like any other. `tuios list-attention` lists it as
+visits it like any other. `dartuios list-attention` lists it as
 `build:api/claude`, with the id `build:17`.
 
 When a host's link drops, its rows stay, drawn in the muted ink, with
@@ -1572,7 +1572,7 @@ header says `seen 3m ago` where it used to say `offline`. On a narrow rail the
 header keeps the mail count (`3 queued`) when mail waits for the machine, and
 otherwise a `✕` mark (`x` in ASCII), so a down machine never reads like one
 that is up. A machine that is connecting gets no mark. A host that answers
-and refuses keeps its reason (`no daemon`, `no tuios`, `version`). When the
+and refuses keeps its reason (`no daemon`, `no dartuios`, `version`). When the
 link comes back the stream resumes where it stopped and the marks clear.
 
 Dismissing a row of another machine with `d` hides it here and marks nothing
@@ -1585,9 +1585,9 @@ change to the attached clients, and the rail lists the hosts again on the
 push, with one listing a minute as a backstop. While the client is attached
 to a session on another machine the push goes to that machine's daemon, not
 to this client, so the rail keeps polling every 5 seconds with the rail open
-and 30 without. A host whose tuios is too old
+and 30 without. A host whose dartuios is too old
 to stream its agents is polled as before, every 5 seconds with the rail open
-and 30 without, and `tuios hosts` names it with what to update; what waits on
+and 30 without, and `dartuios hosts` names it with what to update; what waits on
 it is not in the Inbox until it is updated.
 
 Who can clear it: `dismiss-attention` needs the nonce the daemon issued in a
@@ -1604,7 +1604,7 @@ read is a peek.
 What it does not do yet: a client attached to a session on another machine
 sees this machine's Inbox and cannot dismiss or answer from it, and the Inbox
 does not answer an item of a linked host, with the peek or with `1`, `2` and
-`3`. `tuios peek-prompt` and `tuios respond` reach a pane on another machine
+`3`. `dartuios peek-prompt` and `dartuios respond` reach a pane on another machine
 by `HOST:SESSION:WINDOW`.
 
 ## Selectors
@@ -1701,10 +1701,10 @@ closes the peek, and the dock says what was pressed and what the agent did:
 On the command line, the same two steps are two verbs:
 
 ```bash
-tuios peek-prompt -w review                        # the prompt, its options, its answers
-tuios respond -w review --prompt-id 75f8b9fadb5b5dfc approve
-tuios respond -w review choose 2
-tuios peek-prompt -w buildbox:api:review --json    # a pane on another machine
+dartuios peek-prompt -w review                        # the prompt, its options, its answers
+dartuios respond -w review --prompt-id 75f8b9fadb5b5dfc approve
+dartuios respond -w review choose 2
+dartuios peek-prompt -w buildbox:api:review --json    # a pane on another machine
 ```
 
 ### The answers block
@@ -1746,8 +1746,8 @@ nor an option, or with an `option` on a title rule (a title has no options)
 fails the manifest's load, and the error names the answers block. The
 bundled manifests declare answers for Claude Code's permission, trust, plan,
 question and workflow menus, and for Codex's approval. Harnesses whose prompts
-tuios cannot read reliably declare none, and their prompts are answered in the
-pane. Older builds of tuios ignore the block.
+dartuios cannot read reliably declare none, and their prompts are answered in the
+pane. Older builds of dartuios ignore the block.
 
 ### What the daemon checks before it presses anything
 
@@ -1797,7 +1797,7 @@ Answering a prompt is acting as the person: it approves a tool call. So
 
 A caller inside a pane without the `respond` grant is refused with
 `not_human`, even with a live nonce copied out of the person's client. Such an
-agent cannot approve its own tool call or another agent's through tuios. A key that `send-keys` or `run-command`
+agent cannot approve its own tool call or another agent's through dartuios. A key that `send-keys` or `run-command`
 routed into the person's client does not answer from the peek either: the peek
 refuses it and says why, the same rule that keeps such keys from signing a mail
 reply.
@@ -1830,14 +1830,14 @@ hold_seconds = 120                      # kept between 10 and 300
 ```
 
 The config file is watched, so a change applies to the next prompt. Then
-install the integration again (`tuios integration install claude-code`, or
+install the integration again (`dartuios integration install claude-code`, or
 `qwen`), since version 2 of each is the one that gives the hook time to wait. A pane
 `start-agent --protocol` opened needs none of this: see
 [Headless agents over a protocol](#headless-agents-over-a-protocol).
 
 What happens on a prompt:
 
-1. The harness runs `tuios agent-hook` for the prompt: Claude Code's or Qwen
+1. The harness runs `dartuios agent-hook` for the prompt: Claude Code's or Qwen
    Code's `PermissionRequest`, or `permission.asked` through the opencode and
    Kilo plugin. The hook reports the pane as `needs_input`, kind `approval`, as it
    always did.
@@ -1870,7 +1870,7 @@ characters left out.
 `2` is offered only when every rule it adds can be shown. For Claude Code that
 means every `permission_suggestions` entry is an `addRules` that allows, kept
 in the session or a settings file, with at most four rules; a `setMode` (such
-as `acceptEdits`), an `addDirectories`, a deny or ask rule, or a field tuios
+as `acceptEdits`), an `addDirectories`, a deny or ask rule, or a field dartuios
 does not know leaves only `1` and `3`. The rules sent back are rebuilt from the
 ones shown. For opencode, the rules are the request's own `always` patterns.
 
@@ -1884,7 +1884,7 @@ daemon refuses it (`changed`) if the hold is on another call by the time it
 arrives.
 
 A hold ends with no decision, and the harness then shows its own prompt as if
-tuios were not there, when any of these happens first: `hold_seconds` passes;
+dartuios were not there, when any of these happens first: `hold_seconds` passes;
 you press enter on the item (going to the pane is choosing to answer there);
 you focus the pane, or already have it focused when the prompt arrives; you
 dismiss the item; the pane leaves `needs_input` or its block turns into a
@@ -1895,7 +1895,7 @@ What is supported:
 
 | Harness | Decision channel | Offers |
 | --- | --- | --- |
-| Claude Code | `PermissionRequest` hook output (`hookSpecificOutput.decision`) | once and deny, and always when every `permission_suggestions` entry is a rule tuios can show |
+| Claude Code | `PermissionRequest` hook output (`hookSpecificOutput.decision`) | once and deny, and always when every `permission_suggestions` entry is a rule dartuios can show |
 | opencode, Kilo | The plugin posts the reply to opencode's permission route | once and deny, and always when the request lists its `always` patterns |
 | Qwen Code | `PermissionRequest` hook output, in Claude Code's shape | once and deny. Qwen Code ignores `updatedPermissions` from this hook, so always is not offered |
 
@@ -1908,7 +1908,7 @@ Codex would have settled itself. GitHub Copilot CLI's `permissionRequest` hook
 runs before its rules, session approvals and auto-allow in the same way, so it
 is not held for the same reason. Cursor has no hook that runs when it shows its
 own approval prompt, and its permission hooks block a call on an empty answer,
-so tuios registers none of them. Qwen Code's `ask_user_question` comes through
+so dartuios registers none of them. Qwen Code's `ask_user_question` comes through
 `PermissionRequest` too; it is reported as a question and answered in the
 pane.
 
@@ -1933,7 +1933,7 @@ finished turn, or a hook that starts holding the approval wakes it early; the
 same report again does not. When what it was about ends while it sleeps (the
 agent moves on, you look at the pane) it is gone rather than woken. The list
 says how many are snoozed and `S` shows them under a muted Snoozed heading,
-each with when it wakes; `z` on one wakes it now. `tuios list-attention
+each with when it wakes; `z` on one wakes it now. `dartuios list-attention
 --snoozed` lists them too.
 
 Snoozing is for what can wait: finished turns, errors, mail, resume rows, and
@@ -1979,7 +1979,7 @@ the client finds that out once per attach and leaves these keys out: the
 Inbox footer offers no `z`; `z`, `u` and `S` do what an unbound key does, a
 dismiss does not say `u undoes`, and `u` on the rail clears only this
 client's seen marks. The keys come back once the daemon is restarted with a
-newer tuios.
+newer dartuios.
 
 Away since: the client also records, per agent pane, when you last had it in
 front of you (`agent_seen_at` in `sidebar.json`, by window id, beside the
@@ -2058,8 +2058,8 @@ protocol pane's line reads `approve execute: <command>` for a command and
 `write_file`, `replace`) likewise covers them all.
 
 The rules are read from the file and again when it changes, and cannot be set
-with `set-option`, so a pane cannot switch them off through tuios. An approval
-nobody holds is matched on its line: tuios's own hooks report
+with `set-option`, so a pane cannot switch them off through dartuios. An approval
+nobody holds is matched on its line: dartuios's own hooks report
 `approve <Tool>: <what>`, read as that tool and argument; any other line is
 read as a command. That line is clipped to 100 characters, so a risky part
 past the cut is not there to match. A clipped line is therefore marked
@@ -2114,7 +2114,7 @@ reference and the 2.1.281 build). `2` adds one permission update,
 
 `n` on a held approval or plan opens a `Reason:` line under it. `enter` denies
 with what you typed, which the hook hands to the model as the deny's message;
-an empty line sends the default ("The user denied this from the tuios Inbox.").
+an empty line sends the default ("The user denied this from the dartuios Inbox.").
 It is offered where the harness passes a reason on: Claude Code, opencode and
 Kilo. The reason is cleaned and cut to 500 bytes, only you can send it (it is
 a `reply-approval` with your attach nonce), and it reaches only the hold it
@@ -2127,7 +2127,7 @@ built now:
 
 - **Reviewing a pane's changes** (`review-diff`, `review-note`,
   `send-review`), and comparing the attempts of a fan (`compare-fan`,
-  `verify-fan`, `keep-fan`). The review verbs are built, with `tuios review`:
+  `verify-fan`, `keep-fan`). The review verbs are built, with `dartuios review`:
   see [Reviewing an agent's changes](#reviewing-an-agents-changes), and so
   is the review overlay in the client: see
   [Reviewing in the client](#reviewing-in-the-client).
@@ -2160,7 +2160,7 @@ against the fan's base without touching its index or files, and reports the
 last `verify-fan` check and the last command a shell in it finished.
 `verify-fan` runs a command you give, never one read from the repository, in
 a window named `verify` in each attempt; the window holds no grants, closes
-when the check passes and stays open when it fails. `keep-fan` is `tuios fan
+when the check passes and stays open when it fails. `keep-fan` is `dartuios fan
 keep` moved into the daemon, so the TUI and the CLI share it.
 
 Who may do what is settled now, whatever is built. A pane without the `admin`
@@ -2204,7 +2204,7 @@ and a later restart does not offer the same conversation again. An offer is
 made once, for the restart that ended the agent, whether you answer it,
 dismiss it or leave it.
 
-`tuios resume-agent -w <pane>` types the same command at any time, on any
+`dartuios resume-agent -w <pane>` types the same command at any time, on any
 pane with a recorded id, and
 `--dry-run` prints it. The command is typed only when the pane's shell holds
 the terminal's foreground, so it never lands in an editor or another agent. A
@@ -2214,7 +2214,7 @@ Resume row closes when the command is typed, when the pane goes to `working` or
 The bundled manifests carry `[resume]` for Claude Code, Codex, opencode,
 Copilot, Cursor Agent, Devin, Droid, Grok, Hermes, Kilo, Kimi, Qoder, Qwen and
 Antigravity, after herdr's resume table. A harness has to report its session id
-for any of this to apply, which the integrations from `tuios integration
+for any of this to apply, which the integrations from `dartuios integration
 install` do. Add one to your own manifest:
 
 ```toml
@@ -2237,13 +2237,13 @@ since the conversation is on that machine.
 ## Harness integrations
 
 A harness with a hooks system reports its own state, which outranks everything
-tuios can work out by looking. tuios wires nineteen of them itself:
+dartuios can work out by looking. dartuios wires nineteen of them itself:
 
 ```sh
-tuios integration install claude-code   # any harness below, or --all
-tuios integration status                # installed and current, per harness
-tuios integration uninstall codex
-tuios doctor agents                     # PATH, install state, and panes missing theirs
+dartuios integration install claude-code   # any harness below, or --all
+dartuios integration status                # installed and current, per harness
+dartuios integration uninstall codex
+dartuios doctor agents                     # PATH, install state, and panes missing theirs
 ```
 
 An integration reports one of two things. Twelve report the pane's **state**:
@@ -2254,29 +2254,29 @@ while the pane's state keeps coming from the manifest's screen and title rules.
 Their hooks miss events a state needs, an interrupt, a cancelled approval or the
 end of a turn, and a state reported by a hook outranks every screen rule, so one
 missed event would hold the pane on `working` until the harness exits. herdr
-drew the same line for the same harnesses after running them. `tuios integration
-status` and `tuios doctor agents` say which each one is.
+drew the same line for the same harnesses after running them. `dartuios integration
+status` and `dartuios doctor agents` say which each one is.
 
 | Harness | Reports | What is written | Format source |
 | ------- | ------- | --------------- | ------------- |
 | Claude Code | state | `hooks` in `~/.claude/settings.json` (or `$CLAUDE_CONFIG_DIR`) | [hooks reference](https://code.claude.com/docs/en/hooks) |
 | Codex | state | `~/.codex/hooks.json` (or `$CODEX_HOME`) | [Codex hooks](https://developers.openai.com/codex/hooks) |
 | Gemini CLI | state | `hooks` in `~/.gemini/settings.json` | [hooks reference](https://geminicli.com/docs/hooks/reference/) |
-| opencode | state | `plugins/tuios-agent-state.js` in `~/.config/opencode` (or `$XDG_CONFIG_HOME/opencode`) | [plugins](https://opencode.ai/docs/plugins/) |
-| Kilo | state | `plugin/tuios-agent-state.js` in `~/.config/kilo` (or `$XDG_CONFIG_HOME/kilo`), the opencode plugin under Kilo's id | opencode's plugin API, which Kilo forks |
-| Amp | state | `plugins/tuios-agent-state.ts` in `~/.config/amp` (or `$XDG_CONFIG_HOME/amp`) | [plugin API](https://ampcode.com/manual/plugin-api) |
+| opencode | state | `plugins/dartuios-agent-state.js` in `~/.config/opencode` (or `$XDG_CONFIG_HOME/opencode`) | [plugins](https://opencode.ai/docs/plugins/) |
+| Kilo | state | `plugin/dartuios-agent-state.js` in `~/.config/kilo` (or `$XDG_CONFIG_HOME/kilo`), the opencode plugin under Kilo's id | opencode's plugin API, which Kilo forks |
+| Amp | state | `plugins/dartuios-agent-state.ts` in `~/.config/amp` (or `$XDG_CONFIG_HOME/amp`) | [plugin API](https://ampcode.com/manual/plugin-api) |
 | Kimi Code CLI | state | `[[hooks]]` tables between two marker comments at the end of `~/.kimi-code/config.toml` (or `$KIMI_CODE_HOME`); needs 0.14.0 or newer | [hooks](https://www.kimi.com/code/docs/en/kimi-code-cli/customization/hooks.html) |
-| Pi | state | `extensions/tuios-agent-state.ts` in `~/.pi/agent` (or `$PI_CODING_AGENT_DIR`) | herdr's Pi extension, and Pi's extension events |
-| oh-my-pi (`omp`) | state | `extensions/tuios-omp-agent-state.ts` in `~/.omp/agent` (or `$PI_CODING_AGENT_DIR`). Needs omp 18.3.2 or newer. | [extension discovery](https://github.com/can1357/oh-my-pi/blob/main/docs/extension-loading.md) and [event API](https://github.com/can1357/oh-my-pi/blob/main/packages/coding-agent/src/extensibility/extensions/types.ts) |
-| GitHub Copilot CLI | state | `hooks/tuios.json` in `~/.copilot` (or `$COPILOT_HOME`), a file of its own | [hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference) |
+| Pi | state | `extensions/dartuios-agent-state.ts` in `~/.pi/agent` (or `$PI_CODING_AGENT_DIR`) | herdr's Pi extension, and Pi's extension events |
+| oh-my-pi (`omp`) | state | `extensions/dartuios-omp-agent-state.ts` in `~/.omp/agent` (or `$PI_CODING_AGENT_DIR`). Needs omp 18.3.2 or newer. | [extension discovery](https://github.com/can1357/oh-my-pi/blob/main/docs/extension-loading.md) and [event API](https://github.com/can1357/oh-my-pi/blob/main/packages/coding-agent/src/extensibility/extensions/types.ts) |
+| GitHub Copilot CLI | state | `hooks/dartuios.json` in `~/.copilot` (or `$COPILOT_HOME`), a file of its own | [hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference) |
 | Cursor Agent | state | hooks in `~/.cursor/hooks.json` (or `$CURSOR_CONFIG_DIR`) | [hooks](https://cursor.com/docs/hooks) |
 | Qwen Code | state | `hooks` in `~/.qwen/settings.json` (or `$QWEN_HOME`) | [hooks](https://github.com/QwenLM/qwen-code/blob/main/docs/users/features/hooks.md) |
-| Antigravity CLI | session | a `tuios` block in `~/.gemini/config/hooks.json` (or `$ANTIGRAVITY_CLI_CONFIG_DIR`) | herdr's Antigravity installer |
+| Antigravity CLI | session | a `dartuios` block in `~/.gemini/config/hooks.json` (or `$ANTIGRAVITY_CLI_CONFIG_DIR`) | herdr's Antigravity installer |
 | Crush | session | a `PreToolUse` hook in `~/.config/crush/crush.json` (or `$XDG_CONFIG_HOME/crush`) | [hooks](https://github.com/charmbracelet/crush/blob/main/docs/hooks/README.md) |
 | Devin CLI | session | `hooks` in `config.json` in `$XDG_CONFIG_HOME/devin`, `~/.config/devin` or `%APPDATA%\devin` | herdr's Devin installer |
 | Droid | session | `hooks` in `~/.factory/settings.json` | herdr's Droid installer |
-| Grok CLI | session | `hooks/tuios.json` in `~/.grok` (or `$GROK_HOME`), a file of its own | herdr's Grok installer |
-| Hermes Agent | session | a plugin in `plugins/tuios-agent-state/` under `~/.hermes` (or `$HERMES_HOME`), and `tuios-agent-state` in `plugins.enabled` in its `config.yaml` | herdr's Hermes plugin |
+| Grok CLI | session | `hooks/dartuios.json` in `~/.grok` (or `$GROK_HOME`), a file of its own | herdr's Grok installer |
+| Hermes Agent | session | a plugin in `plugins/dartuios-agent-state/` under `~/.hermes` (or `$HERMES_HOME`), and `dartuios-agent-state` in `plugins.enabled` in its `config.yaml` | herdr's Hermes plugin |
 | Qoder CLI | session | `hooks` in `~/.qoder/settings.json` (or `$QODER_CONFIG_DIR`) | [hooks](https://docs.qoder.com/zh/cli/hooks) |
 
 OMP profiles use their own agent directory (`~/.omp/profiles/<name>/agent`).
@@ -2285,12 +2285,12 @@ Pi reads the same environment variable. `integration install --all` skips
 both Pi and omp and installs the other harnesses when this variable is set.
 Install the one you use by name. An explicit install refuses a directory
 identified as the other harness's. If an earlier install left Pi's extension
-in an OMP profile, run `tuios integration uninstall pi` with that
+in an OMP profile, run `dartuios integration uninstall pi` with that
 `PI_CODING_AGENT_DIR` before installing omp. The 18.3.2 minimum is for
 `ctx.agent.kind`, which distinguishes the main agent from subagents. Process
 detection was measured on omp 18.4.2.
 
-Five recognised harnesses have no integration, and `tuios doctor agents` names
+Five recognised harnesses have no integration, and `dartuios doctor agents` names
 them with the reason: aider (its one hook, `notifications-command`, replaces the
 user's own and carries nothing), Cline (one executable per event in a directory
 that has moved between releases, behind a setting), goose (its hooks have no
@@ -2306,69 +2306,69 @@ migration tool.
 
 Qwen Code reads a command hook's `timeout` of 1000 or more as milliseconds and
 a smaller one as seconds, where older releases read every value as
-milliseconds, so every timeout tuios writes there is 1000 or more:
+milliseconds, so every timeout dartuios writes there is 1000 or more:
 `PermissionRequest` gets 310000, the rest 5000.
 
-A plugin, an extension, and the hook file of its own tuios writes for Copilot
-and Grok are files tuios owns whole. Each carries the version marker in its
-text; a file at that path that tuios did not write is refused, never
+A plugin, an extension, and the hook file of its own dartuios writes for Copilot
+and Grok are files dartuios owns whole. Each carries the version marker in its
+text; a file at that path that dartuios did not write is refused, never
 overwritten, and never removed. Every other integration edits a file the user
 owns, as below. Hermes touches three files, and every file an integration
-touches is worked out before any is written, so a file tuios cannot read leaves
+touches is worked out before any is written, so a file dartuios cannot read leaves
 all of them unchanged. Its `config.yaml` is edited line by line, keeping
 comments and order; a `plugins.enabled` written as an inline list with items in
 it is refused, with the line to add by hand. Uninstall leaves an emptied list as
 `enabled: []`.
 
-Every hook entry runs `tuios agent-hook <harness> --integration <version>`. The
+Every hook entry runs `dartuios agent-hook <harness> --integration <version>`. The
 version marker is how a later install replaces an older entry, how uninstall
-finds exactly what tuios wrote, and how status tells current from out of date.
+finds exactly what dartuios wrote, and how status tells current from out of date.
 The installer keeps everything else in the file, in its order and with the
 user's own text as written (`&&`, `<` and `>` in a hook command are not
 escaped), replaces the file atomically, and writes nothing when nothing
 changed. The first time it rewrites a file it keeps the file as it was as
-`<file>.tuios.bak`, and later writes leave that copy alone, so it is always the
-file from before tuios touched it. A settings file that is a symlink, as a
+`<file>.dartuios.bak`, and later writes leave that copy alone, so it is always the
+file from before dartuios touched it. A settings file that is a symlink, as a
 dotfile manager leaves it, stays a symlink: the file it points to is the one
 rewritten. A symlink to a missing file is refused. It refuses a file it cannot parse rather than
 rewrite it, and refuses when the harness's configuration directory does not
 exist yet (run the harness once first). `--command` names the program the hooks
-run when `tuios` is not on the harness's PATH.
+run when `dartuios` is not on the harness's PATH.
 
 Codex gets hooks rather than the older `notify` command: `notify` takes one
 command only, so it would replace a user's own, and it reports only that a turn
 finished. Hooks are on by default in Codex; `status` notes a `config.toml` that
-turns them off with `[features] hooks = false`. `tuios agent-hook codex` still
+turns them off with `[features] hooks = false`. `dartuios agent-hook codex` still
 reads a `notify` payload, so a hand-wired `notify` reports `done`.
 
 ### The MCP server
 
-`tuios mcp` offers tuios to a harness as Model Context Protocol tools, so an
-agent drives tuios with tool calls instead of shell commands it read about in
+`dartuios mcp` offers dartuios to a harness as Model Context Protocol tools, so an
+agent drives dartuios with tool calls instead of shell commands it read about in
 the skill. `--mcp` on install registers it with the four harnesses that read
-MCP servers from a file tuios can edit:
+MCP servers from a file dartuios can edit:
 
 ```sh
-tuios integration install claude-code --mcp        # read-only
-tuios integration install codex --mcp-write        # plus the tools that type
+dartuios integration install claude-code --mcp        # read-only
+dartuios integration install codex --mcp-write        # plus the tools that type
 ```
 
 | Harness | What is written |
 | ------- | --------------- |
-| Claude Code | a `tuios` server in `mcpServers` in `~/.claude.json` (or `$CLAUDE_CONFIG_DIR/.claude.json`), the user scope `claude mcp add --scope user` writes |
-| Codex | an `[mcp_servers.tuios]` table between two marker comments at the end of `~/.codex/config.toml` |
-| Gemini CLI | a `tuios` server in `mcpServers` in `~/.gemini/settings.json` |
-| opencode | a local `tuios` server in `mcp` in `~/.config/opencode/opencode.json` |
+| Claude Code | a `dartuios` server in `mcpServers` in `~/.claude.json` (or `$CLAUDE_CONFIG_DIR/.claude.json`), the user scope `claude mcp add --scope user` writes |
+| Codex | an `[mcp_servers.dartuios]` table between two marker comments at the end of `~/.codex/config.toml` |
+| Gemini CLI | a `dartuios` server in `mcpServers` in `~/.gemini/settings.json` |
+| opencode | a local `dartuios` server in `mcp` in `~/.config/opencode/opencode.json` |
 
-The entry runs `tuios mcp --integration <version>`, the marker that tells it
-from a server the user named `tuios` themselves, which install refuses to
+The entry runs `dartuios mcp --integration <version>`, the marker that tells it
+from a server the user named `dartuios` themselves, which install refuses to
 overwrite and uninstall leaves alone. Uninstall removes it with the hooks.
 
 The server is read-only by default: it lists and captures panes, waits for
-states, follows the event stream (`tuios_events`, resumable with the
+states, follows the event stream (`dartuios_events`, resumable with the
 `last_seq` and `boot_id` it returns), reports the agent's own state and meta,
-and sends and reads mail. `--write` adds `tuios_send_text`,
-`tuios_send_keys`, `tuios_ask_agent`, `tuios_respond` and `tuios_fan`. Either
+and sends and reads mail. `--write` adds `dartuios_send_text`,
+`dartuios_send_keys`, `dartuios_ask_agent`, `dartuios_respond` and `dartuios_fan`. Either
 way it reaches only the session of the pane it runs in, the sessions in its fan
 group, and the sessions a `fan` from it started, unless it was started with
 `--scope all`.
@@ -2379,7 +2379,7 @@ answers `forbidden` to whatever the restriction does not allow (see
 [restrict-connection](protocol.md#restrict-connection)). The daemon finds the
 server's pane from the kernel's record of its pid, so a harness that starts its
 MCP servers with a scrubbed environment, as Codex does, changes nothing. Where
-the kernel cannot say, `TUIOS_PANE_TOKEN` proves `TUIOS_PANE_ID`.
+the kernel cannot say, `DARTUIOS_PANE_TOKEN` proves `DARTUIOS_PANE_ID`.
 
 A self report through the server with no `window` lands on the agent's own pane,
 and mail goes out from it, with nothing for the agent to fill in. Results that
@@ -2389,15 +2389,15 @@ not instructions.
 ### The status line feed
 
 Claude Code runs one status line command, with a JSON payload on stdin each
-time the conversation changes. `--statusline` points it at tuios:
+time the conversation changes. `--statusline` points it at dartuios:
 
 ```sh
-tuios integration install claude-code --statusline
-tuios integration install claude-code --statusline --then '~/.claude/statusline.sh'
+dartuios integration install claude-code --statusline
+dartuios integration install claude-code --statusline --then '~/.claude/statusline.sh'
 ```
 
 It writes `statusLine` in the same `settings.json` as the hooks:
-`{"type": "command", "command": "tuios agent-statusline claude-code --integration 1"}`,
+`{"type": "command", "command": "dartuios agent-statusline claude-code --integration 1"}`,
 with `--then '<your command>'` at the end when chaining. The wrapper writes
 `model` (from `model.display_name`, else `model.id`), `context` (from
 `context_window.used_percentage`) and `cost` (from `cost.total_cost_usd`) to
@@ -2405,7 +2405,7 @@ the pane's metadata, and prints nothing of its own, so Claude Code's status
 line is empty unless it chains.
 
 - A status line you wrote is never replaced. Install refuses it and prints
-  `tuios integration install claude-code --statusline --then '<your command>'`.
+  `dartuios integration install claude-code --statusline --then '<your command>'`.
   With that `--then`, the entry keeps every key it had (`padding` included)
   and only its command changes.
 - Installing again without `--then` keeps a chain installed before.
@@ -2415,22 +2415,22 @@ line is empty unless it chains.
 
 The wrapper finds its pane as `agent-hook` does and calls only
 `set-agent-meta` for it. It reads at most 1 MiB of stdin, gives up on the
-daemon after 300ms, exits 0 whatever goes wrong on the tuios side (with
+daemon after 300ms, exits 0 whatever goes wrong on the dartuios side (with
 `--then`, it exits with your command's status), and reports nothing for a
-status line under a `TUIOS_AGENT` naming another harness. Its throttle state
+status line under a `DARTUIOS_AGENT` naming another harness. Its throttle state
 is a small file per pane beside the daemon's socket (mode 0600).
 
 Claude Code runs the status line only while the conversation changes, so the
 last run of a turn is usually one the 15 second interval holds back. The
 wrapper keeps what it held in the same file, and the `Stop` hook
-(`tuios agent-hook claude-code`) sends it when the turn ends, so the rail, the
+(`dartuios agent-hook claude-code`) sends it when the turn ends, so the rail, the
 Inbox and the peek show the turn's final context and cost, not values from up
 to 15 seconds before it ended. A status line run after the `Stop` goes at once
 for the same reason.
 
 ### What each event reports
 
-`tuios agent-hook` reads the payload on stdin (the Codex `notify` payload
+`dartuios agent-hook` reads the payload on stdin (the Codex `notify` payload
 arrives as the last argument) and sends one `set-agent-state`, or nothing. A
 report that ends a turn also sends, with `set-agent-meta`, what the pane's
 status line feed held back (see above).
@@ -2531,7 +2531,7 @@ Cursor Agent maps `sessionStart` to `idle`, `beforeSubmitPrompt`,
 or `errored` by its status (`completed`, `aborted`, `error`), and `sessionEnd`
 to `none`. Cursor calls `preToolUse`, `beforeShellExecution`,
 `beforeMCPExecution`, `beforeReadFile` and `subagentStart` permission hooks and
-blocks the action when one prints no valid answer, so tuios registers none of
+blocks the action when one prints no valid answer, so dartuios registers none of
 them, and no Cursor hook runs when Cursor shows its own approval prompt. That
 prompt comes from the screen rules, which may take over a `working` report
 while it is on screen (see [The one exception: a visible blocker](#the-one-exception-a-visible-blocker)).
@@ -2570,7 +2570,7 @@ A hook is a child of the harness, which usually carries the pane's environment.
 The pane is taken from, in order:
 
 1. `--window` (and `--session`) on the command line.
-2. `TUIOS_PANE_ID` (and `TUIOS_SESSION`).
+2. `DARTUIOS_PANE_ID` (and `DARTUIOS_SESSION`).
 3. The hook process's session id. A pane's shell leads the session of the
    pane's terminal, so every process whose controlling terminal is the pane
    shares that id, however deep. The daemon's `resolve-pane` verb matches it.
@@ -2587,15 +2587,15 @@ the one that owns the pane. These filters keep those events off the pane:
 
 - A subagent's events (`agent_id` set, `SubagentStop`, opencode child sessions)
   are dropped by the reporter.
-- An event from a harness other than the one `TUIOS_AGENT` names is dropped by
-  the reporter. `TUIOS_AGENT` may name any harness tuios recognises, one with
+- An event from a harness other than the one `DARTUIOS_AGENT` names is dropped by
+  the reporter. `DARTUIOS_AGENT` may name any harness dartuios recognises, one with
   no integration included, so a Claude Code hook in a pane given to aider is
-  dropped too; a name tuios does not know says nothing either way. A Claude
+  dropped too; a name dartuios does not know says nothing either way. A Claude
   Code hook that Cursor or Grok runs is dropped (both read Claude Code's hook
   configuration; Grok marks its hook processes with `GROK_SESSION_ID`), and so
   is a Codex hook whose session is not the `CODEX_THREAD_ID` it inherited.
-  Every plugin tuios installs does nothing unless `TUIOS_ENV` or `TUIOS_AGENT`
-  is set, so outside tuios it costs nothing.
+  Every plugin dartuios installs does nothing unless `DARTUIOS_ENV` or `DARTUIOS_AGENT`
+  is set, so outside dartuios it costs nothing.
 - A session report (`set-agent-session`) is refused for a pane attributed to
   another harness, and for a pane mid-turn whose id came from another process
   of the same harness. See [Session identity](#session-identity).
@@ -2628,7 +2628,7 @@ into the pane. The harness it belongs to is stored with it
 the agent exits and a resume needs both.
 
 A harness whose hooks can name the conversation but cannot be trusted with the
-pane's state sends the id alone, with the `set-agent-session` verb (`tuios
+pane's state sends the id alone, with the `set-agent-session` verb (`dartuios
 set-agent-session` by hand). It stores the id and changes nothing else: not the
 state, not the source that holds it, not the harness the pane is attributed to.
 A state reported by a hook outranks every screen rule, so a hook that misses an
@@ -2646,7 +2646,7 @@ pane's.
 ### Failure behaviour
 
 Harnesses run some hooks synchronously, `PreToolUse` and `PermissionRequest`
-among them. `tuios agent-hook` exits 0 whatever happens, prints nothing a
+among them. `dartuios agent-hook` exits 0 whatever happens, prints nothing a
 harness could read as an answer (Gemini CLI and Antigravity CLI, which parse
 stdout, get `{}`), and gives up after 500 ms (`--timeout`) when the daemon is
 slow, restarting or gone. The opencode, Kilo, Amp, Pi and oh-my-pi plugins
@@ -2655,7 +2655,7 @@ up. The Hermes plugin waits for it, on session start only, for at most two
 seconds. A session report goes only to a daemon whose `list-verbs` has
 `set-agent-session`; an older daemon gets nothing, and `--explain` says so.
 
-A daemon keeps running across a tuios upgrade, so a new hook talking to an
+A daemon keeps running across a dartuios upgrade, so a new hook talking to an
 older daemon is the ordinary case right after one. Such a daemon does not
 reject the hook fields: it ignores a param it does not know and applies the
 report without it. So before it reports, the hook asks `list-verbs` which
@@ -2664,7 +2664,7 @@ is not sent at all to a daemon without it, because applied unconditionally it
 would do what the condition rules out: Claude Code's `idle_prompt` would turn
 `done` into `idle` a minute after every turn, and a late `PostToolUse` would
 turn `done` back into `working`. `--explain` lists the fields it left out as
-`unsupported`. `tuios set-agent-state --if-state` makes the same check and
+`unsupported`. `dartuios set-agent-state --if-state` makes the same check and
 fails rather than send the report without its condition.
 
 The one hook that may wait is a permission prompt with approvals on (see
@@ -2675,8 +2675,8 @@ Code integrations give that hook. With approvals off it returns as fast as any o
 
 ### The old shim
 
-`integrations/claude-code/tuios-agent-state.sh` is now a wrapper that runs
-`tuios agent-hook claude-code`, so settings that point at it get the new map.
+`integrations/claude-code/dartuios-agent-state.sh` is now a wrapper that runs
+`dartuios agent-hook claude-code`, so settings that point at it get the new map.
 Wired alongside an installed integration it reports every event twice;
 `status` and `doctor` say so. See
 [integrations/claude-code](../integrations/claude-code/README.md).
@@ -2684,17 +2684,17 @@ Wired alongside an installed integration it reports every event twice;
 ## Headless agents over a protocol
 
 Hooks, screen rules and transcripts read an agent that draws its own TUI.
-Some agents also speak a structured protocol, and for those tuios can be the
+Some agents also speak a structured protocol, and for those dartuios can be the
 client: `start-agent --protocol acp` (the Agent Client Protocol, version 1) or
 `--protocol codex` (the Codex app-server) runs the agent headless, and the
 pane shows the conversation as a plain transcript with a prompt line under it.
 
 ```sh
-tuios start-agent --protocol acp 'opencode acp' --name helper --prompt 'List the TODOs.'
-tuios start-agent --protocol codex codex --name tests
+dartuios start-agent --protocol acp 'opencode acp' --name helper --prompt 'List the TODOs.'
+dartuios start-agent --protocol codex codex --name tests
 ```
 
-The pane's process is `tuios agent-proto`. It knows the agent's state from the
+The pane's process is `dartuios agent-proto`. It knows the agent's state from the
 protocol itself, not from its screen, and reports it for its own pane with
 `set-agent-state`, source `report`, under the harness the manifest named (or
 `acp` or `codex` when none did):
@@ -2762,7 +2762,7 @@ the pane has not seen, whose files it cannot show. When it carries
 `grantRoot`, a request to allow writes under that directory for the rest of
 the session, the pane says so under the title.
 
-What the agent can do through tuios is nothing it could not do in its own TUI.
+What the agent can do through dartuios is nothing it could not do in its own TUI.
 `agent-proto` advertises no file system and no terminal capability, answers
 every request it does not handle with method not found (which Codex reads as
 not approved), starts the agent in a session of its own with no controlling
@@ -2825,9 +2825,9 @@ caller until the agent is done. The delivery queue holds it in the daemon and
 types it the moment the agent comes to rest.
 
 ```bash
-tuios queue -w build 'make the backoff jitter configurable'
-tuios queue ls
-tuios queue rm q3
+dartuios queue -w build 'make the backoff jitter configurable'
+dartuios queue ls
+dartuios queue rm q3
 ```
 
 The verbs are `queue-prompt`, `list-queued` and `cancel-queued`
@@ -2863,7 +2863,7 @@ never typed again, so text is never typed twice, and the Inbox gets a
 question on the pane: "your queued message was typed but api did not take
 it: look at the pane". A stalled message holds the ones behind it until the
 pane next shows `working` (the agent took it late, or you dealt with the
-pane), which drops it, or until you drop it with `tuios queue rm`.
+pane), which drops it, or until you drop it with `dartuios queue rm`.
 
 **What ends a queue.** It lives in the daemon's memory only. A daemon restart
 drops every queue, since the conversation a message was for ended with the
@@ -2954,10 +2954,10 @@ When an agent finishes, you read what it changed, leave notes on the lines
 you want changed, and send the notes back as one message.
 
 ```bash
-tuios review api-fan-retry-2              # the diff, with notes under their lines
-tuios review note -s api-fan-retry-2 api/retry.go:42 'log the attempt number here too'
-tuios review notes -s api-fan-retry-2
-tuios review send -s api-fan-retry-2      # typed when the agent comes to rest
+dartuios review api-fan-retry-2              # the diff, with notes under their lines
+dartuios review note -s api-fan-retry-2 api/retry.go:42 'log the attempt number here too'
+dartuios review notes -s api-fan-retry-2
+dartuios review send -s api-fan-retry-2      # typed when the agent comes to rest
 ```
 
 The verbs are `review-diff`, `review-note` and `send-review`
@@ -2966,7 +2966,7 @@ The verbs are `review-diff`, `review-note` and `send-review`
 **What is diffed.** The pane's repository: the session's worktree when the
 pane is in it, else the repository holding the pane's directory. The diff
 runs from a base, in this order: the `base` you name; the base the worktree
-was made from (`fan`, `worktree new`), or for one tuios made from `HEAD` the
+was made from (`fan`, `worktree new`), or for one dartuios made from `HEAD` the
 main checkout's branch, as `compare-fan` counts it; the merge base with the
 branch's upstream; else `HEAD`, which shows only what is not committed. A named or
 recorded base is taken through its merge base with `HEAD`, so a base that
@@ -2984,10 +2984,10 @@ listed with their counts only (`truncated`). Binary files have counts only.
 All the git calls of one diff are bounded at 10 seconds together, and nothing
 runs until a diff is asked for. The repository is read on the machine the
 daemon runs on. Reviewing a session on a linked machine is not supported yet:
-`tuios review HOST:SESSION` is refused before anything is dialled, and a pane
+`dartuios review HOST:SESSION` is refused before anything is dialled, and a pane
 of a session here whose process runs on another machine is refused with
 `not_repo`. Attach to that machine and review there, or bring the work here
-with `tuios worktree pull HOST:SESSION` and review that.
+with `dartuios worktree pull HOST:SESSION` and review that.
 
 **Notes.** A note sits on a line (`FILE:LINE`, on the new side, or with
 `side: old` on a removed line numbered as in the base) or on a whole hunk (by
@@ -3082,8 +3082,8 @@ typed into the focused pane), `v` in the Inbox does nothing and `v` on a rail
 agent row runs the rail's own binding, and the prefix menu, the help overlay
 and the palette leave the review out. A review that comes back `unknown_verb`,
 from a daemon the question could not reach, says so in the dock once and does
-the same from then on. Restart the daemon with a newer tuios
-(`tuios kill-server`) to get them back.
+the same from then on. Restart the daemon with a newer dartuios
+(`dartuios kill-server`) to get them back.
 
 The overlay covers the screen: a header with the session, the pane, the counts,
 the base and the number of notes; the changed files on the left; the file
@@ -3135,24 +3135,24 @@ Who acts:
 
 ## Environment
 
-When tuios spawns a pane it exports the environment a state-reporting shim needs:
+When dartuios spawns a pane it exports the environment a state-reporting shim needs:
 
 | Variable          | Meaning                                          |
 | ----------------- | ------------------------------------------------ |
-| `TUIOS_ENV`       | `1` when running under tuios                      |
-| `TUIOS_SOCKET`    | Socket of the daemon that runs the pane. It reports; it does not choose the daemon a command reaches, which `XDG_RUNTIME_DIR` does |
-| `TUIOS_PANE_ID`   | The pane's window id                             |
-| `TUIOS_WINDOW_ID` | The pane's window id (alias of `TUIOS_PANE_ID`)  |
-| `TUIOS_SESSION`   | The session name                                 |
-| `TUIOS_PANE_TOKEN` | Proves `TUIOS_PANE_ID` to `restrict-connection` and `pane-grants` where the kernel cannot name the caller's pane. Good for one pane of one daemon start |
-| `TUIOS_PANE_GRANTS` | What the pane may do through tuios as it starts, comma separated (`read,write,fan`, `admin`, `none`). `tuios pane-grants` gives the current answer. See [What a pane may do](#what-a-pane-may-do) |
+| `DARTUIOS_ENV`       | `1` when running under dartuios                      |
+| `DARTUIOS_SOCKET`    | Socket of the daemon that runs the pane. It reports; it does not choose the daemon a command reaches, which `XDG_RUNTIME_DIR` does |
+| `DARTUIOS_PANE_ID`   | The pane's window id                             |
+| `DARTUIOS_WINDOW_ID` | The pane's window id (alias of `DARTUIOS_PANE_ID`)  |
+| `DARTUIOS_SESSION`   | The session name                                 |
+| `DARTUIOS_PANE_TOKEN` | Proves `DARTUIOS_PANE_ID` to `restrict-connection` and `pane-grants` where the kernel cannot name the caller's pane. Good for one pane of one daemon start |
+| `DARTUIOS_PANE_GRANTS` | What the pane may do through dartuios as it starts, comma separated (`read,write,fan`, `admin`, `none`). `dartuios pane-grants` gives the current answer. See [What a pane may do](#what-a-pane-may-do) |
 
 A shim guards on these and no-ops when they are unset, so it is safe to leave
-wired up outside tuios. `tuios agent-hook` uses `TUIOS_PANE_ID` and
-`TUIOS_SESSION` when they are set and finds the pane from its process otherwise
+wired up outside dartuios. `dartuios agent-hook` uses `DARTUIOS_PANE_ID` and
+`DARTUIOS_SESSION` when they are set and finds the pane from its process otherwise
 (see [Finding the pane](#finding-the-pane)).
 
-One variable goes the other way: `TUIOS_AGENT` is set by you, on a wrapper, to
+One variable goes the other way: `DARTUIOS_AGENT` is set by you, on a wrapper, to
 name the harness it runs. See [Behind a wrapper](#behind-a-wrapper).
 
 A pane that starts Crush, or every pane with `herdr_protocol = "always"`, also
@@ -3162,14 +3162,14 @@ gets `HERDR_ENV`, `HERDR_SOCKET_PATH` and `HERDR_PANE_ID`. See
 ### What a pane says its terminal is
 
 `TERM_PROGRAM` names a terminal the programs in the pane know, for the graphics
-tuios can pass through to yours: `ghostty` when your terminal takes kitty
-graphics, `WezTerm` when it takes sixel, and `TUIOS` when it takes neither.
+dartuios can pass through to yours: `ghostty` when your terminal takes kitty
+graphics, `WezTerm` when it takes sixel, and `dartuios` when it takes neither.
 Image tools choose their output from this name.
 
 One pane is told something else. Codex sends its notifications as OSC 9, which
-tuios shows with their text, only to a terminal it knows by that name (Ghostty,
+dartuios shows with their text, only to a terminal it knows by that name (Ghostty,
 iTerm2, kitty, Warp, WezTerm), and rings the bell for any other. So a pane that
-starts Codex directly (`tuios new-window NAME codex`, `start-agent codex`,
+starts Codex directly (`dartuios new-window NAME codex`, `start-agent codex`,
 `fan --agent codex`) on a terminal with neither graphics protocol is told
 `TERM_PROGRAM=WarpTerminal`. Codex treats that name like an unknown terminal in
 everything else (no image protocol, no keyboard workaround, the same link
@@ -3181,11 +3181,11 @@ terminals that do not know it ignore.
 
 ### A pane on another machine
 
-A window whose process runs on another machine (`tuios new-window NAME --host
-HOST`) exports `TUIOS_PANE_ID`, the window's id on the machine that holds the
-window, and `TUIOS_PANE_HOSTED=1`, and no `TUIOS_SOCKET` or `TUIOS_SESSION`.
-Hooks and shims work there unchanged: `tuios agent-hook` and `tuios
-set-agent-state -w "$TUIOS_PANE_ID"` reach the daemon on the machine the
+A window whose process runs on another machine (`dartuios new-window NAME --host
+HOST`) exports `DARTUIOS_PANE_ID`, the window's id on the machine that holds the
+window, and `DARTUIOS_PANE_HOSTED=1`, and no `DARTUIOS_SOCKET` or `DARTUIOS_SESSION`.
+Hooks and shims work there unchanged: `dartuios agent-hook` and `dartuios
+set-agent-state -w "$DARTUIOS_PANE_ID"` reach the daemon on the machine the
 process runs on, which sends the report to the daemon that holds the window
 over the link, and that window takes the state, its Inbox row and its alerts.
 Reading and sending mail as the pane, and `wait-for agent-message` on it, work
@@ -3206,37 +3206,37 @@ What limits it:
 - A message the pane sends can attach only a file in the session's stash, the
   rule a sender on the link is held to. A path it names is a file on the
   machine holding the window, which its process cannot see, so any other path
-  is refused before that machine looks at it. Use `tuios stash put -s
+  is refused before that machine looks at it. Use `dartuios stash put -s
   HOST:SESSION FILE` and attach the path it prints.
 - A `wait-for agent-message` runs on the machine holding the window for at
   most an hour, and ends when the link to that machine drops. The pane's
   reports come back as soon as the link does, whatever waits were running.
 - A machine holding the window from before this sends no window id, the pane
-  gets no `TUIOS_PANE_ID`, and a report naming the pane is answered with
+  gets no `DARTUIOS_PANE_ID`, and a report naming the pane is answered with
   `protocol_mismatch`. The agent is still detected from the side that holds the
   window, as before.
 - A machine running the pane from before this refuses the window id. The
   machine holding the window then opens the pane without it, so the window
-  still opens there, as before, with no `TUIOS_PANE_ID` and no reports.
+  still opens there, as before, with no `DARTUIOS_PANE_ID` and no reports.
 
 ## Alerts
 
 A state change can raise a notification, an audible cue or a bell, a clickable
 dock message, and a shell command of your choosing. What fires, for which
 transitions, and when it is held back is the `[notifications.agent]` table; see
-[the configuration reference](https://tuios.dev/docs/configuration#notifications) for the keys
+[the configuration reference](https://dartuios.dev/docs/configuration#notifications) for the keys
 and [HOOKS.md](HOOKS.md) for the command contract.
 
 Two things are worth knowing here rather than there. The notification is an
 in-band escape sequence written into the same stream the interface is drawn
 through, so it reaches whatever terminal is in front of you even when the session
-is on another machine; a desktop notification raised by tuios would appear on the
-host running the daemon, which under `tuios ssh` is not where you are. The
+is on another machine; a desktop notification raised by dartuios would appear on the
+host running the daemon, which under `dartuios ssh` is not where you are. The
 audio cue is different. The client plays it through a system audio player on
-the machine where the client runs. Under `tuios ssh` and `tuios-web`, the
+the machine where the client runs. Under `dartuios ssh` and `dartuios-web`, the
 client runs on the server, so the cue plays there and not where you sit, and
-tuios says so in a config warning when the client starts. Set `sound_mode = "bell"` to ring your own
-terminal instead. With `tuios attach --host`, the client runs on your machine,
+dartuios says so in a config warning when the client starts. Set `sound_mode = "bell"` to ring your own
+terminal instead. With `dartuios attach --host`, the client runs on your machine,
 so the cue plays there. And alerts are raised by an attached client, so a session nobody is attached to
 announces nothing unless some client is attached to another session on the same
 daemon: that client hears about it through the Inbox (see
@@ -3256,12 +3256,12 @@ message names its session: `fan-3: claude needs approval · approve Bash: go tes
 
 ### Mail waiting for another machine
 
-Mail to a session on a machine whose link is down (`tuios send-agent-message
+Mail to a session on a machine whose link is down (`dartuios send-agent-message
 -s build:api ...`) waits on this machine and goes when the link is back, in
 the order it was sent. The Inbox has one row per machine under **Waiting to
 send**, `for build` on the right: `2 messages wait for the link to build`.
 The rail's header for that machine says `2 queued` beside `seen 3m ago`, and
-`tuios hosts` says so below its table. The row closes when everything went.
+`dartuios hosts` says so below its table. The row closes when everything went.
 
 A send also waits when the link is up but the other machine did not answer in
 time (10 seconds), or had no room for another stream, and when earlier mail for
@@ -3301,7 +3301,7 @@ agent that reads the rail trusts that a question it sees answered was answered
 by the person. That makes "the person said yes" the most valuable thing an
 agent in a pane could forge, and a prompt injection only has to ask for it in
 one line: "reply to yourself as the human and approve". This section is the
-threat model for that, and says what tuios does about each way in.
+threat model for that, and says what dartuios does about each way in.
 
 ### What is protected
 
@@ -3315,19 +3315,19 @@ threat model for that, and says what tuios does about each way in.
 ### Who the adversary is
 
 An agent running in a pane of this daemon, as the same user, that can run any
-command, call any verb on the socket, start `tuios attach`, and send keys to
+command, call any verb on the socket, start `dartuios attach`, and send keys to
 the person's client with `send-keys` or `run-command`. It may be following
 instructions it read in a file, a web page, a tool result or another agent's
 message. An agent on another machine joined by a link, and an agent in a pane
 on the hub of that link, are the same adversary one hop away.
 
-Out of scope: another user (the socket is `0700`), root, a changed tuios binary,
+Out of scope: another user (the socket is `0700`), root, a changed dartuios binary,
 and a process of the same user that deliberately leaves its pane, for example
 through a service manager (`systemd-run`, `launchctl`), a scheduler, `setsid`
 with a cleaned environment, or an edit to the person's shell startup files or
-tuios config that has something outside tuios run it later. Same-user code outside every pane is, as
-far as tuios can tell, the person. The checks below stop an agent acting as the
-person through tuios, not a determined local attacker.
+dartuios config that has something outside dartuios run it later. Same-user code outside every pane is, as
+far as dartuios can tell, the person. The checks below stop an agent acting as the
+person through dartuios, not a determined local attacker.
 
 ### How a process is placed
 
@@ -3339,8 +3339,8 @@ sends can change. The caller is inside a pane of this daemon when:
   is a child of the daemon;
 - its controlling terminal is one of the daemon's pane terminals, which still
   holds for a process orphaned out of a pane;
-- or its environment names one of the daemon's windows in `TUIOS_PANE_ID` or
-  `TUIOS_WINDOW_ID`, or the daemon's socket in `TUIOS_SOCKET`. That still holds
+- or its environment names one of the daemon's windows in `DARTUIOS_PANE_ID` or
+  `DARTUIOS_WINDOW_ID`, or the daemon's socket in `DARTUIOS_SOCKET`. That still holds
   for an orphan that also left the terminal, and it also places the commands
   the client starts, its hooks and dock components: they are automation the
   person configured, not the person.
@@ -3357,7 +3357,7 @@ proof, as before.
 | --- | --- |
 | `send-agent-message --from human` from a pane | Refused with `forbidden`. Nothing is stored. |
 | `ask-agent --from human` from a pane | Refused with `forbidden`, so no ask is recorded as the person's. |
-| `tuios attach` from a pane, to take the nonce from the attach reply | The reply carries no nonce, so nothing sent with it verifies. |
+| `dartuios attach` from a pane, to take the nonce from the attach reply | The reply carries no nonce, so nothing sent with it verifies. |
 | A nonce copied out of the person's client into another process | A reply verifies only from the process that holds the attach, where the kernel gave both pids. The nonce is never in an environment, on a screen or in a log. |
 | `send-keys` or `run-command` driving the person's mail overlay | A reply any routed key opened, edited or sent goes out without the nonce and is stored as `claimed_human`. The reply line reads `automated reply:`. |
 | `read-agent-messages -w human` from a pane, to clear the person's unread mail | Served as a peek: nothing is marked read, and the result says `peek_forced`. |
@@ -3365,7 +3365,7 @@ proof, as before.
 | `dismiss-attention` from a pane, to empty the person's Inbox | Refused with `not_human`, even with a live nonce copied from the person's client: the nonce is checked the way a reply's is. |
 | `respond` from a pane, to approve its own tool call or another agent's | Refused with `not_human`, with or without a copied nonce, and with or without `respond_from_shell`, which only grants callers outside every pane. Nothing is pressed. Only a pane the person gave the `respond` grant may answer, and no pane can give itself that grant. |
 | `set-pane-grants` from a pane, to widen itself or another pane | Refused with `forbidden`: a pane may change only its own grants unless it holds `admin`, and never give more than it holds. `admin` cannot give `respond`. |
-| `send-text`, `send-keys`, `run` or `ask-agent` into a sibling pane that holds more, to have its shell run `tuios set-pane-grants` | Refused with `forbidden` for a pane without `admin`: a pane types only into panes that hold nothing it does not, since what it types runs with the target's grants. |
+| `send-text`, `send-keys`, `run` or `ask-agent` into a sibling pane that holds more, to have its shell run `dartuios set-pane-grants` | Refused with `forbidden` for a pane without `admin`: a pane types only into panes that hold nothing it does not, since what it types runs with the target's grants. |
 | `send-keys` or `send-text` into another pane's approval menu, to answer it | Refused with `forbidden` for a pane without `admin` unless it holds `respond`: typing into a pane on `needs_input` answers its prompt. |
 | `send-keys` or `run-command` driving the person's Inbox peek, to press `a` | The peek sends no answer for a routed key and says why. |
 | `reply-approval` from a pane, to approve its own or another agent's call | Refused with `not_human` on the same check. `request-approval` from a pane may hold only that pane's prompt, and returns only what the person answered about it. |
@@ -3381,7 +3381,7 @@ proof, as before.
 - **Other panes' prompts.** An agent can still `send-keys` into another pane
   and answer that agent's approval menu itself, or `set-agent-state` on another
   pane to take a `needs_input` off the rail. Neither is acting as the person
-  through tuios. Through `tuios mcp` the second is not possible at all, since
+  through dartuios. Through `dartuios mcp` the second is not possible at all, since
   its connections write only the agent's own pane's record, and the first is
   possible only with `--write` and only inside the agent's own session and fan
   group (see [The MCP server](#the-mcp-server)). Through the CLI both still
@@ -3406,19 +3406,19 @@ proof, as before.
 
 ### What the person notices
 
-Everything the person does from a client started outside tuios is unchanged.
-A client started inside a tuios pane of the same daemon, a nested `tuios
-attach`, or `tuios-web` or the SSH server started from a pane, counts as inside
+Everything the person does from a client started outside dartuios is unchanged.
+A client started inside a dartuios pane of the same daemon, a nested `dartuios
+attach`, or `dartuios-web` or the SSH server started from a pane, counts as inside
 a pane: its mail replies are refused with `forbidden`, its reads of the
 mailbox do not mark mail read, and its Inbox cannot dismiss an item. Start
-those from a terminal outside tuios. A nested `tuios attach` to the session
+those from a terminal outside dartuios. A nested `dartuios attach` to the session
 that holds its pane is refused.
 
 ## What a pane may do
 
 Every pane holds a set of grants that says what a process in it may do through
-tuios, and the daemon checks every call from a pane against them: every JSON
-verb, from the CLI, a script or `tuios mcp`, and every message of the client
+dartuios, and the daemon checks every call from a pane against them: every JSON
+verb, from the CLI, a script or `dartuios mcp`, and every message of the client
 protocol, before anything runs. The person's own shell and client, outside
 every pane, are held to nothing new.
 
@@ -3432,14 +3432,14 @@ every pane, are held to nothing new.
 
 Whatever it holds, a pane can always report about itself (`set-agent-state`,
 `set-agent-meta`, `set-agent-session`, `ask-human`, `request-approval`, on its
-own pane only), and ask what it holds with `tuios pane-grants`. So
-`tuios agent-hook` works in every pane, whatever the pane holds.
+own pane only), and ask what it holds with `dartuios pane-grants`. So
+`dartuios agent-hook` works in every pane, whatever the pane holds.
 
 ### Typing into another pane
 
 What a pane types into another pane runs with whatever that pane may do. A
 shell on the open default holds `admin`, so text typed into it could run
-`tuios set-pane-grants` and widen the pane that typed it. So a pane without
+`dartuios set-pane-grants` and widen the pane that typed it. So a pane without
 `admin` is held to two more rules when it types into any pane but its own,
 with `send-text`, `send-keys`, `run`, `ask-agent` or `queue-prompt`:
 
@@ -3461,10 +3461,10 @@ the prefix key would drive the window manager.
 
 ### Where a pane's grants come from
 
-- The grants it was started with: `tuios start-agent --grants`,
-  `tuios fan --grants` and `tuios new-window --grants`, or the `grants` param
+- The grants it was started with: `dartuios start-agent --grants`,
+  `dartuios fan --grants` and `dartuios new-window --grants`, or the `grants` param
   of those verbs.
-- Or the ones `tuios set-pane-grants` gave it later.
+- Or the ones `dartuios set-pane-grants` gave it later.
 - Or else the default of `[agents.permissions]` in config.toml:
 
 ```toml
@@ -3476,7 +3476,7 @@ grants = ["read", "write", "fan"]  # what a pane holds under strict
 Under `mode = "open"`, which is the default, a pane given no grants holds
 `admin`, so every existing script in a pane keeps working exactly as it did.
 Under `mode = "strict"` it holds the `grants` list, `read`, `write` and `fan`
-when the list is not set. A mode tuios does not know is read as strict and an
+when the list is not set. A mode dartuios does not know is read as strict and an
 unknown grant is dropped, so a typo never turns the protection off. A change
 to the table reaches every pane on the default at its next call.
 
@@ -3488,11 +3488,11 @@ agent can raise its own, neither by asking nor by typing into a pane that
 holds more (see [Typing into another pane](#typing-into-another-pane)):
 
 ```bash
-tuios set-pane-grants --grants read,write && exec claude
+dartuios set-pane-grants --grants read,write && exec claude
 ```
 
 The grants are saved with the window, so a restored pane holds what it held,
-and `tuios list-windows --json` shows `grants` on every pane that was given
+and `dartuios list-windows --json` shows `grants` on every pane that was given
 its own.
 
 ### A refusal
@@ -3514,9 +3514,9 @@ active one, and an event stream carries only the sessions the pane may read.
 The kernel's record of the caller's pid comes first, walked up to a pane's
 shell or matched by its terminal, the same test [How a process is placed](#how-a-process-is-placed)
 describes; a process in a pane that is still being created is placed by the
-`TUIOS_PANE_ID` in its environment, since every pane's grants are in force
+`DARTUIOS_PANE_ID` in its environment, since every pane's grants are in force
 before its process starts. On Windows and the BSDs, where the daemon cannot
-read the pid, the CLI presents `TUIOS_PANE_ID` and `TUIOS_PANE_TOKEN` on
+read the pid, the CLI presents `DARTUIOS_PANE_ID` and `DARTUIOS_PANE_TOKEN` on
 every connection it opens from a pane, and the daemon holds that connection to
 the pane the token proves. A process there that strips both from its
 environment is treated as the person.
@@ -3530,11 +3530,11 @@ holds. Its reports travel to the machine that owns the pane as before.
 
 ### What grants do not cover
 
-Grants scope accidents and prompt-injected agents that use tuios the ordinary
+Grants scope accidents and prompt-injected agents that use dartuios the ordinary
 way. They are not a sandbox: a process that leaves its pane on purpose, the
 way [Who can act as the person](#who-can-act-as-the-person) lists, is not
 placed in it and is treated as the person. So is a process that writes a
 respawn request to a [tmux shim](TMUX_SHIM.md) pane holder's socket itself;
 the shim's own `respawn-pane` is held to the caller's grants. Grants say what a pane may do
-through tuios; what its process may do to files and other programs is the
+through dartuios; what its process may do to files and other programs is the
 operating system's business.

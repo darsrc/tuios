@@ -9,7 +9,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // fuzzSeeds are byte streams drawn from sequences a real guest program emits,

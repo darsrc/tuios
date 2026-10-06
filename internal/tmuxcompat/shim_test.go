@@ -41,7 +41,7 @@ func TestClaudeCodeTeammateSequence(t *testing.T) {
 	if nw["workspace"] != float64(1) || nw["focus"] != false || nw["cwd"] != "/src" {
 		t.Errorf("new-window params = %v, want workspace 1, focus false, cwd /src", nw)
 	}
-	wantCmd := []any{"/opt/tuios", "tmux-pane", "--dir", "/run/tuios/tmux", "--", "cat"}
+	wantCmd := []any{"/opt/dartuios", "tmux-pane", "--dir", "/run/dartuios/tmux", "--", "cat"}
 	if !reflect.DeepEqual(nw["command"], wantCmd) {
 		t.Errorf("new-window command = %v, want %v", nw["command"], wantCmd)
 	}
@@ -434,7 +434,7 @@ func TestPaneIDsAreStable(t *testing.T) {
 	}
 	h := newHarness(t)
 	for _, target := range []string{PaneID("leader-0001"), "%leader-0001", "%lead", "leader-0001", "work:1.0", ":1.0", "@1.0", "1"} {
-		code, out := h.run("display-message", "-t", target, "-p", "#{tuios_window_id}")
+		code, out := h.run("display-message", "-t", target, "-p", "#{dartuios_window_id}")
 		if code != 0 || out != "leader-0001\n" {
 			t.Errorf("target %q = %d %q %q", target, code, out, h.err)
 		}

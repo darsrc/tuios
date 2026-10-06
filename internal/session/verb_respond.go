@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // Peek and respond: read the prompt an agent is blocked on, and answer it,
@@ -46,7 +46,7 @@ import (
 //     shown. Otherwise invalid_params, naming the actions that are.
 //
 // Steps 1 to 4 and the write run under one lock per window, so nothing else
-// answering through tuios can move the prompt between the check and the key.
+// answering through dartuios can move the prompt between the check and the key.
 // Then respond waits, up to timeout, for the pane to leave needs_input or for
 // the prompt to change, and returns what the pane says then.
 
@@ -156,7 +156,7 @@ func (d *Daemon) lookAtPrompt(sess *Session, windowID string) (promptLook, *verb
 	reg := d.agentMatcher.registry
 	hid := w.AgentHarness
 	if reg == nil || hid == "" {
-		look.reason = "tuios does not know which agent runs in the pane, so no rule can read its prompt"
+		look.reason = "dartuios does not know which agent runs in the pane, so no rule can read its prompt"
 		return look, nil
 	}
 	pty := sess.GetPTY(w.PTYID)
@@ -374,7 +374,7 @@ func (d *Daemon) mayRespond(cs *connState, nonce string) bool {
 func promptChangedError(w WindowState, why string) *verbError {
 	return hintedVerbError(ErrVerbPromptChanged, "nothing was pressed: "+why, &VerbHint{
 		Verb:    "peek-prompt",
-		Command: "tuios peek-prompt -w " + shortWindowID(w.ID),
+		Command: "dartuios peek-prompt -w " + shortWindowID(w.ID),
 		Detail:  "Read the prompt again with peek-prompt, and answer what it shows now, passing the prompt_id it gives.",
 	})
 }
@@ -417,7 +417,7 @@ func (d *Daemon) verbRespond(cs *connState, params json.RawMessage) (any, *verbE
 		if !d.paneMayRespond(cs, sess.Name) {
 			return nil, hintedVerbError(ErrVerbNotHuman, "respond is for the person at an attached client", &VerbHint{
 				Param:  "human_nonce",
-				Detail: "Answering an agent's prompt is acting as the person, so it takes the nonce of a client attached right now, from a process outside every pane: the Inbox's peek sends its own. A shell outside tuios may respond when the daemon runs with [daemon] respond_from_shell = true, and a pane may when the person gave it the respond grant with tuios set-pane-grants. An agent that wants a prompt answered should ask the person with send-agent-message -w human.",
+				Detail: "Answering an agent's prompt is acting as the person, so it takes the nonce of a client attached right now, from a process outside every pane: the Inbox's peek sends its own. A shell outside dartuios may respond when the daemon runs with [daemon] respond_from_shell = true, and a pane may when the person gave it the respond grant with dartuios set-pane-grants. An agent that wants a prompt answered should ask the person with send-agent-message -w human.",
 			})
 		}
 		if pa := d.paneAuthority(cs); pa != nil {

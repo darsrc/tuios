@@ -5,7 +5,7 @@
 # that is still on screen.
 ---
 • Ran go test ./internal/harness/
-  └ ok  	github.com/Gaurav-Gosain/tuios/internal/harness	0.014s
+  └ ok  	github.com/darsrc/tuios/internal/harness	0.014s
 
 • Working (12s • esc to interrupt)
 

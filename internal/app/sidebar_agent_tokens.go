@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // An agent row is drawn from tokens: the facts the row has about its pane, each

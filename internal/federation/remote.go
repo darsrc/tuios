@@ -4,27 +4,27 @@ import (
 	"strings"
 )
 
-// Finding tuios on the far side.
+// Finding dartuios on the far side.
 //
 // ssh runs a command through a non-interactive shell, and that shell's PATH is
 // the system default: /usr/local/bin, /usr/bin and their friends. It is not the
 // PATH the person sees at their prompt, because the profile that adds
 // ~/.local/bin is only read by a login shell. The project's own install script
-// puts tuios in ~/.local/bin, so the default install location was one the
+// puts dartuios in ~/.local/bin, so the default install location was one the
 // default link could not find, and every such host needed --command to work.
 //
 // The link now finds the binary itself. The whole mechanism is one shell
 // script sent as the remote command, which tries three things in order and
 // then runs what it found with the arguments the link wanted to run:
 //
-//  1. Plain `tuios` on the PATH. Free, and right on most machines.
-//  2. A fixed list of places tuios is installed. Each is one stat, nothing is
+//  1. Plain `dartuios` on the PATH. Free, and right on most machines.
+//  2. A fixed list of places dartuios is installed. Each is one stat, nothing is
 //     searched, and the list is bounded so a person can read it when it fails.
-//  3. The person's login shell, asked what `tuios` means to it. This is the
+//  3. The person's login shell, asked what `dartuios` means to it. This is the
 //     step that reads the profile. It is last because it is the expensive one:
 //     a profile can take seconds, can print, and differs between shells. The
 //     fixed list resolves every install the project knows about without paying
-//     that, so the login shell only runs on a machine where tuios is somewhere
+//     that, so the login shell only runs on a machine where dartuios is somewhere
 //     unusual, which is exactly where its answer is worth the cost.
 //
 // The script prints which path it chose on a line ahead of the link preamble,
@@ -33,7 +33,7 @@ import (
 // always was.
 
 // RemoteBinary is the file name of the program the link runs on the far side.
-const RemoteBinary = "tuios"
+const RemoteBinary = "dartuios"
 
 // remoteBinaryCandidates are the fixed places the link looks, in order, after
 // the PATH. Every entry is a place one of the project's own installers puts
@@ -66,7 +66,7 @@ var remoteBinaryCandidates = []string{
 	"/usr/bin/" + RemoteBinary,
 }
 
-// RemoteBinaryCandidates lists the fixed places the link looks for tuios, in
+// RemoteBinaryCandidates lists the fixed places the link looks for dartuios, in
 // order, spelled the way a person reads them. It is what a failed test prints
 // so the person can see at once that their install is somewhere unusual.
 func RemoteBinaryCandidates() []string {
@@ -79,16 +79,16 @@ func RemoteBinaryCandidates() []string {
 
 // linkCommandPrefix begins the line the probe prints ahead of the preamble to
 // say which binary it is about to run.
-const linkCommandPrefix = "TUIOS-LINK-COMMAND "
+const linkCommandPrefix = "dartuios-LINK-COMMAND "
 
 // linkNoCommand is the line the probe prints when it found nothing.
-const linkNoCommand = "TUIOS-LINK-NO-COMMAND"
+const linkNoCommand = "dartuios-LINK-NO-COMMAND"
 
 // linkCommandLimit bounds the path the probe reports. It comes from another
 // machine, so it gets a ceiling like everything else that crosses.
 const linkCommandLimit = 512
 
-// remoteProbeScript is the sh script that finds tuios and runs it with the
+// remoteProbeScript is the sh script that finds dartuios and runs it with the
 // script's own positional arguments. announce is whether it prints the chosen
 // path ahead of the program's output: the link wants that line, an interactive
 // open does not.
@@ -143,10 +143,10 @@ func remoteProbeScript(announce bool) string {
 	return b.String()
 }
 
-// remoteCommand is the command string ssh runs on the far side to start tuios
+// remoteCommand is the command string ssh runs on the far side to start dartuios
 // with args. args must already be safe for the remote shell.
 //
-// A configured command is sent as written, unquoted, so a "~/.local/bin/tuios"
+// A configured command is sent as written, unquoted, so a "~/.local/bin/dartuios"
 // is expanded by the remote shell. Without one, the probe script runs as
 // `sh -c '<script>' sh <args>`, and the script execs what it finds with the
 // same args.

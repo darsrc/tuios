@@ -1,6 +1,6 @@
 # The ghostty emulator backend
 
-tuios has two terminal emulator implementations behind one interface
+dartuios has two terminal emulator implementations behind one interface
 (`vt.Terminal`), selected at build time:
 
 - **Pure Go** (default): `internal/vt`'s own emulator. `go install` works
@@ -21,7 +21,7 @@ agree.
 
 ## Installing a local build
 
-`scripts/install.sh` goes from a checkout to a `tuios` on your PATH, and runs
+`scripts/install.sh` goes from a checkout to a `dartuios` on your PATH, and runs
 from any directory. With `ghostty`, it builds the pinned library if that has
 not happened yet and passes `PKG_CONFIG_PATH` itself.
 
@@ -31,26 +31,26 @@ not happened yet and passes `PKG_CONFIG_PATH` itself.
 ```
 
 The default destination is `~/.local/bin`; override it with `--prefix DIR`
-or `$TUIOS_PREFIX`. Both backends install under the same name, so switching
+or `$DARTUIOS_PREFIX`. Both backends install under the same name, so switching
 between them is one run of the script with the other name.
 
 Two things the script warns about, because either one makes a successful
 install look like it did nothing:
 
-- **Another `tuios` earlier on your PATH** shadowing what was just
+- **Another `dartuios` earlier on your PATH** shadowing what was just
   installed. A `go install`ed binary in `~/go/bin` is the usual culprit.
 - **A running daemon**, which keeps serving the build it started from until
   it is stopped. Pass `--kill-server` to have the script run
-  `tuios kill-server` for you, or `--keep-server` to be told and left alone;
+  `dartuios kill-server` for you, or `--keep-server` to be told and left alone;
   with neither, it asks. Stopping the daemon ends the programs in your panes;
   each session's layout and working directories are saved on the way out and
   come back with new shells when the daemon next starts.
 
 Because the two builds install under one name, the binary is the only thing
-that can say which emulator it carries, and `tuios --version` does:
+that can say which emulator it carries, and `dartuios --version` does:
 
 ```
-tuios version dev [ghostty backend]
+dartuios version dev [ghostty backend]
 Commit: 4b825dc642cb6eb9a060e54bf8d69288fbee4904
 Built: 2026-08-22T13:41:07Z
 By: install.sh
@@ -85,13 +85,13 @@ does not cross-compile cleanly.
 
 ## Architecture
 
-`GhosttyTerminal` (`internal/vt/ghostty_*.go`) owns what tuios needs on
+`GhosttyTerminal` (`internal/vt/ghostty_*.go`) owns what dartuios needs on
 top of the library:
 
 - **Stream scanner** (`ghostty_scan.go`, pure Go, unit-tested without
   cgo): tokenizes the PTY stream once, forwards everything to the
-  library, and intercepts what tuios owns: kitty APC and sixel DCS
-  (withheld; tuios's passthrough pipeline is their only consumer, and
+  library, and intercepts what dartuios owns: kitty APC and sixel DCS
+  (withheld; dartuios's passthrough pipeline is their only consumer, and
   forwarding sixel would render it twice), OSC 52/4/104/10/11/12
   (answered Go-side so the library cannot answer queries a second time),
   OSC 66 text sizing, OSC 133 semantic markers, and the CSI/ESC
@@ -154,7 +154,7 @@ Three things bound that risk:
 
 - The library is the same code Ghostty ships to production terminals,
   fuzzed and exercised far beyond what `internal/vt` sees.
-- `FuzzGhosttyTerminalWrite` fuzzes tuios's own cgo boundary: arbitrary
+- `FuzzGhosttyTerminalWrite` fuzzes dartuios's own cgo boundary: arbitrary
   bytes in adversarial chunkings through the full adapter path,
   interleaved with reads and resizes.
 - Every path that reaches the library checks for a concurrent Close

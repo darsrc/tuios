@@ -118,10 +118,10 @@ func TestSidebarClickSwitchesSession(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "alpha", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "alpha", "--detach"); err != nil {
 		t.Fatalf("create alpha: %v: %s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "new", "bravo", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "bravo", "--detach"); err != nil {
 		t.Fatalf("create bravo: %v: %s", err, out)
 	}
 
@@ -186,10 +186,10 @@ func TestSidebarDragReordersSessions(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "alpha", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "alpha", "--detach"); err != nil {
 		t.Fatalf("create alpha: %v: %s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "new", "bravo", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "bravo", "--detach"); err != nil {
 		t.Fatalf("create bravo: %v: %s", err, out)
 	}
 

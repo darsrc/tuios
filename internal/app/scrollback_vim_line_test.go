@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/scrollback"
+	"github.com/darsrc/tuios/internal/scrollback"
 )
 
 // What the preview pane draws over the output it shows.

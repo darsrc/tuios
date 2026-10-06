@@ -1,5 +1,5 @@
 // Package webshell is an in-memory terminal and a small fake shell for the
-// browser build of tuios, where there is no kernel pty and no process to exec.
+// browser build of dartuios, where there is no kernel pty and no process to exec.
 //
 // A Pty stands in for xpty.Pty: the window writes keystrokes to it and reads
 // the guest's output back, exactly as it would with a real pseudo-terminal.

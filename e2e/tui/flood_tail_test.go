@@ -15,7 +15,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// tuios keeps painting for seconds after a flooding program has exited. This
+// dartuios keeps painting for seconds after a flooding program has exited. This
 // measures that tail on a real client.
 //
 // The flood has to be one that costs the client something to show. A stream of
@@ -36,7 +36,7 @@ import (
 
 // floodTailEnv is extra environment for the client under measurement, so the
 // same test can be pointed at a more expensive compose path for comparison.
-var floodTailEnv = strings.Fields(os.Getenv("TUIOS_TAIL_ENV"))
+var floodTailEnv = strings.Fields(os.Getenv("DARTUIOS_TAIL_ENV"))
 
 // firePalette is the colour ramp of a fire demo: a black floor, then reds,
 // oranges and yellows up to white.
@@ -44,10 +44,10 @@ var firePalette = []int{0, 52, 88, 124, 160, 196, 202, 208, 214, 220, 226, 231}
 
 // fireFileBytes caps the fixture on disk. Big enough to keep a client busy for
 // several seconds, small enough that a failed run leaves nothing that matters
-// behind. TUIOS_TAIL_MIB raises it for a longer flood, which is how the tail
+// behind. DARTUIOS_TAIL_MIB raises it for a longer flood, which is how the tail
 // was shown to scale with the backlog rather than with the clock.
 var fireFileBytes = func() int {
-	if mib, err := strconv.Atoi(os.Getenv("TUIOS_TAIL_MIB")); err == nil && mib > 0 {
+	if mib, err := strconv.Atoi(os.Getenv("DARTUIOS_TAIL_MIB")); err == nil && mib > 0 {
 		return mib << 20
 	}
 	return 48 << 20
@@ -143,12 +143,12 @@ func measureFloodTail(t *testing.T, extraEnv ...string) floodTailResult {
 	stamp := filepath.Join(dir, "exit_at")
 
 	// A client attached to a daemon, not the standalone TUI. It is the whole
-	// point: plain tuios runs the emulator in the same process as the renderer
+	// point: plain dartuios runs the emulator in the same process as the renderer
 	// and there is no queue between them to fall behind in, so measured that
 	// way the tail is a couple of frames and the question looks answered.
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "e2e-flood-tail", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-flood-tail", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 	term := attachIn(t, base, "e2e-flood-tail", startOpts{cols: 160, rows: 45, env: extraEnv})
@@ -207,7 +207,7 @@ func measureFloodTail(t *testing.T, extraEnv ...string) floodTailResult {
 // before that program died.
 //
 // The bound it asserts is loose, because the number is a property of the
-// machine as much as of tuios. What it pins is what a user can see: the pane
+// machine as much as of dartuios. What it pins is what a user can see: the pane
 // stops within a couple of seconds of the writer, and it settles on the end of
 // the stream rather than in the middle of it.
 func TestFloodPaintTail(t *testing.T) {

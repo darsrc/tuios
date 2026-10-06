@@ -3,7 +3,7 @@ package app
 // What it costs to measure a box that has already been sized.
 //
 // A profile of the flood benchmark puts ansi.StringWidth at 43.75% cumulative,
-// and one of the five passes over the content is tuios's own: addToBorder
+// and one of the five passes over the content is dartuios's own: addToBorder
 // opens with
 //
 //	width := max(lipgloss.Width(content)-2, 0)
@@ -28,8 +28,8 @@ import (
 	"testing"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // TestBorderBoxInnerWidthIsKnown is what licenses addToBorder to be told its

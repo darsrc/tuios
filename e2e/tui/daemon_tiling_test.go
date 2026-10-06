@@ -9,7 +9,7 @@ import (
 
 // TestDaemonCreatedWindowsTile drives the exact scenario the owner reported:
 // with a client attached and tiling on, windows are created through the daemon
-// path (tuios run-command NewWindow, the same path 'tuios new'/CLI callers use)
+// path (dartuios run-command NewWindow, the same path 'dartuios new'/CLI callers use)
 // rather than interactively. Every such window must join the tiled layout, so
 // the six windows partition the screen with no overlap.
 func TestDaemonCreatedWindowsTile(t *testing.T) {
@@ -26,7 +26,7 @@ func TestDaemonCreatedWindowsTile(t *testing.T) {
 
 	// Create five more windows through the daemon verb path.
 	for i := 2; i <= 6; i++ {
-		out, err := tuiosCLI(t, base, "run-command", "NewWindow")
+		out, err := dartuiosCLI(t, base, "run-command", "NewWindow")
 		if err != nil {
 			t.Fatalf("run-command NewWindow #%d failed: %v\n%s", i, err, out)
 		}
@@ -88,7 +88,7 @@ func waitForSettledGeometryIn(t *testing.T, base, session string, n int) []winRe
 	deadline := time.Now().Add(shellTimeout)
 	stableSince := 0
 	for time.Now().Before(deadline) {
-		out, err := tuiosCLI(t, base, args...)
+		out, err := dartuiosCLI(t, base, args...)
 		if err != nil {
 			time.Sleep(200 * time.Millisecond)
 			continue

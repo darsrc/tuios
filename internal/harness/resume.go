@@ -17,7 +17,7 @@ import (
 // starts a new one on the same conversation.
 //
 // The command is typed into the pane's shell, so every token is held to a
-// character set that means the same thing, unquoted, to every shell tuios runs
+// character set that means the same thing, unquoted, to every shell dartuios runs
 // (sh, bash, zsh, fish, PowerShell and cmd): letters, digits and _ . / : = + -.
 // A token that needs quoting is refused when the manifest loads, and an id that
 // does not fit is refused when the command is built. That is what keeps a
@@ -68,7 +68,7 @@ func safeResumeToken(s string) bool {
 // ValidResumeSessionID reports whether id can be put into a resume command:
 // non-empty, at most MaxResumeSessionID bytes, not starting with "-" (which a
 // harness would read as a flag), and only the characters a token may hold,
-// without "=" and "+". Every harness tuios resumes uses a uuid or a short
+// without "=" and "+". Every harness dartuios resumes uses a uuid or a short
 // token, which fits.
 func ValidResumeSessionID(id string) bool {
 	if id == "" || len(id) > MaxResumeSessionID || id[0] == '-' {

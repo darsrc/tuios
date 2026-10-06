@@ -6,8 +6,8 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestSettingsKeyReclaimedFromLegacyRename is the config half of the leader-","
@@ -88,7 +88,7 @@ func TestUserOwnedDuplicateKeyIsLeftAlone(t *testing.T) {
 //
 // The XDG search paths are resolved once at package init, so the reload is what
 // makes the redirect take: without it LoadUserConfig reads the developer's own
-// ~/.config/tuios/config.toml and the test asserts against whatever happens to
+// ~/.config/dartuios/config.toml and the test asserts against whatever happens to
 // be there.
 func writeConfig(t *testing.T, src string) *config.UserConfig {
 	t.Helper()
@@ -100,10 +100,10 @@ func writeConfig(t *testing.T, src string) *config.UserConfig {
 	t.Cleanup(xdg.Reload)
 	t.Setenv("XDG_CONFIG_HOME", dir)
 	xdg.Reload()
-	if err := os.MkdirAll(filepath.Join(dir, "tuios"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(dir, "dartuios"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "tuios", "config.toml"), []byte(src), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "dartuios", "config.toml"), []byte(src), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	cfg, err := config.LoadUserConfig()

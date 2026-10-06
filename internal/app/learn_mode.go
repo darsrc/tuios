@@ -6,9 +6,9 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-// Learn mode is the guided tour at tuios.dev/learn, where tuios runs as
+// Learn mode is the guided tour at dartuios.dev/learn, where dartuios runs as
 // WebAssembly in a browser tab with a fake shell in every pane (see
-// cmd/tuios-wasm). Two things differ from a normal session there:
+// cmd/dartuios-wasm). Two things differ from a normal session there:
 //
 //   - Nothing quits. Closing the tab is the way out, and a quit key that ended
 //     the program would leave a beginner staring at a dead terminal. Every quit
@@ -17,16 +17,16 @@ import (
 //     files is not there. Those actions show a note that says so, instead of the
 //     error the missing piece would otherwise produce.
 //
-// Everything else is the real tuios.
+// Everything else is the real dartuios.
 
 // Notes shown in Learn mode. Short, friendly, and never an error.
 const (
 	learnNoteQuit     = "No need to quit here. Just close the tab when you're done."
-	learnNoteSessions = "Sessions are not in the browser demo. Install tuios for them."
+	learnNoteSessions = "Sessions are not in the browser demo. Install dartuios for them."
 	learnNoteFiles    = "Your files are not in the browser demo, so this is off."
 	learnNoteShot     = "Screenshots are not in the browser demo."
-	learnNoteTapes    = "The tape manager is not in the demo. Try: tuios tape play demo.tape"
-	learnNoteRecord   = "Recording is not in the browser demo. Try: tuios tape play demo.tape"
+	learnNoteTapes    = "The tape manager is not in the demo. Try: dartuios tape play demo.tape"
+	learnNoteRecord   = "Recording is not in the browser demo. Try: dartuios tape play demo.tape"
 	learnNoteMail     = "Agent mail is not in the browser demo."
 	learnNotePaste    = "Paste with your browser here: Cmd+V or Ctrl+Shift+V."
 )

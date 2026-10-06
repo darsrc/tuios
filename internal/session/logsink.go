@@ -15,7 +15,7 @@ import (
 )
 
 // The daemon keeps two records of the same lines. The ring buffer answers
-// `tuios logs` and dies with the process. The file outlives it, which is the
+// `dartuios logs` and dies with the process. The file outlives it, which is the
 // only reason a crash leaves anything to read at all.
 //
 // Both are fed from logRaw in debug.go, so a line cannot reach one and miss the
@@ -24,7 +24,7 @@ import (
 
 const (
 	// daemonLogName is the file the daemon appends to under the state directory.
-	daemonLogName = "tuios/daemon.log"
+	daemonLogName = "dartuios/daemon.log"
 
 	// daemonLogMaxBytes caps the file. At the cap the daemon renames it over
 	// daemon.log.old and starts a new one, so it keeps between one and two caps
@@ -55,7 +55,7 @@ func DefaultDaemonLogPath() string {
 // ringWriter is the standard library logger's output inside the daemon. Every
 // log.Printf in the daemon process becomes a ring entry, so the ~112 call sites
 // that write nowhere in a background daemon today become visible in
-// `tuios logs` without one of them changing.
+// `dartuios logs` without one of them changing.
 //
 // The lines are recorded at "warn": they are unclassified by construction, they
 // are not protocol events, and dropping them below the always-on tier would put
@@ -78,7 +78,7 @@ func (w *ringWriter) Write(p []byte) (int, error) {
 	writeDaemonLogFile("warn", msg)
 
 	if w.echo != nil {
-		fmt.Fprintf(w.echo, "[TUIOS] %s %s\n", timeNow().Format("2006/01/02 15:04:05.000000"), msg)
+		fmt.Fprintf(w.echo, "[dartuios] %s %s\n", timeNow().Format("2006/01/02 15:04:05.000000"), msg)
 	}
 	return len(p), nil
 }
@@ -126,7 +126,7 @@ func InstallDaemonLogging(foreground bool, path string) {
 }
 
 // openDaemonLogFile opens the log file and writes its header. A failure is not
-// fatal: the daemon runs, and the ring buffer still answers `tuios logs`.
+// fatal: the daemon runs, and the ring buffer still answers `dartuios logs`.
 func openDaemonLogFile(path string) {
 	if path == "" {
 		path = DefaultDaemonLogPath()
@@ -161,7 +161,7 @@ func writeDaemonLogHeaderLocked() {
 		return
 	}
 	header := fmt.Sprintf(""+
-		"\n=== tuios daemon log started %s pid=%d level=%s ===\n"+
+		"\n=== dartuios daemon log started %s pid=%d level=%s ===\n"+
 		"# Levels off, errors, basic and messages record identifiers, sizes, counts, states and error text.\n"+
 		"# Levels verbose and trace also record pane content, window titles and paths.\n",
 		timeNow().Format(time.RFC3339), os.Getpid(), GetDebugLevel())

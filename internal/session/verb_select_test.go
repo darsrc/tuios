@@ -170,7 +170,7 @@ func TestAskBySelectorRefusesABlockedPaneAndAsksTheRest(t *testing.T) {
 	if _, _, err := f.api.ApplyAgentReport(f.apiCodex, AgentReport{State: AgentStateNeedsInput, Harness: "aider", Kind: "approval", Message: "Run rm?"}); err != nil {
 		t.Fatal(err)
 	}
-	params := map[string]any{"select": "harness:aider", "text": "echo tuios_select_reply", "settle": 700, "timeout": 4000}
+	params := map[string]any{"select": "harness:aider", "text": "echo dartuios_select_reply", "settle": 700, "timeout": 4000}
 	token, labels := confirmHint(t, callVerb(t, f.c, "ask-agent", params))
 	if len(labels) != 2 {
 		t.Fatalf("the refusal listed %v, want the two aider panes", labels)
@@ -189,7 +189,7 @@ func TestAskBySelectorRefusesABlockedPaneAndAsksTheRest(t *testing.T) {
 				t.Errorf("the blocked pane's row: %v, want agent_blocked", row)
 			}
 		case f.webShell:
-			if reply, _ := row["reply"].(string); row["ok"] != true || !strings.Contains(reply, "tuios_select_reply") {
+			if reply, _ := row["reply"].(string); row["ok"] != true || !strings.Contains(reply, "dartuios_select_reply") {
 				t.Errorf("the resting pane's row: %v, want its reply", row)
 			}
 		default:

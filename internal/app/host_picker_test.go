@@ -3,16 +3,16 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The machine picker is the way to put a window on another machine from inside
 // the UI. Until it existed the only way was the command line, which meant the
-// feature was invisible to anyone using tuios rather than scripting it.
+// feature was invisible to anyone using dartuios rather than scripting it.
 
 func pickerOS(t *testing.T) *OS {
 	t.Helper()

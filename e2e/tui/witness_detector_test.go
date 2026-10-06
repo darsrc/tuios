@@ -11,7 +11,7 @@ import "testing"
 //
 // This proves the detector rather than the plumbing, which is the honest limit
 // of what a table test can do. Proving the plumbing needs a binary that really
-// splices a stream, driven through TUIOS_E2E_BIN the way NEGATIVE_CONTROLS.md
+// splices a stream, driven through DARTUIOS_E2E_BIN the way NEGATIVE_CONTROLS.md
 // describes for the rest of the suite.
 //
 // The cases that must not fire matter as much as the one that must. The rule
@@ -94,7 +94,7 @@ func TestSpliceDetector(t *testing.T) {
 // The hole is genuine and the pane really printed it. One printf emits 1 2 3 and
 // then 200 201 202, so six adjacent rows carry a jump that no clip, overlay or
 // covering pane could produce, and the detector is right to fire. That is the
-// point: what is under test here is not tuios but whether the rule can see a
+// point: what is under test here is not dartuios but whether the rule can see a
 // hole at all once it is reading a composited screen through an emulator instead
 // of a slice of strings the test built itself.
 //

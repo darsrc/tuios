@@ -1,7 +1,7 @@
 // Command unplaced runs a program in a pane so that the daemon cannot tell it
 // runs there, which is what ssh to the same machine does: the program is not
 // a descendant of the pane's shell, its terminal is not the pane's, and its
-// environment holds none of the pane's TUIOS_ variables. The size of the pane
+// environment holds none of the pane's DARTUIOS_ variables. The size of the pane
 // still reaches it, as ssh passes a window change on.
 //
 // unplaced -- argv... starts a relay in a new session and leaves it, so the
@@ -90,7 +90,7 @@ func middle(args []string) int {
 func relay(args []string) int {
 	cmd := exec.Command(args[0], args[1:]...)
 	for _, kv := range os.Environ() {
-		if strings.HasPrefix(kv, "TUIOS_") || strings.HasPrefix(kv, roleEnv+"=") {
+		if strings.HasPrefix(kv, "DARTUIOS_") || strings.HasPrefix(kv, roleEnv+"=") {
 			continue
 		}
 		cmd.Env = append(cmd.Env, kv)

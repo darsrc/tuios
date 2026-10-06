@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // WindowButtonAction is what pressing one of a window's title-bar controls
@@ -145,7 +145,7 @@ func (m *OS) WindowButtonHoverAt(x, y int) bool {
 }
 
 // WindowButtonHoverActive reports whether the pointer is currently on some
-// window's controls. The motion whitelist in cmd/tuios reads it so one more
+// window's controls. The motion whitelist in cmd/dartuios reads it so one more
 // event arrives after the pointer leaves, which is what clears the reveal.
 func (m *OS) WindowButtonHoverActive() bool { return m.windowButtonHover != "" }
 

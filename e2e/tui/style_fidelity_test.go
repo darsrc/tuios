@@ -8,8 +8,8 @@ package tuie2e
 // same cache produces, which is a cell served *another cell's* foreground.
 //
 // This test states the general property instead. The same bytes are replayed
-// into a bare shell and into a tuios pane of the same size, and every cell must
-// agree on content, foreground and background. tuios is then held to what a
+// into a bare shell and into a dartuios pane of the same size, and every cell must
+// agree on content, foreground and background. dartuios is then held to what a
 // terminal that does nothing but apply the stream shows, so any colour it
 // invents, drops or borrows is a failure regardless of which cache produced it.
 //
@@ -62,7 +62,7 @@ func TestListingStyleFidelityAgainstBarePTY(t *testing.T) {
 	}
 
 	// The streams live where both the test process and the pane's shell can
-	// read them. The pane's shell is a child of tuios, not of the test, so a
+	// read them. The pane's shell is a child of dartuios, not of the test, so a
 	// path is all they can share.
 	dir := t.TempDir()
 	if err := os.Chmod(dir, 0o755); err != nil {
@@ -95,7 +95,7 @@ func TestListingStyleFidelityAgainstBarePTY(t *testing.T) {
 			for _, side := range []struct {
 				term *tuitest.Terminal
 				what string
-			}{{ref, "reference"}, {term, "tuios"}} {
+			}{{ref, "reference"}, {term, "dartuios"}} {
 				if err := side.term.SendKeys(cmd, tuitest.Enter); err != nil {
 					t.Fatalf("%s: send %s: %v", side.what, name, err)
 				}
@@ -261,10 +261,10 @@ func paneInterior(t *testing.T, term *tuitest.Terminal) (left, top, right, botto
 	left, top, right, bottom = -1, -1, -1, -1
 	for row := range rows {
 		for col := range cols {
-			switch screen.Cell(col, row).Content {
-			case "╭":
+			switch r := screen.Cell(col, row).Content; r {
+			case "╭", "┌", "┏", "╔":
 				top, left = row, col
-			case "╯":
+			case "╯", "┘", "┛", "╝":
 				bottom, right = row, col
 			}
 		}
@@ -293,7 +293,7 @@ func styleDiff(t *testing.T, ref, got tuitest.Screen, x0, y0, w, h int) (unsettl
 			fgMatters := r.Content != " " && r.Content != ""
 			if styleKey(r.Bg) != styleKey(g.Bg) || (fgMatters && styleKey(r.Fg) != styleKey(g.Fg)) {
 				if t != nil && wrong < 12 {
-					t.Errorf("cell (%d,%d) %q: bare pty has fg=%s bg=%s, tuios has fg=%s bg=%s",
+					t.Errorf("cell (%d,%d) %q: bare pty has fg=%s bg=%s, dartuios has fg=%s bg=%s",
 						col, row, r.Content, styleKey(r.Fg), styleKey(r.Bg), styleKey(g.Fg), styleKey(g.Bg))
 				}
 				wrong++

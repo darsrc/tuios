@@ -119,7 +119,7 @@ func BinaryMode(target string) os.FileMode {
 // mount, and the answer has to be right or the command refuses for the wrong
 // reason.
 func Writable(dir string) bool {
-	f, err := os.CreateTemp(dir, ".tuios-update-probe-*")
+	f, err := os.CreateTemp(dir, ".dartuios-update-probe-*")
 	if err != nil {
 		return false
 	}

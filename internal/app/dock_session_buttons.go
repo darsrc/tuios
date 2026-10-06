@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // The dock's two session controls, at the bar's right-hand end.
@@ -111,7 +111,7 @@ func dockSessionLabel(a DockSessionAction) string {
 }
 
 // CanCreateSession reports whether there is a daemon to create a session on.
-// Under plain `tuios` there is none, so the control is left out of the frame
+// Under plain `dartuios` there is none, so the control is left out of the frame
 // entirely rather than drawn dead, for the reason CanLeaveRunning gives.
 func (m *OS) CanCreateSession() bool {
 	return m.IsDaemonSession && m.DaemonClient != nil
@@ -120,7 +120,7 @@ func (m *OS) CanCreateSession() bool {
 // CanLeaveRunning reports whether there is a session to leave running, which is
 // the same thing as whether a daemon is holding it.
 //
-// Under plain `tuios` there is no daemon: the panes belong to this process and
+// Under plain `dartuios` there is no daemon: the panes belong to this process and
 // quitting takes them with it, so a control offering to leave them running
 // would be a lie. It is left out of the frame entirely rather than drawn
 // disabled, because a button that is always dead teaches people the whole strip

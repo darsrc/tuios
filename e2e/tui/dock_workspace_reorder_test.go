@@ -85,7 +85,7 @@ func TestDockWorkspacePillsDragIntoANewOrder(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "work", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "work", "--detach"); err != nil {
 		t.Fatalf("create work: %v: %s", err, out)
 	}
 
@@ -115,7 +115,7 @@ func TestDockWorkspacePillsDragIntoANewOrder(t *testing.T) {
 		newWindow(t, term)
 	}
 	for _, wsName := range [][2]string{{"1", "EDIT"}, {"2", "REVW"}, {"3", "DPLY"}} {
-		if out, err := tuiosCLI(t, base, "set-workspace-name", wsName[0], wsName[1], "--session", "work"); err != nil {
+		if out, err := dartuiosCLI(t, base, "set-workspace-name", wsName[0], wsName[1], "--session", "work"); err != nil {
 			t.Fatalf("name workspace %s: %v: %s", wsName[0], err, out)
 		}
 	}
@@ -156,7 +156,7 @@ func TestDockWorkspacePillsDragIntoANewOrder(t *testing.T) {
 	// The arrangement is presentation. Every workspace keeps its number, so the
 	// key that addresses workspace 1 still reaches the workspace called EDIT,
 	// wherever the drag put its pill.
-	out, err := tuiosCLI(t, base, "session-info", "--session", "work")
+	out, err := dartuiosCLI(t, base, "session-info", "--session", "work")
 	if err != nil {
 		t.Fatalf("session-info: %v: %s", err, out)
 	}

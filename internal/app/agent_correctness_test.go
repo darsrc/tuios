@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // TestEveryStateMarkSurvivesTheTitleSanitiser: the palette runs its rows
@@ -20,7 +20,7 @@ func TestEveryStateMarkSurvivesTheTitleSanitiser(t *testing.T) {
 		}
 	}
 	// Foreign ornaments in the same block are still stripped.
-	if got := printableTitle("◆ build ◇"); got != "build" {
+	if got := printableTitle("◈ build ◇"); got != "build" {
 		t.Errorf("printableTitle kept a foreign ornament: %q", got)
 	}
 }

@@ -108,7 +108,7 @@ func TestAggregateViewSizesToItsContent(t *testing.T) {
 
 // TestAggregateViewRowClickJumpsToThatWindow: the one overlay whose entire
 // purpose is picking a window returned no hit rows at all, so it was the one
-// list in tuios a click did nothing to. A click has to mean what Enter means.
+// list in dartuios a click did nothing to. A click has to mean what Enter means.
 func TestAggregateViewRowClickJumpsToThatWindow(t *testing.T) {
 	term, _ := start(t, startOpts{})
 	waitBoot(t, term)

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hooks"
 )
 
 // TestDockPlanDropsNamesNothingDefines is the other half of the config warning:

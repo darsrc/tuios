@@ -2,7 +2,7 @@ name: Bug Report
 description: Report a bug or unexpected behavior in the project.
 title: "[BUG]: "
 labels: ["bug", "needs triage"]
-assignees: ["Gaurav-Gosain"]
+assignees: ["darsrc"]
 body:
   - type: markdown
     attributes:
@@ -98,7 +98,7 @@ body:
       description: Provide detailed steps to reproduce the issue.
       placeholder: |
         1. Install version v1.2.0
-        2. Run `tuios`
+        2. Run `dartuios`
         3. Observe error message
     validations:
       required: true

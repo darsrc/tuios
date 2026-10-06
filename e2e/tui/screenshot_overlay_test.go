@@ -29,7 +29,7 @@ import (
 // file and returns what it holds. Capture mode must not offer a pane: the panes
 // are under the overlay. The preview panel is closed with enter, which keeps the file.
 //
-// The host stream up to capture mode is saved as well, so the screen as tuios
+// The host stream up to capture mode is saved as well, so the screen as dartuios
 // drew it can be rendered to an image and looked at.
 func captureFullScreenOver(t *testing.T, term *tuitest.Terminal, stream *hostStream, dir, what string, key any) string {
 	t.Helper()

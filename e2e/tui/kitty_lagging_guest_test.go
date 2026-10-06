@@ -13,7 +13,7 @@ import (
 // The bug is a race, and left to chance it shows up in roughly one run in
 // three, which is how three fixes shipped for it and the report kept coming.
 // The race is between the pane being given a new size and the guest getting
-// round to drawing at it: for that interval tuios holds the new cell count
+// round to drawing at it: for that interval dartuios holds the new cell count
 // while every frame arriving is still the old bitmap. So both halves are held
 // open here rather than waited for. The guest is told to take most of a second
 // to relay out, the way a browser does, and the pane is resized by a mouse
@@ -31,7 +31,7 @@ func TestKittyStretchWhileGuestLagsAResize(t *testing.T) {
 	term, _ := start(t, startOpts{
 		cols: 120, rows: 40,
 		args: []string{"--shared-borders"},
-		env:  []string{"TUIOS_SIXEL_GRAPHICS=0"},
+		env:  []string{"DARTUIOS_SIXEL_GRAPHICS=0"},
 		out:  host,
 	})
 	host.answerProbe(t, term)

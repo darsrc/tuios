@@ -16,7 +16,7 @@ import (
 // its own runtime directory, its own sessions and its own shells, reached only
 // over the hub daemon's link. The ssh stand-in below switches the XDG
 // directories to that machine's before it runs the command, so `ssh build
-// tuios stdio-proxy` reaches the second daemon's socket and nothing else. No
+// dartuios stdio-proxy` reaches the second daemon's socket and nothing else. No
 // network is used and nothing reads the developer's ssh configuration.
 //
 // What would pass a weaker test and fail these: a --host flag that still runs
@@ -63,15 +63,15 @@ func remoteMachine(t *testing.T) string {
 
 // writeOneHostConfig names one host, build, that the stand-in routes to the
 // remote machine.
-func writeOneHostConfig(t *testing.T, base, tuiosPath string) {
+func writeOneHostConfig(t *testing.T, base, dartuiosPath string) {
 	t.Helper()
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
 	body := "[hosts.build]\n" +
 		"addr = \"someone@buildbox\"\n" +
-		"command = \"" + tuiosPath + "\"\n" +
+		"command = \"" + dartuiosPath + "\"\n" +
 		"connect_timeout = 5\n"
 	if err := os.WriteFile(filepath.Join(dir, "config.toml"), []byte(body), 0o600); err != nil {
 		t.Fatalf("write config: %v", err)
@@ -81,15 +81,15 @@ func writeOneHostConfig(t *testing.T, base, tuiosPath string) {
 // remoteSessionsListed is what the remote daemon says its sessions are.
 func remoteSessionsListed(t *testing.T, remoteBase string) string {
 	t.Helper()
-	out, _ := tuiosCLI(t, remoteBase, "ls")
+	out, _ := dartuiosCLI(t, remoteBase, "ls")
 	return out
 }
 
-// noNestedClient fails the test if a tuios client is running on the far side
+// noNestedClient fails the test if a dartuios client is running on the far side
 // for the session, which is what the old ssh-in-a-pane path leaves behind.
 func noNestedClient(t *testing.T, session string) {
 	t.Helper()
-	for _, line := range commandLinesContaining(t, tuiosBin) {
+	for _, line := range commandLinesContaining(t, dartuiosBin) {
 		if strings.Contains(line, " attach "+session) && !strings.Contains(line, "--host") {
 			t.Fatalf("ASSERTION: a nested client is running for %s: %s", session, line)
 		}
@@ -102,11 +102,11 @@ func TestAttachOnAHostIsDrawnByThisClient(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
 	// The session lives on the other machine and nowhere else.
-	if out, err := tuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 
@@ -135,7 +135,7 @@ func TestAttachOnAHostIsDrawnByThisClient(t *testing.T) {
 
 	// It is the far daemon's session: this machine's daemon does not hold
 	// it, and the far daemon sees a client attached.
-	if out, _ := tuiosCLI(t, base, "ls"); strings.Contains(out, "far-shell") {
+	if out, _ := dartuiosCLI(t, base, "ls"); strings.Contains(out, "far-shell") {
 		t.Fatalf("ASSERTION: this machine's daemon holds far-shell, so the session was not attached across the link:\n%s", out)
 	}
 	if out := remoteSessionsListed(t, remote); !strings.Contains(out, "far-shell") {
@@ -152,7 +152,7 @@ func railCurrentIs(s tuitest.Screen, want string) bool {
 	if r < 0 {
 		return false
 	}
-	return strings.HasPrefix(s.Line(r), "▎")
+	return strings.HasPrefix(s.Line(r), "█")
 }
 
 // waitRailCurrent blocks until the rail marks want as the attached session.
@@ -186,10 +186,10 @@ func TestRailAttachesARemoteSessionInThisClient(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
-	if out, err := tuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 

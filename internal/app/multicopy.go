@@ -11,8 +11,8 @@ import (
 	"unicode"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // Multi copy mode is copy mode on every pane of the multifocus set at once.
@@ -399,7 +399,7 @@ func (m *OS) OpenMultiCopySave(panes []MultiCopyPane) {
 		m.ShowNotification("No pane has a selection. Press v or V to select, then press Y.", "warning", m.Settings.NotificationDuration)
 		return
 	}
-	name := fmt.Sprintf("tuios-copy-%s.%s", time.Now().Format("20060102-150405"), multiCopyFormatExt(mc.Format))
+	name := fmt.Sprintf("dartuios-copy-%s.%s", time.Now().Format("20060102-150405"), multiCopyFormatExt(mc.Format))
 	mc.Save = &MultiCopySave{Path: "~/" + name, Panes: panes}
 }
 
@@ -457,7 +457,7 @@ func (m *OS) MultiCopySaveType(text string) {
 
 // multiCopySaveBase is the directory a relative save path is taken from: the
 // focused pane's working directory when its shell reported one on this
-// machine (OSC 7), and the home directory otherwise. The tuios process's own
+// machine (OSC 7), and the home directory otherwise. The dartuios process's own
 // directory means nothing to the person typing the path.
 func (m *OS) multiCopySaveBase() string {
 	if fw := m.GetFocusedWindow(); fw != nil && fw.Cwd != "" && filepath.IsAbs(fw.Cwd) {

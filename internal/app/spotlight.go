@@ -8,8 +8,8 @@ import (
 	uv "github.com/charmbracelet/ultraviolet"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The spotlight is one pass over the composed canvas that turns the light down
@@ -44,7 +44,7 @@ import (
 //
 // A cell the guest left at the terminal default gets the theme's pair and is
 // dimmed from there. That is most of a real screen (a shell prompt, ls output,
-// a blank pane), and tuios emits no colour for any of it, so a pass that left
+// a blank pane), and dartuios emits no colour for any of it, so a pass that left
 // such a cell alone dimmed the syntax highlighting and nothing else. No unit
 // fixture full of explicit SGR can see that; the e2es that read Cell.Fg and
 // Cell.Bg off a real pane are what found both halves of it.
@@ -364,7 +364,7 @@ func spotlightLevel(dx, dy, full, rim float64) uint8 {
 // with. That is the case most of a real screen is in and both halves of it are
 // easy to get wrong.
 //
-// Foreground: tuios emits no colour for text the guest left at the terminal
+// Foreground: dartuios emits no colour for text the guest left at the terminal
 // default (a shell prompt, ls output, most of everything), so a pass that left
 // those cells alone would dim the syntax highlighting and nothing else.
 //
@@ -438,7 +438,7 @@ func (s *cellShade) buildRun(fg, bg color.Color, level uint8) {
 // setting.
 //
 // Two colours it does not know. One of the sixteen the host's own palette owns
-// is whatever the user's terminal says it is, and tuios never asks: it emits no
+// is whatever the user's terminal says it is, and dartuios never asks: it emits no
 // OSC 4 and it queries none. theme.GetANSIPalette says the same thing in the
 // same words, and it is why the colour picker shows the user's own sixteen
 // rather than the xterm defaults. Substituting those defaults here would
@@ -446,14 +446,14 @@ func (s *cellShade) buildRun(fg, bg color.Color, level uint8) {
 // hue is worse than one that does nothing.
 //
 // A cell that names no colour is the other. It is showing the terminal's own
-// ground, which tuios knows only when a theme is set: that is what groundFg and
+// ground, which dartuios knows only when a theme is set: that is what groundFg and
 // groundBg hold, and they are nil otherwise. Painting a guessed ground under
 // such a cell would put a hard black rectangle over whatever the user's
 // terminal really paints there.
 //
-// With a theme set every colour is dimmable, and that is not a shortcut. tuios
+// With a theme set every colour is dimmable, and that is not a shortcut. dartuios
 // pushes theme.GetANSIPalette into every emulator, so an index a themed cell
-// carries is one tuios itself defined, and the ground is the theme's own pair.
+// carries is one dartuios itself defined, and the ground is the theme's own pair.
 //
 // SGR 2 is what stands in for the blend when this is false. It is weaker: it
 // moves the foreground only, by an amount the host picks rather than the dim

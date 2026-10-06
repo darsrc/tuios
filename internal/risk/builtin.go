@@ -42,7 +42,7 @@ func Why(name string) (string, bool) {
 	return "", false
 }
 
-// Builtin returns the rules tuios ships, in the order the Inbox lists them.
+// Builtin returns the rules dartuios ships, in the order the Inbox lists them.
 func Builtin() []Rule {
 	return []Rule{
 		{Name: RuleRecursiveDelete, Why: "deletes a tree of files without asking", command: recursiveDelete},

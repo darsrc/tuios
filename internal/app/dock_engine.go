@@ -13,7 +13,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // The dock's refresh engine.
@@ -486,9 +486,9 @@ func (e *dockEngine) commandEnv(name string, extra ...string) []string {
 	session, socket := e.session, e.socket
 	e.mu.Unlock()
 	env := append(os.Environ(),
-		"TUIOS_DOCK_COMPONENT="+strings.TrimPrefix(name, config.DockCustomPrefix),
-		"TUIOS_SESSION="+session,
-		"TUIOS_SOCKET="+socket,
+		"DARTUIOS_DOCK_COMPONENT="+strings.TrimPrefix(name, config.DockCustomPrefix),
+		"DARTUIOS_SESSION="+session,
+		"DARTUIOS_SOCKET="+socket,
 	)
 	return append(env, extra...)
 }

@@ -15,7 +15,7 @@ import (
 // being one.
 //
 // The release is not optional. A right press starts a resize and sets
-// OS.Resizing and OS.InteractionMode; while either is set tuios stops polling
+// OS.Resizing and OS.InteractionMode; while either is set dartuios stops polling
 // pane content on purpose. Both helpers here used to send a press and no
 // release, which left the program in that state for the rest of the test.
 func shiftRightClick(t *testing.T, term *tuitest.Terminal, x, y int) {
@@ -50,7 +50,7 @@ func waitMenuGone(t *testing.T, term *tuitest.Terminal, marker, what string) {
 	}
 }
 
-// TestContextMenuTargets drives a real tuios and asserts that shift+right-click
+// TestContextMenuTargets drives a real dartuios and asserts that shift+right-click
 // on each target puts up the menu that belongs to that target, and only that
 // menu.
 //
@@ -399,7 +399,7 @@ func moveMouse(t *testing.T, term *tuitest.Terminal, x, y int) {
 // TestContextMenuHoverFollowsPointer drives hover through the real binary.
 //
 // This has to be an end-to-end test. The program installs a mouse-motion filter
-// (filterMouseMotion in cmd/tuios/run.go) as a bubbletea option, and that filter
+// (filterMouseMotion in cmd/dartuios/run.go) as a bubbletea option, and that filter
 // is a whitelist: it drops every motion event that does not match one of a
 // handful of conditions. The filter exists only in the assembled program, so a
 // unit test of the motion handler passes whether or not the event can ever reach
@@ -434,7 +434,7 @@ func TestContextMenuHoverFollowsPointer(t *testing.T) {
 	}, uiTimeout); err != nil {
 		t.Fatalf("hovering row %d (%q) never moved the selection marker, which is still on %q. "+
 			"The motion event is most likely being dropped by filterMouseMotion in "+
-			"cmd/tuios/run.go before it reaches the handler: %v\n%s",
+			"cmd/dartuios/run.go before it reaches the handler: %v\n%s",
 			row, target, markedRow(term.Screen()), err, term.Snapshot())
 	}
 
@@ -491,7 +491,7 @@ func TestContextMenuReachesTopWindowRowWithTopDock(t *testing.T) {
 	top := -1
 	_, rows := term.Screen().Size()
 	for r := range rows {
-		if strings.Contains(term.Screen().Line(r), "╭") {
+		if lineHasPaneTopCorner(term.Screen().Line(r)) {
 			top = r
 			break
 		}

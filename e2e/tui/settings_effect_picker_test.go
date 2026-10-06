@@ -9,7 +9,7 @@ import (
 )
 
 // The saver submenu, proved where it was reported: on the screen, with real
-// mouse reports, against a real tuios.
+// mouse reports, against a real dartuios.
 //
 // The picker opens over the settings panel and overlaps it. Both panels sat on
 // the same z-index, so the hit test broke the tie on whichever was recorded

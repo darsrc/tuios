@@ -6,10 +6,10 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // selectPane builds a focused, floating pane at the origin with one line of
@@ -207,10 +207,10 @@ func TestPressInAMouseTrackingPaneIsNotStolenBySelection(t *testing.T) {
 	pressAt(o, 4, 0)
 
 	if win.InCopyMode() {
-		t.Error("a press in a mouse-tracking pane started a tuios selection")
+		t.Error("a press in a mouse-tracking pane started a dartuios selection")
 	}
 	if o.Dragging {
-		t.Error("a press in a mouse-tracking pane started a tuios drag gesture")
+		t.Error("a press in a mouse-tracking pane started a dartuios drag gesture")
 	}
 }
 

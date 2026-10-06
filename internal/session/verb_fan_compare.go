@@ -13,8 +13,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/worktree"
 )
 
 // Fan compare: the attempts of a fan side by side, one check run in all of
@@ -24,7 +24,7 @@ import (
 // and a link needs only list. verify-fan starts a window in each sibling, so it
 // is scopeLaunch (the fan grant, reaching the caller's fan group) and a link
 // needs open and write. The command is always the caller's and the verify
-// window is opened with no grants, so a check cannot call tuios and cloning a
+// window is opened with no grants, so a check cannot call dartuios and cloning a
 // repository cannot make fan run code. keep-fan removes worktrees, so it is
 // the person's or admin's (scopeDeny), like remove-worktree, and a link needs
 // write.
@@ -66,7 +66,7 @@ func (d *Daemon) fanTarget(cs *connState, name string) (*Session, *WorktreeInfo,
 		}
 		return nil, nil, hintedVerbError(ErrVerbInvalidParams, "session "+sess.Name+" is a worktree session that is not part of a fan", &VerbHint{
 			Param:     "session",
-			Command:   "tuios worktree ls",
+			Command:   "dartuios worktree ls",
 			Available: fans,
 			Detail:    "Name any session a fan started. A worktree made on its own has no attempts to compare.",
 		})
@@ -416,7 +416,7 @@ func skippedDetail(skipped []map[string]any) string {
 // check itself does not inherit, so its output cannot be taken for the
 // status. A check that passed ends the window. One that failed keeps it open,
 // so the output can be read, until the person presses enter.
-const fanVerifyScript = `printf 'tuios verify: %s\n\n' "$1"
+const fanVerifyScript = `printf 'dartuios verify: %s\n\n' "$1"
 sh -c "$1" 3>&-
 s=$?
 printf '%s\n' "$s" >&3
@@ -455,7 +455,7 @@ func (d *Daemon) startFanVerify(sess *Session, dir, command string, env []string
 			return err
 		}
 		extras = []*os.File{w}
-		argv = []string{"/bin/sh", "-c", fanVerifyScript, "tuios-verify", command}
+		argv = []string{"/bin/sh", "-c", fanVerifyScript, "dartuios-verify", command}
 	}
 	none := Grants(0)
 	sessionID := sess.ID
@@ -685,7 +685,7 @@ func (d *Daemon) verbKeepFan(cs *connState, params json.RawMessage) (any, *verbE
 		return nil, hintedVerbError(ErrVerbInvalidParams, "session "+kept.Name+" is not part of a fan, so it has no siblings to remove", &VerbHint{
 			Param:   "session",
 			Verb:    "remove-worktree",
-			Command: "tuios worktree rm " + kept.Name,
+			Command: "dartuios worktree rm " + kept.Name,
 			Detail:  "Nothing was removed. remove-worktree removes one worktree.",
 		})
 	}

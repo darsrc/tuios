@@ -25,7 +25,7 @@ func GitRepo(t *testing.T) string {
 	t.Setenv("GIT_CONFIG_NOSYSTEM", "1")
 	t.Setenv("GIT_CONFIG_GLOBAL", filepath.Join(t.TempDir(), "gitconfig"))
 	for _, k := range []string{"GIT_AUTHOR_NAME", "GIT_COMMITTER_NAME", "GIT_AUTHOR_EMAIL", "GIT_COMMITTER_EMAIL"} {
-		t.Setenv(k, "tuios-test")
+		t.Setenv(k, "dartuios-test")
 	}
 	dir := filepath.Join(t.TempDir(), "repo")
 	if err := os.MkdirAll(dir, 0o755); err != nil {

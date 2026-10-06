@@ -216,7 +216,7 @@ type Frame struct {
 	FontIndex, BoldFontIndex int
 	// EmbedFont allows SVG and HTML to inline FontData as an @font-face. Only
 	// a font the user named themselves earns that: embedding turns a kilobyte
-	// of SVG into megabytes, and a font tuios found by asking the terminal was
+	// of SVG into megabytes, and a font dartuios found by asking the terminal was
 	// found for the raster, not for the export.
 	EmbedFont bool
 	// Scale multiplies the PNG raster size, 1 to 4.

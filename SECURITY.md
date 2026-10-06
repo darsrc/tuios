@@ -15,10 +15,10 @@ As there is no stable release yet, users are encouraged to always update to the 
 
 ## Reporting a Vulnerability
 
-If you discover a potential security issue in **TUIOS**, please **do not open a public issue**.  
+If you discover a potential security issue in **dartuios**, please **do not open a public issue**.  
 Instead, report it privately by emailing:
 
-**[me@gaurav.zip](mailto:me@gaurav.zip?subject=TUIOS%3A%20Potential%20Security%20Issue)**
+**[me@gaurav.zip](mailto:me@gaurav.zip?subject=dartuios%3A%20Potential%20Security%20Issue)**
 
 When reporting, please include:
 - A clear description of the vulnerability.
@@ -52,4 +52,4 @@ Your responsible disclosure helps maintain project integrity and protects other 
 
 ---
 
-_Thank you for taking the time to report security issues responsibly and helping improve TUIOS._
+_Thank you for taking the time to report security issues responsibly and helping improve dartuios._

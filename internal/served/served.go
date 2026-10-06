@@ -1,9 +1,9 @@
 // Package served builds the model for one session a server hands to a remote
 // client: the SSH server in internal/server and the web server in
-// cmd/tuios-web.
+// cmd/dartuios-web.
 //
 // This is the one copy of the sequence, for both an ephemeral session and one
-// attached to the daemon, so the servers cannot drift apart. It lives apart from internal/server so tuios-web can
+// attached to the daemon, so the servers cannot drift apart. It lives apart from internal/server so dartuios-web can
 // use it without linking wish.
 package served
 
@@ -12,10 +12,10 @@ import (
 	"io"
 	"log"
 
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/input"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/input"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // NewModel builds a session's model from opts, filling in what every served

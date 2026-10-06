@@ -9,7 +9,7 @@
 // It prints what it was told, sends Crush's first report (idle), and then
 // reads one word per line from its terminal and sends that report: working,
 // blocked, idle, release, stale (a seq below the last one), foreign (another
-// pane's id) and unsupported (a method tuios does not answer). Each answer is
+// pane's id) and unsupported (a method dartuios does not answer). Each answer is
 // printed on a line of its own, after REPLY.
 package main
 
@@ -41,7 +41,7 @@ type request struct {
 
 func main() {
 	env, sock, pane := os.Getenv("HERDR_ENV"), os.Getenv("HERDR_SOCKET_PATH"), os.Getenv("HERDR_PANE_ID")
-	fmt.Printf("HERDR_ENV=%q PANE_MATCHES=%v SOCKET_SET=%v\n", env, pane != "" && pane == os.Getenv("TUIOS_PANE_ID"), sock != "")
+	fmt.Printf("HERDR_ENV=%q PANE_MATCHES=%v SOCKET_SET=%v\n", env, pane != "" && pane == os.Getenv("DARTUIOS_PANE_ID"), sock != "")
 	if env != "1" || sock == "" || pane == "" {
 		fmt.Println("NO-HERDR")
 		_, _ = io.Copy(io.Discard, os.Stdin)

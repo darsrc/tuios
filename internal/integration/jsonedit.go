@@ -10,9 +10,9 @@ import (
 
 // orderedObject is a JSON object that keeps its keys in the order it read
 // them and every value it does not touch byte for byte. A harness's settings
-// file is the user's, so rewriting it has to change only the entries tuios
+// file is the user's, so rewriting it has to change only the entries dartuios
 // owns: a map would sort every key the user wrote, and a struct would drop
-// every key tuios does not know.
+// every key dartuios does not know.
 type orderedObject struct {
 	keys []string
 	vals map[string]json.RawMessage
@@ -124,12 +124,12 @@ type HookEvent struct {
 	Timeout int
 }
 
-// managedMarker is in every command tuios writes. It is how a later install,
-// uninstall or status tells tuios's entries from the user's own, and it
-// carries the integration version. `tuios agent-hook` accepts and ignores it.
+// managedMarker is in every command dartuios writes. It is how a later install,
+// uninstall or status tells dartuios's entries from the user's own, and it
+// carries the integration version. `dartuios agent-hook` accepts and ignores it.
 const managedMarker = "--integration"
 
-// isManagedCommand reports whether a hook command is one tuios wrote.
+// isManagedCommand reports whether a hook command is one dartuios wrote.
 func isManagedCommand(cmd string) bool {
 	return strings.Contains(cmd, " agent-hook ") && strings.Contains(cmd, " "+managedMarker+" ")
 }
@@ -141,7 +141,7 @@ type managedEntry struct {
 }
 
 // hookGroups decodes an event's array of matcher groups. A value that is not
-// an array is an error: rewriting it would destroy something tuios does not
+// an array is an error: rewriting it would destroy something dartuios does not
 // understand.
 func hookGroups(event string, raw json.RawMessage) ([]json.RawMessage, error) {
 	var groups []json.RawMessage
@@ -208,7 +208,7 @@ func findManaged(doc []byte) ([]managedEntry, error) {
 func stripManaged(group json.RawMessage) (json.RawMessage, bool, error) {
 	obj, err := parseObject(group)
 	if err != nil {
-		// Not an object: not something tuios wrote, so kept as it is.
+		// Not an object: not something dartuios wrote, so kept as it is.
 		return group, false, nil
 	}
 	rawHooks, ok := obj.get("hooks")
@@ -349,7 +349,7 @@ func editHooks(doc []byte, events []HookEvent, command string, install bool, mat
 	case !hooks.empty():
 		root.set("hooks", hooks.compact())
 	case hadHooks && removedAny:
-		// Emptied by removing tuios's own entries, so the key goes too.
+		// Emptied by removing dartuios's own entries, so the key goes too.
 		root.del("hooks")
 	}
 	out, err := root.render()

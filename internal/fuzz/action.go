@@ -1,8 +1,8 @@
-// Package fuzz is the target-agnostic half of tuios's property fuzzer: an
+// Package fuzz is the target-agnostic half of dartuios's property fuzzer: an
 // action alphabet, a seeded generator that biases toward the shapes that have
 // actually broken this codebase, a driver loop, and a shrinker.
 //
-// It knows nothing about tuios itself. A caller supplies a Target, which
+// It knows nothing about dartuios itself. A caller supplies a Target, which
 // applies one Action and reports which invariants the resulting state violates,
 // and the loop here handles seeding, reproduction, and minimisation. Two
 // targets exist: an in-process one that drives app.OS through its real

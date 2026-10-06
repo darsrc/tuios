@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// AgentAlertsConfig is the [notifications.agent] table: what tuios does when a
+// AgentAlertsConfig is the [notifications.agent] table: what dartuios does when a
 // pane's agent state changes.
 //
 // Every toggle is a pointer so nil can mean "unset, use the default" and an
@@ -31,7 +31,7 @@ type AgentAlertsConfig struct {
 	// Default: false.
 	Sound *bool `toml:"sound"`
 
-	// SoundMode chooses how Sound makes a noise: "audio" plays one of tuios's
+	// SoundMode chooses how Sound makes a noise: "audio" plays one of dartuios's
 	// two cues through whatever audio player the machine has, "bell" writes a
 	// BEL and lets the terminal decide what that means, and "both" does each.
 	// An unrecognised value is reported as a config warning and read as the
@@ -48,7 +48,7 @@ type AgentAlertsConfig struct {
 	// Sounds replaces the built-in cues with files of the user's own.
 	Sounds AgentAlertSounds `toml:"sounds"`
 
-	// Dock shows the message in tuios's own dock, where it is clickable and
+	// Dock shows the message in dartuios's own dock, where it is clickable and
 	// jumps to the pane that raised it. Default: true.
 	Dock *bool `toml:"dock"`
 
@@ -62,7 +62,7 @@ type AgentAlertsConfig struct {
 	SettleSeconds *int `toml:"settle_seconds"`
 
 	// SuppressFocused drops alerts for the pane the user is already looking at,
-	// which is what tuios did before any of this was configurable. A pane is
+	// which is what dartuios did before any of this was configurable. A pane is
 	// looked at while it is focused and the host terminal has not reported
 	// losing focus (DECSET 1004 focus events). Set it false
 	// to be told anyway, on the grounds that a pane being on screen is not
@@ -86,7 +86,7 @@ type AgentAlertStates struct {
 	// produces. Default: true.
 	Done *bool `toml:"done"`
 	// Idle is the agent having gone quiet. The stall timer guesses this one from
-	// silence, so it is the flappy state and the one that would make tuios the
+	// silence, so it is the flappy state and the one that would make dartuios the
 	// thing people mute. Default: false.
 	Idle *bool `toml:"idle"`
 	// Working is the agent starting work, which is not news. Default: false.

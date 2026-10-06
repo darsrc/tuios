@@ -15,7 +15,7 @@ import (
 // buffer, which is the same buffer the renderer walks and the resize path
 // reallocates. Several of this session's blank-pane bugs surfaced as a pane
 // that had scrolled and then rendered as empty cells or as a stale cached
-// frame, so the assertion is not merely "tuios survived": it is that the tail
+// frame, so the assertion is not merely "dartuios survived": it is that the tail
 // of the scrolled output is on screen, that the shell prompt came back, and
 // that the pane still updates afterwards.
 func TestScrolledOutputRendersCorrectly(t *testing.T) {

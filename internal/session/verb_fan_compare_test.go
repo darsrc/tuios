@@ -12,7 +12,7 @@ import (
 )
 
 // Every test here works on a throwaway repository under the test's own
-// temporary directory, with tuios's worktree directory pointed at another, and
+// temporary directory, with dartuios's worktree directory pointed at another, and
 // makes its fan with new-worktree plus the group fan would record, so no agent
 // runs.
 

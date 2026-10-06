@@ -47,7 +47,7 @@ func closePalette(t *testing.T, term *tuitest.Terminal, when string) {
 // ESC [ 112 ; 5 u  (112 = 'p', modifier 5 = 1 + ctrl-bit(4)). A real
 // terminal that has negotiated the Kitty keyboard protocol sends this instead
 // of the legacy 0x10 byte. bubbletea parses it into a KeyPressMsg regardless of
-// whether tuios itself requested the enhancement, so sending the raw bytes
+// whether dartuios itself requested the enhancement, so sending the raw bytes
 // reproduces exactly what the owner's terminal delivers.
 const kittyCtrlP = "\x1b[112;5u"
 
@@ -64,7 +64,7 @@ const numLockCtrlP = "\x1b[112;133u"
 
 // attachClient creates a detached daemon session with one window and attaches a
 // client. This is the owner's real setup: a daemon-backed session reached with
-// `tuios attach`. The returned client is settled in window-management mode with
+// `dartuios attach`. The returned client is settled in window-management mode with
 // exactly one window focused.
 func attachClient(t *testing.T) *tuitest.Terminal {
 	t.Helper()
@@ -73,13 +73,13 @@ func attachClient(t *testing.T) *tuitest.Terminal {
 }
 
 // attachClientBase is attachClient but also returns the isolation root, so tests
-// that drive the same daemon over the CLI (e.g. `tuios tape exec`) can reach it.
+// that drive the same daemon over the CLI (e.g. `dartuios tape exec`) can reach it.
 func attachClientBase(t *testing.T) (*tuitest.Terminal, string) {
 	t.Helper()
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-ctrlp", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-ctrlp", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 
@@ -242,7 +242,7 @@ func TestCtrlPAfterTapeScript(t *testing.T) {
 	if err := os.WriteFile(tapePath, []byte("Sleep 200ms\n"), 0o600); err != nil {
 		t.Fatalf("write tape: %v", err)
 	}
-	if out, err := tuiosCLI(t, base, "tape", "exec", "--session", "e2e-ctrlp", tapePath); err != nil {
+	if out, err := dartuiosCLI(t, base, "tape", "exec", "--session", "e2e-ctrlp", tapePath); err != nil {
 		t.Fatalf("tape exec: %v: %s", err, out)
 	}
 

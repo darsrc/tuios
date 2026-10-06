@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // A shell's commands, followed through its OSC 133 marks.

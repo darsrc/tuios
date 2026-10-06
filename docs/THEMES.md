@@ -1,8 +1,8 @@
 # Themes
 
-TUIOS ships a large set of built-in color themes and can load custom ones from
+dartuios ships a large set of built-in color themes and can load custom ones from
 JSON files in your config directory. A theme supplies the 16 ANSI colors plus
-foreground, background and cursor; TUIOS derives its own UI colors (borders,
+foreground, background and cursor; dartuios derives its own UI colors (borders,
 overlays, the dockbar) from them.
 
 ## Table of Contents
@@ -28,15 +28,15 @@ theme = "dracula"
 By command line, which takes precedence over the config file:
 
 ```bash
-tuios --theme dracula
-tuios --list-themes                  # every registered theme ID, custom ones included
-tuios --preview-theme dracula        # print the theme's 16 ANSI colors
-tuios --theme $(tuios --list-themes | fzf --preview 'tuios --preview-theme {}')
+dartuios --theme dracula
+dartuios --list-themes                  # every registered theme ID, custom ones included
+dartuios --preview-theme dracula        # print the theme's 16 ANSI colors
+dartuios --theme $(dartuios --list-themes | fzf --preview 'dartuios --preview-theme {}')
 ```
 
-Against a running daemon, `tuios list-themes` (the subcommand, not the flag)
+Against a running daemon, `dartuios list-themes` (the subcommand, not the flag)
 lists everything the daemon can apply, filterable and with `--json`, re-reading
-the themes directory on each call. `tuios import-theme <file>` converts a kitty,
+the themes directory on each call. `dartuios import-theme <file>` converts a kitty,
 ghostty, alacritty, or wezterm colour scheme into a theme file here, sniffing
 the format from the file's content.
 
@@ -45,7 +45,7 @@ and the settings page (`Ctrl+B` `,`) has a Theme row that opens the same picker.
 The picker is searchable and shows a color swatch for each theme; cancelling
 restores the theme that was active when you opened it.
 
-Leaving the theme unset disables theming entirely and TUIOS uses your terminal's
+Leaving the theme unset disables theming entirely and dartuios uses your terminal's
 own colors. An unknown theme name logs a warning and leaves the colors as they
 were, rather than failing to start.
 
@@ -54,10 +54,10 @@ were, rather than failing to start.
 Custom themes are `.json` files in the themes directory:
 
 ```
-~/.config/tuios/themes/
+~/.config/dartuios/themes/
 ```
 
-More precisely `$XDG_CONFIG_HOME/tuios/themes/`, following the same XDG rules as
+More precisely `$XDG_CONFIG_HOME/dartuios/themes/`, following the same XDG rules as
 the config file. The directory is created for you.
 
 Every `*.json` file directly in that directory is loaded at startup and
@@ -68,11 +68,11 @@ skipped with a warning in the log and does not prevent the other themes, or the
 app, from loading.
 
 The directory is read at startup, and read again in two cases: when a theme id
-that is not registered yet is selected with `tuios set-config appearance.theme
-<id>`, and on every `tuios list-themes`. So a new theme file can be
+that is not registered yet is selected with `dartuios set-config appearance.theme
+<id>`, and on every `dartuios list-themes`. So a new theme file can be
 selected without a restart: write the file, then select its id. Selecting a
 theme that is already registered does not re-read its file, so to see an edit
-to a theme that is already loaded, save it under a new id or restart tuios.
+to a theme that is already loaded, save it under a new id or restart dartuios.
 
 ## Theme File Format
 
@@ -113,11 +113,11 @@ The RGBA form for any color field is `{"r": 255, "g": 0, "b": 0, "a": 255}`.
 Two fields control identity:
 
 - `id` is the name you select the theme by. If it is omitted, it is derived from
-  the filename: `~/.config/tuios/themes/My-Theme.json` becomes `my-theme`
+  the filename: `~/.config/dartuios/themes/My-Theme.json` becomes `my-theme`
   (lowercased, extension stripped).
 - `display_name` is what the picker shows. If omitted it falls back to the `id`.
 
-Note the color names: TUIOS uses `purple`, not `magenta`.
+Note the color names: dartuios uses `purple`, not `magenta`.
 
 ## Defaults for Omitted Colors
 
@@ -139,7 +139,7 @@ want. Define the bright variants explicitly.
 ## Chrome Colors
 
 The sixteen ANSI slots are the emulator's color table: they are what a program
-running inside a pane paints with. They are also where TUIOS takes its own
+running inside a pane paints with. They are also where dartuios takes its own
 furniture colors from, which means a palette whose accent is amber could only
 get an amber logo by putting amber in `bright_blue`, recoloring every bold blue
 `ls` prints.
@@ -233,7 +233,7 @@ a dark one is the case to raise if a pill disappears.
 ## Colour Depth
 
 The chrome is designed separately for each colour depth a terminal can have,
-rather than drawn in truecolor and stepped down one colour at a time. tuios
+rather than drawn in truecolor and stepped down one colour at a time. dartuios
 reads the depth from the terminal the way every other program does, from
 `TERM`, `COLORTERM` and `NO_COLOR`, and it is the same depth the frame writer
 uses.
@@ -267,7 +267,7 @@ Light or dark at 256 colours follows the ground the review is drawn on: the
 pane background, the theme's background, or the chrome's surface.
 
 **mosh.** mosh 1.4 and later pass 24-bit colour through, but mosh does not
-forward `COLORTERM`, so tuios over mosh sees 256 colours. If your terminal has
+forward `COLORTERM`, so dartuios over mosh sees 256 colours. If your terminal has
 truecolor, set it on the remote side:
 
 ```bash
@@ -276,7 +276,7 @@ export COLORTERM=truecolor
 
 ## Lists: Focus and Hover
 
-Every list in tuios (the rail, the Inbox, the review overlay, settings, the
+Every list in dartuios (the rail, the Inbox, the review overlay, settings, the
 command palette and every picker) follows one rule:
 
 - **The cell is reserved.** Whatever the cursor row shows, a mark or a bold
@@ -301,7 +301,7 @@ pointer are underlined.
 - **Flat directory.** Only `*.json` files directly under the themes directory
   are loaded; subdirectories are ignored.
 - **No validation beyond parsing.** A syntactically valid file with meaningless
-  colors loads happily. Use `tuios --preview-theme <id>` to check the result.
+  colors loads happily. Use `dartuios --preview-theme <id>` to check the result.
 - **Border color overrides are separate.** `border_focused_color` and
   `border_unfocused_color` in `[appearance]` override the theme's border colors
   and are not part of the theme file. Both rows in the settings page open a

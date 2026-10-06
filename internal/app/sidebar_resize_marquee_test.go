@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestSidebarEdgeResizeClampAndPersist drives the edge-rule width drag: the
@@ -14,7 +14,7 @@ import (
 // it, and a stored width overrides the config default on the next load.
 //
 // The width the drag moves is read off the model rather than off the config
-// global. It was the global, and the global is process-wide: one tuios-web
+// global. It was the global, and the global is process-wide: one dartuios-web
 // process serves several sessions, so one browser tab's drag resized a rail
 // nobody had touched. The width is also session state now, shared with the
 // session's other clients, and shared state cannot live in a process global.

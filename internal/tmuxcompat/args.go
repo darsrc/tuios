@@ -56,7 +56,7 @@ func ParseGlobal(args []string) (Global, []string, error) {
 				case 'c':
 					// -c shell-command runs a command in the default shell,
 					// the way sh -c does. It is not a tmux command.
-					return g, nil, fmt.Errorf("-c is not supported by the tuios tmux shim")
+					return g, nil, fmt.Errorf("-c is not supported by the dartuios tmux shim")
 				case 'T':
 					g.Ignored = append(g.Ignored, "-T")
 				}
@@ -68,7 +68,7 @@ func ParseGlobal(args []string) (Global, []string, error) {
 				g.Ignored = append(g.Ignored, "-"+string(c))
 				j++
 			case 'C':
-				return g, nil, fmt.Errorf("control mode (-C) is not supported by the tuios tmux shim")
+				return g, nil, fmt.Errorf("control mode (-C) is not supported by the dartuios tmux shim")
 			default:
 				return g, nil, fmt.Errorf("unknown option: -%c", c)
 			}

@@ -14,7 +14,7 @@ import (
 // running an agent, on a platform the project is used on daily.
 //
 // Two sysctls answer all four questions, and both are readable by an ordinary
-// user for a process it owns, which is every process a tuios session spawned:
+// user for a process it owns, which is every process a dartuios session spawned:
 //
 //   - kern.proc.pid gives a kinfo_proc, whose e_tpgid is the foreground process
 //     group of the process's controlling terminal. It is the same number Linux
@@ -106,7 +106,7 @@ func readProcArgs(pid int) (string, []string) {
 	return exe, argv
 }
 
-// readAgentHintEnv reads TUIOS_AGENT from the environment section of
+// readAgentHintEnv reads DARTUIOS_AGENT from the environment section of
 // kern.procargs2. The argument reader above stops before that section on
 // purpose; this is the one variable detection reads, and only when a wrapper
 // it cannot see past might be naming its agent. A refused sysctl is an absent

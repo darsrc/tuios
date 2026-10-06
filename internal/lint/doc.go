@@ -8,5 +8,5 @@
 // terminal all reach every surface. A literal is a surface none of them reach.
 // A deliberate exception carries a comment on its line or the line above:
 //
-//	//tuios:allow-color <reason>
+//	//dartuios:allow-color <reason>
 package lint

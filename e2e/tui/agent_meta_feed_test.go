@@ -11,7 +11,7 @@ import (
 // agentMeta reads a pane's agent metadata with get-agent-state.
 func agentMeta(t *testing.T, base string, args ...string) map[string]string {
 	t.Helper()
-	out, err := tuiosCLI(t, base, append([]string{"get-agent-state", "--json"}, args...)...)
+	out, err := dartuiosCLI(t, base, append([]string{"get-agent-state", "--json"}, args...)...)
 	if err != nil {
 		return nil
 	}
@@ -55,12 +55,12 @@ func waitMeta(t *testing.T, base string, want map[string]string, args ...string)
 // reportStatusLine, the metadata never arrives and the first wait fails.
 func TestStatusLineFeedReachesTheRail(t *testing.T) {
 	term, base := attachClientBase(t)
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "working", "--harness", "claude-code"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "working", "--harness", "claude-code"); err != nil {
 		t.Fatalf("set-agent-state: %v\n%s", err, out)
 	}
 	payload := `{"session_id":"s1","model":{"id":"claude-opus-4-7","display_name":"Opus 4.7"},"context_window":{"used_percentage":42},"cost":{"total_cost_usd":1.2}}`
-	line := "printf '%s' '" + payload + "' | " + tuiosBin + " agent-statusline claude-code; echo FEED-DONE\n"
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
+	line := "printf '%s' '" + payload + "' | " + dartuiosBin + " agent-statusline claude-code; echo FEED-DONE\n"
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	waitMeta(t, base, map[string]string{"model": "Opus 4.7", "context": "42%", "cost": "$1.20"}, "-s", "e2e-ctrlp")
@@ -70,8 +70,8 @@ func TestStatusLineFeedReachesTheRail(t *testing.T) {
 
 	// Chained: the person's command gets the same stdin and its output is
 	// printed as it wrote it.
-	chained := "printf '%s' '" + payload + "' | " + tuiosBin + " agent-statusline claude-code --then 'wc -c | tr -d \" \"; echo MINE-LINE'\n"
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", chained); err != nil {
+	chained := "printf '%s' '" + payload + "' | " + dartuiosBin + " agent-statusline claude-code --then 'wc -c | tr -d \" \"; echo MINE-LINE'\n"
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", chained); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	waitCapture(t, base, "e2e-ctrlp", "0", "MINE-LINE", itoa(len(payload)))
@@ -87,21 +87,21 @@ func TestStatusLineFeedReachesTheRail(t *testing.T) {
 // pane keeps the first run's values and the wait fails.
 func TestStatusLineTurnEndSendsHeldValues(t *testing.T) {
 	_, base := attachClientBase(t)
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "working", "--harness", "claude-code"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "working", "--harness", "claude-code"); err != nil {
 		t.Fatalf("set-agent-state: %v\n%s", err, out)
 	}
 	first := `{"session_id":"s1","model":{"display_name":"Opus"},"context_window":{"used_percentage":10},"cost":{"total_cost_usd":0.1}}`
 	last := `{"session_id":"s1","model":{"display_name":"Opus"},"context_window":{"used_percentage":64},"cost":{"total_cost_usd":2.5}}`
-	line := "printf '%s' '" + first + "' | " + tuiosBin + " agent-statusline claude-code; " +
-		"printf '%s' '" + last + "' | " + tuiosBin + " agent-statusline claude-code; echo HELD-DONE\n"
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
+	line := "printf '%s' '" + first + "' | " + dartuiosBin + " agent-statusline claude-code; " +
+		"printf '%s' '" + last + "' | " + dartuiosBin + " agent-statusline claude-code; echo HELD-DONE\n"
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	waitCapture(t, base, "e2e-ctrlp", "0", "HELD-DONE")
 	waitMeta(t, base, map[string]string{"context": "10%", "cost": "$0.10"}, "-s", "e2e-ctrlp")
 
-	stop := "printf '%s' '{\"hook_event_name\":\"Stop\",\"session_id\":\"s1\"}' | " + tuiosBin + " agent-hook claude-code; echo STOP-DONE\n"
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", stop); err != nil {
+	stop := "printf '%s' '{\"hook_event_name\":\"Stop\",\"session_id\":\"s1\"}' | " + dartuiosBin + " agent-hook claude-code; echo STOP-DONE\n"
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", stop); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, out)
 	}
 	waitCapture(t, base, "e2e-ctrlp", "0", "STOP-DONE")
@@ -119,14 +119,14 @@ func TestProtocolPaneFeedsMeta(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	fake := buildFakeACP(t)
-	if out, err := tuiosCLI(t, base, "new", "e2e-home", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-home", "--detach"); err != nil {
 		t.Fatalf("create the attached session: %v\n%s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-home"}})
 	if err := term.WaitFor(func(s tuitest.Screen) bool { return countWindows(s) == 1 }, bootTimeout); err != nil {
 		t.Fatalf("client never attached: %v\n%s", err, term.Snapshot())
 	}
-	out, err := tuiosCLI(t, base, "start-agent", fake, "--protocol", "acp", "-s", "e2e-agent", "--name", "helper", "--prompt", "show usage")
+	out, err := dartuiosCLI(t, base, "start-agent", fake, "--protocol", "acp", "-s", "e2e-agent", "--name", "helper", "--prompt", "show usage")
 	if err != nil {
 		t.Fatalf("start-agent: %v\n%s", err, out)
 	}

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // cellRow renders one row as "content/width" per occupied cell, so a test can

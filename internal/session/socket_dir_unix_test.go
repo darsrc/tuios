@@ -11,7 +11,7 @@ import (
 
 // The socket directory is a security boundary: whoever controls it can swap
 // the daemon's socket for their own and read every keystroke a client sends.
-// Without XDG_RUNTIME_DIR it is /tmp/tuios-<uid>, a name any local user can
+// Without XDG_RUNTIME_DIR it is /tmp/dartuios-<uid>, a name any local user can
 // create first. The ways GetSocketPath could hand out a socket in a directory
 // someone else controls:
 //
@@ -38,7 +38,7 @@ func TestSocketDirIsCreatedPrivate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("a fresh runtime dir was refused: %v", err)
 	}
-	if want := filepath.Join(runtime, "tuios", "tuios.sock"); path != want {
+	if want := filepath.Join(runtime, "dartuios", "dartuios.sock"); path != want {
 		t.Fatalf("socket path %q, want %q", path, want)
 	}
 	st, err := os.Lstat(filepath.Dir(path))
@@ -57,7 +57,7 @@ func TestSocketDirIsCreatedPrivate(t *testing.T) {
 func TestSocketDirThatIsASymlinkIsRefused(t *testing.T) {
 	runtime := t.TempDir()
 	elsewhere := t.TempDir()
-	if err := os.Symlink(elsewhere, filepath.Join(runtime, "tuios")); err != nil {
+	if err := os.Symlink(elsewhere, filepath.Join(runtime, "dartuios")); err != nil {
 		t.Fatal(err)
 	}
 	if path, err := socketPathIn(t, runtime); err == nil {
@@ -67,7 +67,7 @@ func TestSocketDirThatIsASymlinkIsRefused(t *testing.T) {
 
 func TestSocketDirOpenToOthersIsClosed(t *testing.T) {
 	runtime := t.TempDir()
-	dir := filepath.Join(runtime, "tuios")
+	dir := filepath.Join(runtime, "dartuios")
 	if err := os.Mkdir(dir, 0o700); err != nil {
 		t.Fatal(err)
 	}
@@ -89,11 +89,11 @@ func TestSocketDirOpenToOthersIsClosed(t *testing.T) {
 
 func TestSocketDirThatIsAFileIsRefused(t *testing.T) {
 	runtime := t.TempDir()
-	if err := os.WriteFile(filepath.Join(runtime, "tuios"), nil, 0o600); err != nil {
+	if err := os.WriteFile(filepath.Join(runtime, "dartuios"), nil, 0o600); err != nil {
 		t.Fatal(err)
 	}
 	_, err := socketPathIn(t, runtime)
-	if err == nil || !strings.Contains(err.Error(), "tuios") {
+	if err == nil || !strings.Contains(err.Error(), "dartuios") {
 		t.Fatalf("a file where the socket dir goes gave %v, want an error naming it", err)
 	}
 }

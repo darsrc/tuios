@@ -23,8 +23,8 @@ import (
 //     started. Every other session is invisible to it: reads fail with
 //     forbidden, and its event stream carries nothing from them. The pane is
 //     found by the kernel's record of the caller's pid first, and only when
-//     that places the caller in no pane by TUIOS_PANE_ID plus the
-//     TUIOS_PANE_TOKEN only that pane was started with (pane_token.go). A
+//     that places the caller in no pane by DARTUIOS_PANE_ID plus the
+//     DARTUIOS_PANE_TOKEN only that pane was started with (pane_token.go). A
 //     caller placed in no pane reaches no session at all: the restriction
 //     fails closed.
 //   - read_only. The connection may read, report its own pane's state and
@@ -35,10 +35,10 @@ import (
 // table has to name every verb, which a test checks, so a new verb is refused
 // here until someone decides what a restricted caller may do with it.
 //
-// tuios mcp restricts every connection it opens before its first call, so an
-// agent that drives tuios through MCP holds exactly what the server was
+// dartuios mcp restricts every connection it opens before its first call, so an
+// agent that drives dartuios through MCP holds exactly what the server was
 // started with. This does not stop a process in a pane from opening its own
-// unrestricted connection with the tuios CLI; it bounds the MCP surface, which
+// unrestricted connection with the dartuios CLI; it bounds the MCP surface, which
 // is the one an agent reaches without writing a shell command. docs/protocol.md
 // has the whole contract.
 
@@ -53,7 +53,7 @@ type connScope struct {
 	session string
 	window  string
 	// via says how the pane was found: "pid" from the kernel, "token" from
-	// TUIOS_PANE_TOKEN, or "" when it was not.
+	// DARTUIOS_PANE_TOKEN, or "" when it was not.
 	via string
 }
 
@@ -321,7 +321,7 @@ func (d *Daemon) placeCaller(cs *connState, paneID, token string) (window, via s
 	if cs.viaLink || !d.manager.VerifyPaneToken(paneID, token) {
 		return "", "", hintedVerbError(ErrVerbForbidden, "pane_token does not prove pane_id", &VerbHint{
 			Param:  "pane_token",
-			Detail: "Pass the TUIOS_PANE_TOKEN of the pane named by TUIOS_PANE_ID, from the same pane's environment. A token is good for one pane of one daemon start.",
+			Detail: "Pass the DARTUIOS_PANE_TOKEN of the pane named by DARTUIOS_PANE_ID, from the same pane's environment. A token is good for one pane of one daemon start.",
 		})
 	}
 	return paneID, "token", nil
@@ -450,7 +450,7 @@ func (d *Daemon) eventInScope(cs *connState, ev streamEvent) bool {
 func scopeForbidden(verb, why string) *verbError {
 	return hintedVerbError(ErrVerbForbidden, verb+" is refused on this connection: "+why, &VerbHint{
 		Verb:   "restrict-connection",
-		Detail: "This connection was restricted with restrict-connection, and a restriction lasts as long as the connection. tuios mcp restricts its connections as its flags say: --write allows typing into panes, and --scope all reaches every session.",
+		Detail: "This connection was restricted with restrict-connection, and a restriction lasts as long as the connection. dartuios mcp restricts its connections as its flags say: --write allows typing into panes, and --scope all reaches every session.",
 	})
 }
 

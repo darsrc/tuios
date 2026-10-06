@@ -5,11 +5,11 @@ import (
 	"maps"
 	"slices"
 
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/ui"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/ui"
 )
 
 // BuildSessionState creates a serializable SessionState from the current OS state.
@@ -1977,7 +1977,7 @@ func (m *OS) SyncStateToDaemon() {
 }
 
 // warnOnBuildMismatch says so when the daemon is running a different build of
-// tuios from this client. The two still speak, so this is a note and not a
+// dartuios from this client. The two still speak, so this is a note and not a
 // refusal, but it is the difference between "the fix does not work" and "the
 // fix is not installed on both sides", and nothing else says it out loud.
 func (m *OS) warnOnBuildMismatch() {
@@ -1990,7 +1990,7 @@ func (m *OS) warnOnBuildMismatch() {
 	}
 	m.LogWarn("Build mismatch: client %s, daemon %s", clientBuild, daemonBuild)
 	m.ShowNotification(fmt.Sprintf(
-		"The daemon is version %s and this window is version %s. To use one version in both, run 'tuios kill-server', then start tuios again.",
+		"The daemon is version %s and this window is version %s. To use one version in both, run 'dartuios kill-server', then start dartuios again.",
 		daemonBuild, clientBuild), "warning", 0)
 }
 

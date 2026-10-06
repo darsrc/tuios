@@ -3,9 +3,9 @@ package input
 import (
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	vt "github.com/Gaurav-Gosain/tuios/internal/vt"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/terminal"
+	vt "github.com/darsrc/tuios/internal/vt"
 )
 
 // getAbsoluteY calculates the absolute Y position in the entire scrollback+screen

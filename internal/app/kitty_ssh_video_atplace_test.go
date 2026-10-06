@@ -90,7 +90,7 @@ func TestRemoteVideoSelfPlacesWithAT(t *testing.T) {
 	}
 }
 
-// TestInlineOverlayVideoStaysTransmitOnly is the negative control: the tuios-web
+// TestInlineOverlayVideoStaysTransmitOnly is the negative control: the dartuios-web
 // overlay (inlineGraphics, not remoteClient) re-renders live placements on
 // re-transmit itself, so its reused frames must stay transmit-only (a=t) and must
 // NOT self-place with a=T.

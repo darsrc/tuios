@@ -14,7 +14,7 @@ import (
 // round trip, and each file shape's handling of the user's own content.
 
 // userFiles is a file of the user's own for each target that edits a shared
-// file, with something tuios must keep in it.
+// file, with something dartuios must keep in it.
 var userFiles = map[string]string{
 	ClaudeCode:  userClaudeSettings,
 	Codex:       `{"hooks":{"Stop":[{"hooks":[{"type":"command","command":"say done"}]}]}}`,
@@ -66,10 +66,10 @@ func TestEveryTargetRoundTrips(t *testing.T) {
 			if shared {
 				writeFile(t, tg.Path(env), user)
 			}
-			if st := tg.Status(env, "tuios"); st.Installed || st.Current || !st.ConfigDirExists {
+			if st := tg.Status(env, "dartuios"); st.Installed || st.Current || !st.ConfigDirExists {
 				t.Fatalf("status before install: %+v", st)
 			}
-			res, err := tg.Install(env, "tuios")
+			res, err := tg.Install(env, "dartuios")
 			if err != nil || !res.Changed {
 				t.Fatalf("install: %+v %v", res, err)
 			}
@@ -78,26 +78,26 @@ func TestEveryTargetRoundTrips(t *testing.T) {
 			}
 			installed := readFile(t, tg.Path(env))
 			if !strings.Contains(installed, "agent-hook") {
-				t.Fatalf("nothing of tuios's in %s:\n%s", tg.Path(env), installed)
+				t.Fatalf("nothing of dartuios's in %s:\n%s", tg.Path(env), installed)
 			}
-			if strings.Contains(installed, "__TUIOS_") {
+			if strings.Contains(installed, "__DARTUIOS_") {
 				t.Fatalf("a placeholder was left in %s", tg.Path(env))
 			}
 			if shared {
 				keeps(t, tg.ID, installed)
 			}
-			st := tg.Status(env, "tuios")
+			st := tg.Status(env, "dartuios")
 			if !st.Installed || !st.Current || st.Version != tg.Version || st.Reports != tg.Reports {
 				t.Fatalf("status after install: %+v", st)
 			}
-			if other := tg.Status(env, "/opt/other/tuios"); other.Current {
+			if other := tg.Status(env, "/opt/other/dartuios"); other.Current {
 				t.Fatalf("an install for another binary read as current: %+v", other)
 			}
 			snapshot := map[string]string{}
 			for _, p := range tg.Paths(env) {
 				snapshot[p] = readFile(t, p)
 			}
-			if res, err := tg.Install(env, "tuios"); err != nil || res.Changed {
+			if res, err := tg.Install(env, "dartuios"); err != nil || res.Changed {
 				t.Fatalf("second install: %+v %v", res, err)
 			}
 			for p, want := range snapshot {
@@ -109,14 +109,14 @@ func TestEveryTargetRoundTrips(t *testing.T) {
 			if err != nil || !res.Changed {
 				t.Fatalf("uninstall: %+v %v", res, err)
 			}
-			if st := tg.Status(env, "tuios"); st.Installed {
+			if st := tg.Status(env, "dartuios"); st.Installed {
 				t.Fatalf("status after uninstall: %+v", st)
 			}
 			if shared {
 				after := readFile(t, tg.Path(env))
 				keeps(t, tg.ID, after)
 				if strings.Contains(after, "agent-hook") {
-					t.Fatalf("uninstall left tuios's entries:\n%s", after)
+					t.Fatalf("uninstall left dartuios's entries:\n%s", after)
 				}
 			} else if _, err := os.Stat(tg.Path(env)); !os.IsNotExist(err) {
 				t.Fatalf("uninstall left %s behind", tg.Path(env))
@@ -136,7 +136,7 @@ func TestJSONTargetsGiveBackTheUsersFile(t *testing.T) {
 			env := testEnv(t)
 			tg := mustTarget(t, id)
 			writeFile(t, tg.Path(env), userFiles[id])
-			if _, err := tg.Install(env, "tuios"); err != nil {
+			if _, err := tg.Install(env, "dartuios"); err != nil {
 				t.Fatal(err)
 			}
 			if _, err := tg.Uninstall(env); err != nil {
@@ -153,16 +153,16 @@ func TestCrushWritesAFlatHookAfterTheUsers(t *testing.T) {
 	env := testEnv(t)
 	tg := mustTarget(t, Crush)
 	writeFile(t, tg.Path(env), userFiles[Crush])
-	if _, err := tg.Install(env, "tuios"); err != nil {
+	if _, err := tg.Install(env, "dartuios"); err != nil {
 		t.Fatal(err)
 	}
 	got := readFile(t, tg.Path(env))
-	want := `{"command":"tuios agent-hook crush --integration 1","name":"tuios","timeout":5}`
+	want := `{"command":"dartuios agent-hook crush --integration 1","name":"dartuios","timeout":5}`
 	if !strings.Contains(compactJSON(t, got), want) {
-		t.Fatalf("crush.json has no flat tuios hook:\n%s", got)
+		t.Fatalf("crush.json has no flat dartuios hook:\n%s", got)
 	}
 	if strings.Index(got, "guard") > strings.Index(got, "agent-hook") {
-		t.Fatal("the tuios hook went before the user's")
+		t.Fatal("the dartuios hook went before the user's")
 	}
 	if strings.Contains(got, `"hooks": [`) && strings.Contains(got, `"type": "command"`) {
 		t.Fatalf("crush.json got Claude Code's nested shape:\n%s", got)
@@ -175,11 +175,11 @@ func TestCursorHooksFileGetsAVersion(t *testing.T) {
 	if err := os.MkdirAll(tg.ConfigDir(env), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := tg.Install(env, "tuios"); err != nil {
+	if _, err := tg.Install(env, "dartuios"); err != nil {
 		t.Fatal(err)
 	}
 	got := compactJSON(t, readFile(t, tg.Path(env)))
-	if got != `{"hooks":{"beforeSubmitPrompt":[{"command":"tuios agent-hook cursor-agent --integration 2"}],"postToolUse":[{"command":"tuios agent-hook cursor-agent --integration 2"}],"postToolUseFailure":[{"command":"tuios agent-hook cursor-agent --integration 2"}],"sessionEnd":[{"command":"tuios agent-hook cursor-agent --integration 2"}],"sessionStart":[{"command":"tuios agent-hook cursor-agent --integration 2"}],"stop":[{"command":"tuios agent-hook cursor-agent --integration 2"}]},"version":1}` {
+	if got != `{"hooks":{"beforeSubmitPrompt":[{"command":"dartuios agent-hook cursor-agent --integration 2"}],"postToolUse":[{"command":"dartuios agent-hook cursor-agent --integration 2"}],"postToolUseFailure":[{"command":"dartuios agent-hook cursor-agent --integration 2"}],"sessionEnd":[{"command":"dartuios agent-hook cursor-agent --integration 2"}],"sessionStart":[{"command":"dartuios agent-hook cursor-agent --integration 2"}],"stop":[{"command":"dartuios agent-hook cursor-agent --integration 2"}]},"version":1}` {
 		t.Fatalf("hooks.json = %s", got)
 	}
 }
@@ -188,19 +188,19 @@ func TestAntigravityOwnsOneNamedBlock(t *testing.T) {
 	env := testEnv(t)
 	tg := mustTarget(t, Antigravity)
 	writeFile(t, tg.Path(env), userFiles[Antigravity])
-	if _, err := tg.Install(env, "tuios"); err != nil {
+	if _, err := tg.Install(env, "dartuios"); err != nil {
 		t.Fatal(err)
 	}
 	got := compactJSON(t, readFile(t, tg.Path(env)))
-	if !strings.Contains(got, `"tuios":{"PreInvocation":[{"command":"tuios agent-hook antigravity --integration 1","timeout":5,"type":"command"}]}`) {
+	if !strings.Contains(got, `"dartuios":{"PreInvocation":[{"command":"dartuios agent-hook antigravity --integration 1","timeout":5,"type":"command"}]}`) {
 		t.Fatalf("hooks.json = %s", got)
 	}
 
-	// A block named tuios that tuios did not write is refused and kept.
-	own := `{"tuios": {"PreInvocation": [{"type": "command", "command": "my-script"}]}}`
+	// A block named dartuios that dartuios did not write is refused and kept.
+	own := `{"dartuios": {"PreInvocation": [{"type": "command", "command": "my-script"}]}}`
 	writeFile(t, tg.Path(env), own)
-	if _, err := tg.Install(env, "tuios"); err == nil {
-		t.Fatal("installed over the user's own tuios block")
+	if _, err := tg.Install(env, "dartuios"); err == nil {
+		t.Fatal("installed over the user's own dartuios block")
 	}
 	if res, err := tg.Uninstall(env); err != nil || res.Changed {
 		t.Fatalf("uninstall removed the user's block: %+v %v", res, err)
@@ -212,8 +212,8 @@ func TestAntigravityOwnsOneNamedBlock(t *testing.T) {
 
 func TestOwnedJSONHookFilesAreWholeFiles(t *testing.T) {
 	cases := map[string]string{
-		Copilot: `{"hooks":{"ErrorOccurred":[{"bash":"tuios agent-hook copilot --integration 2","powershell":"tuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"PostToolUse":[{"bash":"tuios agent-hook copilot --integration 2","powershell":"tuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"PostToolUseFailure":[{"bash":"tuios agent-hook copilot --integration 2","powershell":"tuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"PreToolUse":[{"bash":"tuios agent-hook copilot --integration 2","powershell":"tuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"SessionEnd":[{"bash":"tuios agent-hook copilot --integration 2","powershell":"tuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"SessionStart":[{"bash":"tuios agent-hook copilot --integration 2","powershell":"tuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"Stop":[{"bash":"tuios agent-hook copilot --integration 2","powershell":"tuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"UserPromptSubmit":[{"bash":"tuios agent-hook copilot --integration 2","powershell":"tuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"notification":[{"bash":"tuios agent-hook copilot --integration 2","powershell":"tuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}]},"version":1}`,
-		Grok:    `{"hooks":{"SessionStart":[{"hooks":[{"command":"tuios agent-hook grok --integration 1","timeout":5,"type":"command"}]}]}}`,
+		Copilot: `{"hooks":{"ErrorOccurred":[{"bash":"dartuios agent-hook copilot --integration 2","powershell":"dartuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"PostToolUse":[{"bash":"dartuios agent-hook copilot --integration 2","powershell":"dartuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"PostToolUseFailure":[{"bash":"dartuios agent-hook copilot --integration 2","powershell":"dartuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"PreToolUse":[{"bash":"dartuios agent-hook copilot --integration 2","powershell":"dartuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"SessionEnd":[{"bash":"dartuios agent-hook copilot --integration 2","powershell":"dartuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"SessionStart":[{"bash":"dartuios agent-hook copilot --integration 2","powershell":"dartuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"Stop":[{"bash":"dartuios agent-hook copilot --integration 2","powershell":"dartuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"UserPromptSubmit":[{"bash":"dartuios agent-hook copilot --integration 2","powershell":"dartuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}],"notification":[{"bash":"dartuios agent-hook copilot --integration 2","powershell":"dartuios agent-hook copilot --integration 2","timeoutSec":5,"type":"command"}]},"version":1}`,
+		Grok:    `{"hooks":{"SessionStart":[{"hooks":[{"command":"dartuios agent-hook grok --integration 1","timeout":5,"type":"command"}]}]}}`,
 	}
 	for id, want := range cases {
 		t.Run(id, func(t *testing.T) {
@@ -221,7 +221,7 @@ func TestOwnedJSONHookFilesAreWholeFiles(t *testing.T) {
 			tg := mustTarget(t, id)
 			mine := filepath.Join(filepath.Dir(tg.Path(env)), "mine.json")
 			writeFile(t, mine, `{"hooks":{}}`)
-			if _, err := tg.Install(env, "tuios"); err != nil {
+			if _, err := tg.Install(env, "dartuios"); err != nil {
 				t.Fatal(err)
 			}
 			if got := compactJSON(t, readFile(t, tg.Path(env))); got != want {
@@ -233,13 +233,13 @@ func TestOwnedJSONHookFilesAreWholeFiles(t *testing.T) {
 			if readFile(t, mine) != `{"hooks":{}}` {
 				t.Fatal("uninstall touched another hook file")
 			}
-			// A file of the user's at tuios's path is never overwritten.
+			// A file of the user's at dartuios's path is never overwritten.
 			writeFile(t, tg.Path(env), `{"hooks":{"SessionStart":[]}}`)
-			if _, err := tg.Install(env, "tuios"); err == nil {
-				t.Fatal("overwrote a file tuios did not write")
+			if _, err := tg.Install(env, "dartuios"); err == nil {
+				t.Fatal("overwrote a file dartuios did not write")
 			}
 			if res, err := tg.Uninstall(env); err != nil || res.Changed {
-				t.Fatalf("uninstall removed a file tuios did not write: %+v %v", res, err)
+				t.Fatalf("uninstall removed a file dartuios did not write: %+v %v", res, err)
 			}
 		})
 	}
@@ -250,7 +250,7 @@ func TestKimiBlockKeepsTheUsersTOML(t *testing.T) {
 	tg := mustTarget(t, Kimi)
 	user := userFiles[Kimi]
 	writeFile(t, tg.Path(env), user)
-	if _, err := tg.Install(env, "tuios"); err != nil {
+	if _, err := tg.Install(env, "dartuios"); err != nil {
 		t.Fatal(err)
 	}
 	got := readFile(t, tg.Path(env))
@@ -260,7 +260,7 @@ func TestKimiBlockKeepsTheUsersTOML(t *testing.T) {
 	if n := strings.Count(got, "[[hooks]]"); n != 1+len(tg.Events) {
 		t.Fatalf("%d [[hooks]] tables, want the user's one and %d", n, len(tg.Events))
 	}
-	if !strings.Contains(got, `command = "tuios agent-hook kimi --integration 1"`) {
+	if !strings.Contains(got, `command = "dartuios agent-hook kimi --integration 1"`) {
 		t.Fatalf("config.toml:\n%s", got)
 	}
 	if _, err := tg.Uninstall(env); err != nil {
@@ -272,7 +272,7 @@ func TestKimiBlockKeepsTheUsersTOML(t *testing.T) {
 
 	inline := "hooks = []\n"
 	writeFile(t, tg.Path(env), inline)
-	if _, err := tg.Install(env, "tuios"); err == nil || !strings.Contains(err.Error(), "inline") {
+	if _, err := tg.Install(env, "dartuios"); err == nil || !strings.Contains(err.Error(), "inline") {
 		t.Fatalf("installed next to an inline hooks array: %v", err)
 	}
 	if readFile(t, tg.Path(env)) != inline {
@@ -296,7 +296,7 @@ func TestSharedFilesStayLinked(t *testing.T) {
 			if err := os.Symlink(real, tg.Path(env)); err != nil {
 				t.Skipf("symlinks unavailable: %v", err)
 			}
-			if _, err := tg.Install(env, "tuios"); err != nil {
+			if _, err := tg.Install(env, "dartuios"); err != nil {
 				t.Fatal(err)
 			}
 			if !strings.Contains(readFile(t, real), "agent-hook") {
@@ -313,7 +313,7 @@ func TestSharedFilesStayLinked(t *testing.T) {
 }
 
 func TestTOMLStringEscapes(t *testing.T) {
-	if got := tomlString(`C:\Program Files\tuios "x"`); got != `"C:\\Program Files\\tuios \"x\""` {
+	if got := tomlString(`C:\Program Files\dartuios "x"`); got != `"C:\\Program Files\\dartuios \"x\""` {
 		t.Fatalf("tomlString = %s", got)
 	}
 }
@@ -322,12 +322,12 @@ func TestHermesTurnsThePluginOn(t *testing.T) {
 	cases := []struct {
 		name, before, installed string
 	}{
-		{"no file", "", "plugins:\n  enabled:\n    - tuios-agent-state\n"},
-		{"no plugins key", "model: x\n", "model: x\nplugins:\n  enabled:\n    - tuios-agent-state\n"},
-		{"empty flow list", "plugins:\n  enabled: []\nmodel: x\n", "plugins:\n  enabled:\n    - tuios-agent-state\nmodel: x\n"},
-		{"a list of the user's", "plugins:\n  enabled:\n    - mine # keep\n  disabled: []\nmodel: x\n", "plugins:\n  enabled:\n    - mine # keep\n    - tuios-agent-state\n  disabled: []\nmodel: x\n"},
-		{"compact list", "plugins:\n    enabled:\n    - mine\n", "plugins:\n    enabled:\n    - mine\n    - tuios-agent-state\n"},
-		{"no enabled key", "plugins:\n  disabled: []\n", "plugins:\n  enabled:\n    - tuios-agent-state\n  disabled: []\n"},
+		{"no file", "", "plugins:\n  enabled:\n    - dartuios-agent-state\n"},
+		{"no plugins key", "model: x\n", "model: x\nplugins:\n  enabled:\n    - dartuios-agent-state\n"},
+		{"empty flow list", "plugins:\n  enabled: []\nmodel: x\n", "plugins:\n  enabled:\n    - dartuios-agent-state\nmodel: x\n"},
+		{"a list of the user's", "plugins:\n  enabled:\n    - mine # keep\n  disabled: []\nmodel: x\n", "plugins:\n  enabled:\n    - mine # keep\n    - dartuios-agent-state\n  disabled: []\nmodel: x\n"},
+		{"compact list", "plugins:\n    enabled:\n    - mine\n", "plugins:\n    enabled:\n    - mine\n    - dartuios-agent-state\n"},
+		{"no enabled key", "plugins:\n  disabled: []\n", "plugins:\n  enabled:\n    - dartuios-agent-state\n  disabled: []\n"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -340,7 +340,7 @@ func TestHermesTurnsThePluginOn(t *testing.T) {
 			if tc.before != "" {
 				writeFile(t, config, tc.before)
 			}
-			res, err := tg.Install(env, "tuios")
+			res, err := tg.Install(env, "dartuios")
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -350,21 +350,21 @@ func TestHermesTurnsThePluginOn(t *testing.T) {
 			if len(res.Paths) != 3 {
 				t.Fatalf("install wrote %v, want the plugin, its manifest and the config", res.Paths)
 			}
-			manifest := readFile(t, filepath.Join(tg.ConfigDir(env), "plugins", "tuios-agent-state", "plugin.yaml"))
-			if !strings.Contains(manifest, "name: tuios-agent-state") {
+			manifest := readFile(t, filepath.Join(tg.ConfigDir(env), "plugins", "dartuios-agent-state", "plugin.yaml"))
+			if !strings.Contains(manifest, "name: dartuios-agent-state") {
 				t.Fatalf("plugin.yaml:\n%s", manifest)
 			}
 			if _, err := tg.Uninstall(env); err != nil {
 				t.Fatal(err)
 			}
 			after := readFile(t, config)
-			if strings.Contains(after, "tuios-agent-state") {
+			if strings.Contains(after, "dartuios-agent-state") {
 				t.Fatalf("uninstall left the plugin on:\n%s", after)
 			}
 			if tc.before != "" && strings.Contains(tc.before, "mine") && !strings.Contains(after, "mine # keep") && !strings.Contains(after, "- mine") {
 				t.Fatalf("uninstall lost the user's plugin:\n%s", after)
 			}
-			if _, err := os.Stat(filepath.Join(tg.ConfigDir(env), "plugins", "tuios-agent-state")); !os.IsNotExist(err) {
+			if _, err := os.Stat(filepath.Join(tg.ConfigDir(env), "plugins", "dartuios-agent-state")); !os.IsNotExist(err) {
 				t.Fatal("uninstall left the plugin directory")
 			}
 		})
@@ -376,7 +376,7 @@ func TestHermesRefusesAnInlineList(t *testing.T) {
 	tg := mustTarget(t, Hermes)
 	config := filepath.Join(tg.ConfigDir(env), "config.yaml")
 	writeFile(t, config, "plugins:\n  enabled: [mine]\n")
-	_, err := tg.Install(env, "tuios")
+	_, err := tg.Install(env, "dartuios")
 	if err == nil || !strings.Contains(err.Error(), "by hand") {
 		t.Fatalf("install into an inline list: %v", err)
 	}

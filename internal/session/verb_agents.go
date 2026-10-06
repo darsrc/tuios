@@ -10,7 +10,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // This file implements the cross-agent verbs: who is here (list-agents), leaving
@@ -22,7 +22,7 @@ import (
 // name, which is what every other window-targeted verb takes. Inventing a second
 // namespace for agents would mean two ways to name the same pane and a rule for
 // when they disagree. Discovery is list-agents, so an agent finds its
-// correspondents rather than being told them, and $TUIOS_PANE_ID is its own
+// correspondents rather than being told them, and $DARTUIOS_PANE_ID is its own
 // address.
 //
 // An inbox therefore lives and dies with its window. A message addressed to a
@@ -454,7 +454,7 @@ func (d *Daemon) sendAgentMessage(cs *connState, p sendAgentMessageParams, fromA
 	if p.ReplyTo > d.agents.highestID() {
 		return nil, hintedVerbError(ErrVerbInvalidParams, "reply_to names a message that has never existed", &VerbHint{
 			Param:   "reply_to",
-			Command: "tuios read-agent-messages",
+			Command: "dartuios read-agent-messages",
 			Detail:  "No message has been sent with that id. Read the ring to find the id you meant to answer.",
 		})
 	}
@@ -546,7 +546,7 @@ func (d *Daemon) sendAgentMessage(cs *connState, p sendAgentMessageParams, fromA
 		if (viaLink || (cs != nil && cs.paneOnly)) && !d.stash.owns(sess.ID, path) {
 			return nil, hintedVerbError(ErrVerbInvalidParams, "attachment "+echoName(path)+": a message from another machine can attach only a stashed file", &VerbHint{
 				Param:   "attachments",
-				Command: "tuios stash put",
+				Command: "dartuios stash put",
 				Detail:  "Put the file in this session's stash first and attach the path the stash printed.",
 			})
 		}
@@ -571,7 +571,7 @@ func (d *Daemon) sendAgentMessage(cs *connState, p sendAgentMessageParams, fromA
 	}
 	if !d.agents.checkRate(sess.Name, sender) {
 		return nil, hintedVerbError(ErrVerbRateLimited, "this sender is over the message rate cap", &VerbHint{
-			Command: "tuios read-agent-messages",
+			Command: "dartuios read-agent-messages",
 			Detail:  "A sender gets 10 messages back to back and 30 a minute after that. Hitting the cap almost always means two agents are answering each other in a loop; read the ring before sending again.",
 		})
 	}
@@ -581,7 +581,7 @@ func (d *Daemon) sendAgentMessage(cs *connState, p sendAgentMessageParams, fromA
 		unread, notices := d.agents.linkQueued(sess.Name)
 		if msg.Kind == agentMsgDirect && unread >= agentLinkMaxQueued {
 			return nil, hintedVerbError(ErrVerbRateLimited, "this session holds "+strconv.Itoa(unread)+" unread messages from other machines, which is the cap", &VerbHint{
-				Command: "tuios read-agent-messages",
+				Command: "dartuios read-agent-messages",
 				Detail:  "This machine holds a bounded number of unread messages from other machines. Wait for the recipient to read its inbox, then send again.",
 			})
 		}
@@ -678,7 +678,7 @@ func (d *Daemon) verbReleaseAgentMessage(cs *connState, params json.RawMessage) 
 	if !ok {
 		return nil, hintedVerbError(ErrVerbInvalidParams, "no held message has id "+strconv.FormatUint(p.ID, 10)+" in this session", &VerbHint{
 			Param:   "id",
-			Command: "tuios read-agent-messages -w human",
+			Command: "dartuios read-agent-messages -w human",
 			Detail:  "The message may already have been passed on, or dropped from the ring. Only a message marked held can be released.",
 		})
 	}
@@ -840,7 +840,7 @@ func (d *Daemon) verbReadAgentMessages(cs *connState, params json.RawMessage) (a
 // that thinks before it types is immediately.
 //
 // It is also the only half of this feature that works with the agents that exist
-// today. None of them read a tuios mailbox; all of them read their keyboard.
+// today. None of them read a dartuios mailbox; all of them read their keyboard.
 func (d *Daemon) verbAskAgent(cs *connState, params json.RawMessage) (any, *verbError) {
 	var p askAgentParams
 	if verr := decodeParams(params, &p); verr != nil {
@@ -868,8 +868,8 @@ func (d *Daemon) verbAskAgent(cs *connState, params json.RawMessage) (any, *verb
 	if p.Window == AgentInboxHuman {
 		return nil, hintedVerbError(ErrVerbNoKeyboard, "human has no pane to type into", &VerbHint{
 			Param:   "window",
-			Command: "tuios send-agent-message -w human '<your question>'",
-			Detail:  "human is the person at the attached client. They read mail in the tuios mail overlay and reply from it. Send the question with send-agent-message -w human, then wait-for agent-message on your own inbox.",
+			Command: "dartuios send-agent-message -w human '<your question>'",
+			Detail:  "human is the person at the attached client. They read mail in the dartuios mail overlay and reply from it. Send the question with send-agent-message -w human, then wait-for agent-message on your own inbox.",
 		})
 	}
 	idx, err := findWindowStateIndex(state.Windows, p.Window)
@@ -1007,7 +1007,7 @@ func (d *Daemon) askAgent(cs *connState, sess *Session, state *SessionState, tar
 			detail += " Asks in flight: " + strings.Join(edges, ", ") + "."
 		}
 		return nil, hintedVerbError(ErrVerbLoopRefused, "this ask would close a loop with one already in flight", &VerbHint{
-			Command: "tuios send-agent-message -w " + shortWindowID(target.ID) + " '<what you wanted to ask>'",
+			Command: "dartuios send-agent-message -w " + shortWindowID(target.ID) + " '<what you wanted to ask>'",
 			Detail:  detail,
 		})
 	}
@@ -1095,7 +1095,7 @@ func (d *Daemon) askAgent(cs *connState, sess *Session, state *SessionState, tar
 		return nil, hintedVerbError(ErrVerbPromptStalled, gate.stalledMessage(stall)+"; its state is "+endState, &VerbHint{
 			Param:   "stall_timeout",
 			Verb:    "capture-pane",
-			Command: "tuios capture-pane -w " + shortWindowID(target.ID),
+			Command: "dartuios capture-pane -w " + shortWindowID(target.ID),
 			Detail:  "The question was typed and Enter was sent, so do not send it again without looking. Read the pane with capture-pane. If the question sits in the agent's input box, press Enter there with send-keys. If the agent is still starting, wait for it with wait-for agent-state and ask again. An agent that is slow to show it is working can be given more time with stall_timeout.",
 		})
 	}
@@ -1192,7 +1192,7 @@ func agentBlockedError(w WindowState) *verbError {
 	}
 	return hintedVerbError(ErrVerbAgentBlocked, msg, &VerbHint{
 		Verb:    "capture-pane",
-		Command: "tuios capture-pane -w " + shortWindowID(w.ID),
+		Command: "dartuios capture-pane -w " + shortWindowID(w.ID),
 		Detail:  "Nothing was typed. Read the prompt with capture-pane first. Then answer it yourself with send-keys if answering it is yours to do, or ask the person with send-agent-message -w human. Pass allow_blocked only when you have read the prompt and it takes free text.",
 	})
 }
@@ -1263,7 +1263,7 @@ func (d *Daemon) waitAgentRest(sess *Session, windowID string, timeout time.Dura
 			}
 			return "", hintedVerbError(ErrVerbNotReady, msg, &VerbHint{
 				Param:   "ready_timeout",
-				Command: "tuios wait-for agent-state -w " + shortWindowID(windowID) + " --until idle,needs_input,done",
+				Command: "dartuios wait-for agent-state -w " + shortWindowID(windowID) + " --until idle,needs_input,done",
 				Detail:  detail,
 			})
 		case <-d.ctx.Done():

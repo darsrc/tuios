@@ -154,7 +154,7 @@ func (d *Daemon) resolveSelection(cs *connState, text, confirm string, max int) 
 		return nil, hintedVerbError(ErrVerbWindowNotFound, "no agent pane matches the selector "+echoName(sel.String()), &VerbHint{
 			Param:   "select",
 			Verb:    "list-agents",
-			Command: "tuios list-agents --select '" + sel.String() + "'",
+			Command: "dartuios list-agents --select '" + sel.String() + "'",
 			Detail:  "Nothing was sent. list-agents with the same selector shows what it matches; a selector reaches agent panes only, and a term the pane cannot answer (a group outside a fan-out, a cwd nothing reported) does not match.",
 		})
 	}

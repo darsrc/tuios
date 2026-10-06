@@ -11,31 +11,31 @@ package session
 // with no install step, so accepting the same requests gives a Crush pane its
 // exact state.
 //
-// tuios's own contract stays set-agent-state on the daemon socket (see
+// dartuios's own contract stays set-agent-state on the daemon socket (see
 // docs/AGENT_STATE.md). This is a second door into the same report path, and
 // it is kept apart from herdr's own so a real herdr on the same machine is
 // never confused:
 //
-//   - It is a socket of tuios's own, beside the daemon's (HerdrSocketPath),
+//   - It is a socket of dartuios's own, beside the daemon's (HerdrSocketPath),
 //     never herdr's path. herdr reads HERDR_SOCKET_PATH as the path of its own
 //     server, and HERDR_ENV=1 as "inside herdr", which makes herdr refuse to
-//     start nested. So tuios sets the three variables only in a pane where they
+//     start nested. So dartuios sets the three variables only in a pane where they
 //     are wanted: one that starts a harness known to report this way, or every
 //     pane when [agents] herdr_protocol = "always" asks for it. A shell pane
 //     is not told it is a herdr pane.
 //   - A pane never inherits an outer herdr's HERDR_ENV or pane ids from the
 //     daemon's environment (guestenv.WithoutHostMultiplexer), so an agent in a
-//     tuios pane cannot report to the herdr pane tuios itself runs in.
+//     dartuios pane cannot report to the herdr pane dartuios itself runs in.
 //   - Only the requests that report a pane's own agent are answered:
 //     pane.report_agent, pane.report_agent_session, pane.release_agent, and
 //     ping. Everything else gets herdr's error shape with code
 //     "unsupported", so a herdr client that reached this socket by mistake
-//     fails plainly instead of being answered as if tuios were herdr.
+//     fails plainly instead of being answered as if dartuios were herdr.
 //
 // A request may speak only for the caller's own pane. The daemon places the
 // process on the other end of the connection the way it places every caller
 // (peerPane: the kernel's peer pid, its ancestors, its terminal, and last its
-// TUIOS_PANE_ID) and refuses a pane_id that is not that pane. A process
+// DARTUIOS_PANE_ID) and refuses a pane_id that is not that pane. A process
 // outside every pane, or one the daemon cannot place, is refused.
 //
 // Mapping, from herdr's PaneAgentState (src/api/schema/common.rs):
@@ -66,7 +66,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/integration"
+	"github.com/darsrc/tuios/internal/integration"
 )
 
 // herdrMaxRequest bounds one request line. A report is a few hundred bytes.
@@ -79,7 +79,7 @@ const herdrIOTimeout = 2 * time.Second
 // which at worst accepts one stale report per pane.
 const herdrSeqMax = 4096
 
-// HerdrSocketPath is the socket tuios accepts herdr's pane state protocol on,
+// HerdrSocketPath is the socket dartuios accepts herdr's pane state protocol on,
 // beside the daemon's own socket.
 func HerdrSocketPath(socketPath string) string {
 	return socketPath + ".herdr"
@@ -92,7 +92,7 @@ type herdrRequest struct {
 	Params json.RawMessage `json:"params"`
 }
 
-// herdrParams are the params of the requests tuios answers.
+// herdrParams are the params of the requests dartuios answers.
 type herdrParams struct {
 	PaneID         string  `json:"pane_id"`
 	Source         string  `json:"source"`
@@ -217,10 +217,10 @@ func writeHerdr(w io.Writer, id string, result any, code, msg string) {
 func (d *Daemon) herdrCall(cs *connState, req herdrRequest) (any, string, string) {
 	switch req.Method {
 	case "ping":
-		return map[string]any{"type": "pong", "version": "tuios", "protocol": 0}, "", ""
+		return map[string]any{"type": "pong", "version": "dartuios", "protocol": 0}, "", ""
 	case "pane.report_agent", "pane.report_agent_session", "pane.release_agent":
 	default:
-		return nil, "unsupported", "this is tuios, which accepts only pane.report_agent, pane.report_agent_session and pane.release_agent here"
+		return nil, "unsupported", "this is dartuios, which accepts only pane.report_agent, pane.report_agent_session and pane.release_agent here"
 	}
 	var p herdrParams
 	if len(req.Params) > 0 {
@@ -266,7 +266,7 @@ func (d *Daemon) herdrPane(cs *connState, paneID string) (string, string, string
 	fromPane, window := d.peerPane(cs)
 	switch {
 	case !fromPane || window == "":
-		return "", "forbidden", "the caller runs in no pane of this tuios"
+		return "", "forbidden", "the caller runs in no pane of this dartuios"
 	case paneID != window:
 		return "", "forbidden", "a pane may report only for itself"
 	}

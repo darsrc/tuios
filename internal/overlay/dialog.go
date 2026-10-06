@@ -3,6 +3,7 @@ package overlay
 import (
 	"image/color"
 	"strings"
+	"time"
 
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
@@ -26,6 +27,11 @@ type Dialog struct {
 	Width int
 	Body  string // pre-styled, multi-line; each line is canvas-filled
 	Hints []Hint
+	Hard  bool // destructive dialogs draw the hard box corners
+	// ShownAt is when the dialog opened, zero for a dialog that has not been
+	// shown. While 200 ms of it have not passed the frame's boundary pulses in
+	// weight, so the open is felt in the border rather than a colour change.
+	ShownAt time.Time
 }
 
 // MinDialogWidth is the narrowest inner width a dialog lays itself out at:
@@ -42,12 +48,26 @@ func DialogFitWidth(preferred, screenW int) int {
 	return max(min(preferred, screenW-2), 1)
 }
 
-// dialogFrame returns the corner, horizontal and vertical border glyphs.
-func dialogFrame() (tl, tr, bl, br, h, v string) {
+// dialogFrame returns the corner, horizontal and vertical border glyphs. A
+// plain dialog anchors its panel with the corner marks; a hard (destructive)
+// dialog draws the full box corners; ASCII mode draws "+" for every corner.
+func dialogFrame(hard bool) (tl, tr, bl, br, h, v string) {
 	if UseASCII() {
 		return "+", "+", "+", "+", "-", "|"
 	}
-	return "╭", "╮", "╰", "╯", "─", "│"
+	if hard {
+		return "┌", "┐", "└", "┘", "─", "│"
+	}
+	return AnchorTL(), AnchorTR(), AnchorBL(), AnchorBR(), "─", "│"
+}
+
+// anchoredFrame is the plain dialog's frame: the four anchor corners and no
+// connecting lines. The panel is anchored by the corners alone (DAR §45); the
+// caller draws the open top and bottom as width-preserving spaces, which is
+// what the title and the hints ride on. A hard (destructive) dialog keeps the
+// full box from dialogFrame.
+func anchoredFrame() (tl, tr, bl, br, h, v string) {
+	return AnchorTL(), AnchorTR(), AnchorBL(), AnchorBR(), " ", " "
 }
 
 // DashRule returns a dashed internal separator, the micro-dialog's answer to a
@@ -65,6 +85,22 @@ func DashRuleGlyph() string {
 		def = "-"
 	}
 	return chromeOr(func(c *Chrome) string { return c.DashRule }, def)
+}
+
+// AnchorTL, AnchorTR, AnchorBL and AnchorBR are the panel's four corners. The
+// corner is a mark of its own rather than the border's, so a set can anchor a
+// panel while the window keeps its own corners; ASCII mode draws "+", the one
+// corner every seven-bit terminal has.
+func AnchorTL() string { return anchorOr(func(c *Chrome) string { return c.AnchorTL }, "◜") }
+func AnchorTR() string { return anchorOr(func(c *Chrome) string { return c.AnchorTR }, "◝") }
+func AnchorBL() string { return anchorOr(func(c *Chrome) string { return c.AnchorBL }, "◟") }
+func AnchorBR() string { return anchorOr(func(c *Chrome) string { return c.AnchorBR }, "◞") }
+
+func anchorOr(role func(*Chrome) string, def string) string {
+	if UseASCII() {
+		def = "+"
+	}
+	return chromeOr(role, def)
 }
 
 // EnterKey names the return key for a hint strip: the glyph where it renders,
@@ -150,7 +186,12 @@ func HintStrip(hints []Hint, bg color.Color, pal Palette) string {
 func (d Dialog) Render(pal Palette) (string, Geometry) {
 	bg := pal.Canvas
 	w := max(d.Width, MinDialogWidth)
-	tl, tr, bl, br, h, v := dialogFrame()
+	var tl, tr, bl, br, h, v string
+	if d.Hard {
+		tl, tr, bl, br, h, v = dialogFrame(true)
+	} else {
+		tl, tr, bl, br, h, v = anchoredFrame()
+	}
 
 	frame := Style(bg).Foreground(pal.FgMute)
 	rule := func(n int) string { return frame.Render(strings.Repeat(h, max(n, 0))) }
@@ -188,6 +229,12 @@ func (d Dialog) Render(pal Palette) (string, Geometry) {
 	bottom += frame.Render(br)
 
 	side := frame.Render(v)
+	if d.Hard && !d.ShownAt.IsZero() {
+		now := time.Now()
+		if now.Sub(d.ShownAt) < 200*time.Millisecond {
+			side = frame.Render(string(WeightPulse(d.ShownAt, now)))
+		}
+	}
 	lines := []string{top}
 	for bodyLine := range strings.SplitSeq(d.Body, "\n") {
 		if lipgloss.Width(bodyLine) > w {

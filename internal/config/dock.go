@@ -138,7 +138,7 @@ type DockClockConfig struct {
 // has to write to put their own cell on the bar.
 //
 // The contract is deliberately small enough to have no version: environment
-// variables in, one line of text out. There is nothing here that a future tuios
+// variables in, one line of text out. There is nothing here that a future dartuios
 // can break, because there is no API behind it.
 type DockCustomConfig struct {
 	// Command is run through sh -c. Its first line of stdout is the cell.

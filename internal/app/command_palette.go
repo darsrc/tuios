@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/pkg/fuzzy"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/pkg/fuzzy"
 )
 
 // paletteCategoryAgents is the palette's section for the agent entries.
@@ -641,7 +641,7 @@ func GetCommandPaletteItems(s *config.Settings) []CommandPaletteItem {
 			},
 		},
 		// Keybinds. Three rows onto one overlay, because "change a key" and
-		// "stop tuios taking a key" are the two things people come here for and
+		// "stop dartuios taking a key" are the two things people come here for and
 		// neither of them is spelled "keybind manager". Two of the three spend
 		// their meta slot on the "#" token, which is the part nothing else
 		// would ever tell the user about.

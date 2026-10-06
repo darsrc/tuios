@@ -23,7 +23,7 @@ type paneMatch struct {
 }
 
 // matchPaneByProcess finds the pane a process belongs to from what the
-// process can say about itself without any help from tuios's environment.
+// process can say about itself without any help from dartuios's environment.
 //
 // sid is the process's session id. The shell in a pane is the session leader
 // of the pane's terminal, so every process whose controlling terminal is that
@@ -85,7 +85,7 @@ func (d *Daemon) localPaneShells() []paneShell {
 
 // verbResolvePane names the pane a process runs in, for a hook reporter that
 // lost the pane's environment. A harness that scrubs its hooks' environment,
-// or a sandbox wrapper that starts clean, leaves TUIOS_PANE_ID unset, and the
+// or a sandbox wrapper that starts clean, leaves DARTUIOS_PANE_ID unset, and the
 // report would otherwise land on whichever window is focused.
 func (d *Daemon) verbResolvePane(_ *connState, params json.RawMessage) (any, *verbError) {
 	var p struct {

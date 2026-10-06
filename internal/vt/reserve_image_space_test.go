@@ -3,13 +3,13 @@ package vt_test
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // Space reserved under an image must come out blank, whatever colour the guest
 // had in its pen when it transmitted. ScrollUp fills the rows it exposes with
 // the pen background, which is right for a guest that scrolled by printing, but
-// a reservation is a scroll tuios invents to make room for a graphics command.
+// a reservation is a scroll dartuios invents to make room for a graphics command.
 // Inheriting the pen there painted every reserved row full width in the guest's
 // colour around the image.
 //

@@ -7,7 +7,7 @@ import "strings"
 // Ambiguity is a pair of key names that a terminal sends as the same byte, so
 // binding one of them binds both.
 //
-// This is not a tuios quirk to be worked around. It is what a VT100 keyboard
+// This is not a dartuios quirk to be worked around. It is what a VT100 keyboard
 // was: Ctrl+letter is the letter's code with the top three bits cleared, and
 // Tab, Return and Escape happen to sit exactly where Ctrl+I, Ctrl+M and Ctrl+[
 // land. Nothing downstream of the terminal can undo that, which is why the only
@@ -101,7 +101,7 @@ func AmbiguityPartners(key string) []string {
 // AmbiguityVerdict is what to tell a user about a key they just pressed, given
 // whether the host terminal agreed to disambiguate.
 //
-// The host's answer is the whole of it. tuios asks for disambiguation on every
+// The host's answer is the whole of it. dartuios asks for disambiguation on every
 // view; a terminal that granted it sends Ctrl+I as an escape sequence carrying
 // the modifier, and the pair genuinely separates. A terminal that did not sends
 // 0x09 and there is nothing to separate.

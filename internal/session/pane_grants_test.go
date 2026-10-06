@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 func TestGrantsAdminImpliesAllButRespond(t *testing.T) {
@@ -332,10 +332,10 @@ func TestPaneGrantsEnvAndTableFollowTheProcess(t *testing.T) {
 		t.Fatal(err)
 	}
 	env := sess.buildEnv(win.ID, false)
-	if !slices.Contains(env, "TUIOS_PANE_GRANTS=read,write") {
-		t.Errorf("env has no TUIOS_PANE_GRANTS=read,write: %v", env)
+	if !slices.Contains(env, "DARTUIOS_PANE_GRANTS=read,write") {
+		t.Errorf("env has no DARTUIOS_PANE_GRANTS=read,write: %v", env)
 	}
-	if got := sess.buildEnv("unknown", false); !slices.Contains(got, "TUIOS_PANE_GRANTS=admin") {
+	if got := sess.buildEnv("unknown", false); !slices.Contains(got, "DARTUIOS_PANE_GRANTS=admin") {
 		t.Error("a pane given nothing does not say it holds the open default")
 	}
 
@@ -431,7 +431,7 @@ func TestTheClientPresentsItsPaneWhereTheKernelCannot(t *testing.T) {
 	d, sp, a1, _, b1 := scopeFixture(t)
 	setStrict(d, "read")
 	d.setApprovalPeer(func(*connState) (bool, string) { return false, "" })
-	env := map[string]string{"TUIOS_PANE_ID": a1, "TUIOS_PANE_TOKEN": d.manager.PaneToken(a1)}
+	env := map[string]string{"DARTUIOS_PANE_ID": a1, "DARTUIOS_PANE_TOKEN": d.manager.PaneToken(a1)}
 	getenv := func(k string) string { return env[k] }
 
 	kernel, err := DialVerbClientAt(sp, "test")
@@ -623,7 +623,7 @@ func TestAPaneCannotTypeIntoAPaneThatHoldsMore(t *testing.T) {
 
 	d.setApprovalPeer(func(*connState) (bool, string) { return true, a1 })
 	c := dialVerb(t, sp)
-	widen := "tuios set-pane-grants -w " + a1 + " --grants admin\r"
+	widen := "dartuios set-pane-grants -w " + a1 + " --grants admin\r"
 	resp := callP(c, t, "send-text", map[string]any{"window": a2, "text": widen})
 	wantForbidden(t, "send-text into an admin sibling", resp)
 	if msg := resp["error"].(map[string]any)["message"].(string); !strings.Contains(msg, "admin") || !strings.Contains(msg, "more than this pane holds") {
@@ -710,7 +710,7 @@ func TestTypingIntoAPromptNeedsRespond(t *testing.T) {
 	}
 }
 
-// TestGetWindowIsARead: tuios get-window used to send the client protocol's
+// TestGetWindowIsARead: dartuios get-window used to send the client protocol's
 // GetWindow, which a pane without admin may not send, so an agent holding
 // read could not read one window's agent_state the way the skill tells it to.
 // The get-window verb is a read: served on the pane's own session, refused
@@ -785,7 +785,7 @@ func jsonEqual(a, b any) bool {
 
 // TestAttachedClientAnswersGetWindowAndNeverAPanesKeys: with a client
 // attached, get-window is answered by the client, as the client protocol's
-// GetWindow was, so tuios get-window keeps its fields. send-keys from a pane
+// GetWindow was, so dartuios get-window keeps its fields. send-keys from a pane
 // without admin is written to the pane's terminal and never routed to the
 // client, where the prefix key would drive the window manager.
 func TestAttachedClientAnswersGetWindowAndNeverAPanesKeys(t *testing.T) {

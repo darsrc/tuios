@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# TUIOS Installation Script
-# Usage: curl -fsSL https://raw.githubusercontent.com/Gaurav-Gosain/tuios/main/install.sh | bash
+# dartuios Installation Script
+# Usage: curl -fsSL https://raw.githubusercontent.com/darsrc/tuios/main/install.sh | bash
 
 set -e
 
@@ -13,8 +13,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # GitHub repository
-REPO="Gaurav-Gosain/tuios"
-BINARY_NAME="tuios"
+REPO="darsrc/tuios"
+BINARY_NAME="dartuios"
 
 # Print colored output
 print_info() {
@@ -143,7 +143,7 @@ verify_checksum() {
 
 # Main installation
 main() {
-    print_info "Installing TUIOS..."
+    print_info "Installing dartuios..."
     echo ""
 
     # Detect system
@@ -171,7 +171,7 @@ main() {
     print_success "Latest version: $VERSION"
 
     # Construct download URL
-    # Format: tuios_0.0.6_Linux_x86_64.tar.gz
+    # Format: dartuios_0.0.6_Linux_x86_64.tar.gz
     # Note: GoReleaser uses version without 'v' prefix in filenames
     VERSION_NO_V="${VERSION#v}"  # Remove leading 'v' from version
 
@@ -251,7 +251,7 @@ main() {
     fi
 
     echo ""
-    print_info "To start TUIOS, simply run: $BINARY_NAME"
+    print_info "To start dartuios, simply run: $BINARY_NAME"
     print_info "For help, run: $BINARY_NAME --help"
 }
 

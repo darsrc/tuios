@@ -10,8 +10,8 @@ import (
 )
 
 func TestEnvironVar(t *testing.T) {
-	block := []byte("PATH=/bin\x00TUIOS_AGENT=codex\x00TUIOS_AGENTX=no\x00")
-	if v, ok := environVar(block, "TUIOS_AGENT"); !ok || v != "codex" {
+	block := []byte("PATH=/bin\x00DARTUIOS_AGENT=codex\x00DARTUIOS_AGENTX=no\x00")
+	if v, ok := environVar(block, "DARTUIOS_AGENT"); !ok || v != "codex" {
 		t.Fatalf("environVar = %q %v, want codex", v, ok)
 	}
 	if _, ok := environVar(block, "HOME"); ok {
@@ -31,15 +31,15 @@ func TestProcargsEnvVar(t *testing.T) {
 		want string
 		ok   bool
 	}{
-		{"after argv", build(2, "/bin/sh\x00\x00\x00sh\x00TUIOS_AGENT=fake\x00TUIOS_AGENT=codex\x00\x00"), "codex", true},
+		{"after argv", build(2, "/bin/sh\x00\x00\x00sh\x00DARTUIOS_AGENT=fake\x00DARTUIOS_AGENT=codex\x00\x00"), "codex", true},
 		// An argument that looks like the variable is not the environment.
-		{"argv is not env", build(2, "/bin/sh\x00\x00sh\x00TUIOS_AGENT=fake\x00HOME=/h\x00\x00"), "", false},
-		{"apple strings after env are not env", build(1, "/bin/sh\x00\x00sh\x00HOME=/h\x00\x00TUIOS_AGENT=apple\x00"), "", false},
+		{"argv is not env", build(2, "/bin/sh\x00\x00sh\x00DARTUIOS_AGENT=fake\x00HOME=/h\x00\x00"), "", false},
+		{"apple strings after env are not env", build(1, "/bin/sh\x00\x00sh\x00HOME=/h\x00\x00DARTUIOS_AGENT=apple\x00"), "", false},
 		{"truncated", []byte{1, 0}, "", false},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			v, ok := procargsEnvVar(tc.buf, "TUIOS_AGENT")
+			v, ok := procargsEnvVar(tc.buf, "DARTUIOS_AGENT")
 			if v != tc.want || ok != tc.ok {
 				t.Fatalf("got %q %v, want %q %v", v, ok, tc.want, tc.ok)
 			}
@@ -48,7 +48,7 @@ func TestProcargsEnvVar(t *testing.T) {
 }
 
 // TestAgentHintNamesAPaneBehindAnOpaqueWrapper is P27: a sandbox wrapper runs
-// an agent no process walk can see, and TUIOS_AGENT on the wrapper names it.
+// an agent no process walk can see, and DARTUIOS_AGENT on the wrapper names it.
 func TestAgentHintNamesAPaneBehindAnOpaqueWrapper(t *testing.T) {
 	m := newAgentMatcher(nil)
 	hint := func(v string) func() string { return func() string { return v } }
@@ -85,7 +85,7 @@ func TestAgentHintNamesAPaneBehindAnOpaqueWrapper(t *testing.T) {
 // of its own platform binaries from kern.procargs2, and a wrapper a user runs
 // is not one of those.
 func TestReadAgentHintEnvFromALiveProcess(t *testing.T) {
-	if os.Getenv("TUIOS_HINT_TEST_CHILD") == "1" {
+	if os.Getenv("DARTUIOS_HINT_TEST_CHILD") == "1" {
 		time.Sleep(5 * time.Second)
 		return
 	}
@@ -93,7 +93,7 @@ func TestReadAgentHintEnvFromALiveProcess(t *testing.T) {
 		t.Skip("no process environment reader on this platform")
 	}
 	cmd := exec.Command(os.Args[0], "-test.run=^TestReadAgentHintEnvFromALiveProcess$")
-	cmd.Env = append(os.Environ(), "TUIOS_HINT_TEST_CHILD=1", "TUIOS_AGENT=Claude-Code ")
+	cmd.Env = append(os.Environ(), "DARTUIOS_HINT_TEST_CHILD=1", "DARTUIOS_AGENT=Claude-Code ")
 	if err := cmd.Start(); err != nil {
 		t.Skipf("start sleep: %v", err)
 	}

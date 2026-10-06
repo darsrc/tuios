@@ -8,13 +8,13 @@ package tuie2e
 // the path from a keypress to the character on screen, which crosses a socket,
 // a PTY, a shell and a compositor before it gets there.
 //
-// They are gated behind TUIOS_PERF on top of TUIOS_E2E because they are
+// They are gated behind DARTUIOS_PERF on top of DARTUIOS_E2E because they are
 // measurements rather than assertions: they take minutes, they report numbers
 // instead of passing or failing, and a number that moved is a thing for a human
 // to read rather than for CI to reject. Wall-clock thresholds in CI would be
 // flaky in exactly the way that trains people to ignore a red build.
 //
-//	cd e2e/tui && TUIOS_E2E=1 TUIOS_PERF=1 go test -count=1 -v -run TestPerf ./...
+//	cd e2e/tui && DARTUIOS_E2E=1 DARTUIOS_PERF=1 go test -count=1 -v -run TestPerf ./...
 //
 // Every number is reported as a distribution, not a mean. Startup and latency
 // both have long right tails (a scheduler hiccup, a cold page fault), and a mean
@@ -33,13 +33,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/perf"
 	"github.com/Gaurav-Gosain/tuitest"
+	"github.com/darsrc/tuios/internal/perf"
 )
 
 const (
-	// perfEnv gates the whole file on top of TUIOS_E2E.
-	perfEnv = "TUIOS_PERF"
+	// perfEnv gates the whole file on top of DARTUIOS_E2E.
+	perfEnv = "DARTUIOS_PERF"
 
 	// perfCols and perfRows are the maintainer's real host size, the same one
 	// the render benchmarks in internal/app use. Per-frame cost scales with
@@ -50,7 +50,7 @@ const (
 	// perfPromptMark is the pane shell's prompt, overridden so "the pane is
 	// usable" is a string on screen rather than a guess about a border being
 	// drawn. It has to be a token no chrome would ever paint.
-	perfPromptMark = "TUIOSRDY"
+	perfPromptMark = "dartuiosRDY"
 
 	// perfStartRuns is how many times a startup path is measured. Startup is
 	// seconds-scale work with a wide spread, and each run forks a whole
@@ -126,7 +126,7 @@ func waitTextAt(t *testing.T, term *tuitest.Terminal, start time.Time, substr st
 // ---------------------------------------------------------------------------
 // Startup
 
-// TestPerfStartupCold measures `tuios new` from a machine with no daemon: fork,
+// TestPerfStartupCold measures `dartuios new` from a machine with no daemon: fork,
 // exec, daemon spawn, socket handshake, first frame. This is the slowest path a
 // user ever takes and the first impression the program makes.
 func TestPerfStartupCold(t *testing.T) {
@@ -146,7 +146,7 @@ func TestPerfStartupCold(t *testing.T) {
 	report(t, boot, "startup/cold: exec -> first frame")
 }
 
-// da1Query is the primary device attributes request tuios ends its capability
+// da1Query is the primary device attributes request dartuios ends its capability
 // probe with, and da1Reply is what a terminal supporting sixel answers.
 const (
 	da1Query = "\x1b[c"
@@ -265,7 +265,7 @@ func TestPerfFirstPane(t *testing.T) {
 	report(t, pane, "startup/first pane: 'n' -> prompt")
 }
 
-// TestPerfAttach measures `tuios attach` to a session that already exists and
+// TestPerfAttach measures `dartuios attach` to a session that already exists and
 // already has content: the client's cost to fetch state and paint a screen,
 // with no session creation in it. Measured with one pane and with eight,
 // because what the daemon sends on attach scales with the session and this is
@@ -384,7 +384,7 @@ func TestPerfInputLatency(t *testing.T) {
 // `yes` is used rather than a loop with a sleep because the interesting
 // question is what happens when a pane is saturating the pipe, not what happens
 // when it is polite.
-const floodCmd = "yes tuiosflood"
+const floodCmd = "yes dartuiosflood"
 
 // TestPerfTypeWhileFlooding is the case that makes a multiplexer feel bad and
 // the one nobody benchmarks: one pane is dumping output at full speed while the
@@ -417,7 +417,7 @@ func TestPerfTypeWhileFlooding(t *testing.T) {
 				if err := term.SendKeys(floodCmd, tuitest.Enter); err != nil {
 					t.Fatalf("start flood: %v", err)
 				}
-				if err := term.WaitForText("tuiosflood", shellTimeout); err != nil {
+				if err := term.WaitForText("dartuiosflood", shellTimeout); err != nil {
 					t.Fatalf("flood never started: %v\n%s", err, term.Snapshot())
 				}
 				leaveTerminalMode(t, term)
@@ -454,7 +454,7 @@ func perfBase(t *testing.T) string {
 // rather than in the client.
 func daemonRSS(t *testing.T, base string) int {
 	t.Helper()
-	raw, err := os.ReadFile(filepath.Join(base, "XDG_RUNTIME_DIR", "tuios", "tuios.sock.pid"))
+	raw, err := os.ReadFile(filepath.Join(base, "XDG_RUNTIME_DIR", "dartuios", "dartuios.sock.pid"))
 	if err != nil {
 		t.Fatalf("read daemon pid: %v", err)
 	}
@@ -496,7 +496,7 @@ func rssOf(t *testing.T, pid int) int {
 func TestPerfMemoryPanes(t *testing.T) {
 	perfGate(t)
 	base := perfBase(t)
-	if out, err := tuiosCLI(t, base, "new", "mem", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "mem", "--detach"); err != nil {
 		t.Fatalf("create session: %v: %s", err, out)
 	}
 
@@ -514,7 +514,7 @@ func TestPerfMemoryPanes(t *testing.T) {
 
 	for _, target := range []int{8, 32} {
 		for panes < target {
-			if out, err := tuiosCLI(t, base, "new-window", "-s", "mem"); err != nil {
+			if out, err := dartuiosCLI(t, base, "new-window", "-s", "mem"); err != nil {
 				t.Fatalf("new-window: %v: %s", err, out)
 			}
 			panes++
@@ -530,7 +530,7 @@ func TestPerfMemoryPanes(t *testing.T) {
 func TestPerfMemorySoak(t *testing.T) {
 	perfGate(t)
 	base := perfBase(t)
-	if out, err := tuiosCLI(t, base, "new", "soak", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "soak", "--detach"); err != nil {
 		t.Fatalf("create session: %v: %s", err, out)
 	}
 	time.Sleep(750 * time.Millisecond)
@@ -539,7 +539,7 @@ func TestPerfMemorySoak(t *testing.T) {
 	// Each round is well past the default 10000-line scrollback cap, so the
 	// ring is full from the first round on and later growth is not it filling.
 	for round := 1; round <= 4; round++ {
-		if out, err := tuiosCLI(t, base, "send-text", "-s", "soak", "seq 1 40000\n"); err != nil {
+		if out, err := dartuiosCLI(t, base, "send-text", "-s", "soak", "seq 1 40000\n"); err != nil {
 			t.Fatalf("round %d: %v: %s", round, err, out)
 		}
 		time.Sleep(4 * time.Second)
@@ -571,7 +571,7 @@ func startDaemonWithPprof(t *testing.T, base string) string {
 		env = append(env, key+"="+xdgDir(base, key))
 	}
 	addr := fmt.Sprintf("127.0.0.1:%d", freePort(t))
-	daemon := exec.Command(tuiosBin, "daemon", "--pprof", addr)
+	daemon := exec.Command(dartuiosBin, "daemon", "--pprof", addr)
 	daemon.Env = env
 	daemon.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 	if err := daemon.Start(); err != nil {
@@ -596,7 +596,7 @@ func startDaemonWithPprof(t *testing.T, base string) string {
 // windowIDs lists the session's window ids through the CLI.
 func windowIDs(t *testing.T, base, session string) []string {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "list-windows", "-s", session, "--json")
+	out, err := dartuiosCLI(t, base, "list-windows", "-s", session, "--json")
 	if err != nil {
 		t.Fatalf("list-windows: %v: %s", err, out)
 	}
@@ -663,14 +663,14 @@ func TestPerfMemoryClientAndDaemon(t *testing.T) {
 	// by the shell so the echo of the command cannot satisfy the wait.
 	ids := windowIDs(t, base, "mem")
 	for _, id := range ids {
-		if out, err := tuiosCLI(t, base, "send-text", "-s", "mem", "-w", id, "seq 1 20000; echo FLOOD$((1+1))DONE\n"); err != nil {
+		if out, err := dartuiosCLI(t, base, "send-text", "-s", "mem", "-w", id, "seq 1 20000; echo FLOOD$((1+1))DONE\n"); err != nil {
 			t.Fatalf("send-text: %v: %s", err, out)
 		}
 	}
 	deadline := time.Now().Add(2 * time.Minute)
 	for _, id := range ids {
 		for {
-			out, _ := tuiosCLI(t, base, "capture-pane", "-s", "mem", "-w", id, "--lines", "3")
+			out, _ := dartuiosCLI(t, base, "capture-pane", "-s", "mem", "-w", id, "--lines", "3")
 			if strings.Contains(out, "FLOOD2DONE") {
 				break
 			}

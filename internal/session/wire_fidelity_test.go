@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // The wire's fidelity, asked about directly.

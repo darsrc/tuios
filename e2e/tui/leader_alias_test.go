@@ -15,7 +15,7 @@ const altF12 = "\x1b[24;3~"
 // leader written as opt+f12 was accepted but never fired, because the leader
 // was compared with the literal spelling and the key arrives as alt+f12.
 //
-// OSTYPE=darwin makes tuios take its macOS path on this machine, which is the
+// OSTYPE=darwin makes dartuios take its macOS path on this machine, which is the
 // only platform where opt+ is a valid spelling.
 //
 // Negative control: compare the leader with strings.EqualFold again in
@@ -31,7 +31,7 @@ func TestLeaderSpelledWithOptAliasStartsThePrefix(t *testing.T) {
 		env:  []string{"OSTYPE=darwin"},
 	})
 	if err := term.WaitForText(welcomeHint, bootTimeout); err != nil {
-		t.Fatalf("tuios never booted with leader_key = opt+f12: %v\n%s", err, term.Snapshot())
+		t.Fatalf("dartuios never booted with leader_key = opt+f12: %v\n%s", err, term.Snapshot())
 	}
 	if err := term.WaitStable(uiTimeout); err != nil {
 		t.Fatalf("the first frame never settled: %v\n%s", err, term.Snapshot())

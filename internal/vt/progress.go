@@ -7,7 +7,7 @@ import (
 
 // ProgressState is the state field of an OSC 9;4 progress report, the ConEmu
 // progress sequence. It is a structured, in-band statement by the program in the
-// pane about whether it is busy, which is why tuios reads it: a coding agent that
+// pane about whether it is busy, which is why dartuios reads it: a coding agent that
 // emits it is describing its own state far more honestly than any guess made from
 // its output.
 type ProgressState int

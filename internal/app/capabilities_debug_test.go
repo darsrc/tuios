@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-// TestCapabilitiesDebugFileIsPrivate: TUIOS_DEBUG_CAPS wrote
-// /tmp/tuios_caps.log, one fixed name every user of the machine races for and
+// TestCapabilitiesDebugFileIsPrivate: DARTUIOS_DEBUG_CAPS wrote
+// /tmp/dartuios_caps.log, one fixed name every user of the machine races for and
 // anyone can read. It belongs under the per-user state directory, named per
 // client, and readable by its owner only.
 func TestCapabilitiesDebugFileIsPrivate(t *testing.T) {
@@ -16,10 +16,10 @@ func TestCapabilitiesDebugFileIsPrivate(t *testing.T) {
 	t.Setenv("XDG_STATE_HOME", dir)
 
 	path := capabilitiesDebugPath()
-	if path == "/tmp/tuios_caps.log" {
+	if path == "/tmp/dartuios_caps.log" {
 		t.Fatalf("the capabilities log is still the shared fixed name: %s", path)
 	}
-	if !strings.HasPrefix(path, filepath.Join(dir, "tuios")) {
+	if !strings.HasPrefix(path, filepath.Join(dir, "dartuios")) {
 		t.Fatalf("the capabilities log is outside the state directory: %s", path)
 	}
 	// The name carries the pid, so two clients on one machine cannot collide.

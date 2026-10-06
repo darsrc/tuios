@@ -35,7 +35,7 @@ const hostPollActive = 5 * time.Second
 //
 // The command runs through `sh -c` on the joined words, which is what sshd
 // does on the far side: the command reaches a shell as one string and the
-// shell re-parses it. That is what lets the link's own probe for the tuios
+// shell re-parses it. That is what lets the link's own probe for the dartuios
 // binary, which is a quoted shell script, run here the way it runs over ssh.
 
 // writeFakeSSH puts an ssh stand-in in dir and returns its path.
@@ -61,19 +61,19 @@ func writeFakeSSH(t *testing.T, dir string) string {
 
 // writeHostsConfig writes a config file naming one reachable host and one that
 // cannot be reached.
-func writeHostsConfig(t *testing.T, base, tuiosPath string) {
+func writeHostsConfig(t *testing.T, base, dartuiosPath string) {
 	t.Helper()
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
 	body := "[hosts.build]\n" +
 		"addr = \"someone@buildbox\"\n" +
-		"command = \"" + tuiosPath + "\"\n" +
+		"command = \"" + dartuiosPath + "\"\n" +
 		"connect_timeout = 5\n\n" +
 		"[hosts.offline]\n" +
 		"addr = \"someone@poweredoff\"\n" +
-		"command = \"/nonexistent/tuios\"\n" +
+		"command = \"/nonexistent/dartuios\"\n" +
 		"connect_timeout = 2\n"
 	if err := os.WriteFile(filepath.Join(dir, "config.toml"), []byte(body), 0o600); err != nil {
 		t.Fatalf("write config: %v", err)
@@ -86,9 +86,9 @@ func writeHostsConfig(t *testing.T, base, tuiosPath string) {
 func TestSidebarGroupsSessionsByHost(t *testing.T) {
 	base := t.TempDir()
 	ssh := writeFakeSSH(t, base)
-	writeHostsConfig(t, base, tuiosBin)
+	writeHostsConfig(t, base, dartuiosBin)
 
-	term := startIn(t, base, startOpts{args: []string{"new", "fed-e2e"}, env: []string{"TUIOS_SSH=" + ssh}})
+	term := startIn(t, base, startOpts{args: []string{"new", "fed-e2e"}, env: []string{"DARTUIOS_SSH=" + ssh}})
 	waitBoot(t, term)
 
 	toggleSidebarViaPalette(t, term)
@@ -126,9 +126,9 @@ func TestSidebarGroupsSessionsByHost(t *testing.T) {
 func TestDraggingAMachineHeaderReordersTheRail(t *testing.T) {
 	base := t.TempDir()
 	ssh := writeFakeSSH(t, base)
-	writeHostsConfig(t, base, tuiosBin)
+	writeHostsConfig(t, base, dartuiosBin)
 
-	term := startIn(t, base, startOpts{args: []string{"new", "fed-drag"}, env: []string{"TUIOS_SSH=" + ssh}})
+	term := startIn(t, base, startOpts{args: []string{"new", "fed-drag"}, env: []string{"DARTUIOS_SSH=" + ssh}})
 	waitBoot(t, term)
 	toggleSidebarViaPalette(t, term)
 
@@ -182,7 +182,7 @@ func TestDraggingAMachineHeaderReordersTheRail(t *testing.T) {
 func TestRailShowsAHostAddedWhileAttached(t *testing.T) {
 	base := t.TempDir()
 	ssh := writeFakeSSH(t, base)
-	env := []string{"TUIOS_SSH=" + ssh}
+	env := []string{"DARTUIOS_SSH=" + ssh}
 	// The rail comes on from the file rather than the palette: `hosts add`
 	// below rewrites the file from its own load of it, and the reload that
 	// follows applies whatever the file says about the rail.
@@ -201,10 +201,10 @@ func TestRailShowsAHostAddedWhileAttached(t *testing.T) {
 	}
 	saveFrame(t, term, "rail-host-add-before")
 
-	out, err := tuiosCLIEnv(t, base, env, "hosts", "add", "build", "someone@buildbox",
-		"--command", tuiosBin, "--connect-timeout", "5")
+	out, err := dartuiosCLIEnv(t, base, env, "hosts", "add", "build", "someone@buildbox",
+		"--command", dartuiosBin, "--connect-timeout", "5")
 	if err != nil {
-		t.Fatalf("tuios hosts add: %v\n%s", err, out)
+		t.Fatalf("dartuios hosts add: %v\n%s", err, out)
 	}
 
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -218,21 +218,21 @@ func TestRailShowsAHostAddedWhileAttached(t *testing.T) {
 	alive(t, term, "after a host was added while attached")
 }
 
-// TestHostsCommandReportsALinkEndToEnd drives `tuios hosts` against the same
+// TestHostsCommandReportsALinkEndToEnd drives `dartuios hosts` against the same
 // daemon, so the CLI half is proved on the same link.
 func TestHostsCommandReportsALinkEndToEnd(t *testing.T) {
 	base := t.TempDir()
 	ssh := writeFakeSSH(t, base)
-	writeHostsConfig(t, base, tuiosBin)
+	writeHostsConfig(t, base, dartuiosBin)
 
-	term := startIn(t, base, startOpts{args: []string{"new", "fed-e2e"}, env: []string{"TUIOS_SSH=" + ssh}})
+	term := startIn(t, base, startOpts{args: []string{"new", "fed-e2e"}, env: []string{"DARTUIOS_SSH=" + ssh}})
 	waitBoot(t, term)
 
-	out, err := tuiosCLI(t, base, "hosts")
+	out, err := dartuiosCLI(t, base, "hosts")
 	if err != nil {
-		t.Fatalf("tuios hosts: %v\n%s", err, out)
+		t.Fatalf("dartuios hosts: %v\n%s", err, out)
 	}
-	t.Logf("tuios hosts:\n%s", out)
+	t.Logf("dartuios hosts:\n%s", out)
 
 	if !strings.Contains(out, "build") || !strings.Contains(out, "up") {
 		t.Errorf("the reachable host is not reported as up:\n%s", out)
@@ -241,7 +241,7 @@ func TestHostsCommandReportsALinkEndToEnd(t *testing.T) {
 		t.Errorf("the unreachable host is not reported:\n%s", out)
 	}
 	// The listing says what a person does next with an up host.
-	if !strings.Contains(out, "tuios attach --host") {
+	if !strings.Contains(out, "dartuios attach --host") {
 		t.Errorf("the listing does not say how to attach a session on a host:\n%s", out)
 	}
 }

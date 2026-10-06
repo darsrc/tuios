@@ -3,8 +3,8 @@ package applist_test
 import (
 	"fmt"
 
-	"github.com/Gaurav-Gosain/tuios/pkg/applist"
-	"github.com/Gaurav-Gosain/tuios/pkg/fuzzy"
+	"github.com/darsrc/tuios/pkg/applist"
+	"github.com/darsrc/tuios/pkg/fuzzy"
 )
 
 // Example shows the whole launcher pipeline: scan once and keep the cache,

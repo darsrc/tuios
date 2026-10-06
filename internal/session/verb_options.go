@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/theme"
 	"github.com/google/uuid"
 )
 
@@ -178,7 +178,7 @@ func (d *Daemon) verbSetOption(cs *connState, params json.RawMessage) (any, *ver
 		return nil, hintedVerbError(ErrVerbOptionNotFound, "no such option "+echoName(p.Key), &VerbHint{
 			Param:      "key",
 			Verb:       "list-options",
-			Command:    "tuios list-options",
+			Command:    "dartuios list-options",
 			DidYouMean: closestMatch(p.Key, config.OptionPaths()),
 			// Every path, not a sample: a caller that mistyped one can pick the
 			// right one from the failure rather than making a second call to find
@@ -203,7 +203,7 @@ func (d *Daemon) verbSetOption(cs *connState, params json.RawMessage) (any, *ver
 		// a set that worked, and is now reported with the name that would have.
 		if opt.Theme {
 			hint.Verb = "list-themes"
-			hint.Command = "tuios list-themes --filter " + p.Value
+			hint.Command = "dartuios list-themes --filter " + p.Value
 			hint.DidYouMean = closestMatch(p.Value, theme.AvailableThemes())
 		}
 		return nil, hintedVerbError(ErrVerbInvalidParams, err.Error(), hint)
@@ -215,7 +215,7 @@ func (d *Daemon) verbSetOption(cs *connState, params json.RawMessage) (any, *ver
 	// The level used to be read once at startup, which made the only way to look
 	// at a fault in more detail a daemon restart, and a restart is what ends the
 	// run the fault was in. Now a caller raises the level, reproduces, reads
-	// `tuios logs -f`, and lowers it again. It answers with no session because a
+	// `dartuios logs -f`, and lowers it again. It answers with no session because a
 	// daemon serving none can still be the thing that is wrong.
 	if path == optionDaemonLogLevel {
 		previous := GetDebugLevel()
@@ -340,7 +340,7 @@ func (d *Daemon) verbGetOption(_ *connState, params json.RawMessage) (any, *verb
 	return nil, hintedVerbError(ErrVerbOptionNotFound, "no such option "+echoName(p.Key), &VerbHint{
 		Param:      "key",
 		Verb:       "list-options",
-		Command:    "tuios list-options",
+		Command:    "dartuios list-options",
 		DidYouMean: closestMatch(p.Key, append(config.OptionPaths(), available...)),
 		Available:  append(config.OptionPaths(), available...),
 		Detail:     "the key is in neither this build's option registry nor this session's overrides.",

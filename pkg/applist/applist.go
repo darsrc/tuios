@@ -42,11 +42,11 @@ import (
 //
 // Desktop entries are Linux and BSD only, which is why that half of the package
 // is unix-only and Merge does not exist elsewhere. $PATH means the same thing on
-// every platform tuios builds for, so a Windows list is the $PATH list and stays
+// every platform dartuios builds for, so a Windows list is the $PATH list and stays
 // as explicable as it was.
 //
-// One property of a desktop entry is tuios-specific: Terminal=true declares that
-// the program must run inside a terminal emulator. tuios is one, so those are
+// One property of a desktop entry is dartuios-specific: Terminal=true declares that
+// the program must run inside a terminal emulator. dartuios is one, so those are
 // entries it hosts natively where a GUI launcher has to spawn a terminal first.
 const (
 	SourcePath    = "path"
@@ -85,12 +85,12 @@ type Entry struct {
 	// and the arguments are part of what the entry means.
 	Exec []string
 	// Cwd is the Path= value, the directory the entry asks to be started in.
-	// Carried for a caller that can honour it; the tuios launcher does not yet,
+	// Carried for a caller that can honour it; the dartuios launcher does not yet,
 	// so a desktop entry that depends on its working directory starts in
 	// whatever one a new pane would have.
 	Cwd string
 	// Terminal reports Terminal=true: the entry has no window of its own and
-	// needs a terminal emulator around it. tuios is one, which is why such an
+	// needs a terminal emulator around it. dartuios is one, which is why such an
 	// entry is offered at all rather than filtered out. Nothing reads it yet;
 	// it is the field a caller would check before deciding to wrap a GUI
 	// launcher around one.

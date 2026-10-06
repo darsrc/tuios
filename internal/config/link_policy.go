@@ -24,7 +24,7 @@ import (
 //
 // The name a link arrives under is the one the other machine gives for itself,
 // its host name, unless the ssh key it logs in with pins one with a forced
-// command (`command="tuios stdio-proxy --as laptop"`). Only the pinned name is
+// command (`command="dartuios stdio-proxy --as laptop"`). Only the pinned name is
 // a boundary: a key that can run any command can also run a shell. The daemon
 // that receives the link enforces the policy on every verb and every binary
 // message, whatever name it arrived under.

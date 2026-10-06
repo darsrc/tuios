@@ -134,12 +134,12 @@ func outputCell(t *testing.T, s tuitest.Screen, line string) (row, col int) {
 	return -1, -1
 }
 
-// saveMultiCopyFrame writes the screen as text to TUIOS_E2E_FRAME_DIR when it is set,
+// saveMultiCopyFrame writes the screen as text to DARTUIOS_E2E_FRAME_DIR when it is set,
 // with every cell drawn on a background shown as a block under it, so the
 // selection is visible in a plain text frame.
 func saveMultiCopyFrame(t *testing.T, term *tuitest.Terminal, name string) {
 	t.Helper()
-	dir := os.Getenv("TUIOS_E2E_FRAME_DIR")
+	dir := os.Getenv("DARTUIOS_E2E_FRAME_DIR")
 	if dir == "" {
 		return
 	}
@@ -221,7 +221,7 @@ func runMultiCopyE2E(t *testing.T, term *tuitest.Terminal, out *lockedBuffer, ho
 		t.Fatalf("V highlighted the pane without a match\n%s", term.Snapshot())
 	}
 	saveMultiCopyFrame(t, term, "selected")
-	if os.Getenv("TUIOS_E2E_FRAME_DIR") != "" {
+	if os.Getenv("DARTUIOS_E2E_FRAME_DIR") != "" {
 		// Once the message has gone, the dock shows the keys.
 		if err := term.WaitForText("yank all", 3*uiTimeout); err == nil {
 			saveMultiCopyFrame(t, term, "help")
@@ -293,17 +293,17 @@ func runMultiCopyE2E(t *testing.T, term *tuitest.Terminal, out *lockedBuffer, ho
 	if err := term.SendKeys("Y"); err != nil {
 		t.Fatalf("send Y: %v", err)
 	}
-	if err := term.WaitForText("Save to: ~/tuios-copy-", uiTimeout); err != nil {
+	if err := term.WaitForText("Save to: ~/dartuios-copy-", uiTimeout); err != nil {
 		t.Fatalf("Y did not open the save prompt: %v\n%s", err, term.Snapshot())
 	}
 	saveMultiCopyFrame(t, term, "save-prompt")
 	if err := term.SendKeys(tuitest.Enter); err != nil {
 		t.Fatalf("send enter: %v", err)
 	}
-	if err := term.WaitForText("Saved to ~/tuios-copy-", uiTimeout); err != nil {
+	if err := term.WaitForText("Saved to ~/dartuios-copy-", uiTimeout); err != nil {
 		t.Fatalf("no saved message: %v\n%s", err, term.Snapshot())
 	}
-	files, _ := filepath.Glob(filepath.Join(home, "tuios-copy-*.json"))
+	files, _ := filepath.Glob(filepath.Join(home, "dartuios-copy-*.json"))
 	if len(files) != 1 {
 		t.Fatalf("want one saved file in %s, found %v", home, files)
 	}
@@ -337,12 +337,12 @@ func TestMultiCopyModeYanksEveryPane(t *testing.T) {
 	runMultiCopyE2E(t, term, out, xdgDir(base, "HOME"))
 }
 
-// The same through a daemon session, which is how tuios ships.
+// The same through a daemon session, which is how dartuios ships.
 func TestMultiCopyModeYanksEveryPaneDaemon(t *testing.T) {
 	out := &lockedBuffer{}
 	base := t.TempDir()
 	killDaemon(t, base)
-	if o, err := tuiosCLI(t, base, "new", "e2e-mcopy", "--detach"); err != nil {
+	if o, err := dartuiosCLI(t, base, "new", "e2e-mcopy", "--detach"); err != nil {
 		t.Fatalf("create session: %v\n%s", err, o)
 	}
 	term := startIn(t, base, startOpts{out: out, args: []string{"attach", "e2e-mcopy"}})

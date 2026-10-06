@@ -16,7 +16,7 @@ import (
 const LocalHostName = "local"
 
 // DefaultConnectTimeout bounds one dial attempt. A machine that is powered off
-// must be reported, not waited on, and this is the number that makes `tuios
+// must be reported, not waited on, and this is the number that makes `dartuios
 // hosts` return promptly against a dead box. It is also passed to ssh as
 // ConnectTimeout so the child process gives up on its own.
 const DefaultConnectTimeout = 10 * time.Second
@@ -39,7 +39,7 @@ type Host struct {
 	Addr string
 	// ConnectTimeout bounds one dial. Zero means DefaultConnectTimeout.
 	ConnectTimeout time.Duration
-	// Command is the remote tuios binary. Empty means the link finds one
+	// Command is the remote dartuios binary. Empty means the link finds one
 	// itself: on the PATH, at the known install paths, or through the login
 	// shell (see remote.go). Set, it is run as written and nothing is looked
 	// for. It is the override for a machine where the search is wrong.

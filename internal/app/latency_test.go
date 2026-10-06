@@ -23,7 +23,7 @@ package app
 // to the host tty. Those three are what the e2e number adds on top, and the gap
 // between the two harnesses is how much they cost.
 //
-//	go test ./internal/app/ -run TestLatency -v   (needs TUIOS_PERF=1)
+//	go test ./internal/app/ -run TestLatency -v   (needs DARTUIOS_PERF=1)
 
 import (
 	"fmt"
@@ -34,8 +34,8 @@ import (
 
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/Gaurav-Gosain/tuios/internal/perf"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/perf"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 const (
@@ -44,7 +44,7 @@ const (
 	// numbers rather than passing or failing. A wall-clock threshold in CI
 	// would be flaky in exactly the way that teaches people to ignore a red
 	// build.
-	latencyEnv = "TUIOS_PERF"
+	latencyEnv = "DARTUIOS_PERF"
 
 	// latencyRuns is the sample count per measurement. A p99 needs enough
 	// samples that the 99th percentile is an observation rather than an

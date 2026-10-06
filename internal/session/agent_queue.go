@@ -9,7 +9,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // The delivery queue: messages for the agent in a pane, typed as a prompt the
@@ -292,8 +292,8 @@ type queuedResult struct {
 func queueFullError(target WindowState, limit int) *verbError {
 	return hintedVerbError(ErrVerbQueueFull, "the queue for window "+shortWindowID(target.ID)+" holds "+strconv.Itoa(limit)+" messages, as many as [agents.queue] max allows", &VerbHint{
 		Verb:    "list-queued",
-		Command: "tuios queue ls -w " + shortWindowID(target.ID),
-		Detail:  "Nothing was queued. Wait for the agent to take what is queued, drop an entry with tuios queue rm, or raise max under [agents.queue] in config.toml.",
+		Command: "dartuios queue ls -w " + shortWindowID(target.ID),
+		Detail:  "Nothing was queued. Wait for the agent to take what is queued, drop an entry with dartuios queue rm, or raise max under [agents.queue] in config.toml.",
 	})
 }
 

@@ -14,7 +14,7 @@ import (
 )
 
 // ConfigFileHeader is the comment block written at the top of a generated
-// config file. Exported so `tuios config reset` writes the same guidance a
+// config file. Exported so `dartuios config reset` writes the same guidance a
 // first-run config gets, including the notes on which keys cost you what.
 func ConfigFileHeader(configPath string) string {
 	return configFileHeader(configPath)
@@ -25,15 +25,15 @@ func ConfigFileHeader(configPath string) string {
 // produce identical, well-documented files.
 func configFileHeader(configPath string) string {
 	var sb strings.Builder
-	sb.WriteString("# TUIOS Configuration File\n")
+	sb.WriteString("# dartuios Configuration File\n")
 	sb.WriteString("# This file allows you to customize appearance and keybindings\n")
 	sb.WriteString("#\n")
 	sb.WriteString("# Configuration location: " + configPath + "\n")
-	sb.WriteString("# Documentation: https://github.com/Gaurav-Gosain/tuios\n")
-	sb.WriteString("# For keybindings documentation, run: tuios keybinds list\n")
+	sb.WriteString("# Documentation: https://github.com/darsrc/tuios\n")
+	sb.WriteString("# For keybindings documentation, run: dartuios keybinds list\n")
 	sb.WriteString("#\n")
-	sb.WriteString("# tuios watches this file. A save takes effect at once, with no restart.\n")
-	sb.WriteString("# tuios does not apply a file that has an error. It keeps the settings that\n")
+	sb.WriteString("# dartuios watches this file. A save takes effect at once, with no restart.\n")
+	sb.WriteString("# dartuios does not apply a file that has an error. It keeps the settings that\n")
 	sb.WriteString("# are in use and shows the error on screen.\n\n")
 
 	sb.WriteString("# ============================================================================\n")
@@ -70,17 +70,17 @@ func configFileHeader(configPath string) string {
 	sb.WriteString("# ============================================================================\n")
 	sb.WriteString("# Set an action to [] to unbind it and hand the key back to the shell.\n")
 	sb.WriteString("# An empty list and a missing line are not the same thing. A line this file\n")
-	sb.WriteString("# does not have gets its default back the next time tuios starts; an action\n")
+	sb.WriteString("# does not have gets its default back the next time dartuios starts; an action\n")
 	sb.WriteString("# set to [] stays empty.\n")
 	sb.WriteString("#\n")
-	sb.WriteString("# You do not have to edit this by hand. In tuios, open the keybind manager\n")
+	sb.WriteString("# You do not have to edit this by hand. In dartuios, open the keybind manager\n")
 	sb.WriteString("# (leader then k, or the command palette) and press ctrl+d on a binding to\n")
 	sb.WriteString("# remove it, or ctrl+x to take its key off every action. From a shell:\n")
 	sb.WriteString("#\n")
-	sb.WriteString("#   tuios keybinds unbind close_window w   # one key off one action\n")
-	sb.WriteString("#   tuios keybinds free alt+left           # off every action\n")
+	sb.WriteString("#   dartuios keybinds unbind close_window w   # one key off one action\n")
+	sb.WriteString("#   dartuios keybinds free alt+left           # off every action\n")
 	sb.WriteString("#\n")
-	sb.WriteString("# `tuios keybinds doctor` says which binding in each scope is live, what\n")
+	sb.WriteString("# `dartuios keybinds doctor` says which binding in each scope is live, what\n")
 	sb.WriteString("# clashes with what, and which keys never reach the program in the pane.\n")
 	sb.WriteString("#\n")
 	sb.WriteString("# [keybindings.global] acts in window mode and terminal mode alike. It binds\n")
@@ -102,7 +102,7 @@ func configFileHeader(configPath string) string {
 	sb.WriteString("# alt+up and alt+down are unclaimed by the common shells, so they are the\n")
 	sb.WriteString("# safer pair to keep.\n")
 	sb.WriteString("#\n")
-	sb.WriteString("# hold_window_mode binds a key that puts tuios in window-management mode for\n")
+	sb.WriteString("# hold_window_mode binds a key that puts dartuios in window-management mode for\n")
 	sb.WriteString("# as long as it is physically held, and hands the previous mode back when it\n")
 	sb.WriteString("# is let go:\n")
 	sb.WriteString("#\n")
@@ -137,7 +137,7 @@ func configFileHeader(configPath string) string {
 	sb.WriteString("#\n")
 	sb.WriteString("# and then \"custom/branch\" in one of the lists above. A component that\n")
 	sb.WriteString("# fails is hidden rather than left showing a stale value;\n")
-	sb.WriteString("# `tuios list-dock-components` says which and why.\n")
+	sb.WriteString("# `dartuios list-dock-components` says which and why.\n")
 	sb.WriteString("# ============================================================================\n\n")
 	return sb.String()
 }
@@ -172,7 +172,7 @@ func writeConfigBytes(data []byte, configPath string) error {
 	return nil
 }
 
-// selfWrites remembers the content tuios itself last put in the config file, so
+// selfWrites remembers the content dartuios itself last put in the config file, so
 // the watcher can tell its own saves from somebody's edit.
 //
 // Every row on the settings page saves. Without this, one arrow key would come
@@ -189,7 +189,7 @@ var selfWrites struct {
 	next   int
 }
 
-// noteSelfWrite records what tuios just wrote.
+// noteSelfWrite records what dartuios just wrote.
 func noteSelfWrite(data []byte) {
 	sum := sha256.Sum256(data)
 	selfWrites.Lock()
@@ -198,7 +198,7 @@ func noteSelfWrite(data []byte) {
 	selfWrites.Unlock()
 }
 
-// isSelfWrite reports whether the given content is one tuios itself wrote.
+// isSelfWrite reports whether the given content is one dartuios itself wrote.
 func isSelfWrite(sum [sha256.Size]byte) bool {
 	selfWrites.Lock()
 	defer selfWrites.Unlock()
@@ -241,7 +241,7 @@ var (
 // once. Writes are serialised and stamped, so when two saves are in flight the
 // older one gives way rather than overwriting the newer.
 func RenderUserConfig(cfg *UserConfig) (func() error, error) {
-	configPath, err := xdg.ConfigFile("tuios/config.toml")
+	configPath, err := xdg.ConfigFile("dartuios/config.toml")
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve config path: %w", err)
 	}
@@ -267,7 +267,7 @@ func RenderUserConfig(cfg *UserConfig) (func() error, error) {
 // SaveUserConfig persists cfg to the user's config file at the standard XDG
 // location. Used by the in-app settings page to make live changes durable.
 func SaveUserConfig(cfg *UserConfig) error {
-	configPath, err := xdg.ConfigFile("tuios/config.toml")
+	configPath, err := xdg.ConfigFile("dartuios/config.toml")
 	if err != nil {
 		return fmt.Errorf("failed to resolve config path: %w", err)
 	}

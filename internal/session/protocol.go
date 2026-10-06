@@ -1,4 +1,4 @@
-// Package session provides persistent session management for TUIOS.
+// Package session provides persistent session management for dartuios.
 // It implements a daemon-client architecture similar to tmux, allowing
 // terminal sessions to persist when the client disconnects.
 package session
@@ -185,12 +185,12 @@ type AttachPayload struct {
 	// LayoutReserve. A client that sends none reserves nothing, which is what an
 	// older client means and what a client with no chrome means.
 	Reserve LayoutReserve `json:"reserve,omitempty"`
-	// Served marks a client that serves a remote viewer (tuios-web, the SSH
+	// Served marks a client that serves a remote viewer (dartuios-web, the SSH
 	// server). Its size is the viewer's, not its own terminal's, so it is not
 	// refused for running in a pane of the session. See nested_attach.go.
 	Served bool `json:"served,omitempty"`
 	// AllowNested lets the attach through from a pane of its own session, as
-	// tuios attach --force asks.
+	// dartuios attach --force asks.
 	AllowNested bool `json:"allow_nested,omitempty"`
 	// NestProbe is the nonce of the probe the client wrote to its terminal.
 	// See nest_probe.go.
@@ -427,7 +427,7 @@ type CreatePTYPayload struct {
 	Width  int    `json:"width,omitempty"`
 	Height int    `json:"height,omitempty"`
 	// WindowID is the client-side window UUID. It is exported to the spawned
-	// shell as TUIOS_WINDOW_ID. Empty from older clients (unset, as before).
+	// shell as DARTUIOS_WINDOW_ID. Empty from older clients (unset, as before).
 	WindowID string `json:"window_id,omitempty"`
 }
 

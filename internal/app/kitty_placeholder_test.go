@@ -9,7 +9,7 @@ import (
 	uv "github.com/charmbracelet/ultraviolet"
 	"github.com/charmbracelet/x/ansi/kitty"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // pendingString is what the passthrough has queued for the host.
@@ -23,7 +23,7 @@ func pendingString(kp *KittyPassthrough) string {
 //
 // An application using Unicode placeholders transmits the image, declares that
 // it occupies a box of c by r cells, and then prints the cells that say where
-// that box goes. tuios used to strip the U=1 from the declaration and turn it
+// that box goes. dartuios used to strip the U=1 from the declaration and turn it
 // into a real placement at wherever the guest's cursor happened to be, which
 // put the image in the wrong place and left the cells naming an image the host
 // had no virtual placement for. Nothing was drawn.
@@ -56,7 +56,7 @@ func TestAVirtualPlacementIsForwardedAsVirtual(t *testing.T) {
 
 // TestAVirtualPlacementKeepsTheIDTheImageArrivedUnder is the trap in the
 // middle of this. A transmit-only command, which is what these applications
-// send, is passed through under a host id tuios allocates for the pane, and
+// send, is passed through under a host id dartuios allocates for the pane, and
 // the declaration has to name that same id, or it names an image the host
 // has never been sent.
 //
@@ -97,7 +97,7 @@ func TestAVirtualPlacementKeepsTheIDTheImageArrivedUnder(t *testing.T) {
 }
 
 // TestAVirtualPlacementUsesAnExistingHostID is the other half: when some other
-// path already re-registered the image under an id of tuios's, the declaration
+// path already re-registered the image under an id of dartuios's, the declaration
 // has to name that one, because that is also what the cells are rewritten to.
 func TestAVirtualPlacementUsesAnExistingHostID(t *testing.T) {
 	kp := newTestKittyPassthrough(t)
@@ -187,7 +187,7 @@ func TestDimmingLeavesAPlaceholderCellAlone(t *testing.T) {
 	}
 }
 
-// TestAVirtualPlacementReservesNoRows keeps tuios out of the way. The
+// TestAVirtualPlacementReservesNoRows keeps dartuios out of the way. The
 // reservation exists so an image placed at the cursor does not overwrite rows
 // the guest believes are empty. An application using placeholders prints the
 // cells the image occupies itself, so reserving rows for it would push its own

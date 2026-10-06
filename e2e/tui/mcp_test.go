@@ -11,9 +11,9 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// TestMCPServerInAPaneIsHeldToItsSession runs tuios mcp the way a harness in a
+// TestMCPServerInAPaneIsHeldToItsSession runs dartuios mcp the way a harness in a
 // pane runs it: as a child of the pane's shell, fed a scripted MCP session on
-// stdin. TUIOS_PANE_TOKEN is taken out of its environment, so the only thing
+// stdin. DARTUIOS_PANE_TOKEN is taken out of its environment, so the only thing
 // that can place it is the kernel's record of its pid, walked up to the pane's
 // shell. From there it reads its own session, is refused another session, and
 // its state report lands on its own pane, which the rail then shows.
@@ -22,7 +22,7 @@ import (
 // lists the other session's windows and the test fails on it.
 func TestMCPServerInAPaneIsHeldToItsSession(t *testing.T) {
 	term, base := attachClientBase(t)
-	if out, err := tuiosCLI(t, base, "new", "e2e-other", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-other", "--detach"); err != nil {
 		t.Fatalf("create the other session: %v\n%s", err, out)
 	}
 
@@ -33,16 +33,16 @@ func TestMCPServerInAPaneIsHeldToItsSession(t *testing.T) {
 	out := filepath.Join(base, "mcp-out.jsonl")
 	reqs := []string{
 		`{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18"}}`,
-		`{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"tuios_list_windows","arguments":{}}}`,
-		`{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"tuios_list_windows","arguments":{"session":"e2e-other"}}}`,
-		`{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"tuios_set_agent_state","arguments":{"state":"needs_input","message":"mcp asks"}}}`,
+		`{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"dartuios_list_windows","arguments":{}}}`,
+		`{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"dartuios_list_windows","arguments":{"session":"e2e-other"}}}`,
+		`{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"dartuios_set_agent_state","arguments":{"state":"needs_input","message":"mcp asks"}}}`,
 	}
-	line := "printf '%s\\n' '" + strings.Join(reqs, "' '") + "' | env -u TUIOS_PANE_TOKEN " + tuiosBin + " mcp > " + out + "; echo MCP_EXIT=$?\n"
-	if o, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
+	line := "printf '%s\\n' '" + strings.Join(reqs, "' '") + "' | env -u DARTUIOS_PANE_TOKEN " + dartuiosBin + " mcp > " + out + "; echo MCP_EXIT=$?\n"
+	if o, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
 		t.Fatalf("send-text failed: %v\n%s", err, o)
 	}
 	if err := term.WaitForText("MCP_EXIT=0", shellTimeout); err != nil {
-		t.Fatalf("tuios mcp did not finish in the pane: %v\n%s", err, term.Snapshot())
+		t.Fatalf("dartuios mcp did not finish in the pane: %v\n%s", err, term.Snapshot())
 	}
 
 	f, err := os.Open(out)
@@ -56,7 +56,7 @@ func TestMCPServerInAPaneIsHeldToItsSession(t *testing.T) {
 	for sc.Scan() {
 		var m map[string]any
 		if err := json.Unmarshal(sc.Bytes(), &m); err != nil {
-			t.Fatalf("tuios mcp wrote a line that is not JSON: %q", sc.Text())
+			t.Fatalf("dartuios mcp wrote a line that is not JSON: %q", sc.Text())
 		}
 		if id, ok := m["id"].(float64); ok {
 			byID[id] = m
@@ -83,7 +83,7 @@ func TestMCPServerInAPaneIsHeldToItsSession(t *testing.T) {
 		t.Errorf("set_agent_state = %s", body)
 	}
 
-	state, err := tuiosCLI(t, base, "get-agent-state", "-s", "e2e-ctrlp", "--json")
+	state, err := dartuiosCLI(t, base, "get-agent-state", "-s", "e2e-ctrlp", "--json")
 	if err != nil {
 		t.Fatalf("get-agent-state: %v\n%s", err, state)
 	}
@@ -98,5 +98,5 @@ func TestMCPServerInAPaneIsHeldToItsSession(t *testing.T) {
 		t.Fatalf("the client never drew the state the MCP server reported: %v\n%s", err, term.Snapshot())
 	}
 	saveFrame(t, term, "mcp-pane-report")
-	alive(t, term, "after tuios mcp ran in a pane")
+	alive(t, term, "after dartuios mcp ran in a pane")
 }

@@ -3,7 +3,7 @@ package vt_test
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // TestEmulator_ScrollRegionNoRowJump verifies that CR, IL, and DL do not move

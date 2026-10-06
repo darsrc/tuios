@@ -13,13 +13,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/worktree"
 )
 
 // bundle-worktree: a worktree's work, read out in pieces so it can cross a
 // link.
 //
-// `tuios worktree pull build:api-fan-2` is the caller. It asks the daemon on
+// `dartuios worktree pull build:api-fan-2` is the caller. It asks the daemon on
 // build for the worktree's commits as a git bundle and its uncommitted work
 // as a binary patch, reads both back in chunks over its one connection, and
 // makes a local worktree session from them. The chunking is why this is not
@@ -180,7 +180,7 @@ func (d *Daemon) verbBundleWorktree(cs *connState, params json.RawMessage) (any,
 	}
 	if p.Session == "" {
 		return nil, hintedVerbError(ErrVerbInvalidParams, "session is required (bundle-worktree never guesses which worktree to read)",
-			&VerbHint{Param: "session", Command: "tuios worktree ls", Available: d.worktreeSessionNames()})
+			&VerbHint{Param: "session", Command: "dartuios worktree ls", Available: d.worktreeSessionNames()})
 	}
 	sess, info, verr := d.worktreeTarget(p.Session)
 	if verr != nil {
@@ -234,7 +234,7 @@ func (d *Daemon) openBundle(cs *connState, sessionName string, info *WorktreeInf
 		}
 	}
 
-	dir, err := os.MkdirTemp("", "tuios-bundle-*")
+	dir, err := os.MkdirTemp("", "dartuios-bundle-*")
 	if err != nil {
 		return nil, newVerbError(ErrVerbInternal, "cannot make a directory for the transfer: "+err.Error())
 	}

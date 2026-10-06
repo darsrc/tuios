@@ -66,17 +66,17 @@ func shout(name string) string {
 import "testing"
 
 func TestGreet(t *testing.T) {
-	if got := greet("tuios"); got != "hello, tuios" {
+	if got := greet("dartuios"); got != "hello, dartuios" {
 		t.Fatalf("greet = %q", got)
 	}
 }
 `
 	helloReadme = `# hello
 
-A tiny Go program for the tuios tour.
+A tiny Go program for the dartuios tour.
 
     go run .          # hello, world
-    go run . tuios    # hello, tuios
+    go run . dartuios    # hello, dartuios
     go test           # runs greet_test.go
 
 Things to try here:
@@ -90,7 +90,7 @@ Things to try here:
 // files is the whole fake filesystem. Directories are implied by the paths.
 // Every pane shares it, so a file one pane creates is visible in the others.
 var files = map[string]string{
-	Home + "/README.md": `# Welcome to tuios
+	Home + "/README.md": `# Welcome to dartuios
 
 Everything here runs in your browser: the window manager, this
 shell, all of it. Nothing to install, nothing sent anywhere.
@@ -101,8 +101,8 @@ Things to try:
   less README.md       read a file (q to quit)
   claude               a pretend coding agent
   top                  a live process monitor
-  tuios tape play demo.tape
-                       watch tuios drive itself
+  dartuios tape play demo.tape
+                       watch dartuios drive itself
   help                 everything this shell knows
 `,
 	Home + "/notes.txt": `Things to remember
@@ -111,14 +111,14 @@ Things to try:
 - i goes back to typing in the window.
 - Ctrl+B then ? shows every key.
 `,
-	Home + "/todo.md": `- [x] open tuios
+	Home + "/todo.md": `- [x] open dartuios
 - [ ] open a second window
 - [ ] tile them
 - [ ] switch to workspace 2
 - [ ] let the agent ask for something
 `,
-	Home + "/demo.tape": `# A short tour that tuios plays by itself.
-# Run it with: tuios tape play demo.tape
+	Home + "/demo.tape": `# A short tour that dartuios plays by itself.
+# Run it with: dartuios tape play demo.tape
 Sleep 600ms
 WindowManagementMode
 EnableTiling
@@ -148,8 +148,8 @@ NextWindow
 Sleep 500ms
 TerminalMode
 `,
-	Home + "/party.tape": `# Three programs, a zoom and a trip to workspace 2, all typed by tuios.
-# Run it with: tuios tape play party.tape
+	Home + "/party.tape": `# Three programs, a zoom and a trip to workspace 2, all typed by dartuios.
+# Run it with: dartuios tape play party.tape
 WindowManagementMode
 EnableTiling
 NewWindow
@@ -247,10 +247,10 @@ func writeFile(p, content string, appendTo bool) bool {
 	return true
 }
 
-// ConfigPath is the fake tuios config file.
-const ConfigPath = Home + "/.config/tuios/config.toml"
+// ConfigPath is the fake dartuios config file.
+const ConfigPath = Home + "/.config/dartuios/config.toml"
 
-// configText is the config file for these looks. An empty theme is tuios's
+// configText is the config file for these looks. An empty theme is dartuios's
 // own colours, and "default" glyphs are the shipped set, so neither is
 // written.
 func configText(theme, border, glyphs string) string {

@@ -135,7 +135,7 @@ func TestSetAgentStateNewSessionInTheSameHarnessTakesOver(t *testing.T) {
 }
 
 // TestListVerbsNamesTheHookFields checks list-verbs lists every hook field of
-// set-agent-state. tuios agent-hook reads that list to decide what a daemon
+// set-agent-state. dartuios agent-hook reads that list to decide what a daemon
 // supports, because a daemon ignores a param it does not know rather than
 // refusing it, so a field missing here is a field the hook never sends.
 func TestListVerbsNamesTheHookFields(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // clearAgentNote drops what a window's state said about itself: the message
@@ -386,7 +386,7 @@ func (s *Session) applyAgentReport(target string, r AgentReport) (AgentState, bo
 // one the foreground-process detector owns: it names the harness when it sees
 // the binary and clears it when the agent leaves the foreground, which is the
 // only event that can honestly say a pane is no longer running one. A report
-// says what the agent is doing, and most reporters have no idea what tuios calls
+// says what the agent is doing, and most reporters have no idea what dartuios calls
 // the program they run inside: the shipped hook shim, an OSC 9;4 sequence and a
 // settled hold all name a state and no harness. Writing their empty id over the
 // detector's answer erased the pane's attribution, and the screen tier keys on

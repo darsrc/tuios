@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // The federation control plane's three read verbs.
@@ -195,7 +195,7 @@ func filterHostAgents(entries []hostAgentsEntry, sel *Selector) {
 
 // verbListHosts reports every configured host with its status and versions.
 //
-// This is `tuios hosts`. It answers the question the design document says a
+// This is `dartuios hosts`. It answers the question the design document says a
 // listing has to answer on its own: why is this host not usable, and is it the
 // machine, the daemon, or the version.
 func (d *Daemon) verbListHosts(_ *connState, _ json.RawMessage) (any, *verbError) {
@@ -224,7 +224,7 @@ func (d *Daemon) verbListHosts(_ *connState, _ json.RawMessage) (any, *verbError
 	return out, nil
 }
 
-// verbListHostSessions is the aggregated `tuios ls --all-hosts`.
+// verbListHostSessions is the aggregated `dartuios ls --all-hosts`.
 //
 // Local always comes first and is never fetched over a link; it is this
 // daemon's own listing. Remote hosts follow in the table's sorted order,
@@ -394,7 +394,7 @@ func soleSession(rows []remoteAgentRow) string {
 	return s
 }
 
-// verbListHostAgents is the aggregated `tuios list-agents --all-hosts`. Every
+// verbListHostAgents is the aggregated `dartuios list-agents --all-hosts`. Every
 // session on every host is listed, and each row names its session.
 func (d *Daemon) verbListHostAgents(cs *connState, params json.RawMessage) (any, *verbError) {
 	var p struct {
@@ -525,14 +525,14 @@ func (d *Daemon) checkHostParam(name string) *verbError {
 			"unknown host "+echoName(name)+". No hosts are configured.",
 			&VerbHint{
 				Param:   "host",
-				Command: "tuios hosts add " + name + " user@machine",
-				Detail:  "Add the machine with 'tuios hosts add'. The daemon opens the link at once.",
+				Command: "dartuios hosts add " + name + " user@machine",
+				Detail:  "Add the machine with 'dartuios hosts add'. The daemon opens the link at once.",
 			})
 	}
 	if _, err := d.federation.Table().Lookup(name); err != nil {
 		return hintedVerbError(ErrVerbUnknownHost, err.Error(), &VerbHint{
 			Param:     "host",
-			Command:   "tuios hosts",
+			Command:   "dartuios hosts",
 			Available: d.federation.Table().Names(),
 			Detail:    "A host name is matched exactly. Nothing is guessed, so a near miss cannot reach the wrong machine.",
 		})

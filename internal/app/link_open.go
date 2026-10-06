@@ -12,23 +12,23 @@ import (
 // Which machine opens a link is the whole of this file, and it is the question
 // the rest of the feature exists to be careful about.
 //
-// There are two machines. The panes, the daemon and the tuios client process
+// There are two machines. The panes, the daemon and the dartuios client process
 // all run on one of them; call it the pane machine. The person looking at the
 // screen sits at the other; call it the viewer machine. On a local run they are
-// the same machine and nothing is interesting. Under `tuios ssh` and
-// `tuios-web` they are not: the client code runs on the server, so calling
+// the same machine and nothing is interesting. Under `dartuios ssh` and
+// `dartuios-web` they are not: the client code runs on the server, so calling
 // xdg-open there opens a browser on the server's console, in front of nobody.
 // That is the mistake this file is written to not make.
 //
 // The two kinds of link fall on opposite sides of that split:
 //
 //   - A file:// link names a file on the pane machine. The client process is
-//     always on the pane machine, in every deployment tuios has, so the path
+//     always on the pane machine, in every deployment dartuios has, so the path
 //     can be stat'd here and opened here. A pane is the right place to open it
 //     in, because a pane is a window onto exactly that machine.
 //
 //   - An http:// or https:// link has to be opened by a browser the person can
-//     see, which lives on the viewer machine. tuios has no way to run anything
+//     see, which lives on the viewer machine. dartuios has no way to run anything
 //     there: there is no escape sequence for "open this URL", and adding a
 //     protocol for running commands on the viewer's box is a much larger thing
 //     to own than a link. So a local client opens it and a remote one does not
@@ -63,7 +63,7 @@ func (m *OS) OpenLink(rawURL string) tea.Cmd {
 	// The scheme decides whether this is handed to the desktop at all. See
 	// linkOpenableScheme.
 	if !linkOpenableScheme(rawURL) {
-		m.ShowNotification("tuios can not open that kind of link. The address is on your clipboard.",
+		m.ShowNotification("dartuios can not open that kind of link. The address is on your clipboard.",
 			"warning", m.Settings.NotificationDuration)
 		return tea.SetClipboard(rawURL)
 	}
@@ -150,7 +150,7 @@ func (m *OS) openLocalPath(path, rawURL string) tea.Cmd {
 }
 
 // openDirectoryLink shows a directory in the rail's files section, which is the
-// one surface in tuios that already knows how to list one. The rail has to be
+// one surface in dartuios that already knows how to list one. The rail has to be
 // on and expanded for that to be somewhere the user can see, so a rail that is
 // not falls back to the clipboard rather than putting a section nobody can see
 // into a folder nobody asked for.

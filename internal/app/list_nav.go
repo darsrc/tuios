@@ -1,6 +1,6 @@
 package app
 
-import "github.com/Gaurav-Gosain/tuios/internal/listnav"
+import "github.com/darsrc/tuios/internal/listnav"
 
 // listWraps reports whether a single step off the end of a list wraps to the
 // other end for the move being made now.

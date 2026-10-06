@@ -73,7 +73,7 @@ func openHostConnectionOn(conn net.Conn, br *bufio.Reader, host string) (HostCon
 			return HostConnectionInfo{}, &HostConnectError{
 				Host:    host,
 				Code:    ErrVerbProtocolMismatch,
-				Message: "The daemon on this machine is too old to open a connection to " + host + ". Restart it with 'tuios kill-server'.",
+				Message: "The daemon on this machine is too old to open a connection to " + host + ". Restart it with 'dartuios kill-server'.",
 			}
 		}
 		return HostConnectionInfo{}, fmt.Errorf("no answer from the daemon on this machine about %s: %w", host, err)
@@ -88,7 +88,7 @@ func openHostConnectionOn(conn net.Conn, br *bufio.Reader, host string) (HostCon
 	if resp.Error != nil {
 		e := &HostConnectError{Host: host, Code: resp.Error.Code, Message: resp.Error.Message, Hint: resp.Error.Hint}
 		if resp.Error.Code == ErrVerbUnknownVerb {
-			e.Message = "The daemon on this machine is older than this tuios and cannot open a connection to " + host + ". Restart it with 'tuios kill-server'."
+			e.Message = "The daemon on this machine is older than this dartuios and cannot open a connection to " + host + ". Restart it with 'dartuios kill-server'."
 		}
 		return HostConnectionInfo{}, e
 	}

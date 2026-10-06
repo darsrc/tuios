@@ -79,7 +79,7 @@ func (c *Codex) Start(ctx context.Context, cwd string) (Info, error) {
 		UserAgent string `json:"userAgent"`
 	}
 	err := c.conn.Call(ctx, "initialize", map[string]any{
-		"clientInfo":   map[string]any{"name": "tuios", "title": "tuios", "version": c.version},
+		"clientInfo":   map[string]any{"name": "dartuios", "title": "dartuios", "version": c.version},
 		"capabilities": map[string]any{"experimentalApi": false, "requestAttestation": false},
 	}, &init)
 	if err != nil {
@@ -454,7 +454,7 @@ func (c *Codex) onRequest(r *Request) {
 		}
 		c.emit(perm)
 	default:
-		r.ReplyError(codeMethodNotFound, "tuios does not offer "+r.Method)
+		r.ReplyError(codeMethodNotFound, "dartuios does not offer "+r.Method)
 	}
 }
 

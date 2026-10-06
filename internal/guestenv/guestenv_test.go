@@ -5,19 +5,19 @@ import (
 	"testing"
 )
 
-// TestWithoutHostMultiplexerDropsOuterTuiosPane covers a daemon started from a
-// tuios pane: its panes must not inherit the outer pane's session, socket and
+// TestWithoutHostMultiplexerDropsOuterDartuiosPane covers a daemon started from a
+// dartuios pane: its panes must not inherit the outer pane's session, socket and
 // ids, which would place them in the outer session.
-func TestWithoutHostMultiplexerDropsOuterTuiosPane(t *testing.T) {
+func TestWithoutHostMultiplexerDropsOuterDartuiosPane(t *testing.T) {
 	env := []string{
 		"HOME=/home/u",
-		"TUIOS_SESSION=outer", "TUIOS_SOCKET=/run/outer.sock", "TUIOS_PANE_ID=w1",
-		"TUIOS_WINDOW_ID=w1", "TUIOS_PANE_TOKEN=t", "TUIOS_PANE_GRANTS=g",
-		"TUIOS_RESTORED=1", "TUIOS_PANE_TTY=/dev/pts/9", "TUIOS_SESSION_REMOTE=r", "TUIOS_PANE_HOSTED=1",
-		"TUIOS_ENV=1", "TMUX=/tmp/tmux",
+		"DARTUIOS_SESSION=outer", "DARTUIOS_SOCKET=/run/outer.sock", "DARTUIOS_PANE_ID=w1",
+		"DARTUIOS_WINDOW_ID=w1", "DARTUIOS_PANE_TOKEN=t", "DARTUIOS_PANE_GRANTS=g",
+		"DARTUIOS_RESTORED=1", "DARTUIOS_PANE_TTY=/dev/pts/9", "DARTUIOS_SESSION_REMOTE=r", "DARTUIOS_PANE_HOSTED=1",
+		"DARTUIOS_ENV=1", "TMUX=/tmp/tmux",
 	}
 	got := WithoutHostMultiplexer(slices.Clone(env))
-	want := []string{"HOME=/home/u", "TUIOS_ENV=1"}
+	want := []string{"HOME=/home/u", "DARTUIOS_ENV=1"}
 	if !slices.Equal(got, want) {
 		t.Errorf("got %v, want %v", got, want)
 	}

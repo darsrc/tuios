@@ -1,12 +1,12 @@
-# Project Tapes (`.tuios.tape` autorun)
+# Project Tapes (`.dartuios.tape` autorun)
 
-A project tape is a `.tuios.tape` file in a project directory. When the focused
-shell inside TUIOS enters a directory that carries one, TUIOS can build a project
+A project tape is a `.dartuios.tape` file in a project directory. When the focused
+shell inside dartuios enters a directory that carries one, dartuios can build a project
 session and layout from it, the same way a `.envrc` file works for direnv.
 
 Because a tape is arbitrary command execution (`Type "curl x | sh" Enter` is a
 legal tape), the feature is built around a trust boundary: **an untrusted tape is
-inert.** TUIOS only stats it, reads it once, hashes it, and shows it to you.
+inert.** dartuios only stats it, reads it once, hashes it, and shows it to you.
 Nothing runs until you review the content and choose to run or trust it.
 
 ## Contents
@@ -21,7 +21,7 @@ Nothing runs until you review the content and choose to run or trust it.
 
 ## Quick start
 
-1. A `.tuios.tape` lives in a project you `cd` into inside TUIOS.
+1. A `.dartuios.tape` lives in a project you `cd` into inside dartuios.
 2. About 400ms later a passive banner slides in and a `tape ?` badge appears in
    the dock. Nothing has executed. Your shell never lost a keystroke.
 3. Press `Ctrl+B` `T` `t` (or open the command palette with `Ctrl+P` and choose
@@ -45,12 +45,12 @@ model:
 - **Any edit to the file changes the hash and silently reverts it to untrusted.**
   A `git pull` that changes a trusted tape shows up as an untrusted, "changed
   since you trusted it" encounter, never a silent run.
-- Approval and execution use the **same in-memory bytes**. TUIOS reads the file
+- Approval and execution use the **same in-memory bytes**. dartuios reads the file
   once, hashes that buffer, shows that buffer, and runs that buffer. The file on
   disk is never re-read between review and execution, so swapping the file (or a
   symlink target) after you approve changes nothing about what runs.
 
-Trust decisions live in `$XDG_DATA_HOME/tuios/tape-trust.toml` (mode 0600). It is
+Trust decisions live in `$XDG_DATA_HOME/dartuios/tape-trust.toml` (mode 0600). It is
 per-machine state and does not travel with dotfile syncing.
 
 ### Ineligible tapes
@@ -101,8 +101,8 @@ auto_review = false    # auto-open the review dialog on detection
   or changed tape behaves exactly as in `ask`: banner, badge, dialog, never an
   autorun. There is no mode in which unreviewed content executes.
 
-The environment variable `TUIOS_TAPE_AUTORUN` overrides the config for one run
-(`TUIOS_TAPE_AUTORUN=off tuios ...`), useful for CI or poking at hostile code.
+The environment variable `DARTUIOS_TAPE_AUTORUN` overrides the config for one run
+(`DARTUIOS_TAPE_AUTORUN=off dartuios ...`), useful for CI or poking at hostile code.
 
 ### `auto_review` (opt-in, default off)
 
@@ -170,7 +170,7 @@ asynchronously created pane is ready before the next command types into it.
 A typical project tape:
 
 ```
-# .tuios.tape for myproject
+# .dartuios.tape for myproject
 Session "myproject"
 Require "pnpm"
 
@@ -191,7 +191,7 @@ Focus "edit"
 
 ### `Scope session` (default): session per project
 
-When a tape runs, TUIOS:
+When a tape runs, dartuios:
 
 1. Derives a session name (explicit `Session`, else the project basename).
 2. **If a session with that name already exists, it switches to it and does not
@@ -206,8 +206,8 @@ always starts from a known state (fresh session, one window at the project root)
 a keystroke script is deterministic instead of composing with whatever windows
 happened to be open.
 
-Session scope requires a daemon-backed session (`tuios new ...`). Outside one,
-TUIOS falls back to running the tape in the current session and says so.
+Session scope requires a daemon-backed session (`dartuios new ...`). Outside one,
+dartuios falls back to running the tape in the current session and says so.
 
 ### `Scope current`: opt-in, best-effort
 
@@ -231,5 +231,5 @@ rather than typing a command into a shell that cannot run it.
 - Detection is suppressed entirely while a tape is running, and a project root
   handled this run does not re-trigger, so a tape that `cd`s onward cannot chain
   another run.
-- Remote (SSH) shells are ignored: TUIOS cannot read or verify a remote file, so
+- Remote (SSH) shells are ignored: dartuios cannot read or verify a remote file, so
   it neither prompts nor runs.

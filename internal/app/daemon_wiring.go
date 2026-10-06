@@ -3,12 +3,12 @@ package app
 import (
 	"log"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // One wiring for the daemon connection, shared by every client.
 //
-// The local attach client, the SSH server and tuios-web each used to register
+// The local attach client, the SSH server and dartuios-web each used to register
 // the daemon client's callbacks themselves, three copies of the same list.
 // When the session-ended and disconnect handlers were added the local client
 // got them first and the two servers held their last frame for ever until a
@@ -180,7 +180,7 @@ func (m *OS) RestoreAttachedSession(state *session.SessionState) {
 // daemon reads a BaseVersion of 0 as a client that predates versioning and takes
 // its push as sent. A client that attached to an empty session never recorded
 // the version, so its first pushes said 0: a window the daemon created in the
-// meantime (tuios new-window from a script, say) was missing from them, and the
+// meantime (dartuios new-window from a script, say) was missing from them, and the
 // push that was taken as sent removed it. A session switch to an empty session
 // kept the previous session's version instead, which is a number about a
 // different session.

@@ -26,7 +26,7 @@ func startCodex(t *testing.T) (*Codex, *peer, *events) {
 		t.Fatalf("first message %s, want initialize without jsonrpc", raw)
 	}
 	params, _ := json.Marshal(init["params"])
-	if !strings.Contains(string(params), `"experimentalApi":false`) || !strings.Contains(string(params), `"name":"tuios"`) {
+	if !strings.Contains(string(params), `"experimentalApi":false`) || !strings.Contains(string(params), `"name":"dartuios"`) {
 		t.Errorf("initialize params = %s", params)
 	}
 	p.send(map[string]any{"id": init["id"], "result": map[string]any{"userAgent": "codex/0.99"}})
@@ -211,7 +211,7 @@ func TestCodexApprovals(t *testing.T) {
 }
 
 // TestCodexFileChangeApprovalTheInboxCannotShow: a file change approval for an
-// item tuios has not seen shows no files and no content, and one that carries
+// item dartuios has not seen shows no files and no content, and one that carries
 // grantRoot also asks for writes under that root for the rest of the session.
 // Neither fits one Inbox line, so both are the pane's, and the pane says the
 // root.

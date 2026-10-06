@@ -8,7 +8,7 @@
 //
 // chroma's lexers package embeds every one of its 279 definitions, about
 // 2.4 MB of XML, and registers them all at start. The review needs the
-// languages people keep in a repository, so tuios carries those, compressed,
+// languages people keep in a repository, so dartuios carries those, compressed,
 // and registers them on the first highlight. A lexer that hands part of its
 // text to another one (HTML to CSS and JavaScript, for one) needs that one
 // too: the list is closed over those references here, so a missing one fails

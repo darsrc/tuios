@@ -11,7 +11,7 @@ import (
 // The report this file exists for: scroll the strip in the scrolling (niri)
 // layout, switch workspace, come back, and the scroll is gone.
 //
-// One real tuios on one real daemon, three named panes, the real leader chord
+// One real dartuios on one real daemon, three named panes, the real leader chord
 // for the workspace switch and real SGR wheel reports for the scroll. The
 // assertion is the frame: where the columns are drawn is where the strip is.
 //
@@ -37,7 +37,7 @@ import (
 func stripClient(t *testing.T, base string) *tuitest.Terminal {
 	t.Helper()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "wsstrip", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "wsstrip", "--detach"); err != nil {
 		t.Fatalf("create session: %v: %s", err, out)
 	}
 	a := attachIn(t, base, "wsstrip", startOpts{cols: 100, rows: 30})
@@ -280,7 +280,7 @@ func TestClosingTheFocusedColumnStillRevealsTheStrip(t *testing.T) {
 
 	// ALPHA is the focused column and it is off screen. Closing it hands focus
 	// to a column that must be brought on screen.
-	if out, err := tuiosCLI(t, base, "send-text", "exit\n", "--window", "ALPHA"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "exit\n", "--window", "ALPHA"); err != nil {
 		t.Fatalf("close ALPHA: %v: %s", err, out)
 	}
 	if err := a.WaitFor(func(s tuitest.Screen) bool {
@@ -307,7 +307,7 @@ func TestARemoteConfigChangeLeavesTheParkedStripAlone(t *testing.T) {
 
 	before := parkStripPastFocus(t, a)
 
-	if out, err := tuiosCLI(t, base, "set-config", "border_style", "rounded"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-config", "border_style", "rounded"); err != nil {
 		t.Fatalf("set-config: %v: %s", err, out)
 	}
 	time.Sleep(3 * time.Second)

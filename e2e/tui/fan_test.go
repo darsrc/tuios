@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
 	"github.com/Gaurav-Gosain/tuitest"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // The fan-out, end to end through the binary a person runs: a throwaway
@@ -42,16 +42,16 @@ func fanFixture(t *testing.T) (base, repo string) {
 		t.Fatal(err)
 	}
 	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
-	t.Setenv("TUIOS_AGENT_STALL_SECONDS", "2")
-	t.Setenv("TUIOS_AGENT_DETECT_SECONDS", "1")
-	t.Setenv("TUIOS_WORKTREE_DIR", filepath.Join(base, "worktrees"))
+	t.Setenv("DARTUIOS_AGENT_STALL_SECONDS", "2")
+	t.Setenv("DARTUIOS_AGENT_DETECT_SECONDS", "1")
+	t.Setenv("DARTUIOS_WORKTREE_DIR", filepath.Join(base, "worktrees"))
 	return base, repo
 }
 
-// worktreeRows reads `tuios worktree ls --json`.
+// worktreeRows reads `dartuios worktree ls --json`.
 func worktreeRows(t *testing.T, base string, args ...string) []map[string]any {
 	t.Helper()
-	out, err := tuiosCLI(t, base, append([]string{"worktree", "ls", "--json"}, args...)...)
+	out, err := dartuiosCLI(t, base, append([]string{"worktree", "ls", "--json"}, args...)...)
 	if err != nil {
 		t.Fatalf("worktree ls: %v: %s", err, out)
 	}
@@ -64,15 +64,15 @@ func worktreeRows(t *testing.T, base string, args ...string) []map[string]any {
 
 func TestFanTypesPromptWhenReady(t *testing.T) {
 	base, repo := fanFixture(t)
-	if out, err := tuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
 		t.Fatalf("start the daemon: %v: %s", err, out)
 	}
 
-	out, err := tuiosCLI(t, base, "fan", "2", "--agent", "claude", "--repo", repo, "--name", "try/retry", "Add a retry to the client.")
+	out, err := dartuiosCLI(t, base, "fan", "2", "--agent", "claude", "--repo", repo, "--name", "try/retry", "Add a retry to the client.")
 	if err != nil {
 		t.Fatalf("fan: %v: %s", err, out)
 	}
-	for _, want := range []string{"Started 2 agents on try/retry", "repo-try-retry ", "repo-try-retry-2 ", "tuios fan keep"} {
+	for _, want := range []string{"Started 2 agents on try/retry", "repo-try-retry ", "repo-try-retry-2 ", "dartuios fan keep"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("fan output lacks %q:\n%s", want, out)
 		}
@@ -98,7 +98,7 @@ func TestFanTypesPromptWhenReady(t *testing.T) {
 		time.Sleep(500 * time.Millisecond)
 	}
 	for _, name := range []string{"repo-try-retry", "repo-try-retry-2"} {
-		pane, err := tuiosCLI(t, base, "capture-pane", "-s", name)
+		pane, err := dartuiosCLI(t, base, "capture-pane", "-s", name)
 		if err != nil {
 			t.Fatalf("capture-pane %s: %v: %s", name, err, pane)
 		}
@@ -140,10 +140,10 @@ func TestFanReportsAStalledPrompt(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
-	if out, err := tuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
 		t.Fatalf("start the daemon: %v: %s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "fan", "1", "--agent", "claude", "--repo", repo, "--name", "try/stall", "Add a retry to the client."); err != nil {
+	if out, err := dartuiosCLI(t, base, "fan", "1", "--agent", "claude", "--repo", repo, "--name", "try/stall", "Add a retry to the client."); err != nil {
 		t.Fatalf("fan: %v: %s", err, out)
 	}
 
@@ -164,7 +164,7 @@ func TestFanReportsAStalledPrompt(t *testing.T) {
 		}
 		time.Sleep(500 * time.Millisecond)
 	}
-	out, err := tuiosCLI(t, base, "worktree", "ls", "--group", "try/stall")
+	out, err := dartuiosCLI(t, base, "worktree", "ls", "--group", "try/stall")
 	if err != nil {
 		t.Fatalf("worktree ls: %v: %s", err, out)
 	}
@@ -175,10 +175,10 @@ func TestFanReportsAStalledPrompt(t *testing.T) {
 
 func TestFanKeepRefusesDirtySibling(t *testing.T) {
 	base, repo := fanFixture(t)
-	if out, err := tuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
 		t.Fatalf("start the daemon: %v: %s", err, out)
 	}
-	out, err := tuiosCLI(t, base, "fan", "2", "--agent", "claude", "--repo", repo, "--name", "try/keep", "Do the thing.")
+	out, err := dartuiosCLI(t, base, "fan", "2", "--agent", "claude", "--repo", repo, "--name", "try/keep", "Do the thing.")
 	if err != nil {
 		t.Fatalf("fan: %v: %s", err, out)
 	}
@@ -198,7 +198,7 @@ func TestFanKeepRefusesDirtySibling(t *testing.T) {
 	}
 
 	// No flag: the dirty sibling is left alone and the command says why.
-	out, err = tuiosCLI(t, base, "fan", "keep", "repo-try-keep-2")
+	out, err = dartuiosCLI(t, base, "fan", "keep", "repo-try-keep-2")
 	if err == nil {
 		t.Fatalf("fan keep exited 0 with a dirty sibling:\n%s", out)
 	}
@@ -215,11 +215,11 @@ func TestFanKeepRefusesDirtySibling(t *testing.T) {
 	}
 
 	// --stash: the work goes into the repository's stash and the sibling goes.
-	out, err = tuiosCLI(t, base, "fan", "keep", "repo-try-keep-2", "--stash")
+	out, err = dartuiosCLI(t, base, "fan", "keep", "repo-try-keep-2", "--stash")
 	if err != nil {
 		t.Fatalf("fan keep --stash: %v: %s", err, out)
 	}
-	for _, want := range []string{"Removed worktree", "Branch try/keep is kept", "git stash as 'tuios: try/keep'", "Killed session 'repo-try-keep'"} {
+	for _, want := range []string{"Removed worktree", "Branch try/keep is kept", "git stash as 'dartuios: try/keep'", "Killed session 'repo-try-keep'"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("fan keep --stash output lacks %q:\n%s", want, out)
 		}
@@ -232,7 +232,7 @@ func TestFanKeepRefusesDirtySibling(t *testing.T) {
 		t.Errorf("worktree ls after keep = %v, want only the winner", rows)
 	}
 	stash := gitOut(t, repo, "stash", "list")
-	if !strings.Contains(stash, "tuios: try/keep") {
+	if !strings.Contains(stash, "dartuios: try/keep") {
 		t.Errorf("the stash does not hold the sibling's work: %q", stash)
 	}
 	branches := gitOut(t, repo, "branch", "--list", "try/keep*")

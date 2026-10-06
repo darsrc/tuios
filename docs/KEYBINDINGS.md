@@ -1,6 +1,6 @@
 # Keybindings
 
-The keybinding reference lives on the docs site: https://tuios.dev/docs/keybindings
+The keybinding reference lives on the docs site: https://dartuios.dev/docs/keybindings
 
 Every binding lives in one of the 23 sections under `[keybindings]` in `config.toml` and is rebindable; the site page lists each section's defaults, the prefix chords, copy mode, and the key syntax.
 
@@ -9,19 +9,19 @@ mode. The pane gets the leader that `leader_key` names, such as `ctrl+a`,
 encoded as the pane expects: CSI u for a pane using the Kitty keyboard
 protocol, legacy bytes otherwise. A leader with no legacy encoding is dropped.
 
-To inspect your own effective bindings, use the binary rather than any document: `tuios keybinds list`, `tuios keybinds doctor` for conflicts, `tuios keybinds explain <key>` for everything one key does, or the in-app keybind manager on `Ctrl+B k`.
+To inspect your own effective bindings, use the binary rather than any document: `dartuios keybinds list`, `dartuios keybinds doctor` for conflicts, `dartuios keybinds explain <key>` for everything one key does, or the in-app keybind manager on `Ctrl+B k`.
 
 ## Modifier spellings
 
-A key in `config.toml` can spell a modifier in more than one way. tuios reads each spelling as the same key.
+A key in `config.toml` can spell a modifier in more than one way. dartuios reads each spelling as the same key.
 
-| Write | tuios reads it as | Where |
+| Write | dartuios reads it as | Where |
 |---|---|---|
 | `opt+`, `option+` | `alt+` | macOS only |
 | `cmd+`, `command+` | `super+` | all platforms |
 | `control+` | `ctrl+` | all platforms |
 
-The order of the modifiers does not matter, so `shift+ctrl+x` is `ctrl+shift+x`. This applies to `leader_key`, to every binding table, and to `tuios keybinds explain`, `free` and `unbind`. `tuios keybinds explain opt+f12` shows `opt+f12 (tuios reads it as alt+f12)`. `tuios keybinds doctor` lists each key that tuios cannot read.
+The order of the modifiers does not matter, so `shift+ctrl+x` is `ctrl+shift+x`. This applies to `leader_key`, to every binding table, and to `dartuios keybinds explain`, `free` and `unbind`. `dartuios keybinds explain opt+f12` shows `opt+f12 (dartuios reads it as alt+f12)`. `dartuios keybinds doctor` lists each key that dartuios cannot read.
 
 A `super+` chord needs a terminal that sends the Super key. Most macOS terminals keep Command chords for their own menus. Ghostty and kitty send an unbound Command chord under the Kitty keyboard protocol.
 
@@ -138,7 +138,7 @@ prompts.
 
 When a search finds more than 1000 matches, the prompt shows `1000+`.
 
-tuios cannot put two actions on one key. `tuios send-keys` cannot do it either,
+dartuios cannot put two actions on one key. `dartuios send-keys` cannot do it either,
 because a key from `send-keys` does not go to copy mode.
 
 ## Screenshots over a panel
@@ -179,7 +179,7 @@ its tab. In the search, `up` and `down` move through the results, `left`,
 `right` and `enter` act on the row where it is, `tab` goes to the row on its
 own tab, `delete` resets it, and `esc` clears the search and puts the page back
 where it was; a second `esc` closes it. The command palette reaches the same
-rows by name (`settings: pane background`), and `tuios list-options --search`
+rows by name (`settings: pane background`), and `dartuios list-options --search`
 runs the same search from a shell.
 
 ## The Inbox
@@ -380,7 +380,7 @@ confirmation refuse it. See
 ## Other keyboard layouts
 
 Bindings work with layouts for non-Latin scripts, such as Cyrillic, Greek,
-Hebrew or Arabic. When no binding matches the character a key types, tuios uses
+Hebrew or Arabic. When no binding matches the character a key types, dartuios uses
 the key at the same position on a US layout. With a Ukrainian layout, the key
 that types `ш` is the US `i` key, so `ctrl+b` then that key opens the Inbox. A
 binding on the typed character wins, so you can still bind `ш` yourself. Text
@@ -395,11 +395,11 @@ tape spell the chord the same way. A Latin letter with no binding does nothing.
 
 This needs a terminal that sends the US-layout key through the Kitty keyboard
 protocol: Ghostty, kitty, WezTerm or foot. Other terminals send only the typed
-character. With those, switch to a Latin layout for tuios commands.
+character. With those, switch to a Latin layout for dartuios commands.
 
-In window mode tuios tells the terminal to send every key as a code. tuios
-resets this when it stops. If tuios cannot stop correctly, the terminal can
-stay in this mode. This occurs when you use `kill -9` on tuios, or when an ssh
+In window mode dartuios tells the terminal to send every key as a code. dartuios
+resets this when it stops. If dartuios cannot stop correctly, the terminal can
+stay in this mode. This occurs when you use `kill -9` on dartuios, or when an ssh
 connection drops. The shell then shows codes such as `[97u` when you type. To
 reset the terminal, run this command or close the tab:
 
@@ -409,7 +409,7 @@ printf '\033[=0;1u'
 
 ## Keys sent to a pane
 
-In terminal mode, tuios sends these keys to the program in the pane:
+In terminal mode, dartuios sends these keys to the program in the pane:
 
 - The keypad keys, with Num Lock on or off. Keypad `Enter` sends Enter.
 - `Begin`, the centre key of the keypad with Num Lock off.
@@ -426,7 +426,7 @@ only when it asks for every key.
 ## macOS
 
 Option is a compose key on macOS unless the terminal is told otherwise, so an
-Option chord usually arrives as a character rather than as Alt. tuios reads the
+Option chord usually arrives as a character rather than as Alt. dartuios reads the
 composed characters back into the chord they stand for, which covers most of
 them, but two kinds cannot be recovered:
 
@@ -463,7 +463,7 @@ keybind = alt+left=unbind
 keybind = alt+right=unbind
 ```
 
-tuios says all of this on screen the first time it sees a chord that did not
+dartuios says all of this on screen the first time it sees a chord that did not
 arrive as it was meant to.
 
 ### What works without changing anything
@@ -485,5 +485,5 @@ tmux's `repeat-time`, and `appearance.prefix_repeat_time` changes it. Zero
 turns it off.
 
 Workspace switching on `opt+1` to `opt+9` works with no configuration, because
-those Option chords compose to characters tuios can read back. That table is
+those Option chords compose to characters dartuios can read back. That table is
 built for a US layout.

@@ -165,7 +165,7 @@ func (d *Daemon) verbDismissAttention(cs *connState, params json.RawMessage) (an
 		return nil, hintedVerbError(ErrVerbInvalidParams, "no open attention item has id "+echoName(p.ID), &VerbHint{
 			Param:   "id",
 			Verb:    "list-attention",
-			Command: "tuios list-attention",
+			Command: "dartuios list-attention",
 			Detail:  "The item may already be closed: its pane moved on, the mail was read, or someone else dismissed it.",
 		})
 	}

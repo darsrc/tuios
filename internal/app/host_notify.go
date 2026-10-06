@@ -5,15 +5,15 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // In-band alerts: bytes written into the same stream the frame is rendered
 // through, so they arrive wherever the frame arrives.
 //
-// This is the only notification mechanism that is correct in every mode tuios
-// supports. `tuios ssh` runs the whole TUI on the remote host and renders
+// This is the only notification mechanism that is correct in every mode dartuios
+// supports. `dartuios ssh` runs the whole TUI on the remote host and renders
 // through the ssh.Session, so a desktop notification raised by this process
 // would pop on a machine nobody is sitting at. An escape sequence travels the
 // pipe to whatever terminal is actually in front of the user. The cost is that
@@ -84,7 +84,7 @@ func guardNumericOSCPrefix(s string) string {
 const screenStringLimit = 768
 
 // hostNotifySequence builds the in-band notification for text, wrapped for
-// whatever multiplexer tuios is running inside. Empty text yields no bytes.
+// whatever multiplexer dartuios is running inside. Empty text yields no bytes.
 //
 // OSC 9 rather than OSC 777 or OSC 99: it is the one sequence every terminal
 // that does notifications at all accepts, and it is the one already vendored
@@ -111,7 +111,7 @@ func hostNotifySequence(text string, outer outerMultiplexer) []byte {
 	return []byte(seq)
 }
 
-// outerMultiplexer names the multiplexer between tuios and the user's terminal.
+// outerMultiplexer names the multiplexer between dartuios and the user's terminal.
 type outerMultiplexer int
 
 const (
@@ -123,7 +123,7 @@ const (
 // detectOuterMultiplexer reports what the client's terminal is running inside.
 //
 // Locally, $TMUX and $STY are the direct answers, set for their own children,
-// and TERM backs them up. With `tuios ssh` the TUI runs on the remote host,
+// and TERM backs them up. With `dartuios ssh` the TUI runs on the remote host,
 // where the server's own environment says nothing about the user's terminal:
 // the TERM the client sent in its pty request is what carries the fact, and
 // the server's $TMUX/$STY describe only where the server was started.
@@ -152,7 +152,7 @@ func (m *OS) detectOuterMultiplexer() outerMultiplexer {
 // writeHostSequence writes raw bytes to the terminal the client is attached to.
 //
 // It funnels through KittyPassthrough because that already owns the host output
-// handle for every mode (the ssh.Session under `tuios ssh`, the sip PTY slave in
+// handle for every mode (the ssh.Session under `dartuios ssh`, the sip PTY slave in
 // web mode, /dev/tty or stdout locally) and serialises writes to it under a
 // mutex, which is what keeps this from interleaving with a graphics frame. That
 // is the same route the guest OSC 9 forwarding in notify.go already takes.

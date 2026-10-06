@@ -5,7 +5,7 @@ import (
 
 	uv "github.com/charmbracelet/ultraviolet"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // TestWidthMethod_MatchesHowCharactersAreActuallyPlaced covers a disagreement

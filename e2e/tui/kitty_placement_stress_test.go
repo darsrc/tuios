@@ -29,13 +29,13 @@ import (
 // pane's rectangle, so none of them may change what the host is told about it.
 
 // stressRounds is how many perturbation cycles to run. The default is a short
-// run for CI; TUIOS_KITTY_STRESS_ROUNDS raises it for a soak.
+// run for CI; DARTUIOS_KITTY_STRESS_ROUNDS raises it for a soak.
 func stressRounds(t *testing.T) int {
-	if v := os.Getenv("TUIOS_KITTY_STRESS_ROUNDS"); v != "" {
+	if v := os.Getenv("DARTUIOS_KITTY_STRESS_ROUNDS"); v != "" {
 		if n, err := strconv.Atoi(v); err == nil && n > 0 {
 			return n
 		}
-		t.Fatalf("TUIOS_KITTY_STRESS_ROUNDS=%q is not a positive number", v)
+		t.Fatalf("DARTUIOS_KITTY_STRESS_ROUNDS=%q is not a positive number", v)
 	}
 	return 6
 }
@@ -74,7 +74,7 @@ func settlePhase(host *kittyHost, name string, d time.Duration) func([]byte) []w
 // scale factor kitty applies: the stretch.
 //
 // The guest reports every size it is given, so the set is ground truth rather
-// than a restatement of tuios's own belief.
+// than a restatement of dartuios's own belief.
 func checkAgrees(t *testing.T, cmds []wireCmd, phase string, told map[[2]int]bool) {
 	t.Helper()
 	seen := map[string]int{}
@@ -132,7 +132,7 @@ func TestKittyPlacementStressUnderPerturbation(t *testing.T) {
 	term, _ := start(t, startOpts{
 		cols: 120, rows: 40,
 		args: []string{"--shared-borders"},
-		env:  []string{"TUIOS_SIXEL_GRAPHICS=0"},
+		env:  []string{"DARTUIOS_SIXEL_GRAPHICS=0"},
 		out:  host,
 	})
 	host.answerProbe(t, term)
@@ -227,7 +227,7 @@ func TestKittyPlacementStressUnderPerturbation(t *testing.T) {
 	t.Logf("%d rounds of perturbation in %s", rounds, time.Since(began).Round(time.Second))
 
 	stream := host.bytes()
-	if dump := os.Getenv("TUIOS_KITTY_CAPTURE"); dump != "" {
+	if dump := os.Getenv("DARTUIOS_KITTY_CAPTURE"); dump != "" {
 		if err := os.WriteFile(dump, stream, 0o644); err != nil {
 			t.Fatalf("write capture: %v", err)
 		}

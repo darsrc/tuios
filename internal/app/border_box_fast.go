@@ -5,15 +5,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
-// fastBoxDisabled sends every pane box back through lipgloss (TUIOS_NO_FASTBOX=1)
+// fastBoxDisabled sends every pane box back through lipgloss (DARTUIOS_NO_FASTBOX=1)
 // so the two compositions can be compared for output and for cost on one
-// binary, the same way TUIOS_NO_PRESHAPED does for the wrap.
-var fastBoxDisabled = os.Getenv("TUIOS_NO_FASTBOX") == "1"
+// binary, the same way DARTUIOS_NO_PRESHAPED does for the wrap.
+var fastBoxDisabled = os.Getenv("DARTUIOS_NO_FASTBOX") == "1"
 
 // fastWindowBox draws a pane's frame around a body that is already exactly the
 // pane's rectangle, without measuring the body, or reports false and leaves the
@@ -41,7 +41,7 @@ var fastBoxDisabled = os.Getenv("TUIOS_NO_FASTBOX") == "1"
 // The output is byte for byte what the lipgloss path produces.
 // TestFastWindowBoxMatchesLipgloss is the proof, run over every Unicode case
 // the pre-shaped path already carries plus a size matrix.
-func (m *OS) fastWindowBox(content string, window *terminal.Window, borderColorObj color.Color, position int, isTiling bool) (string, bool) {
+func (m *OS) fastWindowBox(content string, window *terminal.Window, borderColorObj color.Color, position int, isTiling, isFocused bool) (string, bool) {
 	if fastBoxDisabled {
 		return "", false
 	}
@@ -59,12 +59,12 @@ func (m *OS) fastWindowBox(content string, window *terminal.Window, borderColorO
 		return "", false
 	}
 
-	left, right, ok := borderSideCells(borderColorObj, &m.Settings)
+	left, right, ok := borderSideCells(borderColorObj, windowBorder(&m.Settings, isFocused))
 	if !ok {
 		return "", false
 	}
 
-	top, bottom := m.windowBorderRows(window.ContentWidth(), borderColorObj, window, position, isTiling)
+	top, bottom := m.windowBorderRows(window.ContentWidth(), borderColorObj, window, position, isTiling, isFocused)
 
 	var b strings.Builder
 	b.Grow(len(top) + len(bottom) + len(content) + (len(left)+len(right)+1)*(window.Height-1) + 1)
@@ -87,8 +87,7 @@ func (m *OS) fastWindowBox(content string, window *terminal.Window, borderColorO
 // lipgloss cycles a multi-rune border side down the rows and substitutes a
 // space for an empty one. Both are reproducible, but neither is a border any
 // style in the registry uses, so they are declined rather than duplicated.
-func borderSideCells(borderColorObj color.Color, s *config.Settings) (left, right string, ok bool) {
-	border := getBorder(s)
+func borderSideCells(borderColorObj color.Color, border lipgloss.Border) (left, right string, ok bool) {
 	if !isSingleRune(border.Left) || !isSingleRune(border.Right) {
 		return "", "", false
 	}

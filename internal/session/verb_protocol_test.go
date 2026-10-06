@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // startTestDaemon starts a real daemon listening on an isolated unix socket in a

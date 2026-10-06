@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds the tuios binary the way the release does (CGO_ENABLED=0, -trimpath,
+# Builds the dartuios binary the way the release does (CGO_ENABLED=0, -trimpath,
 # -ldflags "-s -w") for each target given, prints its size, and fails when one
 # is larger than its budget.
 #
@@ -35,15 +35,15 @@ go version
 fail=0
 for target in "${targets[@]}"; do
 	limit=$(budget "$target")
-	bin="$out/tuios-${target%/*}-${target#*/}"
+	bin="$out/dartuios-${target%/*}-${target#*/}"
 	CGO_ENABLED=0 GOOS="${target%/*}" GOARCH="${target#*/}" \
-		go build -trimpath -ldflags "-s -w" -o "$bin" ./cmd/tuios
+		go build -trimpath -ldflags "-s -w" -o "$bin" ./cmd/dartuios
 	size=$(wc -c <"$bin" | tr -d ' ')
 	room=$((limit - size))
 	awk -v t="$target" -v s="$size" -v l="$limit" -v r="$room" \
 		'BEGIN { printf "%-14s %10d bytes (%.2f MiB)  budget %10d  room %9d\n", t, s, s / 1048576, l, r }'
 	if [ "$size" -gt "$limit" ]; then
-		echo "::error::tuios for $target is $size bytes, over its budget of $limit by $((size - limit)). See docs/perf.md, \"Binary size budget\"."
+		echo "::error::dartuios for $target is $size bytes, over its budget of $limit by $((size - limit)). See docs/perf.md, \"Binary size budget\"."
 		fail=1
 	fi
 done

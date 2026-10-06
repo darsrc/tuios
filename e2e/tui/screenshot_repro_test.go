@@ -28,7 +28,7 @@ import (
 const shotImageID = 0xF100_0000
 
 // shotCellW and shotCellH are the cell size the tests force on the client with
-// TUIOS_CELL_SIZE, so an assertion about a placement box is arithmetic and not
+// DARTUIOS_CELL_SIZE, so an assertion about a placement box is arithmetic and not
 // a guess about what the host answered.
 const (
 	shotCellW = 10
@@ -39,9 +39,9 @@ const (
 // cell size. The preview's pixel tier only runs there.
 func shotGraphicsEnv() []string {
 	return []string{
-		"TUIOS_KITTY_GRAPHICS=1",
-		"TUIOS_SIXEL_GRAPHICS=0",
-		fmt.Sprintf("TUIOS_CELL_SIZE=%dx%d", shotCellW, shotCellH),
+		"DARTUIOS_KITTY_GRAPHICS=1",
+		"DARTUIOS_SIXEL_GRAPHICS=0",
+		fmt.Sprintf("DARTUIOS_CELL_SIZE=%dx%d", shotCellW, shotCellH),
 		"PATH=/usr/bin:/bin",
 	}
 }
@@ -557,9 +557,9 @@ func TestScreenshotPreviewKeepsThePicturesShape(t *testing.T) {
 	}
 	transmits, placements := waitForShotGraphics(t, term, stream, 1, 1,
 		"the pixel tier never ran")
-	// TUIOS_SHOT_DUMP writes the picture the client actually uploaded to a file,
+	// DARTUIOS_SHOT_DUMP writes the picture the client actually uploaded to a file,
 	// which is how the shape is checked by eye rather than only by arithmetic.
-	if dump := os.Getenv("TUIOS_SHOT_DUMP"); dump != "" {
+	if dump := os.Getenv("DARTUIOS_SHOT_DUMP"); dump != "" {
 		_ = os.WriteFile(dump, transmits[len(transmits)-1].png, 0o644)
 		t.Logf("dumped the uploaded picture to %s", dump)
 	}
@@ -594,7 +594,7 @@ func TestScreenshotOverAnOpenPreviewSendsTheNewPicture(t *testing.T) {
 	setShotOption(t, term, base, "screenshot.scale", "1")
 	fillPane(t, term, "ROW")
 
-	if out, err := tuiosCLI(t, base, "run-command", "Screenshot"); err != nil {
+	if out, err := dartuiosCLI(t, base, "run-command", "Screenshot"); err != nil {
 		t.Fatalf("first run-command Screenshot: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -610,7 +610,7 @@ func TestScreenshotOverAnOpenPreviewSendsTheNewPicture(t *testing.T) {
 	}
 
 	// The panel is still up. Capture again over the top of it.
-	if out, err := tuiosCLI(t, base, "run-command", "Screenshot"); err != nil {
+	if out, err := dartuiosCLI(t, base, "run-command", "Screenshot"); err != nil {
 		t.Fatalf("second run-command Screenshot: %v\n%s", err, out)
 	}
 	transmits, placements := waitForShotGraphics(t, term, stream, 2, 1,

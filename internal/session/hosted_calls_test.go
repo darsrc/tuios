@@ -18,10 +18,10 @@ import (
 // Reports from a pane on another machine (P18), proved with two real daemons
 // on the real proxy and a real process in the pane: the process is this test
 // binary, started as the pane's command, calling the far daemon's socket the
-// way the tuios CLI does.
+// way the dartuios CLI does.
 
 // hostedHelperCall is one call the helper process makes. $PANE in params is
-// replaced by TUIOS_PANE_ID. expect, when set, is a string the answer has to
+// replaced by DARTUIOS_PANE_ID. expect, when set, is a string the answer has to
 // hold for the helper to print HAS.
 type hostedHelperCall struct {
 	Verb   string          `json:"verb"`
@@ -30,19 +30,19 @@ type hostedHelperCall struct {
 }
 
 // TestHostedPaneHelperProcess is not a test. It is the process in the pane
-// when TUIOS_HOSTED_HELPER is set, and does nothing otherwise.
+// when DARTUIOS_HOSTED_HELPER is set, and does nothing otherwise.
 //
 // It prints one short token per call, R<n>:OK, R<n>:HAS or R<n>:ERR:<code>,
 // because the test reads it off an 80 column screen.
 func TestHostedPaneHelperProcess(t *testing.T) {
-	if os.Getenv("TUIOS_HOSTED_HELPER") != "1" {
+	if os.Getenv("DARTUIOS_HOSTED_HELPER") != "1" {
 		return
 	}
 	var calls []hostedHelperCall
-	_ = json.Unmarshal([]byte(os.Getenv("TUIOS_HOSTED_HELPER_CALLS")), &calls)
-	pane := os.Getenv("TUIOS_PANE_ID")
+	_ = json.Unmarshal([]byte(os.Getenv("DARTUIOS_HOSTED_HELPER_CALLS")), &calls)
+	pane := os.Getenv("DARTUIOS_PANE_ID")
 	fmt.Printf("PANE:%t ", pane != "")
-	conn, err := net.DialTimeout("unix", os.Getenv("TUIOS_HOSTED_HELPER_SOCKET"), 5*time.Second)
+	conn, err := net.DialTimeout("unix", os.Getenv("DARTUIOS_HOSTED_HELPER_SOCKET"), 5*time.Second)
 	if err != nil {
 		fmt.Printf("DIAL:%v\n", err)
 		time.Sleep(time.Minute)
@@ -92,9 +92,9 @@ func hostedHelperWindow(t *testing.T, hub *Daemon, far *farSide, sessionName str
 	win, err := sess.AddDaemonWindowWith(NewWindowOptions{
 		Host: "build",
 		Command: []string{"/usr/bin/env",
-			"TUIOS_HOSTED_HELPER=1",
-			"TUIOS_HOSTED_HELPER_SOCKET=" + far.socket,
-			"TUIOS_HOSTED_HELPER_CALLS=" + string(raw),
+			"DARTUIOS_HOSTED_HELPER=1",
+			"DARTUIOS_HOSTED_HELPER_SOCKET=" + far.socket,
+			"DARTUIOS_HOSTED_HELPER_CALLS=" + string(raw),
 			os.Args[0], "-test.run=^TestHostedPaneHelperProcess$",
 		},
 	}, func(string) {})
@@ -267,7 +267,7 @@ func TestAHostedPaneAttachesOnlyStashedFiles(t *testing.T) {
 		return verr
 	}
 	var messages []string
-	for _, path := range []string{"/etc/hosts", "/nonexistent/tuios-hosted-probe"} {
+	for _, path := range []string{"/etc/hosts", "/nonexistent/dartuios-hosted-probe"} {
 		verr := send(path)
 		if verr == nil || verr.Code != ErrVerbInvalidParams || !strings.Contains(verr.Message, "only a stashed file") {
 			t.Errorf("a hosted pane attaching %s was answered %v, want the stash refusal", path, verr)

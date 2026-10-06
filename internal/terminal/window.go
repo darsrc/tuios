@@ -17,11 +17,11 @@ import (
 	"charm.land/lipgloss/v2"
 	xpty "github.com/charmbracelet/x/xpty"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/debuglog"
-	"github.com/Gaurav-Gosain/tuios/internal/ptyspawn"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/debuglog"
+	"github.com/darsrc/tuios/internal/ptyspawn"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // ioMu guards the emulator cell buffer: the PTY reader and the daemon output
@@ -709,7 +709,7 @@ func NewWindow(id, title string, x, y, width, height, z int, exitChan chan strin
 	termType, colorTerm := getTerminalEnv()
 
 	// Debug logging for terminal environment
-	if os.Getenv("TUIOS_DEBUG_INTERNAL") == "1" {
+	if os.Getenv("DARTUIOS_DEBUG_INTERNAL") == "1" {
 		debugMsg := fmt.Sprintf("[%s] NewWindow TERM=%s COLORTERM=%s (envTERM=%s envCOLORTERM=%s)\n",
 			time.Now().Format("15:04:05.000"), termType, colorTerm, os.Getenv("TERM"), os.Getenv("COLORTERM"))
 		if f, err := debuglog.Open(debuglog.Path); err == nil {
@@ -740,7 +740,7 @@ func NewWindow(id, title string, x, y, width, height, z int, exitChan chan strin
 			"COLORTERM="+colorTerm,
 			"TERM_PROGRAM="+guestTermProgram(command), // Terminal identity guests can act on
 			"TERM_PROGRAM_VERSION=0.1.0",              // Version for compatibility checking
-			"TUIOS_WINDOW_ID="+id,
+			"DARTUIOS_WINDOW_ID="+id,
 			guestKittyAnimation(), // whether a=f frame edits reach the host
 		)
 		return cmd

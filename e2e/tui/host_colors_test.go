@@ -15,20 +15,20 @@ import (
 	uv "github.com/charmbracelet/ultraviolet"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
 	"github.com/Gaurav-Gosain/tuitest"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/shot"
 )
 
 // The host terminal's own colours, told to the programs in the panes and used
 // for the chrome, on a terminal tuitest cannot be: one with a light
-// background. testdata/hostterm sits between tuitest and tuios and answers the
+// background. testdata/hostterm sits between tuitest and dartuios and answers the
 // colour questions itself, as a light terminal would, and switches to a dark
 // scheme on SIGUSR1 the way a terminal following the system appearance does.
 //
 // How this could pass wrongly, written down first:
 //   - The pane's answer could come from tuitest's emulator rather than from
-//     tuios: hostterm swallows every colour question it answers, so tuitest
+//     dartuios: hostterm swallows every colour question it answers, so tuitest
 //     never sees one, and tuitest answers black, which the light and the dark
 //     scheme here both differ from.
 //   - The answer could be read from the command echo: the printed line is
@@ -39,7 +39,7 @@ import (
 //     the terminal's default colour fails as "not measured".
 //   - A switch could be missed and the old answer read again: each round
 //     clears the pane first and waits for the new colour, and the host log
-//     has to show tuios asked for the background after the switch.
+//     has to show dartuios asked for the background after the switch.
 //   - The daemon path could be skipped: the client is attached to a daemon
 //     session, whose emulators answer the pane's questions, so the colours
 //     have to travel from this client to the daemon.
@@ -101,10 +101,10 @@ func hostInkAt(s tuitest.Screen, col, row int) (color.Color, bool) {
 	return p.Resolve(c, p.FG), true
 }
 
-// renderScreenPNG draws the screen tuitest holds with tuios's own renderer,
+// renderScreenPNG draws the screen tuitest holds with dartuios's own renderer,
 // on the host's palette, and writes it to path. It is the frame the host
 // terminal shows at the colour depth the client ran at, which a capture taken
-// inside tuios cannot show: that one is drawn from tuios's own cells, before
+// inside dartuios cannot show: that one is drawn from dartuios's own cells, before
 // they are reduced to 256 or 16 colours.
 func renderScreenPNG(t *testing.T, s tuitest.Screen, p *shot.Palette, path string) {
 	t.Helper()
@@ -173,11 +173,11 @@ func askPane(t *testing.T, base, session, host string, want map[string]string) m
 	var pane string
 	deadline := time.Now().Add(shellTimeout)
 	for time.Now().Before(deadline) {
-		if out, err := tuiosCLI(t, base, "send-keys", "-s", session, "-l", cmd.String()); err != nil {
+		if out, err := dartuiosCLI(t, base, "send-keys", "-s", session, "-l", cmd.String()); err != nil {
 			t.Fatalf("send the queries: %v\n%s", err, out)
 		}
 		time.Sleep(time.Second)
-		pane, _ = tuiosCLI(t, base, "capture-pane", "-s", session)
+		pane, _ = dartuiosCLI(t, base, "capture-pane", "-s", session)
 		for spec := range want {
 			re := regexp.MustCompile(`HOSTTERM-` + regexp.QuoteMeta(spec) + `=(\S+)`)
 			if m := re.FindAllStringSubmatch(pane, -1); m != nil {
@@ -271,7 +271,7 @@ func checkRailReads(t *testing.T, term *tuitest.Terminal, ground color.Color, wh
 	}
 	// Each session row's dot burns that session's colour, lifted until it
 	// reads on the ground under the row. With no theme that ground is the
-	// host's, not the black a theme-less tuios used to assume: measured
+	// host's, not the black a theme-less dartuios used to assume: measured
 	// against black, bright cyan needs no lift and all but vanishes on a
 	// light terminal. The dot is a mark, held to the mark floor.
 	for _, name := range []string{"e2e-light", "e2e-other"} {
@@ -300,7 +300,7 @@ func checkRailReads(t *testing.T, term *tuitest.Terminal, ground color.Color, wh
 	}
 	// The pane's frame is a shape, held to the mark floor. With no theme its
 	// colour is a fixed pale cyan picked for a dark terminal.
-	row, col, ok := textAt(s, "╭", 0)
+	row, col, ok := findPaneTopCornerCell(s)
 	if !ok {
 		t.Fatalf("%s: no pane frame on screen\n%s", when, term.Snapshot())
 	}
@@ -315,8 +315,8 @@ func checkRailReads(t *testing.T, term *tuitest.Terminal, ground color.Color, wh
 }
 
 // TestHostColorsReachPanesAndChrome attaches to a daemon session from a light
-// terminal with no tuios theme and the pane background off, which is how
-// tuios ships. A pane program asking OSC 11, OSC 10 and OSC 4 for slot 1 is
+// terminal with no dartuios theme and the pane background off, which is how
+// dartuios ships. A pane program asking OSC 11, OSC 10 and OSC 4 for slot 1 is
 // told the host's own colours, the rail and the dock are drawn to read on the
 // light ground, and after the host switches to its dark scheme the pane is
 // told the dark colours and the chrome follows. Each state is kept as a frame
@@ -353,7 +353,7 @@ type hostDepth struct {
 }
 
 // hostColorsAt is TestHostColorsReachPanesAndChrome at one colour depth,
-// given as the client's environment. Every frame is also drawn with tuios's
+// given as the client's environment. Every frame is also drawn with dartuios's
 // own renderer on the host's palette as <name>-terminal.png, which is the
 // screen as the host shows it at that depth.
 func hostColorsAt(t *testing.T, depth hostDepth) {
@@ -367,7 +367,7 @@ func hostColorsAt(t *testing.T, depth hostDepth) {
 	useShippedLooks(base)
 	writeConfig(t, base, "[screenshot]\ndirectory = \""+shots+"\"\nformat = \"png\"\n")
 	for _, name := range []string{"e2e-light", "e2e-other"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create session %s: %v\n%s", name, err, out)
 		}
 	}
@@ -450,9 +450,9 @@ func hostColorsAt(t *testing.T, depth hostDepth) {
 		logged, _ := os.ReadFile(hostLog)
 		_, after, switched := strings.Cut(string(logged), "switch to "+bg)
 		if !switched || !strings.Contains(after[:strings.Index(after, "\n")], "subscribed=true") {
-			t.Errorf("tuios had not turned on mode 2031 when the host switched to %s:\n%s", bg, logged)
+			t.Errorf("dartuios had not turned on mode 2031 when the host switched to %s:\n%s", bg, logged)
 		} else if !strings.Contains(after, "answer 11 "+bg) {
-			t.Errorf("tuios did not ask for the background again after the switch to %s:\n%s", bg, logged)
+			t.Errorf("dartuios did not ask for the background again after the switch to %s:\n%s", bg, logged)
 		}
 	}
 	// pillGround is the fill of the dock's workspace pill, which tells the
@@ -507,7 +507,7 @@ func hostColorsAt(t *testing.T, depth hostDepth) {
 }
 
 // TestHostColorsSilentTerminal attaches from a terminal that answers no colour
-// question, which is what mosh does. tuios has to start as fast as it does on
+// question, which is what mosh does. dartuios has to start as fast as it does on
 // any other terminal, and with nothing learned it must invent nothing: a pane
 // is told the emulator's own defaults, as before the host colour work.
 //
@@ -525,7 +525,7 @@ func TestHostColorsSilentTerminal(t *testing.T) {
 	hostLog := filepath.Join(t.TempDir(), "host.log")
 
 	useShippedLooks(base)
-	if out, err := tuiosCLI(t, base, "new", "e2e-mute", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-mute", "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
 	began := time.Now()
@@ -550,6 +550,6 @@ func TestHostColorsSilentTerminal(t *testing.T) {
 	saveArtifact(t, term, artifacts, "silent-host")
 	logged, _ := os.ReadFile(hostLog)
 	if !strings.Contains(string(logged), "unanswered 11;?") {
-		t.Errorf("tuios never asked the silent host for its background:\n%s", logged)
+		t.Errorf("dartuios never asked the silent host for its background:\n%s", logged)
 	}
 }

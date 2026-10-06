@@ -1,9 +1,9 @@
-# TUIOS JSON verb protocol
+# dartuios JSON verb protocol
 
-The TUIOS daemon speaks a typed, line-delimited JSON control protocol over the
+The dartuios daemon speaks a typed, line-delimited JSON control protocol over the
 same unix socket the interactive client uses. It is layered additively on top of
 the existing binary framing: a connection is classified as JSON or binary from
-its very first byte, so older clients (older tuios binaries, the SSH server, the
+its very first byte, so older clients (older dartuios binaries, the SSH server, the
 web build) keep working unchanged while new tooling can drive the daemon with
 one JSON object per line.
 
@@ -55,7 +55,7 @@ failure:
   "message": "session wrok not found",
   "hint": {
     "param": "session",
-    "command": "tuios ls",
+    "command": "dartuios ls",
     "did_you_mean": "work",
     "available": ["notes", "work"],
     "detail": "the name matches no live session. ..."
@@ -116,7 +116,7 @@ dropped connection.
 Request:
 
 ```json
-{"id": 1, "verb": "hello", "params": {"client": "tuios", "version": "1.4.0", "protocol": 1}}
+{"id": 1, "verb": "hello", "params": {"client": "dartuios", "version": "1.4.0", "protocol": 1}}
 ```
 
 Result:
@@ -136,13 +136,13 @@ Result:
 
 `link_policy` says the daemon holds calls from other machines to a link
 policy (see [What a linked machine may do here](#what-a-linked-machine-may-do-here)).
-`tuios stdio-proxy` reads it before it would reach the daemon on its own socket
+`dartuios stdio-proxy` reads it before it would reach the daemon on its own socket
 for a link, and refuses when it is set. It is absent from an older daemon.
 
 `pane_grants` says the daemon holds calls from panes to their grants (see
 [pane-grants](#pane-grants)) and takes a pane's token with `pane-grants`. On a
-platform where the daemon cannot read the peer's pid, the `tuios` CLI reads it
-and then presents `$TUIOS_PANE_ID` and `$TUIOS_PANE_TOKEN` on every
+platform where the daemon cannot read the peer's pid, the `dartuios` CLI reads it
+and then presents `$DARTUIOS_PANE_ID` and `$DARTUIOS_PANE_TOKEN` on every
 connection it opens from a pane. It is absent from an older daemon.
 
 The handshake is optional, not a gate: a daemon serves every other verb whether
@@ -155,9 +155,9 @@ daemon predates the protocol entirely. Such a daemon reads the leading `{` of a
 request line as the high byte of a binary length prefix, fails its frame check,
 and closes the connection. A client that sees the connection die with no response
 line should read that as a version mismatch, not as a transport fault; the
-`tuios` CLI confirms it by asking over the older binary handshake, which every
+`dartuios` CLI confirms it by asking over the older binary handshake, which every
 daemon has always answered, and reports both versions along with the
-`tuios kill-server` command that resolves it.
+`dartuios kill-server` command that resolves it.
 
 ### Changes to existing verbs
 
@@ -178,7 +178,7 @@ could before, with these exceptions:
   `release-agent-message` need the `respond` capability, which the default
   does not grant. Over a link they used to be refused only for want of a
   verified nonce (`not_human`); with the default policy they are now
-  `forbidden` first. `tuios respond -w HOST:SESSION:WINDOW` needs
+  `forbidden` first. `dartuios respond -w HOST:SESSION:WINDOW` needs
   `allow = [..., "respond"]` on that host for this machine.
 - `open-host-connection` over a link, which relays on to the far machine's own
   hosts, needs every capability, so the default refuses it.
@@ -236,7 +236,7 @@ for existing callers:
 - `dismiss-attention` on an `outbox` item discards the mail still waiting for
   that machine, and answers `for_host` and `discarded`.
 - `list-hosts` rows carry `queued`.
-- `tuios send-agent-message -s HOST:SESSION` falls back to this when the host
+- `dartuios send-agent-message -s HOST:SESSION` falls back to this when the host
   is unreachable, instead of failing with `host_unreachable`.
 - A message queued from `human` arrives on the far machine as `claimed_human`:
   no nonce the far daemon would honour survives the wait. `host` is refused
@@ -254,16 +254,16 @@ the rules below are the CLI's. The verbs on the wire do not change.
   `send-agent-message`, `ask-agent`, `stash get` and every other verb that
   prints its result with `--json`. A `--json` error another machine answered
   carries them too.
-- In `tuios ls --all-hosts --json` and `tuios list-agents --all-hosts --json`,
+- In `dartuios ls --all-hosts --json` and `dartuios list-agents --all-hosts --json`,
   each other machine's entry in `hosts` carries `"untrusted": true`. The
   `local` entry does not.
-- `tuios capture-pane` takes `--json`. Its plain output from another machine
+- `dartuios capture-pane` takes `--json`. Its plain output from another machine
   is fenced as untrusted content, as mail is, with `│ ` before every line.
   Control characters, bidi controls and zero-width characters are removed.
   With `--ansi` or `--resolved`, SGR sequences (`CSI ... m`) are kept and
   every other escape (OSC, DCS, cursor moves, modes) is removed. A local
   capture prints as before.
-- `tuios send-agent-message --attach PATH` to another machine first asks that
+- `dartuios send-agent-message --attach PATH` to another machine first asks that
   machine for its session's stash root with `stash-list`. A path under that
   root passes through as written. Every other path must be a regular file on
   this machine: it is put in the far stash with `stash-put`, the stored path
@@ -437,7 +437,7 @@ newline redraws its input box, so output from it proves nothing.
 - `fan` records the new `prompt_status` value `stalled`, with a `prompt_note`,
   where it used to record `sent`. A prompt stays `pending` for the few seconds
   the check takes. A client that does not know `stalled` should treat it like
-  `not_sent`, which is what `tuios fan --wait` from an older build prints.
+  `not_sent`, which is what `dartuios fan --wait` from an older build prints.
 
 **A message from `human` says whether it is verified.** Any caller can send
 `send-agent-message` with `from: "human"`, and such a message used to be stored
@@ -445,7 +445,7 @@ exactly like the person's reply from the mail overlay. Now:
 
 - The attach reply (`AttachedPayload`) carries `human_nonce`, a fresh random
   secret per attach. It is an additive field, empty from an older daemon.
-- `send-agent-message` takes a new param `human_nonce`. The tuios client sends
+- `send-agent-message` takes a new param `human_nonce`. The dartuios client sends
   it with a reply from the mail overlay, and only when it has one, since an
   older daemon refuses the param.
 - A message from `human` is stored with `verified_human: true` when
@@ -454,7 +454,7 @@ exactly like the person's reply from the mail overlay. Now:
   verifies only a send on the link socket, and a local one only a local send.
   Otherwise it is stored with `claimed_human: true`. The send result and
   `read-agent-messages` both report the two fields, and the mail overlay and
-  `tuios read-agent-messages` show a claimed one as unverified.
+  `dartuios read-agent-messages` show a claimed one as unverified.
 - Over a link, the hub relays the stream without reading it, so no flag in the
   request can stand for a check the hub made. A client attached through the
   link got its nonce from this daemon, and its reply verifies against that
@@ -468,8 +468,8 @@ pid of every caller from its socket (`SO_PEERCRED` on Linux, `LOCAL_PEERPID`
 on macOS) and counts the caller as inside a pane when the daemon is one of its
 ancestors, when its controlling terminal is one of the daemon's pane
 terminals, or when its environment names one of the daemon's windows in
-`TUIOS_PANE_ID` or `TUIOS_WINDOW_ID`, or the daemon's socket in
-`TUIOS_SOCKET`. The last two also place the client's hook commands and dock
+`DARTUIOS_PANE_ID` or `DARTUIOS_WINDOW_ID`, or the daemon's socket in
+`DARTUIOS_SOCKET`. The last two also place the client's hook commands and dock
 components, which are automation and not the person. A process whose
 record cannot be read counts as inside a pane. docs/AGENT_STATE.md, "Who can
 act as the person", has the threat model.
@@ -482,7 +482,7 @@ act as the person", has the threat model.
   sends verifies.
 - `verified_human` also needs the sender to be allowed to act as the person,
   and, where the kernel gave both pids, to be the process that holds the
-  attach. The tuios client sends its reply from the process that attached, so
+  attach. The dartuios client sends its reply from the process that attached, so
   its replies still verify. A nonce copied to another process does not.
 - `read-agent-messages` with `to: "human"` from such a caller is served as a
   peek: it marks nothing read, and the result carries the new field
@@ -504,7 +504,7 @@ act as the person", has the threat model.
 - Windows and the BSDs do not give this build the peer's pid. There every
   caller is treated as before, and the nonce is the only proof.
 
-**A reply the person did not type is not signed as theirs.** The tuios client
+**A reply the person did not type is not signed as theirs.** The dartuios client
 sends a reply from its mail overlay without the attach nonce when any key that
 `send-keys`, `run-command` or a tape script routed to the client opened,
 edited or sent the reply line, so the daemon stores it as `claimed_human`. The
@@ -584,7 +584,7 @@ an existing caller:
 - The error catalog's `not_human` is also raised by `reply-approval`.
 - The Claude Code integration is now version 2: its `PermissionRequest` hook
   entry gets a 310 second timeout instead of 5, so a hold can run. With
-  approvals off the hook still returns within 500 ms. `tuios integration
+  approvals off the hook still returns within 500 ms. `dartuios integration
   status` reports a version 1 install as out of date until it is installed
   again. The opencode and Kilo plugins are version 2 as well: a
   `permission.asked` event runs the hook and waits for what it prints, and
@@ -636,7 +636,7 @@ an existing caller:
   filter delivers it.
 - `list-hosts` gains `events_push: true` at the top and, per host, `events`
   (`live`, `polling`, or empty while the link is not up) and `events_note`,
-  which says why a host is polled: its tuios is too old to have an Inbox or to
+  which says why a host is polled: its dartuios is too old to have an Inbox or to
   resume its stream, and the note names the update.
 - `list-host-agents` lists every session on each host, where it used to list
   only the host's most recently active one. Each row gains `session`, and the
@@ -660,7 +660,7 @@ window, and then returns `calls_token`; the asking daemon opens the new verb
 `pane-calls` with it (see [Reports from a pane on another
 machine](#reports-from-a-pane-on-another-machine)). What changes:
 
-- A hosted pane's process gets `TUIOS_PANE_ID`, the owner's window id. It used
+- A hosted pane's process gets `DARTUIOS_PANE_ID`, the owner's window id. It used
   to get none.
 - On the machine running the process, `set-agent-state`, `set-agent-meta`,
   `set-agent-session` and `wait-for` (condition `agent-message`) with `window`
@@ -678,17 +678,17 @@ machine](#reports-from-a-pane-on-another-machine)). What changes:
   asking daemon then asks again without it, so a window still opens on that
   machine, with no reports from the pane.
 - The `session` param of `open-pane` was documented as exported as
-  `TUIOS_SESSION`. It is exported as `TUIOS_SESSION_REMOTE`, as it has been
-  since hosted panes stopped exporting `TUIOS_SESSION`; the description now
+  `DARTUIOS_SESSION`. It is exported as `DARTUIOS_SESSION_REMOTE`, as it has been
+  since hosted panes stopped exporting `DARTUIOS_SESSION`; the description now
   says so.
 
 **A connection can restrict itself.** The new verb `restrict-connection` (see
 [restrict-connection](#restrict-connection)) narrows what one connection may
-do for as long as it is open, and `tuios mcp` restricts every connection it
+do for as long as it is open, and `dartuios mcp` restricts every connection it
 opens. A connection that never calls it is served exactly as before. What
 changes for everyone:
 
-- Every pane is started with `TUIOS_PANE_TOKEN` beside `TUIOS_PANE_ID`. It is
+- Every pane is started with `DARTUIOS_PANE_TOKEN` beside `DARTUIOS_PANE_ID`. It is
   new, and nothing reads it but `restrict-connection`.
 - `fan` records on each session it starts the session of the pane that ran
   it, when a pane of this daemon ran it, and `list-worktrees` rows gain
@@ -729,7 +729,7 @@ no marks is unaffected by all of this. What changes for everyone else:
 - `wait-for` takes the new condition `command-finished` and the new param
   `command_seq`.
 - The new hook event `after-command-finished` runs on the daemon with
-  `TUIOS_COMMAND`, `TUIOS_EXIT_CODE` and `TUIOS_DURATION_MS`. Every hook now
+  `DARTUIOS_COMMAND`, `DARTUIOS_EXIT_CODE` and `DARTUIOS_DURATION_MS`. Every hook now
   gets those three variables, empty for the other events.
 - The new error codes `no_shell_integration` and `not_at_prompt` come only from
   the new verb `run` and the new capture source.
@@ -791,11 +791,11 @@ takes the new params `agents`, `prompts` and `env`, and the new verb
   `prompts` and `agents` stand in for them. A call with neither is still
   `invalid_params`.
 - `prompt_status` has the new value `held`, which a caller that waits for
-  `pending` to end should treat the same way. The `tuios fan --wait` of this
+  `pending` to end should treat the same way. The `dartuios fan --wait` of this
   build does. A CLI from before it stops waiting at `held` and reports the
   prompt as not sent.
 - A held prompt opens a `question` item in the Inbox for the pane, with the
-  summary "waiting at a screen tuios does not recognise: look at the pane and
+  summary "waiting at a screen dartuios does not recognise: look at the pane and
   answer it". It closes when the prompt is typed or given up on, or when the
   pane's state changes.
 - The harness the daemon started stands in for detection while the wait runs,
@@ -805,8 +805,8 @@ takes the new params `agents`, `prompts` and `env`, and the new verb
 - `list-worktrees` rows gain `agent`, the agent as it was named, and
   `prompt_ready_by`. Sessions of `fan_started` gain `agent` and `command`, and
   the top-level `command` is an absolute path when the caller sent a `PATH`.
-- The `tuios fan` CLI sends its `PATH` in `env`. Against a daemon from before
-  `env` it retries without it, unless `--env` was passed. `tuios fan --host`
+- The `dartuios fan` CLI sends its `PATH` in `env`. Against a daemon from before
+  `env` it retries without it, unless `--env` was passed. `dartuios fan --host`
   sends no `env`, since a call over a link may not carry any, and refuses an
   explicit `--env`.
 
@@ -830,7 +830,7 @@ repository without a path. What changes:
 
 The new verb `bundle-worktree` changes no old one. A daemon from before it,
 or from before `start-agent`, answers `unknown_verb`, and one from before
-`repo_url` answers `invalid_params` naming it; the CLI turns both into "tuios
+`repo_url` answers `invalid_params` naming it; the CLI turns both into "dartuios
 on HOST is too old".
 
 **start-agent can run an agent headless over a protocol.** `start-agent`
@@ -861,7 +861,7 @@ a connection placed in a pane against them before the handler runs. With no
 every pane holds `admin`, which is everything a pane could do before, and
 every call is answered exactly as before. What changes:
 
-- Every pane is started with `TUIOS_PANE_GRANTS`, the grants it holds as it
+- Every pane is started with `DARTUIOS_PANE_GRANTS`, the grants it holds as it
   starts, comma separated, or `none`.
 - `hello` answers with `pane_grants: true`.
 - `new-window`, `start-agent` and `fan` take the new param `grants`. A call
@@ -895,7 +895,7 @@ every call is answered exactly as before. What changes:
   a client is attached, so its keys never reach the window manager. Calls
   from outside every pane, and from a pane holding `admin`, are answered as
   before.
-- `tuios get-window` reads with the new verb `get-window` instead of the
+- `dartuios get-window` reads with the new verb `get-window` instead of the
   client protocol's `GetWindow` command, so a pane holding `read` may run it
   on its own session. The verb answers as `GetWindow` did, from the attached
   client when there is one, so the `--json` output keeps its shape; with no
@@ -945,7 +945,7 @@ call answered ok either way. Now:
   times.
 - The result gains `sent_to` (`window` or `client`), `keys` (how many were
   sent), and for `window` the `window_id` and `window` name it went to.
-  `tuios send-keys` prints that as `sent 3 keys to window docs (3a42ab8f)`
+  `dartuios send-keys` prints that as `sent 3 keys to window docs (3a42ab8f)`
   and takes `--repeat` (`-N`) and `--json`.
 
 **A window's name wins over another window's title.** A window target that
@@ -956,8 +956,8 @@ titles only when no name matches. An ambiguous prefix or name still answers
 `window_not_found`; the message now lists the index, short id and name of
 each window it matched, and the hint says it matched more than one.
 
-**new-window can print the id alone.** `tuios new-window --print-id` prints
-the full window id and nothing else, for `id=$(tuios new-window --print-id)`.
+**new-window can print the id alone.** `dartuios new-window --print-id` prints
+the full window id and nothing else, for `id=$(dartuios new-window --print-id)`.
 
 **new-window waits for an attached client to place the window.** With a
 client attached, `new-window` now answers once the client has placed the
@@ -1035,7 +1035,7 @@ verbs change:
   the window state's `agent_meta` like any other, so `get-agent-state`,
   `list-agents` and older clients see them as ordinary metadata.
 - `set-agent-meta` refuses the keys `now` and `prompt`, set or removed, with
-  `invalid_params`: they are written by tuios from hook activity. `clear`
+  `invalid_params`: they are written by dartuios from hook activity. `clear`
   leaves them in place, whatever `source` it names.
 - `set-agent-meta` no longer pushes state for a call that changes nothing. A
   key set to the value it holds, by the source that wrote it, keeps its
@@ -1048,10 +1048,10 @@ verbs change:
   resume whose `types` names it gets a `not_retained` gap when one was
   published after `after_seq`. Read the ring with `agent-activity` instead.
 
-**tuios now feeds `set-agent-meta` itself.** No verb changes; what changes is
+**dartuios now feeds `set-agent-meta` itself.** No verb changes; what changes is
 who calls two of them, and a client that draws metadata now has some to draw:
 
-- A protocol pane (`tuios agent-proto`, what `start-agent --protocol` runs)
+- A protocol pane (`dartuios agent-proto`, what `start-agent --protocol` runs)
   calls `set-agent-meta` for its own pane with the source `protocol` and the
   keys `model`, `context`, `cost` and `plan`, each only when its value
   changes, and all of them again at the start of each turn, so values a
@@ -1070,12 +1070,12 @@ who calls two of them, and a client that draws metadata now has some to draw:
   `models` now says so in the transcript's first line: `connected to
   opencode 1.2 (Claude Sonnet 4)` where it said `connected to opencode 1.2`.
   A Codex pane said it before, and still does.
-- `tuios agent-statusline` (Claude Code's status line, opt in, and the
+- `dartuios agent-statusline` (Claude Code's status line, opt in, and the
   opencode and Kilo plugin) calls `set-agent-meta` for its own pane with the
   source `statusline` and the keys `model`, `context` and `cost`, at most once
   every 15 seconds per pane while they change, and never with a TTL. What
   the interval held back is sent at the end of the turn: by Claude Code's
-  `Stop` hook (`tuios agent-hook claude-code`, which then calls
+  `Stop` hook (`dartuios agent-hook claude-code`, which then calls
   `set-agent-meta` for its own pane as well as `set-agent-state`), and by
   the opencode plugin's `--turn-end`.
 - The opencode and Kilo plugin is version 3, so `integration status` reads a
@@ -1087,7 +1087,7 @@ who calls two of them, and a client that draws metadata now has some to draw:
 yet". What changes for a caller that uses none of them: nothing, since a pane
 has no queue until something is queued. For one that does:
 
-- `queue-prompt` for a pane that runs no agent tuios knows of is
+- `queue-prompt` for a pane that runs no agent dartuios knows of is
   `invalid_params`, and for `human` it is `no_keyboard`. A `human_nonce` that
   does not verify is `not_human`, not a quiet fall back to the caller's own
   name.
@@ -1122,7 +1122,7 @@ has no queue until something is queued. For one that does:
   queued on the same connection. `queue-prompt` and `cancel-queued` from a pane
   on another machine, forwarded through its report channel, are `forbidden`.
 
-**The tuios client replies, and reads the recap.** No verb changed; the
+**The dartuios client replies, and reads the recap.** No verb changed; the
 client now calls three it did not:
 
 - `queue-prompt` with `human_nonce` when the person sends a reply from the
@@ -1160,7 +1160,7 @@ existing caller:
   someone presses enter in it.
 - The daemon's shell facts gain the time the last command finished, which
   `compare-fan` reports as `last_command.at`. No other verb reports it.
-- `tuios fan keep` calls `keep-fan`, and falls back to the loop over
+- `dartuios fan keep` calls `keep-fan`, and falls back to the loop over
   `remove-worktree` it ran before when the daemon answers `unknown_verb`.
   Its output and `--json` shape are unchanged, except that a sibling left
   dirty is described by the daemon's refusal plus a sentence naming
@@ -1206,7 +1206,7 @@ instead of `internal` (see [review-diff](#review-diff),
 [review-note](#review-note) and [send-review](#send-review)). What changes for
 an existing caller:
 
-- `remove-worktree`, and so `keep-fan` and `tuios worktree rm`, drop the
+- `remove-worktree`, and so `keep-fan` and `dartuios worktree rm`, drop the
   review notes kept on the worktree they remove, whether or not the directory
   was still there. Their answers are unchanged.
 - A window closing drops the review notes kept for that pane. Nothing is
@@ -1234,9 +1234,9 @@ an existing caller:
   person was typed under the header "from the person" with nothing to tell it
   apart.
 - A pane whose process runs on another machine is `not_repo`, and its hint
-  now points at `tuios worktree pull` instead of a `HOST:SESSION` review:
+  now points at `dartuios worktree pull` instead of a `HOST:SESSION` review:
   reviewing a session on a linked machine is not supported yet, and
-  `tuios review` refuses a `HOST:` target before it dials.
+  `dartuios review` refuses a `HOST:` target before it dials.
 
 ### list-verbs
 
@@ -1284,7 +1284,7 @@ same lists the handlers enforce, so they cannot drift from the implementation.
 A verb's `returns` use the same shape. A returned field that can be `null` as
 well as its type carries `"nullable": true`, as `evidence_age_ms` does.
 
-From the shell, `tuios list-verbs` and `tuios list-verbs --json` render the same
+From the shell, `dartuios list-verbs` and `dartuios list-verbs --json` render the same
 catalog.
 
 ## Error codes
@@ -1366,7 +1366,7 @@ a window writes to that window's terminal either way. The routing is transparent
 caller: it is still one request and one response.
 
 A verb that genuinely cannot run without a renderer (tiling geometry, animation,
-theming) fails with `needs_client`, whose hint names the `tuios attach` command
+theming) fails with `needs_client`, whose hint names the `dartuios attach` command
 for that session. Everything else works headless.
 
 ### Who owns session state
@@ -1423,7 +1423,7 @@ script that kills a session does not leave a user staring at a dead UI. The
 ## Verbs
 
 This catalog is deliberately partial: it documents the verbs whose semantics
-need prose. `tuios list-verbs` is the authoritative, always-current list of
+need prose. `dartuios list-verbs` is the authoritative, always-current list of
 every verb the daemon registers, generated from the same tables the request
 validator uses.
 
@@ -1435,7 +1435,7 @@ Handshake: report the protocol range this daemon serves. Params: `client`,
 ### restrict-connection
 
 Give up authority on this connection for as long as it is open. It is how a
-caller that drives tuios for an agent, `tuios mcp` above all, makes the daemon
+caller that drives dartuios for an agent, `dartuios mcp` above all, makes the daemon
 hold every later call on the connection to what the agent was granted, so a
 prompt-injected agent cannot reach further through that caller than the grant.
 
@@ -1449,8 +1449,8 @@ Params:
 - `read_only`: refuse `send-text`, `send-keys`, `ask-agent`, `respond` and
   `fan`. The caller may still read, report its own pane's state and meta, and
   leave mail.
-- `pane_id`, `pane_token`: the caller's `$TUIOS_PANE_ID` and
-  `$TUIOS_PANE_TOKEN`, for when the kernel cannot place the caller.
+- `pane_id`, `pane_token`: the caller's `$DARTUIOS_PANE_ID` and
+  `$DARTUIOS_PANE_TOKEN`, for when the kernel cannot place the caller.
 
 The caller's pane is found first from the kernel's record of the process that
 connected (`SO_PEERCRED` on Linux, `LOCAL_PEERPID` on macOS), walked up to a
@@ -1513,7 +1513,7 @@ Under `own`:
   `read-agent-messages` may name only the caller's own inbox in `to`.
 
 This scopes what goes through a restricted connection. A process in a pane can
-still open a connection of its own with the tuios CLI and not restrict it; a
+still open a connection of its own with the dartuios CLI and not restrict it; a
 harness's shell tool can do that. What the restriction bounds is the MCP
 surface, which is what an agent reaches without writing a shell command, and
 the one a harness can offer without a shell tool at all. Pane grants, below,
@@ -1521,7 +1521,7 @@ bound that connection too.
 
 ### pane-grants
 
-Say what the caller may do through tuios. Every pane holds a set of grants,
+Say what the caller may do through dartuios. Every pane holds a set of grants,
 and the daemon holds every JSON verb and every client protocol message from a
 connection placed in a pane to them, before the handler runs and before
 `restrict-connection` is applied. A connection placed in no pane (the
@@ -1580,11 +1580,11 @@ How a connection is placed in a pane, strongest first:
    `request-approval` does. A process does not change panes, so the answer is
    kept for the connection once it names one.
 2. For a process the kernel places inside the daemon's panes but in no pane
-   yet, the `TUIOS_PANE_ID` in its environment, when it names a pane the
+   yet, the `DARTUIOS_PANE_ID` in its environment, when it names a pane the
    daemon is still creating. Every local pane is entered in the grant table
    before its process starts, so a process never runs before its grants hold.
 3. Where the daemon cannot read the peer's pid (Windows, the BSDs), the pane
-   id and token the connection presents with `pane-grants`. The `tuios` CLI
+   id and token the connection presents with `pane-grants`. The `dartuios` CLI
    does this on every connection it opens from a pane. The token is the
    `restrict-connection` token: an HMAC of the window id under a key picked at
    daemon start, so it names one pane and cannot be made for another.
@@ -1598,8 +1598,8 @@ call only the verbs every pane may.
 
 Params:
 
-- `pane_id`, `pane_token`: the caller's `$TUIOS_PANE_ID` and
-  `$TUIOS_PANE_TOKEN`. Used only where the kernel places the caller in no
+- `pane_id`, `pane_token`: the caller's `$DARTUIOS_PANE_ID` and
+  `$DARTUIOS_PANE_TOKEN`. Used only where the kernel places the caller in no
   pane; a `pane_id` that disagrees with the kernel is `forbidden`, and so is a
   token that does not match. A connection placed by token stays in that pane
   for as long as it is open, and a second pane's token is `forbidden`.
@@ -1621,15 +1621,15 @@ A refusal:
 ```json
 {"error": {"code": "forbidden",
  "message": "send-text is refused for this pane: writing into the pane's own session needs the write grant",
- "hint": {"verb": "pane-grants", "command": "tuios pane-grants",
-  "detail": "Pane 7f3c1a2b holds read, the grants it was given. Nothing was done. The person can give this pane more with tuios set-pane-grants -w 7f3c1a2b --grants <names>, or every pane started with none with mode and grants under [agents.permissions] in config.toml."}}}
+ "hint": {"verb": "pane-grants", "command": "dartuios pane-grants",
+  "detail": "Pane 7f3c1a2b holds read, the grants it was given. Nothing was done. The person can give this pane more with dartuios set-pane-grants -w 7f3c1a2b --grants <names>, or every pane started with none with mode and grants under [agents.permissions] in config.toml."}}}
 ```
 
 The daemon log records every refusal. For a pane without `admin`, a verb that
 takes `session` and names none gets the pane's own session, and a subscription
 carries only the sessions the pane may read, as they stood at its subscribe.
 
-This scopes accidents and prompt-injected agents that use tuios the ordinary
+This scopes accidents and prompt-injected agents that use dartuios the ordinary
 way, not a determined local attacker: a process that leaves its pane on
 purpose (a double fork with a cleaned environment, a service manager) is not
 placed in it, and is then treated as the person, as the human checks are. See
@@ -1647,7 +1647,7 @@ From outside every pane anything may be given. From a pane, the target must be
 its own pane unless it holds `admin`, and what it gives, or the default for
 `reset`, must be something it holds, so a pane can narrow itself and never
 widen itself. Refused over a link and for a window on another machine. The
-change applies to the pane's next call; `TUIOS_PANE_GRANTS` in the running
+change applies to the pane's next call; `DARTUIOS_PANE_GRANTS` in the running
 process is not rewritten. The grants are saved with the window and hold again
 after a restore.
 
@@ -1782,7 +1782,7 @@ focused window).
 
 It is a read, like `list-windows`: a pane holding `read` may call it on its
 own session and its fan group, and a restricted connection on a session in
-reach. `tuios get-window` uses it.
+reach. `dartuios get-window` uses it.
 
 Request:
 
@@ -1956,7 +1956,7 @@ input starts, C when the command runs and `D;<status>` when it finishes. fish
 and zsh send them with prompt integration on, bash with a setup, and every
 shell a terminal like Ghostty, kitty or WezTerm injects its script into. The
 daemon reads them from the pane's own output, so nothing needs installing in
-tuios.
+dartuios.
 
 Params:
 
@@ -2120,7 +2120,7 @@ Request:
 Response:
 
 ```json
-{"result": {"type": "screenshot", "path": "/home/u/Pictures/tuios/tuios-build-2026-08-25-204003.svg",
+{"result": {"type": "screenshot", "path": "/home/u/Pictures/dartuios/dartuios-build-2026-08-25-204003.svg",
             "host": "daemon", "format": "svg", "cols": 78, "rows": 22, "bytes": 2407, "warnings": []}}
 ```
 
@@ -2131,7 +2131,7 @@ machine the path is on, so a script never has to assume; a CLI reaching the
 daemon over its unix socket is on that machine by construction.
 
 `warnings` is always present and empty when there is nothing to say. The one
-that matters is the no theme case: tuios can never read the host terminal's
+that matters is the no theme case: dartuios can never read the host terminal's
 palette, so a session with no theme set renders basic and indexed colors in the
 xterm reference defaults and says so. Truecolor cells are exact regardless, and
 `theme` re renders in any installed palette.
@@ -2183,7 +2183,7 @@ Response:
 ### new-worktree
 
 Create a git worktree of a repository and a session in it. The worktree goes
-under `$XDG_DATA_HOME/tuios/worktrees/<repo>/<branch>`, and the session is
+under `$XDG_DATA_HOME/dartuios/worktrees/<repo>/<branch>`, and the session is
 named `<repo>-<branch>` with every slash in the branch turned into a hyphen. A
 branch that does not exist is created from `base`, or from HEAD.
 
@@ -2199,9 +2199,9 @@ remote (`https://github.com/o/r`, `git@github.com:o/r.git` and
 (absolute, or `~/` for the daemon's home) three levels deep, or when that is
 omitted under `~/src`, `~/dev`, `~/code`, `~/projects`, `~/repos`, `~/git`,
 `~/work`, `~/go/src`, the home itself one level deep, and
-`$XDG_DATA_HOME/tuios/repos`. Two checkouts of one origin are refused with
+`$XDG_DATA_HOME/dartuios/repos`. Two checkouts of one origin are refused with
 `invalid_params`, the hint listing both, and none is `repo_not_found`. With
-`clone`, none is cloned into `repos_root` or `$XDG_DATA_HOME/tuios/repos`. A
+`clone`, none is cloned into `repos_root` or `$XDG_DATA_HOME/dartuios/repos`. A
 clone fetches only `https`, `ssh` and `git` URLs, or `user@host:path`: a local
 path, a `file` URL, a transport helper such as `ext::` or anything starting
 with a hyphen is refused before git runs, and git runs with
@@ -2219,7 +2219,7 @@ Response:
 
 ```json
 {"result": {"type": "worktree_created", "session": "api-feat-retry", "repo": "api", "repo_root": "/src/api",
- "branch": "feat/retry", "created_branch": true, "path": "/home/u/.local/share/tuios/worktrees/api/feat-retry",
+ "branch": "feat/retry", "created_branch": true, "path": "/home/u/.local/share/dartuios/worktrees/api/feat-retry",
  "window_id": "...", "pty_id": "..."}}
 ```
 
@@ -2246,7 +2246,7 @@ Response:
 ```json
 {"result": {"type": "worktree_list", "total": 1, "worktrees": [
   {"session": "api-feat-retry", "repo": "api", "repo_root": "/src/api", "branch": "feat/retry",
-   "path": "/home/u/.local/share/tuios/worktrees/api/feat-retry", "base": "main", "group": "",
+   "path": "/home/u/.local/share/dartuios/worktrees/api/feat-retry", "base": "main", "group": "",
    "managed": true, "gone": false, "state": "working", "harness": "claude-code", "windows": 1,
    "attached": false, "prompt_status": "", "prompt_note": "", "changes": 3, "ahead": 1}]}}
 ```
@@ -2259,7 +2259,7 @@ rolled up over the session's windows.
 
 Remove a worktree session's worktree with `git worktree remove`, and kill the
 session. Uncommitted changes are refused with `worktree_dirty` unless `stash`
-moves them into the repository's stash as `tuios: <branch>` or `force` discards
+moves them into the repository's stash as `dartuios: <branch>` or `force` discards
 them. `force` is the only option that discards work. The branch is never
 deleted, and the daemon never runs `git worktree prune`.
 
@@ -2275,8 +2275,8 @@ Response:
 
 ```json
 {"result": {"type": "worktree_removed", "session": "api-feat-retry", "branch": "feat/retry",
- "path": "/home/u/.local/share/tuios/worktrees/api/feat-retry", "repo": "api", "changes": 3,
- "stashed": true, "stash_message": "tuios: feat/retry", "discarded": false, "session_killed": true, "branch_kept": true}}
+ "path": "/home/u/.local/share/dartuios/worktrees/api/feat-retry", "repo": "api", "changes": 3,
+ "stashed": true, "stash_message": "dartuios: feat/retry", "discarded": false, "session_killed": true, "branch_kept": true}}
 ```
 
 ### fan
@@ -2298,7 +2298,7 @@ session: `pending`, `held`, `sent`, `not_sent` with a `prompt_note`, or
 no sign of taking it. A stalled prompt may still be in the agent's input box.
 `held` is a prompt whose agent has not been ready for 30 seconds and is not on
 `needs_input`: the Inbox holds a `question` for its pane saying it waits at a
-screen tuios does not recognise, and the prompt is typed as soon as the agent
+screen dartuios does not recognise, and the prompt is typed as soon as the agent
 is ready. The question closes when the prompt is typed or given up on, or when
 the pane's state changes. Once the prompt is typed, `prompt_ready_by` says on
 what: `idle`, `done`, or `quiet` for `unknown` on a harness that cannot show
@@ -2323,13 +2323,13 @@ programs are looked up), and `repo_url`, `repos_root` and `clone` as for
 `new-worktree`. The result names the checkout used as `repo_root`.
 
 `env` rules: at most 64 variables, a value at most 32 KiB and all of them at
-most 256 KiB; a name is `[A-Za-z_][A-Za-z0-9_]*`; `TUIOS_` names, `TMUX` and
-`TMUX_PANE` are refused with `invalid_params`, since tuios sets the first for
+most 256 KiB; a name is `[A-Za-z_][A-Za-z0-9_]*`; `DARTUIOS_` names, `TMUX` and
+`TMUX_PANE` are refused with `invalid_params`, since dartuios sets the first for
 every pane and strips the others on purpose; a call from another machine (over
 a link, or from a hosted pane) that passes `env` is refused with `forbidden`,
 because its variables describe that machine. The variables go to the process
 only: they are not logged, not saved, and a pane a restore brings back starts
-with the daemon's environment. The `TUIOS_` variables and `TERM` are set after
+with the daemon's environment. The `DARTUIOS_` variables and `TERM` are set after
 them, so they cannot be overridden.
 
 Each entry of `sessions` gains `agent` (the harness id, empty for a program no
@@ -2382,7 +2382,7 @@ argv after the agent's own words), `name` (the window's name, which
 The agent is checked before a clone, so a missing agent does not cost one. A
 call that reaches the daemon
 over a host link is refused with `forbidden` when it carries `env`, since the
-variables describe the caller's machine. `tuios start-agent -s host:session`
+variables describe the caller's machine. `dartuios start-agent -s host:session`
 therefore sends no `env` unless `--env` was passed, and the agent is looked up
 on the far machine's `PATH`.
 
@@ -2421,13 +2421,13 @@ in its own TUI, and the pane shows the conversation as a transcript:
   words when neither they nor `args` name it, between the two, so `args` are
   the app-server's own.
 
-The pane's process is this daemon's own binary, `tuios agent-proto --protocol
+The pane's process is this daemon's own binary, `dartuios agent-proto --protocol
 P --harness H -- <agent argv>`, and it execs the agent's argv directly, with
 pipes for its stdin and stdout, in a session of its own with no controlling
 terminal. It advertises no file system and no terminal capability, and answers
 every request it does not handle (`fs/*`, `terminal/*`, MCP elicitations,
 dynamic tool calls) with method not found, so the agent can do nothing
-through tuios that it could not do in its own TUI. Everything it shows is
+through dartuios that it could not do in its own TUI. Everything it shows is
 cleaned of escape sequences and control characters before it reaches the pane.
 
 It reports the pane's state with `set-agent-state` under the harness the
@@ -2482,7 +2482,7 @@ fan. A named or recorded base is taken through its merge base with `HEAD`.
 
 ```json
 {"result": {"type": "review_diff", "session": "api-fan-retry-2", "window": "4be1c09a-...",
- "repo_root": "/src/api", "worktree": "/home/u/.local/share/tuios/worktrees/api/fan-retry-2",
+ "repo_root": "/src/api", "worktree": "/home/u/.local/share/dartuios/worktrees/api/fan-retry-2",
  "base": "main", "base_sha": "1a760e8f...", "uncommitted": false, "tree_sha": "9d0c...",
  "files": [
   {"path": "api/retry.go", "status": "M", "added": 12, "removed": 1, "hunks": [
@@ -2671,11 +2671,11 @@ with `sh -c` (`cmd.exe /c` on Windows). The call returns once the windows are
 open; each result lands in the session's worktree record as `verify`, which
 reaches clients with the ordinary state push and which `compare-fan` reports.
 
-- The command is always the caller's, at most 4096 bytes. tuios never reads a
+- The command is always the caller's, at most 4096 bytes. dartuios never reads a
   check from the repository, so cloning a repository cannot make `fan` run
   its code.
 - The window holds the grants `none`, whatever the default is, so the check
-  cannot call tuios.
+  cannot call dartuios.
 - The check's exit status reaches the daemon on a pipe the check itself does
   not inherit, so nothing it prints can pass for its status. A check that
   passes closes its window. One that fails keeps it open, with the output, and
@@ -2689,7 +2689,7 @@ reaches clients with the ordinary state push and which `compare-fan` reports.
   so. When nothing could be started the call is `internal`, with the reasons
   in the hint.
 - `env` adds variables for the check, with the rules of `fan`'s `env`. The
-  tuios CLI sends its `PATH`.
+  dartuios CLI sends its `PATH`.
 
 A pane needs the `fan` grant, and reaches its own fan group; the checks start
 only in the sessions it reaches. Over a link it needs `open` and `write`.
@@ -2733,16 +2733,16 @@ Params: `session` (required), `stash`, `force`.
 ```json
 {"result": {"type": "fan_kept", "kept": "api-fan-retry-2", "branch": "fan/retry-2", "group": "fan/retry",
  "repo": "api", "left": 1, "removed": [
-  {"session": "api-fan-retry", "removed": true, "branch": "fan/retry", "path": "/home/u/.local/share/tuios/worktrees/api/fan-retry",
+  {"session": "api-fan-retry", "removed": true, "branch": "fan/retry", "path": "/home/u/.local/share/dartuios/worktrees/api/fan-retry",
    "changes": 0, "stashed": false, "discarded": false, "session_killed": true, "branch_kept": true},
   {"session": "api-fan-retry-3", "removed": false, "code": "worktree_dirty",
-   "note": "/home/u/.local/share/tuios/worktrees/api/fan-retry-3 holds 1 uncommitted change. Nothing was removed."}]}}
+   "note": "/home/u/.local/share/dartuios/worktrees/api/fan-retry-3 holds 1 uncommitted change. Nothing was removed."}]}}
 ```
 
 ### bundle-worktree
 
 Read a worktree session's work out in chunks, so it can cross a link that caps
-a reply line at 16 MB. `tuios worktree pull` is the caller. The transfer is the
+a reply line at 16 MB. `dartuios worktree pull` is the caller. The transfer is the
 branch's commits as a git bundle, then the uncommitted work, untracked files
 included, as a binary patch against HEAD. The patch is read through a
 temporary index, so the worktree's own index is not touched.
@@ -2907,14 +2907,14 @@ sends none of the fields is handled exactly as before. A daemon older than them 
 reject them: params are decoded leniently, so it ignores the fields and applies
 the report without them. A client that depends on one, `if_state` above all,
 has to ask `list-verbs` for `set-agent-state` first and check the field is
-listed. `tuios agent-hook` and `tuios set-agent-state --if-state` do, and the
+listed. `dartuios agent-hook` and `dartuios set-agent-state --if-state` do, and the
 hook sends `activity` only to a daemon that lists it.
 
 ### set-agent-session
 
 Store the conversation id a harness reports for a pane, without changing the
 pane's agent state, the source that holds it, or its harness attribution. It is
-what `tuios agent-hook` sends for a harness whose hooks can name the
+what `dartuios agent-hook` sends for a harness whose hooks can name the
 conversation but cannot be trusted with its state, so the pane's screen rules
 keep deciding the state. Params: `session`, `window`, `harness` (required),
 `agent_session_id` (required, at most 256 bytes), `harness_pid`.
@@ -2949,7 +2949,7 @@ Security: it grants a subset of what `set-agent-state` with `agent_session_id`
 already grants any socket caller, the one field and no state.
 
 Wire compatibility: a new verb. An older daemon answers `unknown_verb`, and
-`tuios agent-hook` asks `list-verbs` first and sends nothing to a daemon
+`dartuios agent-hook` asks `list-verbs` first and sends nothing to a daemon
 without it.
 
 ### resume-agent
@@ -3014,7 +3014,7 @@ Wire compatibility: a new verb. An older daemon answers `unknown_verb`.
 ### resolve-pane
 
 Name the pane a process runs in, for a hook reporter whose environment lost
-`TUIOS_PANE_ID`. Params: `sid` (the caller's session id) and `pids` (its
+`DARTUIOS_PANE_ID`. Params: `sid` (the caller's session id) and `pids` (its
 ancestors, nearest first). A pane's shell leads the session of the pane's
 terminal, so `sid` is matched first; then the first ancestor that is a pane's
 shell. Only panes on the daemon's own machine are matched.
@@ -3048,7 +3048,7 @@ a TTL out of range is `invalid_params`; a cut value is not an error, and its
 key is listed in `truncated`.
 
 Reserved keys: `now` (what the agent is doing, such as `Bash: go test ./...`)
-and `prompt` (the first line of the last prompt) are written by tuios from the
+and `prompt` (the first line of the last prompt) are written by dartuios from the
 `activity` a hook reports with `set-agent-state`, with source `activity`. This
 verb refuses them with `invalid_params`, and its `clear` leaves them. A hook
 that names a model also sets `model`, with source `hook`, which a caller may
@@ -3083,10 +3083,10 @@ Response:
 
 `get-agent-state` and each `list-agents` entry carry the same `meta` object.
 
-Keys tuios writes itself, each only when the harness states it: `model`,
+Keys dartuios writes itself, each only when the harness states it: `model`,
 `context` (`42%`), `cost` (`$1.20`, or the amount and an ISO 4217 code for
 another currency) and `plan` (`3/7`). The source says which feed wrote them:
-`statusline` for `tuios agent-statusline` (Claude Code's status line and the
+`statusline` for `dartuios agent-statusline` (Claude Code's status line and the
 opencode plugin), `protocol` for a protocol pane. Both write only their own
 pane, and a caller may overwrite or clear them like any other key; they are
 display only (see [Agent metadata](AGENT_STATE.md#what-feeds-it)).
@@ -3197,7 +3197,7 @@ opened again from the outbox, which is saved on its own and survives a
 restart whole.
 
 Wire compatibility: new verb and new event type. An older daemon answers
-`unknown_verb`, and the tuios client then shows the Inbox as unavailable.
+`unknown_verb`, and the dartuios client then shows the Inbox as unavailable.
 
 ### Selectors
 
@@ -3334,7 +3334,7 @@ nothing on the host changes, and the item wakes when the host changes it or
 its time comes. `unread` does not reach another machine's panes.
 
 A client finds out whether a daemon has this verb by asking `list-verbs` for
-it once per attach; tuios's own client hides its snooze, undo and unread keys
+it once per attach; dartuios's own client hides its snooze, undo and unread keys
 from a daemon that does not.
 
 Only the person can: the call is refused to a pane without `admin`
@@ -3424,9 +3424,9 @@ Wire compatibility: new verbs. An older daemon answers `unknown_verb`.
 ### request-approval
 
 Hold a pane's permission prompt until the person answers it in the Inbox.
-`tuios agent-hook` calls it; a script has little reason to. It is for a harness
+`dartuios agent-hook` calls it; a script has little reason to. It is for a harness
 that takes a decision back from its hook: Claude Code's and Qwen Code's `PermissionRequest`
-hook, and opencode or Kilo through the plugin tuios installs. The call does not
+hook, and opencode or Kilo through the plugin dartuios installs. The call does not
 answer until the person answers with `reply-approval` or the hold ends, and it
 is opt in: nothing is held unless `[agents.approvals]` in the config names the
 harness, or the pane is one `start-agent` opened with `protocol` (see
@@ -3470,7 +3470,7 @@ Response, when the person answered:
 
 `decision` is `once`, `always` or `deny`, or empty when there is none. An empty
 decision means the harness should ask in its pane, as it would have without
-tuios, and `reason` says why:
+dartuios, and `reason` says why:
 
 | `reason` | Meaning |
 | --- | --- |
@@ -3489,7 +3489,7 @@ tuios, and `reason` says why:
 Who may call it: it is refused with `forbidden` over a link, and a caller inside
 a pane of this daemon may only hold its own pane's prompt (the daemon places the
 caller by its process ancestry, then its controlling terminal, then its
-`TUIOS_PANE_ID`; a caller it cannot place is refused). What the caller gets back
+`DARTUIOS_PANE_ID`; a caller it cannot place is refused). What the caller gets back
 is the answer to the prompt it asked about, nothing more.
 
 Send nothing else on the connection while the call waits. The daemon reads it
@@ -3552,7 +3552,7 @@ database, infrastructure, outside the worktree) unless `builtin = false`, and
 the person's own. See [Risk rules](AGENT_STATE.md#risk-rules) for what each one
 matches. They run on a held call's `tool` and `target` when the hook names
 them, else on its `summary`, and on the line of every `approval` item nobody
-holds (tuios's own hooks report `approve <Tool>: <what>`, which is read as that
+holds (dartuios's own hooks report `approve <Tool>: <what>`, which is read as that
 tool and argument; any other line is read as a command). The names of the rules
 that matched are the item's `risk`. That line is clipped, so a clipped one also
 carries `cut short` in `risk`, which is acknowledged like a rule. A daemon that
@@ -3727,9 +3727,9 @@ When the link drops, the host's items are marked `stale` with `seen_at`, and
 and `fetched_at`. On a redial the stream resumes from the last `seq` it
 delivered; a `gap` from the host, or a host that restarted, lists again.
 
-A host whose tuios has no `list-attention` or no resumable stream is followed
+A host whose dartuios has no `list-attention` or no resumable stream is followed
 by polling, as every host was before: `list-hosts` reports `events: "polling"`
-with an `events_note` that names the update, and the tuios client keeps its
+with an `events_note` that names the update, and the dartuios client keeps its
 poll for it.
 
 Everything a host sends is data from another machine. Lines are bounded to 1
@@ -3747,7 +3747,7 @@ reports travel back over a connection the owner opened, since the link is
 dialled one way:
 
 1. The owner sends `window`, its window id, with `open-pane`. The far daemon
-   exports it to the process as `TUIOS_PANE_ID` and returns `calls_token`.
+   exports it to the process as `DARTUIOS_PANE_ID` and returns `calls_token`.
 2. The owner calls `pane-calls` with `pane` and `token` on a new connection.
    After the reply the connection carries requests from the far daemon,
    `{"id":1,"verb":"set-agent-state","params":{...}}`, one per line, and the
@@ -3785,7 +3785,7 @@ How the grant is held to that:
   pane are in flight, and lines are bounded to 1 MiB.
 
 An owner from before this sends no `window`, and the far daemon exports no
-`TUIOS_PANE_ID` and answers a call naming the pane id with
+`DARTUIOS_PANE_ID` and answers a call naming the pane id with
 `protocol_mismatch`. A far daemon from before this refuses `open-pane` with
 `invalid_params`, because it checks every request against its schema and its
 `open-pane` has no `window`. Nothing is spawned by that refusal and the
@@ -3835,7 +3835,7 @@ The asking daemon sends it when a window is closed on purpose. Result: `pane`,
 ### What a linked machine may do here
 
 A connection that arrives over a link is accepted on a link socket
-(`<socket>.link` or `<socket>.link-human`), which only `tuios stdio-proxy` on
+(`<socket>.link` or `<socket>.link-human`), which only `dartuios stdio-proxy` on
 this machine dials. The daemon marks it before a byte is read, and holds every
 verb and every binary message on it to the policy for the machine it came from.
 The policy is read from the `[hosts]` table on this machine: the built-in
@@ -3866,7 +3866,7 @@ The default grants `list`, `mail`, `open` and `write`.
 A verb or message with no entry in the table is refused over a link. A test
 holds the table to the verb registry, so a new verb cannot ship without one.
 
-**Naming the machine.** `tuios stdio-proxy` sends `link-peer` as the first
+**Naming the machine.** `dartuios stdio-proxy` sends `link-peer` as the first
 line of every connection it opens:
 
 ```json
@@ -3890,7 +3890,7 @@ run a shell, and can claim any name. Pin it in `authorized_keys` on this
 machine:
 
 ```
-command="tuios stdio-proxy --as laptop",restrict ssh-ed25519 AAAA...
+command="dartuios stdio-proxy --as laptop",restrict ssh-ed25519 AAAA...
 ```
 
 **Holding mail.** With `hold_mail`, `send-agent-message` over the link to
@@ -3996,7 +3996,7 @@ The event type `agent-activity` carries each entry as it is recorded, as
 `entry`, to a subscription whose `types` names it. It is not replayed on a
 resume; read the ring instead.
 
-`tuios agent-log` is this verb on the command line.
+`dartuios agent-log` is this verb on the command line.
 
 ### Agent review, triage and queue verbs
 
@@ -4162,7 +4162,7 @@ Two cases are worth stating plainly because they are easy to guess wrong:
   z-order, and alt-screen flags move constantly as a TUI renders and re-tiles;
   none of them produce events, so an attached client does not flood the stream.
 
-Restoring a session (daemon cold start, or `tuios resurrect`) raises
+Restoring a session (daemon cold start, or `dartuios resurrect`) raises
 `session-created` followed by a `window-created` for each restored window, since
 from a subscriber's point of view those windows come into existence at that
 moment. A plain subscribe carries what happens from the subscription onward,
@@ -4352,7 +4352,7 @@ Response on timeout:
 
 ## A client built on these verbs: the tmux shim
 
-`tuios tmux` and the `tmux` link `tuios tmux-shim` installs answer tmux
+`dartuios tmux` and the `tmux` link `dartuios tmux-shim` installs answer tmux
 commands by calling the verbs above on the caller's own session. They add no
 verb and change none, and the wire is unchanged: an older daemon serves the
 shim as well as a new one. The mapping, for a reader of a daemon log:
@@ -4360,7 +4360,7 @@ shim as well as a new one. The mapping, for a reader of a daemon log:
 | tmux | verbs |
 |------|-------|
 | any target | `list-windows`, `list-workspaces` (a pane `%N` is a window, N derived from its id; a window `@N` is workspace N) |
-| `split-window`, `new-window` | `new-window` with `workspace`, `focus`, `cwd`, and `command` running `tuios tmux-pane`; `new-window -n` adds `set-workspace-name` |
+| `split-window`, `new-window` | `new-window` with `workspace`, `focus`, `cwd`, and `command` running `dartuios tmux-pane`; `new-window -n` adds `set-workspace-name` |
 | `send-keys` | `send-text`, with tmux key names turned into bytes by the shim |
 | `capture-pane -p` | `capture-pane`, `source` visible, and recent when `-S` reaches into history |
 | `kill-pane`, `kill-window` | `close-window` |
@@ -4369,7 +4369,7 @@ shim as well as a new one. The mapping, for a reader of a daemon log:
 | `respawn-pane -k` | `pane-grants`, then a request on the pane holder's unix socket. From a pane without `admin`, only the caller's own pane is respawned |
 
 Every call names the caller's session, so nothing the shim does reaches
-another. It holds no authority the caller's own tuios CLI does not. See
+another. It holds no authority the caller's own dartuios CLI does not. See
 [TMUX_SHIM.md](TMUX_SHIM.md).
 
 ## Examples from a shell
@@ -4377,7 +4377,7 @@ another. It holds no authority the caller's own tuios CLI does not. See
 Create a detached session, drive it, and read it back:
 
 ```sh
-SOCK="${XDG_RUNTIME_DIR:-/tmp/tuios-$(id -u)}/tuios/tuios.sock"
+SOCK="${XDG_RUNTIME_DIR:-/tmp/dartuios-$(id -u)}/dartuios/dartuios.sock"
 
 # List windows in the most recently active session.
 printf '{"id":1,"verb":"list-windows"}\n' | socat - "UNIX-CONNECT:$SOCK" | jq .
@@ -4396,10 +4396,10 @@ printf '{"verb":"subscribe","params":{"types":["output","bell","window-exit"]}}\
   | socat - "UNIX-CONNECT:$SOCK" | jq -c .
 ```
 
-`tuios subscribe` does the last one without socat, and resumes with
+`dartuios subscribe` does the last one without socat, and resumes with
 `--after-seq` and `--boot-id`.
 
-The tuios CLI speaks this protocol directly. `tuios ls`, `tuios kill-session`,
-`tuios send-keys`, `tuios capture-pane`, `tuios list-windows`,
-`tuios session-info`, `tuios set-config`, and `tuios get-config` are all verb
+The dartuios CLI speaks this protocol directly. `dartuios ls`, `dartuios kill-session`,
+`dartuios send-keys`, `dartuios capture-pane`, `dartuios list-windows`,
+`dartuios session-info`, `dartuios set-config`, and `dartuios get-config` are all verb
 protocol clients.

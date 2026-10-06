@@ -111,7 +111,7 @@ func TestGhosttyResizeSplitsAFullWidthLine(t *testing.T) {
 // Ghostty's own answer to this is the OSC 133 redraw extension: on resize it
 // blanks the prompt area so the shell can repaint it cleanly. libghostty's C
 // API turns that off at construction ("embedders don't necessarily install
-// Ghostty's shell integration"), which is why tuios does not get it and a
+// Ghostty's shell integration"), which is why dartuios does not get it and a
 // ghostty window does. Enabling it clears the stale rows but not the extra
 // one, so it is not on its own a fix.
 func TestGhosttyResizeCostsALinePerShrinkWhenAShellRepaints(t *testing.T) {

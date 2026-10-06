@@ -21,14 +21,14 @@ func (b *byteCounter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-// idleWireBudget bounds the bytes tuios may write during a 10s idle window. A
+// idleWireBudget bounds the bytes dartuios may write during a 10s idle window. A
 // held frame-skip writes nothing; the budget tolerates a stray settling frame
 // or two but is far below what a leaking 10Hz render of changing content costs.
 const idleWireBudget = 2048
 
 // TestIdleCostStaysLow is the idle-cost regression guard for the whole program:
 // one client, three idle shells, clock off. Over a 10s idle window the frame
-// skip must hold, so tuios writes ~nothing to the wire. A future milestone that
+// skip must hold, so dartuios writes ~nothing to the wire. A future milestone that
 // reintroduces a timer-driven render trips this. Tick-work at idle is guarded
 // precisely in-process by BenchmarkIdleTick / TestIdleTickSkipsScans; this test
 // guards the render count on the real binary. See docs/perf.md.
@@ -37,7 +37,7 @@ func TestIdleCostStaysLow(t *testing.T) {
 	statsPath := filepath.Join(t.TempDir(), "tickstats")
 	term, _ := start(t, startOpts{
 		out: &wire,
-		env: []string{"TUIOS_STATS_FILE=" + statsPath},
+		env: []string{"DARTUIOS_STATS_FILE=" + statsPath},
 	})
 	waitBoot(t, term)
 

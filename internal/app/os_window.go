@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/ui"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/ui"
 )
 
 // ToggleFloating toggles the focused window between floating and tiled mode.

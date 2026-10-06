@@ -3,12 +3,12 @@ package session
 import (
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // The pane's window title as an agent-state signal.
 //
-// tuios has always parsed OSC 0 and OSC 2 and kept the string for the window's
+// dartuios has always parsed OSC 0 and OSC 2 and kept the string for the window's
 // name, and no tier ever read it for what it says about the agent. The agents
 // are already writing to it: Claude Code puts a spinner there while it works,
 // Codex writes that an action is required when it blocks. It is the cheapest

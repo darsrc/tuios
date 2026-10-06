@@ -8,8 +8,8 @@ import (
 )
 
 // TestAgentLogFromRealHooks drives the real binary end to end: Claude Code
-// hook payloads through `tuios agent-hook`, exactly as the installed hooks run
-// it, then `tuios agent-log` reading back what the daemon kept for the pane
+// hook payloads through `dartuios agent-hook`, exactly as the installed hooks run
+// it, then `dartuios agent-log` reading back what the daemon kept for the pane
 // and summarising it with --recap. It also checks that set-agent-meta refuses
 // the key the hooks now own.
 //
@@ -19,13 +19,13 @@ import (
 func TestAgentLogFromRealHooks(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "e2e-agent", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-agent", "--detach"); err != nil {
 		t.Fatalf("create the agent's session: %v\n%s", err, out)
 	}
 
 	hook := func(payload string) {
 		t.Helper()
-		cmd := exec.Command(tuiosBin, "agent-hook", "claude-code", "--session", "e2e-agent", "--window", "0", "--timeout", "10s")
+		cmd := exec.Command(dartuiosBin, "agent-hook", "claude-code", "--session", "e2e-agent", "--window", "0", "--timeout", "10s")
 		cmd.Dir = workDirIn(t, base)
 		cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 		for _, key := range xdgKeys {
@@ -42,7 +42,7 @@ func TestAgentLogFromRealHooks(t *testing.T) {
 	hook(`{"hook_event_name":"PostToolUse","session_id":"e2e-log","tool_name":"Write","tool_input":{"file_path":"api/retry.go","content":"package api"}}`)
 	hook(`{"hook_event_name":"Stop","session_id":"e2e-log","last_assistant_message":"The test still fails.\nHere is why."}`)
 
-	out, err := tuiosCLI(t, base, "agent-log", "-s", "e2e-agent", "-w", "0")
+	out, err := dartuiosCLI(t, base, "agent-log", "-s", "e2e-agent", "-w", "0")
 	if err != nil {
 		t.Fatalf("agent-log: %v\n%s", err, out)
 	}
@@ -58,7 +58,7 @@ func TestAgentLogFromRealHooks(t *testing.T) {
 		}
 	}
 
-	out, err = tuiosCLI(t, base, "agent-log", "-s", "e2e-agent", "-w", "0", "--recap")
+	out, err = dartuiosCLI(t, base, "agent-log", "-s", "e2e-agent", "-w", "0", "--recap")
 	if err != nil {
 		t.Fatalf("agent-log --recap: %v\n%s", err, out)
 	}
@@ -73,7 +73,7 @@ func TestAgentLogFromRealHooks(t *testing.T) {
 		}
 	}
 
-	if out, err := tuiosCLI(t, base, "set-agent-meta", "-s", "e2e-agent", "-w", "0", "now=typing"); err == nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-meta", "-s", "e2e-agent", "-w", "0", "now=typing"); err == nil {
 		t.Errorf("set-agent-meta wrote the reserved key now:\n%s", out)
 	}
 
@@ -81,11 +81,11 @@ func TestAgentLogFromRealHooks(t *testing.T) {
 	// activity. The pane at rest must not keep showing the tool it ran.
 	hook(`{"hook_event_name":"UserPromptSubmit","session_id":"e2e-log","prompt":"lint it"}`)
 	hook(`{"hook_event_name":"PreToolUse","session_id":"e2e-log","tool_name":"Bash","tool_input":{"command":"make lint"}}`)
-	if out, _ := tuiosCLI(t, base, "get-agent-state", "-s", "e2e-agent", "-w", "0", "--json"); !strings.Contains(out, `"now": "Bash: make lint"`) {
+	if out, _ := dartuiosCLI(t, base, "get-agent-state", "-s", "e2e-agent", "-w", "0", "--json"); !strings.Contains(out, `"now": "Bash: make lint"`) {
 		t.Fatalf("the running tool is not in now:\n%s", out)
 	}
 	hook(`{"hook_event_name":"Notification","notification_type":"idle_prompt","session_id":"e2e-log"}`)
-	out, err = tuiosCLI(t, base, "get-agent-state", "-s", "e2e-agent", "-w", "0", "--json")
+	out, err = dartuiosCLI(t, base, "get-agent-state", "-s", "e2e-agent", "-w", "0", "--json")
 	if err != nil || !strings.Contains(out, `"state": "idle"`) {
 		t.Fatalf("get-agent-state after idle_prompt: %v\n%s", err, out)
 	}

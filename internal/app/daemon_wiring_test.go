@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // daemonClientHandlers lists the TUIClient's session-wide callbacks by

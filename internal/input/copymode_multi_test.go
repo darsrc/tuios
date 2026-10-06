@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // Multi copy mode: one copy-mode key drives every pane of the multifocus set.
@@ -341,8 +341,8 @@ func TestMultiCopySaveToFile(t *testing.T) {
 	if s == nil {
 		t.Fatal("Y did not open the save prompt")
 	}
-	if !strings.HasPrefix(s.Path, "~/tuios-copy-") || !strings.HasSuffix(s.Path, ".txt") {
-		t.Errorf("default path %q, want ~/tuios-copy-<time>.txt", s.Path)
+	if !strings.HasPrefix(s.Path, "~/dartuios-copy-") || !strings.HasSuffix(s.Path, ".txt") {
+		t.Errorf("default path %q, want ~/dartuios-copy-<time>.txt", s.Path)
 	}
 	// tab changes the format and the extension with it.
 	mcPress(o, "tab")

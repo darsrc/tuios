@@ -274,7 +274,7 @@ func EncodeKeyCSIu(key KeyPressEvent, flags int) string {
 // keys: code[:shifted[:base]]. The shifted key is only there with Shift held,
 // and the base-layout key (the US-layout key at the same position) only when it
 // differs from the code. A pane that did not ask gets the bare code, so the
-// alternate keys tuios asks the host for never reach it.
+// alternate keys dartuios asks the host for never reach it.
 func kittyAlternateKeys(code int, key KeyPressEvent) string {
 	field := strconv.Itoa(code)
 	shifted := 0

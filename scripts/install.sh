@@ -1,10 +1,10 @@
 #!/bin/sh
-# Build tuios from this checkout and install it on your PATH as `tuios` and
-# `tuios-web`.
+# Build dartuios from this checkout and install it on your PATH as `dartuios` and
+# `dartuios-web`.
 #
 # Both are installed together and stamped with the same commit, because they are
-# two halves of one thing: tuios-web is a client of the same daemon, and a
-# tuios-web left behind by an upgrade is a client running last month's code
+# two halves of one thing: dartuios-web is a client of the same daemon, and a
+# dartuios-web left behind by an upgrade is a client running last month's code
 # against this month's daemon. The two builds are compared at the handshake and
 # the window reports a mismatch, but the better answer is that it does not
 # happen.
@@ -15,13 +15,13 @@
 #   ghostty   link the libghostty-vt emulator. Needs zig; the pinned
 #             static library is built on first use and cached in .ghostty-vt/.
 #
-#   --prefix DIR    install into DIR (default: $TUIOS_PREFIX, else ~/.local/bin)
+#   --prefix DIR    install into DIR (default: $DARTUIOS_PREFIX, else ~/.local/bin)
 #   --kill-server   stop a running daemon after installing, without asking
 #   --keep-server   leave a running daemon alone, without asking
 #   -h, --help      show this text
 #
 # Both backends install under the same name, so switching is one run of this
-# script with the other name. `tuios --version` reports which one is installed.
+# script with the other name. `dartuios --version` reports which one is installed.
 set -eu
 
 usage() {
@@ -44,10 +44,10 @@ note() {
 # Resolved from the script rather than the working directory, so the script
 # runs from anywhere.
 ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
-[ -f "$ROOT/go.mod" ] || die "no tuios checkout above $0 (the script builds the tree it lives in)"
+[ -f "$ROOT/go.mod" ] || die "no dartuios checkout above $0 (the script builds the tree it lives in)"
 
 backend=pure
-prefix=${TUIOS_PREFIX:-$HOME/.local/bin}
+prefix=${DARTUIOS_PREFIX:-$HOME/.local/bin}
 daemon_action=ask
 
 while [ $# -gt 0 ]; do
@@ -74,9 +74,9 @@ command -v go >/dev/null || die "go not found. Install Go from https://go.dev/dl
 
 # The same socket the daemon picks; see internal/session/manager_unix.go.
 if [ -n "${XDG_RUNTIME_DIR:-}" ]; then
-    socket=$XDG_RUNTIME_DIR/tuios/tuios.sock
+    socket=$XDG_RUNTIME_DIR/dartuios/dartuios.sock
 else
-    socket=/tmp/tuios-$(id -u)/tuios.sock
+    socket=/tmp/dartuios-$(id -u)/dartuios.sock
 fi
 
 # Prints the pid of a live daemon, or fails. The pid file outlives a crash, so
@@ -113,8 +113,8 @@ fi
 mkdir -p "$prefix" || die "cannot create $prefix"
 # Checked up front so a system prefix fails here rather than after the build.
 [ -w "$prefix" ] || die "$prefix is not writable. Pick a prefix you own, or re-run under sudo."
-dest=$prefix/tuios
-webdest=$prefix/tuios-web
+dest=$prefix/dartuios
+webdest=$prefix/dartuios-web
 
 # The commit is stamped in rather than left to the stamps the go command
 # embeds by itself: in a linked worktree those come back naming the main
@@ -144,21 +144,21 @@ ldflags="$ldflags -X main.version=$buildversion"
 # Built next to the destination so each install is one rename on one filesystem:
 # writing over the destination in place would fail with ETXTBSY while a daemon
 # is running it.
-tmp=$prefix/.tuios.install.$$
-webtmp=$prefix/.tuios-web.install.$$
+tmp=$prefix/.dartuios.install.$$
+webtmp=$prefix/.dartuios-web.install.$$
 trap 'rm -f "$tmp" "$webtmp"' EXIT HUP INT TERM
 
-say "==> tuios ($backend backend)"
+say "==> dartuios ($backend backend)"
 (cd "$ROOT" && go build ${buildtags:+"$buildtags"} -trimpath \
-    -ldflags "$ldflags" -o "$tmp" ./cmd/tuios)
+    -ldflags "$ldflags" -o "$tmp" ./cmd/dartuios)
 chmod 755 "$tmp"
 
 # Built before either is moved into place, so a compile error in one does not
 # leave the pair half installed and mismatched, the state this is here to
 # prevent.
-say "==> tuios-web ($backend backend)"
+say "==> dartuios-web ($backend backend)"
 (cd "$ROOT" && go build ${buildtags:+"$buildtags"} -trimpath \
-    -ldflags "$ldflags" -o "$webtmp" ./cmd/tuios-web)
+    -ldflags "$ldflags" -o "$webtmp" ./cmd/dartuios-web)
 chmod 755 "$webtmp"
 
 mv -f "$tmp" "$dest"
@@ -172,15 +172,15 @@ say "installed $webdest"
 
 case ":$PATH:" in
     *":$prefix:"*)
-        found=$(command -v tuios 2>/dev/null || true)
+        found=$(command -v dartuios 2>/dev/null || true)
         if [ -n "$found" ] && [ "$found" != "$dest" ]; then
-            note "PATH still finds tuios at $found, which shadows what was just installed.
+            note "PATH still finds dartuios at $found, which shadows what was just installed.
 Delete that one, or install over it with:
     $0 $backend --prefix $(dirname "$found")"
         fi
         ;;
     *)
-        note "$prefix is not on your PATH, so \`tuios\` will not be found. Add it:
+        note "$prefix is not on your PATH, so \`dartuios\` will not be found. Add it:
     fish:      fish_add_path $prefix
     bash/zsh:  export PATH=\"$prefix:\$PATH\""
         ;;
@@ -211,7 +211,7 @@ if pid=$(daemon_pid); then
     else
         note "A daemon (pid $pid) is still running the previous build, and every
 attached session goes through it. Run this when you are ready to switch:
-    tuios kill-server
+    dartuios kill-server
 That ends the programs running in your panes. Each session's layout and
 working directories are saved on the way out and come back with new shells
 when the daemon starts again."

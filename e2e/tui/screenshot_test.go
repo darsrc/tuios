@@ -9,7 +9,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// End-to-end screenshot coverage against a real tuios in a real terminal.
+// End-to-end screenshot coverage against a real dartuios in a real terminal.
 //
 // Unit tests can prove the renderer draws what it was asked to. Only this can
 // prove the capture mode is reachable, that the preview panel appears on
@@ -31,7 +31,7 @@ func shotDir(t *testing.T, base string) string {
 // same set-config path a person would use.
 func setShotOption(t *testing.T, term *tuitest.Terminal, base, path, value string) {
 	t.Helper()
-	if out, err := tuiosCLI(t, base, "set-config", path, value); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-config", path, value); err != nil {
 		t.Fatalf("set-config %s %s: %v\n%s", path, value, err, out)
 	}
 }
@@ -288,9 +288,9 @@ func TestScreenshotVerbWritesAFile(t *testing.T) {
 	for _, format := range []string{"png", "svg", "ansi", "html", "txt"} {
 		t.Run(format, func(t *testing.T) {
 			out := filepath.Join(dir, "verb."+format)
-			if cliOut, err := tuiosCLI(t, base, "screenshot",
+			if cliOut, err := dartuiosCLI(t, base, "screenshot",
 				"--format", format, "--out", out, "--no-copy"); err != nil {
-				t.Fatalf("tuios screenshot --format %s: %v\n%s", format, err, cliOut)
+				t.Fatalf("dartuios screenshot --format %s: %v\n%s", format, err, cliOut)
 			}
 			info, err := os.Stat(out)
 			if err != nil {
@@ -321,7 +321,7 @@ func TestScreenshotRunCommandCapturesTheFocusedWindow(t *testing.T) {
 	setShotOption(t, term, base, "screenshot.directory", dir)
 	setShotOption(t, term, base, "screenshot.format", "txt")
 
-	if out, err := tuiosCLI(t, base, "run-command", "Screenshot"); err != nil {
+	if out, err := dartuiosCLI(t, base, "run-command", "Screenshot"); err != nil {
 		t.Fatalf("run-command Screenshot: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {

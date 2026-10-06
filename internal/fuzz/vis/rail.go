@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/fuzz"
+	"github.com/darsrc/tuios/internal/overlay"
 )
 
 // The instrument rail. Its voice is the rail grammar the app already uses:
@@ -38,7 +38,7 @@ func renderRail(s Snapshot, o Options, pal overlay.Palette, w, h int) []string {
 	case s.Phase == PhaseDone:
 		status, statusInk = "held", bold(bg, pal.Success)
 	}
-	add(pad, overlay.Chip("tuios fuzz", pal.Accent, pal.PillFg), ink(bg, bg).Render(" "), statusInk.Render(status))
+	add(pad, overlay.Chip("dartuios fuzz", pal.Accent, pal.PillFg), ink(bg, bg).Render(" "), statusInk.Render(status))
 	blank()
 
 	add(pad, label.Render("seed    "), value.Render(hex16(s.Seed)))

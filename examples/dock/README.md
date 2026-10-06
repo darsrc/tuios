@@ -18,7 +18,7 @@ command = "git branch --show-current 2>/dev/null"
 refresh = "event:after-focus-change"
 ```
 
-`tuios list-dock-components` says whether it drew and, if it did not, why.
+`dartuios list-dock-components` says whether it drew and, if it did not, why.
 
 ## The lists
 
@@ -70,10 +70,10 @@ max-width = 24        # optional; the cell is truncated to this
 
 Place it by putting `custom/NAME` in one of the lists.
 
-Your command gets the session's environment plus `TUIOS_DOCK_COMPONENT`,
-`TUIOS_SESSION` and `TUIOS_SOCKET`. An `on-click` command also gets
-`TUIOS_CLICK_BUTTON`. That is the entire contract: environment in, one line of
-text out. There is no API behind it, so there is nothing a tuios release can
+Your command gets the session's environment plus `DARTUIOS_DOCK_COMPONENT`,
+`DARTUIOS_SESSION` and `DARTUIOS_SOCKET`. An `on-click` command also gets
+`DARTUIOS_CLICK_BUTTON`. That is the entire contract: environment in, one line of
+text out. There is no API behind it, so there is nothing a dartuios release can
 break.
 
 Colour works. SGR escapes survive; every other control sequence is stripped,
@@ -95,18 +95,18 @@ In order of preference, because the order is also the order of cost:
   Several at once: `refresh = "event:after-focus-change,after-new-window"`.
 - **`push`** keeps your command running and takes each line it writes as an
   update. Bring your own `inotifywait`, `upower --monitor`, or a loop around
-  `tuios wait-for`.
+  `dartuios wait-for`.
   Wakes are driven by the pipe, never by a clock.
 - **`"30s"`** polls. The floor is one second. One timer is armed for the
   earliest deadline across every polling component, and a value that has not
   moved draws no frame, so a one-second cell watching something that changes
   every five minutes costs sixty executions an hour and about zero renders.
 - **`once`** (the default) runs at startup and then only when you ask, with
-  `tuios refresh-dock NAME`. That verb is what makes a component scriptable:
+  `dartuios refresh-dock NAME`. That verb is what makes a component scriptable:
 
   ```toml
   [hooks]
-  after-agent-state = "tuios refresh-dock agents"
+  after-agent-state = "dartuios refresh-dock agents"
   ```
 
 A dock with no polling component arms no timer at all, which is why adding
@@ -122,7 +122,7 @@ You are told once per failure streak, as a dock message and a log line, and the
 detail is always available:
 
 ```console
-$ tuios list-dock-components
+$ dartuios list-dock-components
 ╭─────────────────┬───────┬─────────┬──────────────────────────┬────────┬──────────────────────╮
 │ COMPONENT       │ SIDE  │ SOURCE  │ REFRESH                  │ STATE  │ READS                │
 ├─────────────────┼───────┼─────────┼──────────────────────────┼────────┼──────────────────────┤
@@ -132,7 +132,7 @@ $ tuios list-dock-components
 ╰─────────────────┴───────┴─────────┴──────────────────────────┴────────┴──────────────────────╯
 ```
 
-Fix the script, then `tuios refresh-dock k8s`. A component that failed five
+Fix the script, then `dartuios refresh-dock k8s`. A component that failed five
 times in a row stops being polled on its own schedule; an explicit refresh
 revives it, so you never have to restart the session.
 
@@ -144,11 +144,11 @@ three second timeout, bounded reads, and only the first line is used.
 It runs where the client runs, because the bar is composed in the client.
 
 - Local session: your machine. What you expect.
-- `tuios-web`: the machine running tuios-web, not the browser.
+- `dartuios-web`: the machine running dartuios-web, not the browser.
 - SSH: the SSH host, not your terminal.
 
 So a battery cell over SSH reports the server's battery, which servers do not
-have. tuios says so in the config warnings when it can see that is your
+have. dartuios says so in the config warnings when it can see that is your
 situation. Every attached client runs its own copy, the way waybar runs one per
 monitor.
 

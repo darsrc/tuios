@@ -12,7 +12,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// borderColumns returns, in order, the screen columns tuios draws a full-height
+// borderColumns returns, in order, the screen columns dartuios draws a full-height
 // vertical rule in: a pane's own border under separate borders, the divider
 // between two panes under shared borders. The height threshold keeps a stray
 // bar in a pane's text or in the dock from counting as one.
@@ -79,7 +79,7 @@ func lastPlacement(t *testing.T, stream []byte) placedRect {
 // two tiled panes, and a full-window graphical guest (terminal-browser) drawing
 // into the left one. The image must be given exactly the columns the guest was
 // told it had, and its right edge must land on the pane's last content column:
-// the column before the divider, which tuios still has to draw.
+// the column before the divider, which dartuios still has to draw.
 //
 // A narrower c= is the reported symptom from the other side: kitty scales the
 // frame's full pixel width into fewer cells than it was rendered for, so the
@@ -98,7 +98,7 @@ func TestKittyImageStopsAtPaneBorder(t *testing.T) {
 			stream := &hostStream{}
 			term, _ := start(t, startOpts{
 				cols: 120, rows: 40, args: tc.args,
-				env: []string{"TUIOS_KITTY_GRAPHICS=1", "TUIOS_SIXEL_GRAPHICS=0"},
+				env: []string{"DARTUIOS_KITTY_GRAPHICS=1", "DARTUIOS_SIXEL_GRAPHICS=0"},
 				out: stream,
 			})
 			waitBoot(t, term)
@@ -120,15 +120,15 @@ func TestKittyImageStopsAtPaneBorder(t *testing.T) {
 			rows, cols := reportedPaneSize(t, term, "A")
 
 			// terminal-browser renders at the pane's own pixel size, which is
-			// its cell size times the cell metrics tuios reports. The e2e host
-			// has no pixel size of its own, so tuios falls back to 9x20.
+			// its cell size times the cell metrics dartuios reports. The e2e host
+			// has no pixel size of its own, so dartuios falls back to 9x20.
 			frame := kittyFrameFile(t, t.TempDir(), cols*9, rows*20)
 			stream.mark("frame")
 			typeLine(t, term, "cat "+frame)
 			leaveTerminalMode(t, term)
 			time.Sleep(2 * time.Second)
 
-			if dump := os.Getenv("TUIOS_KITTY_CAPTURE"); dump != "" {
+			if dump := os.Getenv("DARTUIOS_KITTY_CAPTURE"); dump != "" {
 				_ = os.WriteFile(fmt.Sprintf("%s.%s", dump, tc.name), stream.bytes(), 0o644)
 			}
 
@@ -142,7 +142,7 @@ func TestKittyImageStopsAtPaneBorder(t *testing.T) {
 					"(placed at col %d)", got.cols, cols, got.col)
 			}
 			// A full-pane image ends where its pane does: on the first column
-			// tuios draws a rule in to its right, or on the screen edge when the
+			// dartuios draws a rule in to its right, or on the screen edge when the
 			// pane is the last one. Landing short leaves a strip the guest
 			// rendered pixels for; landing beyond it paints over the rule and
 			// into the neighbour.

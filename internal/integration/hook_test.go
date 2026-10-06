@@ -74,7 +74,7 @@ func TestTranslateFixtures(t *testing.T) {
 }
 
 // TestEveryInstalledEventHasAFixture holds the installers to the map: an event
-// tuios registers a command for must have a payload fixture that reports
+// dartuios registers a command for must have a payload fixture that reports
 // something, or the installer is wiring an event nothing reads.
 func TestEveryInstalledEventHasAFixture(t *testing.T) {
 	for _, target := range Targets() {

@@ -153,7 +153,7 @@ func readProcessInfo(pid int) foregroundInfo {
 	}
 }
 
-// readAgentHintEnv reads TUIOS_AGENT from /proc/<pid>/environ. The file is
+// readAgentHintEnv reads DARTUIOS_AGENT from /proc/<pid>/environ. The file is
 // readable only for a process of the same user, and a refusal is an absent
 // hint, never an error.
 func readAgentHintEnv(pid int) (string, bool) {

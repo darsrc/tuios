@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/worktree"
 )
 
 // Naming a repository to a daemon that may be on another machine.
@@ -71,7 +71,7 @@ func (r repoSource) named() bool {
 // clone, shared by every verb that takes them.
 var repoSourceParams = []verbParam{
 	{Name: "repo_url", Type: "string", Description: "The repository by its origin URL, for a caller on another machine. This daemon finds its own checkout whose origin is the same repository. Pass repo or repo_url, not both."},
-	{Name: "repos_root", Type: "string", Description: "With repo_url, the directory on this machine to look under, and to clone into. Absolute, or starting with ~/. Omit to look under ~/src, ~/dev, ~/code, ~/projects, ~/repos, ~/git, ~/work, ~/go/src, the home directory itself and tuios's own clone directory."},
+	{Name: "repos_root", Type: "string", Description: "With repo_url, the directory on this machine to look under, and to clone into. Absolute, or starting with ~/. Omit to look under ~/src, ~/dev, ~/code, ~/projects, ~/repos, ~/git, ~/work, ~/go/src, the home directory itself and dartuios's own clone directory."},
 	{Name: "clone", Type: "bool", Description: "With repo_url, clone the repository when no checkout is found. Only https, ssh and git URLs are cloned.", Default: "false"},
 }
 

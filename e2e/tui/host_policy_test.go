@@ -37,7 +37,7 @@ func writeGatedFakeSSH(t *testing.T, dir, remoteBase, gate string) string {
 func dumpLinkLogs(t *testing.T, base, remote string) {
 	t.Helper()
 	for name, root := range map[string]string{"this machine": base, "build": remote} {
-		path := filepath.Join(xdgDir(root, "XDG_STATE_HOME"), "tuios", "daemon.log")
+		path := filepath.Join(xdgDir(root, "XDG_STATE_HOME"), "dartuios", "daemon.log")
 		data, _ := os.ReadFile(path)
 		t.Logf("%s, %s:\n%s", name, path, data)
 	}
@@ -47,7 +47,7 @@ func dumpLinkLogs(t *testing.T, base, remote string) {
 // starts.
 func writeRemoteConfig(t *testing.T, remote, body string) {
 	t.Helper()
-	dir := filepath.Join(xdgDir(remote, "XDG_CONFIG_HOME"), "tuios")
+	dir := filepath.Join(xdgDir(remote, "XDG_CONFIG_HOME"), "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir the far config: %v", err)
 	}
@@ -86,9 +86,9 @@ func TestAPaneOnAnotherMachineOutlivesALinkDrop(t *testing.T) {
 	gate := filepath.Join(base, "link-down")
 	flag := filepath.Join(base, "print-now")
 	ssh := writeGatedFakeSSH(t, base, remote, gate)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
-	if out, err := tuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
+	if out, err := dartuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 
@@ -97,7 +97,7 @@ func TestAPaneOnAnotherMachineOutlivesALinkDrop(t *testing.T) {
 	waitForHostListing(t, base, func(s string) bool { return containsAll(s, "build", "up") }, "the daemon never reported build up")
 
 	script := "echo READY; while [ ! -f " + flag + " ]; do sleep 0.1; done; echo DURING-THE-DROP; exec cat"
-	if out, err := tuiosCLIEnv(t, base, env, "new-window", "deploy", "-s", "home", "--host", "build", "--", "/bin/sh", "-c", script); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, env, "new-window", "deploy", "-s", "home", "--host", "build", "--", "/bin/sh", "-c", script); err != nil {
 		t.Fatalf("create a window on build: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -138,7 +138,7 @@ func TestAPaneOnAnotherMachineOutlivesALinkDrop(t *testing.T) {
 	saveFrame(t, term, "hosted-pane-reattached")
 	// Typed the way an agent types, so the keys go to the pane whatever mode
 	// the client is in.
-	if out, err := tuiosCLIEnv(t, base, env, "send-text", "-s", "home", "-w", "deploy", "typed-after-the-drop\n"); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, env, "send-text", "-s", "home", "-w", "deploy", "typed-after-the-drop\n"); err != nil {
 		t.Fatalf("type into the pane: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -149,7 +149,7 @@ func TestAPaneOnAnotherMachineOutlivesALinkDrop(t *testing.T) {
 }
 
 // TestMailWaitsForAMachineWhoseLinkIsDown: a message for build while its link
-// is down is kept here, the Inbox and tuios hosts say so, and it arrives on
+// is down is kept here, the Inbox and dartuios hosts say so, and it arrives on
 // build when the link is back.
 //
 // Negative control: with the outbox kick cut from the fleet's status report
@@ -159,9 +159,9 @@ func TestMailWaitsForAMachineWhoseLinkIsDown(t *testing.T) {
 	remote := remoteMachine(t)
 	gate := filepath.Join(base, "link-down")
 	ssh := writeGatedFakeSSH(t, base, remote, gate)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
-	if out, err := tuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
+	if out, err := dartuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 
@@ -172,7 +172,7 @@ func TestMailWaitsForAMachineWhoseLinkIsDown(t *testing.T) {
 	cutTheLink(t, gate)
 	deadline := time.Now().Add(30 * time.Second)
 	for {
-		raw, _ := tuiosCLI(t, base, "hosts", "--json")
+		raw, _ := dartuiosCLI(t, base, "hosts", "--json")
 		if contains(raw, `"host": "build"`) && !contains(raw, `"status": "up"`) && !contains(raw, `"status":"up"`) {
 			break
 		}
@@ -182,16 +182,16 @@ func TestMailWaitsForAMachineWhoseLinkIsDown(t *testing.T) {
 		time.Sleep(250 * time.Millisecond)
 	}
 
-	out, err := tuiosCLIEnv(t, base, env, "send-agent-message", "-s", "build:far", "-w", "human", "--from", "PLANNER", "while you were away")
+	out, err := dartuiosCLIEnv(t, base, env, "send-agent-message", "-s", "build:far", "-w", "human", "--from", "PLANNER", "while you were away")
 	if err != nil {
 		t.Fatalf("ASSERTION: a message for a machine whose link is down failed rather than waiting: %v\n%s", err, out)
 	}
 	if !contains(out, "waits here") {
 		t.Fatalf("ASSERTION: the send did not say the message waits:\n%s", out)
 	}
-	hosts, _ := tuiosCLIEnv(t, base, env, "hosts")
+	hosts, _ := dartuiosCLIEnv(t, base, env, "hosts")
 	if !contains(hosts, "build: 1 message(s) wait here for the link") {
-		t.Errorf("tuios hosts does not say mail waits:\n%s", hosts)
+		t.Errorf("dartuios hosts does not say mail waits:\n%s", hosts)
 	}
 
 	if err := term.SendKeys(tuitest.Ctrl('b'), "i"); err != nil {
@@ -210,7 +210,7 @@ func TestMailWaitsForAMachineWhoseLinkIsDown(t *testing.T) {
 	openTheLink(t, gate)
 	deadline = time.Now().Add(uiTimeout * 6)
 	for {
-		far, _ := tuiosCLI(t, remote, "read-agent-messages", "-s", "far", "-w", "human", "--peek")
+		far, _ := dartuiosCLI(t, remote, "read-agent-messages", "-s", "far", "-w", "human", "--peek")
 		if contains(far, "while you were away") {
 			break
 		}
@@ -220,7 +220,7 @@ func TestMailWaitsForAMachineWhoseLinkIsDown(t *testing.T) {
 		time.Sleep(250 * time.Millisecond)
 	}
 	for {
-		if att, _ := tuiosCLIEnv(t, base, env, "list-attention"); !contains(att, "Waiting to send") {
+		if att, _ := dartuiosCLIEnv(t, base, env, "list-attention"); !contains(att, "Waiting to send") {
 			break
 		}
 		if time.Now().After(deadline) {
@@ -241,15 +241,15 @@ func TestAMachineHoldsALinkToItsPolicy(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	writeRemoteConfig(t, remote, "[hosts.\"*\"]\nallow = [\"list\", \"mail\"]\nhold_mail = true\n")
-	if out, err := tuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 	env := hubWithBuild(t, base, remote)
 
-	if out, err := tuiosCLIEnv(t, base, env, "list-windows", "-s", "build:far"); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, env, "list-windows", "-s", "build:far"); err != nil {
 		t.Fatalf("a listing on build was refused: %v\n%s", err, out)
 	}
-	out, err := tuiosCLIEnv(t, base, env, "send-text", "-s", "build:far", "echo should-not-run")
+	out, err := dartuiosCLIEnv(t, base, env, "send-text", "-s", "build:far", "echo should-not-run")
 	if err == nil {
 		t.Fatalf("ASSERTION: typing into a pane on a machine that allows only list went through:\n%s", out)
 	}
@@ -263,14 +263,14 @@ func TestAMachineHoldsALinkToItsPolicy(t *testing.T) {
 	if err != nil || len(wl.Windows) == 0 {
 		t.Fatalf("list the far windows: %v", err)
 	}
-	out, err = tuiosCLIEnv(t, base, env, "send-agent-message", "-s", "build:far", "-w", wl.Windows[0].ID, "--json", "run the migration")
+	out, err = dartuiosCLIEnv(t, base, env, "send-agent-message", "-s", "build:far", "-w", wl.Windows[0].ID, "--json", "run the migration")
 	if err != nil {
 		t.Fatalf("mail to build was refused: %v\n%s", err, out)
 	}
 	if !contains(out, `"held": true`) && !contains(out, `"held":true`) {
 		t.Errorf("ASSERTION: mail from a machine whose mail build holds was not held:\n%s", out)
 	}
-	far, _ := tuiosCLI(t, remote, "list-attention", "--json")
+	far, _ := dartuiosCLI(t, remote, "list-attention", "--json")
 	if !contains(far, "held_for") {
 		t.Errorf("ASSERTION: build's Inbox does not offer the held mail:\n%s", far)
 	}

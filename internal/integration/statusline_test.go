@@ -112,20 +112,20 @@ func TestStatusLineChainRoundTrip(t *testing.T) {
 	writeFile(t, path, userStatusLineSettings)
 	before := settingsDoc(t, userStatusLineSettings)
 
-	if _, err := tg.InstallStatusLine(env, "tuios", "~/.claude/statusline.sh"); err != nil {
+	if _, err := tg.InstallStatusLine(env, "dartuios", "~/.claude/statusline.sh"); err != nil {
 		t.Fatal(err)
 	}
 	doc := settingsDoc(t, readFile(t, path))
 	sl := doc["statusLine"].(map[string]any)
-	if sl["command"] != StatusLineCommand("tuios", "~/.claude/statusline.sh") || sl["padding"] != float64(0) {
+	if sl["command"] != StatusLineCommand("dartuios", "~/.claude/statusline.sh") || sl["padding"] != float64(0) {
 		t.Errorf("statusLine = %v", sl)
 	}
-	st := tg.StatusLineState(env, "tuios")
+	st := tg.StatusLineState(env, "dartuios")
 	if !st.Installed || st.Then != "~/.claude/statusline.sh" {
 		t.Errorf("state = %+v", st)
 	}
 	// Installing again without --then keeps the chain: it is the person's.
-	if res, err := tg.InstallStatusLine(env, "tuios", ""); err != nil || res.Changed {
+	if res, err := tg.InstallStatusLine(env, "dartuios", ""); err != nil || res.Changed {
 		t.Errorf("reinstall: %+v %v", res, err)
 	}
 	if _, err := tg.UninstallStatusLine(env); err != nil {
@@ -143,19 +143,19 @@ func TestStatusLineRefusesUserSlot(t *testing.T) {
 	tg := mustTarget(t, "claude-code")
 	path := tg.Path(env)
 	writeFile(t, path, userStatusLineSettings)
-	_, err := tg.InstallStatusLine(env, "tuios", "")
+	_, err := tg.InstallStatusLine(env, "dartuios", "")
 	var owned *StatusLineOwnedError
 	if !errors.As(err, &owned) || owned.Command != "~/.claude/statusline.sh" {
 		t.Fatalf("err = %v, want the user's command named", err)
 	}
 	// A different command to chain to is refused too: it would drop theirs.
-	if _, err := tg.InstallStatusLine(env, "tuios", "echo other"); !errors.As(err, &owned) {
+	if _, err := tg.InstallStatusLine(env, "dartuios", "echo other"); !errors.As(err, &owned) {
 		t.Fatalf("chaining another command: err = %v", err)
 	}
 	if got := readFile(t, path); got != userStatusLineSettings {
 		t.Errorf("file changed:\n%s", got)
 	}
-	st := tg.StatusLineState(env, "tuios")
+	st := tg.StatusLineState(env, "dartuios")
 	if !st.Foreign || st.Installed || st.Command != "~/.claude/statusline.sh" {
 		t.Errorf("state = %+v", st)
 	}
@@ -166,7 +166,7 @@ func TestStatusLineRefusesUserSlot(t *testing.T) {
 
 	// A status line that is not a command is left alone and named as such.
 	writeFile(t, path, `{"statusLine": "fancy"}`)
-	if _, err := tg.InstallStatusLine(env, "tuios", ""); !errors.As(err, &owned) || owned.Command != "" {
+	if _, err := tg.InstallStatusLine(env, "dartuios", ""); !errors.As(err, &owned) || owned.Command != "" {
 		t.Errorf("non-command slot: err = %v", err)
 	}
 }

@@ -4,12 +4,12 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/pkg/fuzzy"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/pkg/fuzzy"
 )
 
 // The keybind manager's tabs. Four surfaces over one analysis: what is bound,
-// where tuios argues with itself, where tuios argues with the pane's program,
+// where dartuios argues with itself, where dartuios argues with the pane's program,
 // and a place to press a key and be told all three about it.
 const (
 	KeybindTabBindings = iota
@@ -44,7 +44,7 @@ type keybindManager struct {
 	// one-shot: capturing a key disarms it, so there is always a key that means
 	// "stop capturing" and it is the next one.
 	armed bool
-	// captured is the last key recorded, and fate is what tuios does with it.
+	// captured is the last key recorded, and fate is what dartuios does with it.
 	captured string
 	fate     config.KeyFate
 	// bindSection and bindAction are what a captured key would be bound to.
@@ -90,7 +90,7 @@ func (m *OS) CloseKeybindManager() {
 	m.keybinds = keybindManager{}
 }
 
-// buildKeybindReport gathers what tuios can observe about the focused pane and
+// buildKeybindReport gathers what dartuios can observe about the focused pane and
 // hands it to the analysis.
 //
 // Every field is optional and an unavailable one is left zero rather than
@@ -133,7 +133,7 @@ func (m *OS) KeybindSelected() int { return m.keybinds.selected }
 // KeybindArmed is whether the recorder is waiting for a key.
 func (m *OS) KeybindArmed() bool { return m.keybinds.armed }
 
-// KeybindCaptured is the last recorded key and what tuios does with it.
+// KeybindCaptured is the last recorded key and what dartuios does with it.
 func (m *OS) KeybindCaptured() (string, config.KeyFate) {
 	return m.keybinds.captured, m.keybinds.fate
 }
@@ -280,7 +280,7 @@ func (m *OS) armKeybind(section, action string) {
 	m.keybinds.bound = ""
 }
 
-// KeybindCapture records a pressed key and works out everything tuios does with
+// KeybindCapture records a pressed key and works out everything dartuios does with
 // it. It disarms, so the key after a capture is a command again.
 func (m *OS) KeybindCapture(key string) {
 	m.keybinds.armed = false

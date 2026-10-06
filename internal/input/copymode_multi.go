@@ -5,8 +5,8 @@ import (
 	"unicode/utf8"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // Multi copy mode key handling: one key, every pane of the mode. See

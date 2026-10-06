@@ -19,7 +19,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 func TestModeMapReadersUnderRestore(t *testing.T) {

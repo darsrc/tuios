@@ -204,9 +204,9 @@ func FindByOrigin(roots []SearchRoot, remote string) []string {
 }
 
 // CloneDir is where Clone puts a repository when the caller names no
-// directory: $XDG_DATA_HOME/tuios/repos.
+// directory: $XDG_DATA_HOME/dartuios/repos.
 func CloneDir() string {
-	return filepath.Join(xdg.DataHome, "tuios", "repos")
+	return filepath.Join(xdg.DataHome, "dartuios", "repos")
 }
 
 // DefaultSearchRoots are the directories searched when the caller names none:

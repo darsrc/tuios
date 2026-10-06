@@ -1,5 +1,5 @@
 {
-  description = "TUIOS - Terminal UI Operating System";
+  description = "dartuios - Terminal UI Operating System";
 
   inputs = {
     # Our source of packages
@@ -74,8 +74,8 @@
         in
         {
           packages = {
-            tuios = callPackage ./tuios.nix { };
-            default = callPackage ./tuios.nix { };
+            dartuios = callPackage ./dartuios.nix { };
+            default = callPackage ./dartuios.nix { };
           };
         };
 

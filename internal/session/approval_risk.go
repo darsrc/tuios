@@ -9,9 +9,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
-	"github.com/Gaurav-Gosain/tuios/internal/integration"
-	"github.com/Gaurav-Gosain/tuios/internal/risk"
+	"github.com/darsrc/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/integration"
+	"github.com/darsrc/tuios/internal/risk"
 )
 
 // Risky approvals and plans: the daemon's half.
@@ -29,7 +29,7 @@ import (
 //   - at request-approval, on the call the hook names (tool and target), else
 //     on its line, for the hold;
 //   - on every needs_input report of kind approval, on the line the pane
-//     reported, for an approval nobody holds. tuios's own hooks report
+//     reported, for an approval nobody holds. dartuios's own hooks report
 //     "approve <Tool>: <what>", which is read as that tool and argument; any
 //     other line is read as a command. The line is clipped, so a clipped one
 //     is also marked cut short.

@@ -12,7 +12,7 @@ import (
 // TestDaemonServesPprof runs the daemon with --pprof and reads its heap
 // profile. The daemon owns every pane's emulator and scrollback, so it is
 // the process a memory question is about; --pprof was a persistent flag that
-// "tuios daemon" accepted and ignored.
+// "dartuios daemon" accepted and ignored.
 func TestDaemonServesPprof(t *testing.T) {
 	base := t.TempDir()
 	env := os.Environ()
@@ -21,7 +21,7 @@ func TestDaemonServesPprof(t *testing.T) {
 	}
 	addr := fmt.Sprintf("127.0.0.1:%d", freePort(t))
 
-	daemon := exec.Command(tuiosBin, "daemon", "--pprof", addr)
+	daemon := exec.Command(dartuiosBin, "daemon", "--pprof", addr)
 	daemon.Env = env
 	daemon.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 	if err := daemon.Start(); err != nil {

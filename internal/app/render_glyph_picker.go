@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Glyph picker layout constants, matching the theme picker's so the two panels
@@ -110,9 +110,9 @@ func (m *OS) glyphPickerDetail(items []string, pal overlay.Palette, width int) [
 	case sample.Named == 0:
 		summary = "Uses the default shapes"
 	case len(sample.Dropped) == 0:
-		summary = "Sets " + strconv.Itoa(sample.Named) + " roles. tuios draws them all."
+		summary = "Sets " + strconv.Itoa(sample.Named) + " roles. dartuios draws them all."
 	default:
-		summary = "Sets " + strconv.Itoa(sample.Named) + " roles. tuios does not draw " +
+		summary = "Sets " + strconv.Itoa(sample.Named) + " roles. dartuios does not draw " +
 			strconv.Itoa(len(sample.Dropped)) + " of them."
 	}
 	if sample.ASCII {
@@ -132,7 +132,7 @@ func (m *OS) glyphPickerDetail(items []string, pal overlay.Palette, width int) [
 	}
 	// Named individually: "two roles were dropped" sends the author back to the
 	// file to work out which, and the width rule is the reason every time.
-	dropped := "Wrong width. tuios draws the default: " + strings.Join(sample.Dropped, ", ")
+	dropped := "Wrong width. dartuios draws the default: " + strings.Join(sample.Dropped, ", ")
 	return append(lines, overlay.Style(bg).Foreground(pal.Warning).
 		Render("  "+overlay.Truncate(dropped, max(width-2, 1))))
 }

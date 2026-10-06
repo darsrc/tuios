@@ -9,7 +9,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // watchTempConfig points the hub at a file of the test's own and returns it.
@@ -27,7 +27,7 @@ func watchTempConfig(t *testing.T) string {
 
 // TestEveryClientKindFollowsTheConfigFile: a client of any kind subscribes to
 // the file in Init, and a model nobody named or a tape run does not. The
-// watcher used to be installed by bare `tuios` alone.
+// watcher used to be installed by bare `dartuios` alone.
 func TestEveryClientKindFollowsTheConfigFile(t *testing.T) {
 	watchTempConfig(t)
 	cfg := config.DefaultConfig()

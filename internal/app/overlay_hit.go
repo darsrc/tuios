@@ -2,8 +2,8 @@ package app
 
 import (
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
 	"slices"
 )
 
@@ -332,7 +332,7 @@ func (m *OS) centeredBoxLayer(box string, z int, id string) *lipgloss.Layer {
 }
 
 // syncOverlayASCII mirrors the ASCII-only setting into the overlay package,
-// which has no dependency on tuios config.
+// which has no dependency on dartuios config.
 func syncOverlayASCII(s *config.Settings) {
 	overlay.SetASCII(s.UseASCIIOnly)
 }

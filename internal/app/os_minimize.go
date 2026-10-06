@@ -3,8 +3,8 @@ package app
 import (
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/ui"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/ui"
 )
 
 // MinimizeWindow minimizes the window at the specified index.

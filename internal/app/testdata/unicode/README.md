@@ -3,7 +3,7 @@
 `emoji-data.txt` is taken verbatim from the Unicode Character Database, Unicode
 17.0.0. It is the input to `TestNoEmojiInSourceStrings` in
 `internal/app/no_emoji_source_test.go`, which fails on any character with an
-emoji property in a string or rune literal of tuios's own Go source.
+emoji property in a string or rune literal of dartuios's own Go source.
 
 | File | Source | Used for |
 | --- | --- | --- |

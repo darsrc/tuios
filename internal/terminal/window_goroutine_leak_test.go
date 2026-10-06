@@ -4,7 +4,7 @@ import (
 	"testing"
 	"testing/synctest"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestDaemonWindowOpenCloseLeaksNoGoroutines asserts that opening and closing a

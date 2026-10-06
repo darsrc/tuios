@@ -17,7 +17,7 @@ import (
 // fc-match is fontconfig's command line, and macOS does not ship fontconfig.
 // Terminals do not have this problem because they link the platform's font API
 // instead: CoreText on macOS, DirectWrite on Windows, libfontconfig on Linux.
-// All three want cgo, and tuios is built without it, which is what left the
+// All three want cgo, and dartuios is built without it, which is what left the
 // screenshot font lookup reaching for the one font database a Mac reliably does
 // not have. Every capture on an untouched Mac therefore fell back to Go Mono,
 // which has no icons in it.
@@ -75,7 +75,7 @@ var (
 )
 
 // loadFontIndex builds the index once. A machine does not grow fonts while
-// tuios is running, and the scan is the expensive half of a lookup.
+// dartuios is running, and the scan is the expensive half of a lookup.
 func loadFontIndex() *fontIndex {
 	fontIndexOnce.Do(func() { fontIndexVal = buildFontIndex(fontDirs()) })
 	return fontIndexVal

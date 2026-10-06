@@ -6,11 +6,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/overlay"
 	tint "github.com/lrstanley/bubbletint/v2"
 )
 
-// A theme's own colours for tuios's furniture, separate from the sixteen the
+// A theme's own colours for dartuios's furniture, separate from the sixteen the
 // panes are painted with.
 //
 // The sixteen ANSI slots did double duty: they are the emulator's colour table

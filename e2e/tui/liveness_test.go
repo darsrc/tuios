@@ -11,8 +11,8 @@ import (
 
 // Liveness.
 //
-// The fuzzer proves tuios does not violate its invariants. It does not prove
-// tuios does anything. Every rule in both oracles is a prohibition, and a client
+// The fuzzer proves dartuios does not violate its invariants. It does not prove
+// dartuios does anything. Every rule in both oracles is a prohibition, and a client
 // that rendered an empty screen forever and accepted every keystroke into a void
 // would satisfy nearly all of them: nothing would be spliced, no pane would
 // disagree with the daemon, no grid would be the wrong size, nothing would
@@ -21,7 +21,7 @@ import (
 //
 // That is a structural gap rather than a gap in the rule set, so it cannot be
 // closed by adding more prohibitions. What closes it is a small number of
-// properties of the form "this eventually happens", each naming one thing tuios
+// properties of the form "this eventually happens", each naming one thing dartuios
 // is for.
 //
 // They are written as ordinary tests rather than as fuzz rules on purpose. A
@@ -42,7 +42,7 @@ func livenessSession(t *testing.T, name string) (*tuitest.Terminal, string) {
 	t.Helper()
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 		t.Fatalf("create session %s: %v: %s", name, err, out)
 	}
 	return attachIn(t, base, name, startOpts{cols: 120, rows: 40}), base
@@ -61,7 +61,7 @@ func firstWindow(t *testing.T, base, session string) daemonWindow {
 	return wl.Windows[0]
 }
 
-// TestLivenessTypingReachesTheShellAndTheScreen is the most basic thing tuios
+// TestLivenessTypingReachesTheShellAndTheScreen is the most basic thing dartuios
 // claims: a key pressed at a focused pane in terminal mode is input to the
 // program running there, and what that program prints comes back.
 //

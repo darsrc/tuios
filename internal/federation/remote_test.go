@@ -66,11 +66,11 @@ func waitStatus(t *testing.T, m *Manager, want Status) HostReport {
 		"the host never reached "+string(want))
 }
 
-// TestLinkFindsTuiosAtAKnownPathAndRedialsWithIt is the failure this exists
-// for: tuios is in ~/.local/bin, where the install script puts it, and that is
+// TestLinkFindsDartuiosAtAKnownPathAndRedialsWithIt is the failure this exists
+// for: dartuios is in ~/.local/bin, where the install script puts it, and that is
 // not on the PATH ssh gives a command. The link has to find it, say so, and
 // run it directly on the next dial rather than probe again.
-func TestLinkFindsTuiosAtAKnownPathAndRedialsWithIt(t *testing.T) {
+func TestLinkFindsDartuiosAtAKnownPathAndRedialsWithIt(t *testing.T) {
 	far := newFarMachine(t)
 
 	// A stub that answers hello and then hangs a listing, so a call times out
@@ -84,7 +84,7 @@ func TestLinkFindsTuiosAtAKnownPathAndRedialsWithIt(t *testing.T) {
 		return nil, &RemoteError{Code: "internal", Message: "test over"}
 	})
 	t.Cleanup(func() { close(hang) })
-	installed := far.install(".local/bin/tuios")
+	installed := far.install(".local/bin/dartuios")
 
 	dial, commands := recordingDialer(SSHDialer(far.ssh))
 	opts := testOptions(dial)
@@ -93,7 +93,7 @@ func TestLinkFindsTuiosAtAKnownPathAndRedialsWithIt(t *testing.T) {
 
 	r := waitStatus(t, m, StatusUp)
 	if r.Command != installed {
-		t.Fatalf("ASSERTION: the link reports running %q, want the tuios it found at %s", r.Command, installed)
+		t.Fatalf("ASSERTION: the link reports running %q, want the dartuios it found at %s", r.Command, installed)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -124,29 +124,29 @@ func TestLinkFindsTuiosAtAKnownPathAndRedialsWithIt(t *testing.T) {
 	}
 }
 
-// TestLinkPrefersTuiosOnThePath pins the first step of the order: a tuios the
+// TestLinkPrefersDartuiosOnThePath pins the first step of the order: a dartuios the
 // non-interactive shell finds by name wins over every known path, because it
 // is what already worked, and the working case must not change.
-func TestLinkPrefersTuiosOnThePath(t *testing.T) {
+func TestLinkPrefersDartuiosOnThePath(t *testing.T) {
 	far := newFarMachine(t)
-	onPath := far.install("onpath/tuios")
-	far.install(".local/bin/tuios")
+	onPath := far.install("onpath/dartuios")
+	far.install(".local/bin/dartuios")
 	far.addToPath(filepath.Dir(onPath))
 
 	m := managerFor(t, testOptions(SSHDialer(far.ssh)), Host{Name: "build", Addr: "someone@buildbox"})
 	r := waitStatus(t, m, StatusUp)
 	if r.Command != onPath {
-		t.Fatalf("ASSERTION: the link runs %q, want the tuios on the PATH at %s ahead of the known paths", r.Command, onPath)
+		t.Fatalf("ASSERTION: the link runs %q, want the dartuios on the PATH at %s ahead of the known paths", r.Command, onPath)
 	}
 }
 
-// TestLinkPrefersAKnownPathOverTheLoginShell pins the second step: a tuios at
+// TestLinkPrefersAKnownPathOverTheLoginShell pins the second step: a dartuios at
 // a known install path wins over what the login shell would find, so the
 // profile is only ever run on a machine where nothing else worked.
 func TestLinkPrefersAKnownPathOverTheLoginShell(t *testing.T) {
 	far := newFarMachine(t)
-	known := far.install(".local/bin/tuios")
-	far.install("tools/tuios")
+	known := far.install(".local/bin/dartuios")
+	far.install("tools/dartuios")
 	profile := "PATH=$HOME/tools:$PATH\nexport PATH\n"
 	if err := os.WriteFile(filepath.Join(far.home, ".profile"), []byte(profile), 0o600); err != nil {
 		t.Fatalf("write .profile: %v", err)
@@ -159,12 +159,12 @@ func TestLinkPrefersAKnownPathOverTheLoginShell(t *testing.T) {
 	}
 }
 
-// TestLinkFindsTuiosThroughTheLoginShell is the last resort: tuios is nowhere
+// TestLinkFindsDartuiosThroughTheLoginShell is the last resort: dartuios is nowhere
 // the fixed list looks, and only the person's profile knows where it is.
-func TestLinkFindsTuiosThroughTheLoginShell(t *testing.T) {
-	skipIfTuiosIsInstalledSystemWide(t)
+func TestLinkFindsDartuiosThroughTheLoginShell(t *testing.T) {
+	skipIfDartuiosIsInstalledSystemWide(t)
 	far := newFarMachine(t)
-	installed := far.install("tools/tuios")
+	installed := far.install("tools/dartuios")
 	profile := "PATH=$HOME/tools:$PATH\nexport PATH\n"
 	if err := os.WriteFile(filepath.Join(far.home, ".profile"), []byte(profile), 0o600); err != nil {
 		t.Fatalf("write .profile: %v", err)
@@ -182,10 +182,10 @@ func TestLinkFindsTuiosThroughTheLoginShell(t *testing.T) {
 // as configured.
 func TestConfiguredCommandSkipsTheProbe(t *testing.T) {
 	far := newFarMachine(t)
-	// Installed where no probe would look, and with a tuios in ~/.local/bin
+	// Installed where no probe would look, and with a dartuios in ~/.local/bin
 	// that a probe would have preferred.
-	configured := far.install("elsewhere/my-tuios")
-	far.install(".local/bin/tuios")
+	configured := far.install("elsewhere/my-dartuios")
+	far.install(".local/bin/dartuios")
 
 	dial, commands := recordingDialer(SSHDialer(far.ssh))
 	m := managerFor(t, testOptions(dial), Host{Name: "build", Addr: "someone@buildbox", Command: configured})
@@ -203,7 +203,7 @@ func TestConfiguredCommandSkipsTheProbe(t *testing.T) {
 // runs nothing, so the next dial probes again and finds the new place.
 func TestStalePathIsProbedAgain(t *testing.T) {
 	far := newFarMachine(t)
-	old := far.install(".local/bin/tuios")
+	old := far.install(".local/bin/dartuios")
 	dial, commands := recordingDialer(SSHDialer(far.ssh))
 	opts := testOptions(dial)
 	m := managerFor(t, opts, Host{Name: "build", Addr: "someone@buildbox"})
@@ -212,7 +212,7 @@ func TestStalePathIsProbedAgain(t *testing.T) {
 	}
 
 	// Move the binary, then drop the link so the supervisor redials.
-	moved := far.install("go/bin/tuios")
+	moved := far.install("go/bin/dartuios")
 	if err := os.Remove(old); err != nil {
 		t.Fatalf("remove: %v", err)
 	}
@@ -235,7 +235,7 @@ func TestStalePathIsProbedAgain(t *testing.T) {
 // runs it directly.
 func TestKnownPathSurvivesAnUnreachableMachine(t *testing.T) {
 	far := newFarMachine(t)
-	installed := far.install(".local/bin/tuios")
+	installed := far.install(".local/bin/dartuios")
 	dial, commands := recordingDialer(SSHDialer(far.ssh))
 	m := managerFor(t, testOptions(dial), Host{Name: "build", Addr: "someone@buildbox"})
 	waitStatus(t, m, StatusUp)
@@ -304,7 +304,7 @@ func newFarMachine(t *testing.T) *farMachine {
 }
 
 // farMachine is the far side a probe test dials: a HOME and PATH of the test's
-// own, an ssh stand-in that switches to them, and a tuios that is the proxy.
+// own, an ssh stand-in that switches to them, and a dartuios that is the proxy.
 type farMachine struct {
 	t    *testing.T
 	home string
@@ -317,7 +317,7 @@ type farMachine struct {
 	stub      *stubDaemon
 }
 
-// install puts a tuios at rel under the far HOME. It is a script that runs
+// install puts a dartuios at rel under the far HOME. It is a script that runs
 // this test binary as the proxy against the stub, whatever arguments it gets.
 func (f *farMachine) install(rel string) string {
 	f.t.Helper()
@@ -330,7 +330,7 @@ func (f *farMachine) install(rel string) string {
 		f.t.Fatalf("mkdir: %v", err)
 	}
 	script := "#!/bin/sh\nexec " + self + " -test.run=TestHelperStdioProxy -fed.proxysock=" + f.stub.path + "\n"
-	if err := os.WriteFile(path, []byte(script), 0o700); err != nil { //nolint:gosec // the tuios stand-in this test runs
+	if err := os.WriteFile(path, []byte(script), 0o700); err != nil { //nolint:gosec // the dartuios stand-in this test runs
 		f.t.Fatalf("write %s: %v", rel, err)
 	}
 	return path
@@ -362,18 +362,18 @@ func recordingDialer(inner Dialer) (Dialer, func() []string) {
 	}
 }
 
-// skipIfTuiosIsInstalledSystemWide guards the tests that need the probe to
+// skipIfDartuiosIsInstalledSystemWide guards the tests that need the probe to
 // find nothing. The far side's HOME and PATH are the test's own, but the fixed
-// list also names system directories, and a developer with tuios in one of
+// list also names system directories, and a developer with dartuios in one of
 // them would have the probe find it, correctly.
-func skipIfTuiosIsInstalledSystemWide(t *testing.T) {
+func skipIfDartuiosIsInstalledSystemWide(t *testing.T) {
 	t.Helper()
 	for _, c := range remoteBinaryCandidates {
 		if strings.HasPrefix(c, "$") {
 			continue
 		}
 		if _, err := os.Stat(c); err == nil {
-			t.Skipf("tuios is installed at %s on this machine, so the probe would find it", c)
+			t.Skipf("dartuios is installed at %s on this machine, so the probe would find it", c)
 		}
 	}
 }

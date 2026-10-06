@@ -6,13 +6,13 @@ package vt
 // Only ESC-prefixed forms and BEL are recognized, which matches the sink.
 //
 // ghosttyScanner splits a raw PTY byte stream for the libghostty-backed
-// terminal. libghostty parses everything itself, but tuios owns a handful of
+// terminal. libghostty parses everything itself, but dartuios owns a handful of
 // sequence families the library either does not surface (kitty graphics APC,
 // sixel DCS, OSC 66 text sizing, OSC 52 clipboard reads) or does not expose
 // state for (DECSTBM values, charset designations, the kitty keyboard stack).
 // The scanner walks the stream once, emits everything else to the sink in
-// order, and reports the sequences tuios must observe. Sixel and kitty APC
-// are withheld from the sink entirely: tuios's passthrough pipeline is their
+// order, and reports the sequences dartuios must observe. Sixel and kitty APC
+// are withheld from the sink entirely: dartuios's passthrough pipeline is their
 // only consumer, and forwarding sixel would render it twice.
 //
 // It is a tokenizer, not a parser: it tracks only enough state to find

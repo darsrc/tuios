@@ -9,7 +9,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // Fuzzing the kitty graphics passthrough: what several panes' guests send, and
@@ -19,7 +19,7 @@ import (
 // they all land on one host terminal, which has one image id namespace and
 // executes whatever escape sequences arrive. So what goes to the host has to
 // be graphics and cursor bookkeeping only, and what one pane's guest causes
-// has to touch only the images tuios allocated for that pane.
+// has to touch only the images dartuios allocated for that pane.
 //
 // The ways this could fail, written down before the target:
 //
@@ -29,7 +29,7 @@ import (
 //  2. A graphics command sent to the host carries control data or payload
 //     characters a well-formed command cannot, so the host parses the rest
 //     as something else.
-//  3. A command one pane's guest sent names a host image id tuios never
+//  3. A command one pane's guest sent names a host image id dartuios never
 //     allocated for that pane: the guest's own id forwarded untranslated,
 //     or another pane's host id, so pane A overwrites or deletes pane B's
 //     image.
@@ -199,7 +199,7 @@ func FuzzKittyPassthrough(f *testing.F) {
 		wins := []string{"pane-a-0000000000000000", "pane-b-1111111111111111"}
 
 		// owner is the pane each host id was allocated for. An id is the
-		// pane's when tuios allocated it during one of that pane's steps, or
+		// pane's when dartuios allocated it during one of that pane's steps, or
 		// when it sits in the pane's id map. The map alone is not enough: a
 		// transmission under the auto-assign id 0 gets a fresh host id that
 		// is never mapped, and a delete removes the mapping it names.
@@ -259,7 +259,7 @@ func FuzzKittyPassthrough(f *testing.F) {
 					hostID, _ := strconv.ParseUint(m[1], 10, 32)
 					got := owner[hostID]
 					// A refresh redraws every pane, so an id there only has to
-					// be one tuios allocated. A close or clear is about one pane.
+					// be one dartuios allocated. A close or clear is about one pane.
 					if hostID != 0 && (got == "" || (st.op != "refresh" && got != win)) {
 						t.Fatalf("step %d: the %s of %s sent image id %d (owner %q):\n%q",
 							n, st.op, win[:6], hostID, got, body)
@@ -292,7 +292,7 @@ func FuzzKittyPassthrough(f *testing.F) {
 					continue
 				}
 				if got := owner[hostID]; got != win {
-					t.Fatalf("step %d: %s sent %q and the host got image id %d, which tuios never allocated to that pane (owner %q):\n%q",
+					t.Fatalf("step %d: %s sent %q and the host got image id %d, which dartuios never allocated to that pane (owner %q):\n%q",
 						n, win[:6], st.body, hostID, got, body)
 				}
 			}

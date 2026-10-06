@@ -12,8 +12,8 @@ import (
 
 	gossh "golang.org/x/crypto/ssh"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // sshExitRun is one real SSH client attached to one real daemon session, with
@@ -67,7 +67,7 @@ func startSSHExitRun(t *testing.T, name string) *sshExitRun {
 	})
 
 	clientCfg := &gossh.ClientConfig{
-		User:            "tuios",
+		User:            "dartuios",
 		HostKeyCallback: gossh.InsecureIgnoreHostKey(),
 		Timeout:         2 * time.Second,
 	}

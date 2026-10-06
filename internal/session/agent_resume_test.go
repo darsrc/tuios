@@ -27,7 +27,7 @@ argv = ["echo", "resumed-{session_id}"]
 	if err := os.WriteFile(filepath.Join(dir, "echoer.toml"), []byte(manifest), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("TUIOS_HARNESS_DIR", dir)
+	t.Setenv("DARTUIOS_HARNESS_DIR", dir)
 }
 
 // savedAgentSession is the state a previous daemon wrote for a session whose

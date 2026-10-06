@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // filterOS builds a model with the rail on the left and one pane beside it.
@@ -58,7 +58,7 @@ func TestMotionFilterPassesRailHover(t *testing.T) {
 			// The pane keeps the CPU guard when nothing out there hovers. Link
 			// hover is the one thing that does, so the guard is now conditional
 			// on it rather than absolute: with appearance.links off, a plain
-			// shell asked for no mouse mode, tuios draws no hover out there, and
+			// shell asked for no mouse mode, dartuios draws no hover out there, and
 			// that motion is noise exactly as it always was.
 			o.Settings.Links = config.LinksOff
 
@@ -101,7 +101,7 @@ func TestMotionFilterPassesTheBandExitEvent(t *testing.T) {
 
 // TestMotionFilterPassesPaneContentForLinks is the other half of the clause the
 // two tests above now qualify. A link under the pointer is drawn by the pane
-// itself, so unlike every other hover in tuios its target is not a rectangle the
+// itself, so unlike every other hover in dartuios its target is not a rectangle the
 // chrome recorded. The clause used to pass every motion over a pane's content
 // box on that strength, which composed one frame per cell for a sweep across
 // any pane at all; it now asks the pane whether a link is under the cell.

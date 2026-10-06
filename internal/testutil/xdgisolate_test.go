@@ -8,7 +8,7 @@ import (
 )
 
 // subprocessHarness lists the packages that isolate by a different mechanism
-// and so are held to it rather than to RunIsolated. They drive tuios as a real
+// and so are held to it rather than to RunIsolated. They drive dartuios as a real
 // child process with the environment already set, which works where t.Setenv
 // does not because the child resolves its paths at its own init, long after.
 // They are named rather than detected, so adding one is a decision somebody
@@ -140,7 +140,7 @@ func TestIsolationReportsWhatTheRunTouched(t *testing.T) {
 
 // TestIsolationPassesAnUntouchedTree keeps the guard from failing every run for
 // reasons of its own. A directory that does not exist is the ordinary case on a
-// machine that has never run tuios, and it must read as clean.
+// machine that has never run dartuios, and it must read as clean.
 func TestIsolationPassesAnUntouchedTree(t *testing.T) {
 	dir := t.TempDir()
 	if err := os.WriteFile(filepath.Join(dir, "state.json"), []byte("{}"), 0o600); err != nil {

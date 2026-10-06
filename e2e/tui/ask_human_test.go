@@ -12,14 +12,14 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// startAskHuman runs `tuios ask-human` in the background against the suite's
+// startAskHuman runs `dartuios ask-human` in the background against the suite's
 // daemon and returns a channel that delivers its stdout and exit error.
 func startAskHuman(t *testing.T, base string, args ...string) <-chan askRun {
 	t.Helper()
 	return startCLIBackground(t, base, append([]string{"ask-human"}, args...)...)
 }
 
-// startCLIBackground runs a tuios command in the background against the
+// startCLIBackground runs a dartuios command in the background against the
 // suite's daemon and returns a channel that delivers its stdout and exit
 // error, for a command that blocks until something happens on the screen.
 func startCLIBackground(t *testing.T, base string, args ...string) <-chan askRun {
@@ -27,7 +27,7 @@ func startCLIBackground(t *testing.T, base string, args ...string) <-chan askRun
 	// A command that runs before any client would write the first-run config
 	// with the shipped looks, which the pins then read as the test's choice.
 	pinPreV080Looks(t, base)
-	cmd := exec.Command(tuiosBin, args...)
+	cmd := exec.Command(dartuiosBin, args...)
 	cmd.Dir = workDirIn(t, base)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -157,10 +157,10 @@ func TestAskHumanPopIgnoresKeysTypedForThePane(t *testing.T) {
 // call and the pane's inbox stays empty.
 func TestAskHumanAnswerReachesAKilledCaller(t *testing.T) {
 	term, base := attachClientBase(t)
-	if out, err := tuiosCLI(t, base, "new", "e2e-killed", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-killed", "--detach"); err != nil {
 		t.Fatalf("create the agent's session: %v\n%s", err, out)
 	}
-	cmd := exec.Command(tuiosBin, "ask-human", "-s", "e2e-killed", "-w", "0", "--timeout", "60000", "Tag the release?", "-o", "tag", "-o", "skip")
+	cmd := exec.Command(dartuiosBin, "ask-human", "-s", "e2e-killed", "-w", "0", "--timeout", "60000", "Tag the release?", "-o", "tag", "-o", "skip")
 	cmd.Dir = workDirIn(t, base)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -188,7 +188,7 @@ func TestAskHumanAnswerReachesAKilledCaller(t *testing.T) {
 	}
 	deadline := time.Now().Add(uiTimeout)
 	for {
-		mail, err := tuiosCLI(t, base, "read-agent-messages", "-s", "e2e-killed", "-w", "0", "--json")
+		mail, err := dartuiosCLI(t, base, "read-agent-messages", "-s", "e2e-killed", "-w", "0", "--json")
 		if err == nil && strings.Contains(mail, `"text": "tag"`) && strings.Contains(mail, `"verified_human": true`) {
 			break
 		}
@@ -220,7 +220,7 @@ func TestPopupWaitReturnsWhatThePickerPrinted(t *testing.T) {
 		t.Fatalf("popup --capture-stdout returned before the picker did: %q, %v", run.out, run.err)
 	default:
 	}
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", "beta\r"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", "beta\r"); err != nil {
 		t.Fatalf("type into the popup: %v\n%s", err, out)
 	}
 	select {
@@ -241,10 +241,10 @@ func TestPopupWaitReturnsWhatThePickerPrinted(t *testing.T) {
 // coming back with the request id reads it.
 func TestAskHumanWaitsInTheInboxWhenNobodyIsThere(t *testing.T) {
 	term, base := attachClientBase(t)
-	if out, err := tuiosCLI(t, base, "new", "e2e-agent", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-agent", "--detach"); err != nil {
 		t.Fatalf("create the agent's session: %v\n%s", err, out)
 	}
-	out, _ := tuiosCLI(t, base, "ask-human", "-s", "e2e-agent", "-w", "0", "--no-wait", "--json",
+	out, _ := dartuiosCLI(t, base, "ask-human", "-s", "e2e-agent", "-w", "0", "--no-wait", "--json",
 		"Merge the branch?", "-o", "merge", "-o", "wait")
 	var res struct {
 		Result struct {
@@ -284,11 +284,11 @@ func TestAskHumanWaitsInTheInboxWhenNobodyIsThere(t *testing.T) {
 		t.Fatalf("the answered question stayed in the Inbox: %v\n%s", err, term.Snapshot())
 	}
 
-	mail, err := tuiosCLI(t, base, "read-agent-messages", "-s", "e2e-agent", "-w", "0", "--json")
+	mail, err := dartuiosCLI(t, base, "read-agent-messages", "-s", "e2e-agent", "-w", "0", "--json")
 	if err != nil || !strings.Contains(mail, `"text": "merge"`) || !strings.Contains(mail, `"verified_human": true`) {
 		t.Fatalf("the asking pane's inbox = %q (%v), want the answer merge from human, verified", mail, err)
 	}
-	again, err := tuiosCLI(t, base, "ask-human", "--request-id", id)
+	again, err := dartuiosCLI(t, base, "ask-human", "--request-id", id)
 	if err != nil || strings.TrimSpace(again) != "merge" {
 		t.Fatalf("coming back for the answer printed %q (%v), want merge", again, err)
 	}

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // Log adds a new log message to the log buffer.
@@ -94,7 +94,7 @@ var sessionSideHooks = func() map[hooks.Event]bool {
 // daemon, and the daemon fires their hooks. This client stays silent on those,
 // which is what makes three attached clients produce one firing rather than
 // three, and what makes the same hook fire when nobody is attached at all. A
-// standalone tuios has no daemon, so it fires everything itself.
+// standalone dartuios has no daemon, so it fires everything itself.
 func (m *OS) firesHere(event hooks.Event) bool {
 	return !m.IsDaemonSession || !sessionSideHooks[event]
 }

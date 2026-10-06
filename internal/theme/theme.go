@@ -1,4 +1,4 @@
-// Package theme provides color themes and styling for the TUIOS terminal.
+// Package theme provides color themes and styling for the dartuios terminal.
 package theme
 
 import (
@@ -7,8 +7,8 @@ import (
 	"sync"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/overlay"
 	tint "github.com/lrstanley/bubbletint/v2"
 )
 
@@ -107,7 +107,7 @@ func Current() *tint.Tint {
 
 // GetANSIPalette returns the 16 ANSI colors (0-15) from the current theme.
 //
-// With no theme the sixteen are the user's terminal's, and tuios does not know
+// With no theme the sixteen are the user's terminal's, and dartuios does not know
 // what they are. It returns the indices themselves rather than a guess: painted
 // with one of these, a swatch leaves as SGR 31 or 91 and the host fills it in
 // from the user's own palette, so the row really is the user's sixteen. The
@@ -387,7 +387,7 @@ func NotificationGround() color.Color {
 // moved.
 //
 // The ground is the theme's when a theme is on, since that is the one the panes
-// beside the rule are painted in. Without a theme tuios paints nothing and
+// beside the rule are painted in. Without a theme dartuios paints nothing and
 // cannot ask, so the rule is measured against the chrome ramp's own canvas,
 // which is the ground every other constant ink in the rail is measured against
 // and lands within a channel step of charmtone Iron.

@@ -14,7 +14,7 @@ import (
 )
 
 // GhosttyTerminal implements Terminal on top of libghostty-vt. libghostty
-// owns parsing and grid state; this type owns what tuios needs beyond that:
+// owns parsing and grid state; this type owns what dartuios needs beyond that:
 // a uv-typed shadow of the viewport kept fresh from the render state's dirty
 // rows, the graphics passthrough pipeline (kitty, sixel), and the handful of
 // states the library keeps but does not expose (charsets, scroll region,
@@ -120,7 +120,7 @@ type GhosttyTerminal struct {
 	// the restored state.
 	restorePending atomic.Bool
 
-	// tuios graphics state, owned here exactly as the pure emulator owns it.
+	// dartuios graphics state, owned here exactly as the pure emulator owns it.
 	kittyMain, kittyAlt  *KittyState
 	semanticMarkers      *SemanticMarkerList
 	kittyPassthroughFunc func(cmd *KittyCommand, rawData []byte)
@@ -201,7 +201,7 @@ func newGhosttyTerminal(w, h, maxLines int) *GhosttyTerminal {
 		// Grapheme clustering (DEC mode 2027) is on by default, and RIS
 		// restores it. The library's own default is off, which measures a
 		// ZWJ sequence, a flag or a base with VS16 one codepoint at a time:
-		// the family emoji takes eight columns in the grid. tuios re-emits
+		// the family emoji takes eight columns in the grid. dartuios re-emits
 		// the row as text, the host terminal clusters it into two, and the
 		// rest of the row and the pane border shift left. The pure emulator
 		// always clusters, and so does Ghostty itself by default. An app
@@ -252,7 +252,7 @@ func newGhosttyTerminal(w, h, maxLines int) *GhosttyTerminal {
 						cb.ClipboardSet(selection, data)
 					}
 				})
-				break // tuios's callback carries one payload per selection
+				break // dartuios's callback carries one payload per selection
 			}
 			// The reply is mandatory. libghostty denies a write that returns
 			// without one, so this must stay a success even when the host has
@@ -294,7 +294,7 @@ func newGhosttyTerminal(w, h, maxLines int) *GhosttyTerminal {
 	}
 	t.term = term
 
-	// tuios owns kitty graphics end to end; storing decoded images in the C
+	// dartuios owns kitty graphics end to end; storing decoded images in the C
 	// library would only duplicate memory.
 	var zero uint64
 	_ = t.term.SetKittyImageStorageLimit(&zero)
@@ -386,7 +386,7 @@ func (t *GhosttyTerminal) forward(p []byte) {
 }
 
 // Write feeds raw PTY bytes. The scanner forwards them to libghostty and
-// surfaces the sequences tuios handles itself.
+// surfaces the sequences dartuios handles itself.
 func (t *GhosttyTerminal) Write(p []byte) (int, error) {
 	t.mu.Lock()
 	if t.closed.Load() {

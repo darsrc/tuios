@@ -101,21 +101,21 @@ func writeIcon(t *testing.T, parts ...string) string {
 // difference between 81% and 98% of installed applications resolving.
 func TestIconFinderDottedName(t *testing.T) {
 	_, sys := iconTree(t)
-	want := writeIcon(t, sys, "icons", "Test", "22x22", "apps", "com.example.tuios.oss.png")
+	want := writeIcon(t, sys, "icons", "Test", "22x22", "apps", "com.example.dartuios.oss.png")
 
-	if got := NewIconFinder("Test").Find("com.example.tuios.oss", 22); got != want {
+	if got := NewIconFinder("Test").Find("com.example.dartuios.oss", 22); got != want {
 		t.Errorf("Find = %q, want %q; the name is not an extension", got, want)
 	}
 }
 
 func TestIconFinderStripsImageExtension(t *testing.T) {
 	_, sys := iconTree(t)
-	want := writeIcon(t, sys, "icons", "Test", "22x22", "apps", "tuios-suffixed.png")
+	want := writeIcon(t, sys, "icons", "Test", "22x22", "apps", "dartuios-suffixed.png")
 
 	// A relative name with an extension names an icon, not a file, since there
 	// is no directory to resolve it against. The extension is dropped and the
 	// theme answers.
-	if got := NewIconFinder("Test").Find("tuios-suffixed.png", 22); got != want {
+	if got := NewIconFinder("Test").Find("dartuios-suffixed.png", 22); got != want {
 		t.Errorf("Find = %q, want %q", got, want)
 	}
 }
@@ -127,11 +127,11 @@ Name=Ring
 Inherits=Ring,Test
 Directories=
 `)
-	writeIcon(t, sys, "icons", "Test", "22x22", "apps", "tuios-ring.png")
+	writeIcon(t, sys, "icons", "Test", "22x22", "apps", "dartuios-ring.png")
 
 	// A theme that inherits itself must be walked once and then left, or the
 	// lookup never returns at all.
-	if got := NewIconFinder("Ring").Find("tuios-ring", 22); got == "" {
+	if got := NewIconFinder("Ring").Find("dartuios-ring", 22); got == "" {
 		t.Error("Find = \"\", want the copy reached through the cycle")
 	}
 }

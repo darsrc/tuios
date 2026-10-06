@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // TestDiagnoseCountsSavedSessions pins that the diagnosis knows what is on disk.
@@ -25,7 +25,7 @@ func TestDiagnoseCountsSavedSessions(t *testing.T) {
 	if d.Restorable != 0 {
 		t.Fatalf("Restorable = %d with an empty state dir, want 0", d.Restorable)
 	}
-	if !strings.Contains(d.Explain(), "tuios new") {
+	if !strings.Contains(d.Explain(), "dartuios new") {
 		t.Errorf("with nothing saved the fix should be to create a session:\n%s", d.Explain())
 	}
 
@@ -41,7 +41,7 @@ func TestDiagnoseCountsSavedSessions(t *testing.T) {
 		t.Fatalf("Restorable = %d with two saved sessions, want 2", d.Restorable)
 	}
 	msg := d.Explain()
-	if !strings.Contains(msg, "2 saved sessions") || !strings.Contains(msg, "tuios attach") {
+	if !strings.Contains(msg, "2 saved sessions") || !strings.Contains(msg, "dartuios attach") {
 		t.Errorf("message does not name the saved sessions or the command that reopens them:\n%s", msg)
 	}
 }

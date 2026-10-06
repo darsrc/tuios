@@ -2,32 +2,34 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/brand/banner-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="./assets/brand/banner-light.png">
-    <img alt="tuios: a terminal window manager that knows what your agents are doing. Tilly, a small purple CRT whose screen is a tiled layout, stands beside the tuios wordmark and a tiled terminal session." src="./assets/brand/banner-light.png" width="100%">
+    <img alt="dartuios: a terminal window manager that knows what your agents are doing. Tilly, a small purple CRT whose screen is a tiled layout, stands beside the dartuios wordmark and a tiled terminal session." src="./assets/brand/banner-light.png" width="100%">
   </picture>
 
-  <p><strong>TUIOS: Terminal UI Operating System</strong></p>
+  <p><strong>dartuios: Terminal UI Operating System</strong></p>
 
-  <a href="https://github.com/Gaurav-Gosain/tuios/releases"><img src="https://img.shields.io/github/release/Gaurav-Gosain/tuios.svg" alt="Latest Release"></a>
-  <a href="https://pkg.go.dev/github.com/Gaurav-Gosain/tuios?tab=doc"><img src="https://godoc.org/github.com/Gaurav-Gosain/tuios?status.svg" alt="GoDoc"></a>
-  <a href="https://deepwiki.com/Gaurav-Gosain/tuios"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+  <a href="https://github.com/darsrc/tuios/releases"><img src="https://img.shields.io/github/release/darsrc/tuios.svg" alt="Latest Release"></a>
+  <a href="https://pkg.go.dev/github.com/darsrc/tuios?tab=doc"><img src="https://godoc.org/github.com/darsrc/tuios?status.svg" alt="GoDoc"></a>
+  <a href="https://deepwiki.com/darsrc/tuios"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
   <br>
   <a title="This tool is Tool of The Week on Terminal Trove, The $HOME of all things in the terminal" href="https://terminaltrove.com/"><img src="https://cdn.terminaltrove.com/media/badges/tool_of_the_week/png/terminal_trove_tool_of_the_week_green_on_dark_grey_bg.png" alt="Terminal Trove Tool of The Week" style="width: 250px;" /></a>
 </div>
 
-![TUIOS](./assets/demo.gif)
+![dartuios](./assets/demo.gif)
 
-TUIOS is a modern terminal multiplexer and window manager built with Go. It provides a vim-like modal interface with multiple terminal panes, workspaces, BSP tiling, kitty graphics protocol support, and a command palette, all running inside your existing terminal. A daemon keeps sessions alive, reaches sessions on your other machines, and lets the coding agents in your panes report their state and message each other.
+dartuios is a modern terminal multiplexer and window manager built with Go. It provides a vim-like modal interface with multiple terminal panes, workspaces, BSP tiling, kitty graphics protocol support, and a command palette, all running inside your existing terminal. A daemon keeps sessions alive, reaches sessions on your other machines, and lets the coding agents in your panes report their state and message each other.
 
-Built on the Charm stack (Bubble Tea v2, Lipgloss v2), TUIOS features event-driven rendering for near-zero idle CPU usage, flicker-free kitty image passthrough, and comprehensive keyboard/mouse interaction.
+Built on the Charm stack (Bubble Tea v2, Lipgloss v2), dartuios features event-driven rendering for near-zero idle CPU usage, flicker-free kitty image passthrough, and comprehensive keyboard/mouse interaction.
+
+Out of the box it draws in the **DAR** language: a light frame at rest that goes heavy where something is focused, a half-block rail, corner-anchored panels and the thin floating scrollbar. The working-agent pulse rides the existing `appearance.motion` switch. The look is `appearance.border_style` (default `dar`) and the glyph sets are in [Glyph sets](docs/GLYPHS.md).
 
 ## Documentation
 
-Full documentation is available at **[tuios.dev](https://tuios.dev)** (hosted) or in the [`docs/`](./docs/) folder. To try tuios without installing it, take the guided tour at **[tuios.dev/learn](https://tuios.dev/learn)**: the real app, compiled to WebAssembly, with a practice shell in every pane.
+Full documentation is available at **[dartuios.dev](https://dartuios.dev)** (hosted) or in the [`docs/`](./docs/) folder. To try dartuios without installing it, take the guided tour at **[dartuios.dev/learn](https://dartuios.dev/learn)**: the real app, compiled to WebAssembly, with a practice shell in every pane.
 
 What changed in v0.8.0 is in the [release notes](docs/release-notes/v0.8.0.md).
 
 ### Quick Links
-- **[Getting Started](https://tuios.dev/docs/getting-started)**: Install and first session
+- **[Getting Started](https://dartuios.dev/docs/getting-started)**: Install and first session
 - **[Keybindings](docs/KEYBINDINGS.md)**: Default keys and how to rebind them
 - **[BSP Tiling](docs/BSP_TILING.md)**: Tiling with preselection and split control
 - **[Layout Modes](docs/LAYOUT_MODES.md)**: BSP, master-stack and scrolling layouts, aggregate view, multifocus
@@ -38,7 +40,7 @@ What changed in v0.8.0 is in the [release notes](docs/release-notes/v0.8.0.md).
 - **[CLI Reference](docs/CLI_REFERENCE.md)**: All command-line options
 - **[Tape Scripting](docs/TAPE_SCRIPTING.md)**: Automate workflows
 - **[Sessions](docs/SESSIONS.md)**: Daemon mode, attach/detach, other machines, and what survives
-- **[Agents](docs/AGENT_STATE.md)**: Running coding agents in tuios: state, the Inbox, approvals, fleets, other machines, grants and MCP
+- **[Agents](docs/AGENT_STATE.md)**: Running coding agents in dartuios: state, the Inbox, approvals, fleets, other machines, grants and MCP
 - **[tmux Shim](docs/TMUX_SHIM.md)**: Run tools that drive tmux, such as Claude Code agent teams
 - **[Control Protocol](docs/protocol.md)**: JSON verb protocol for driving the daemon
 - **[Architecture](docs/ARCHITECTURE.md)**: Technical design
@@ -64,19 +66,19 @@ What changed in v0.8.0 is in the [release notes](docs/release-notes/v0.8.0.md).
 
 **Homebrew (macOS/Linux):**
 ```bash
-brew install tuios
+brew install dartuios
 ```
 
 **Arch Linux (AUR):**
 ```bash
-yay -S tuios-bin
+yay -S dartuios-bin
 ```
 
 **Nix:**
 ```bash
-nix run github:Gaurav-Gosain/tuios/v0.8.0#tuios   # a release
-nix run github:Gaurav-Gosain/tuios#tuios          # the latest main
-nix run nixpkgs#tuios                             # the nixpkgs package
+nix run github:darsrc/tuios/v0.8.0#dartuios   # a release
+nix run github:darsrc/tuios#dartuios          # the latest main
+nix run nixpkgs#dartuios                             # the nixpkgs package
 ```
 
 Put a release tag after the repo name to build that release. Without a tag, Nix builds the newest commit on `main`.
@@ -85,30 +87,30 @@ Put a release tag after the repo name to build that release. Without a tag, Nix 
 
 ```bash
 # Quick install script (Linux/macOS)
-curl -fsSL https://raw.githubusercontent.com/Gaurav-Gosain/tuios/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/darsrc/tuios/main/install.sh | bash
 
 # Go install
-go install github.com/Gaurav-Gosain/tuios/cmd/tuios@latest
+go install github.com/darsrc/tuios/cmd/dartuios@latest
 
 # Docker
-docker run -it --rm ghcr.io/gaurav-gosain/tuios:latest
+docker run -it --rm ghcr.io/gaurav-gosain/dartuios:latest
 ```
 
-**[GitHub Releases](https://github.com/Gaurav-Gosain/tuios/releases)**: Pre-built binaries for Linux, macOS, Windows, FreeBSD and OpenBSD, with a `checksums.txt`. The `tuios-ghostty_*` archives are `tuios` built on the [libghostty-vt emulator](./docs/ghostty-vt.md), for Linux, macOS and Windows on amd64 and arm64.
+**[GitHub Releases](https://github.com/darsrc/tuios/releases)**: Pre-built binaries for Linux, macOS, Windows, FreeBSD and OpenBSD, with a `checksums.txt`. The `dartuios-ghostty_*` archives are `dartuios` built on the [libghostty-vt emulator](./docs/ghostty-vt.md), for Linux, macOS and Windows on amd64 and arm64.
 
 **Building from source** needs Go 1.26.6 or newer.
 
 **Updating.** If you installed with the quick install script or a release
-binary, `tuios update` fetches the newest release and puts it in place
-(`tuios update --check` just reports). Everything else has a package manager
-that owns the binary, so use that instead; `tuios update` detects which you have
+binary, `dartuios update` fetches the newest release and puts it in place
+(`dartuios update --check` just reports). Everything else has a package manager
+that owns the binary, so use that instead; `dartuios update` detects which you have
 and prints the right command rather than overwriting it.
 
 **Requirements:** A terminal with true color support. Kitty graphics and sixel support recommended (Ghostty, Kitty, WezTerm).
 
 ## Features
 
-![TUIOS](./assets/tuios.gif)
+![dartuios](./assets/dartuios.gif)
 
 ### Core
 - **Multiple Terminal Panes**: Create, resize, drag, and organize terminal sessions
@@ -119,27 +121,27 @@ and prints the right command rather than overwriting it.
 - **Pane Zoom**: Zoom any pane with <kbd>z</kbd> (WM mode) or <kbd>Prefix</kbd>+<kbd>z</kbd>. It takes 95% of the screen by default; set `appearance.zoom_size = 100` for fullscreen. A fullscreen zoom hides the shared borders, and the dockbar shows a **Z** indicator.
 - **Session Rail**: A sidebar with sessions, terminals, files, git state and agents, on by default on the right (`appearance.sidebar.enabled`)
 - **Settings Page**: Change options in the app with <kbd>Prefix</kbd>+<kbd>,</kbd>
-- **Popups**: `tuios popup -- fzf` runs a command in a floating pane that closes when it exits
+- **Popups**: `dartuios popup -- fzf` runs a command in a floating pane that closes when it exits
 
 ### Agents
 The guide is [docs/AGENT_STATE.md](docs/AGENT_STATE.md).
-- **Agent State**: Panes running a coding agent show whether it is working, waiting for you, done or errored, as a shape in the title and a row on the rail. `tuios integration install` wires 19 harnesses (Claude Code, Codex, Gemini CLI, opencode and more) to report it, and tuios detects 24 agent CLIs by their process and screen
+- **Agent State**: Panes running a coding agent show whether it is working, waiting for you, done or errored, as a shape in the title and a row on the rail. `dartuios integration install` wires 19 harnesses (Claude Code, Codex, Gemini CLI, opencode and more) to report it, and dartuios detects 24 agent CLIs by their process and screen
 - **Inbox**: <kbd>Prefix</kbd>+<kbd>i</kbd> lists everything waiting for you in every session and on every machine: approvals, questions, mail, errors, finished turns. <kbd>Prefix</kbd>+<kbd>o</kbd> jumps to the oldest. Answer a prompt from there without going to the pane, and with `[agents.approvals]` answer Claude Code, opencode, Kilo and Qwen Code permission requests with one key
-- **Questions and Messages**: `tuios ask-human` puts a question with fixed answers in your Inbox. Agents mail each other with `tuios send-agent-message`, and `tuios ask-agent` asks one and waits for its answer. It never types into a pane waiting on a prompt, and replies from you are marked verified
-- **Fleets**: `tuios fan` starts one prompt in several agents, mixed harnesses allowed, each in its own git worktree. `tuios start-agent` starts one helper beside you, in its TUI or headless over ACP or the Codex app-server. Selectors such as `group:fan/retry needs:you` address a whole group
+- **Questions and Messages**: `dartuios ask-human` puts a question with fixed answers in your Inbox. Agents mail each other with `dartuios send-agent-message`, and `dartuios ask-agent` asks one and waits for its answer. It never types into a pane waiting on a prompt, and replies from you are marked verified
+- **Fleets**: `dartuios fan` starts one prompt in several agents, mixed harnesses allowed, each in its own git worktree. `dartuios start-agent` starts one helper beside you, in its TUI or headless over ACP or the Codex app-server. Selectors such as `group:fan/retry needs:you` address a whole group
 - **Resume**: After a daemon restart, the Inbox offers to resume each agent conversation that was running
-- **Pane Grants**: Say what an agent's pane may do through tuios (`read`, `write`, `fan`, `respond`, `admin`), and give a helper less with `--grants`
-- **MCP Server**: `tuios mcp` serves the same surface as MCP tools, read-only and held to the agent's own session unless you say otherwise
-- **tmux Shim**: `tuios tmux-shim` runs tools that drive tmux, such as Claude Code agent teams, with their panes opened as tuios panes
-- **Session Stash**: `tuios stash put` keeps a file for the session, so another agent can still open it
-- **Agent Skill**: `tuios --skill` prints the short guide an agent in a pane reads to drive tuios, and `tuios --skill TOPIC` the rest, recipes included
+- **Pane Grants**: Say what an agent's pane may do through dartuios (`read`, `write`, `fan`, `respond`, `admin`), and give a helper less with `--grants`
+- **MCP Server**: `dartuios mcp` serves the same surface as MCP tools, read-only and held to the agent's own session unless you say otherwise
+- **tmux Shim**: `dartuios tmux-shim` runs tools that drive tmux, such as Claude Code agent teams, with their panes opened as dartuios panes
+- **Session Stash**: `dartuios stash put` keeps a file for the session, so another agent can still open it
+- **Agent Skill**: `dartuios --skill` prints the short guide an agent in a pane reads to drive dartuios, and `dartuios --skill TOPIC` the rest, recipes included
 
 ### Machines
-- **Hosts**: `tuios hosts add` names another machine, reached over ssh. `tuios hosts tailnet` lists the machines on a Tailscale tailnet
-- **Remote Sessions**: `tuios attach --host build api` draws a session on another machine in this client, and `-s HOST:SESSION` sends any command there
-- **Hosted Panes**: `tuios new-window NAME --host build` runs one pane's process on another machine, in a session here
-- **Global Sessions**: `tuios new NAME --global` holds panes from several machines ([docs](docs/SESSIONS.md))
-- **Agents on Other Machines**: `tuios fan --host build` and `tuios start-agent -s build:api` run agents there, their Inbox items show here, and `tuios worktree pull` brings their work back. Each machine's `[hosts]` policy says what the others may do
+- **Hosts**: `dartuios hosts add` names another machine, reached over ssh. `dartuios hosts tailnet` lists the machines on a Tailscale tailnet
+- **Remote Sessions**: `dartuios attach --host build api` draws a session on another machine in this client, and `-s HOST:SESSION` sends any command there
+- **Hosted Panes**: `dartuios new-window NAME --host build` runs one pane's process on another machine, in a session here
+- **Global Sessions**: `dartuios new NAME --global` holds panes from several machines ([docs](docs/SESSIONS.md))
+- **Agents on Other Machines**: `dartuios fan --host build` and `dartuios start-agent -s build:api` run agents there, their Inbox items show here, and `dartuios worktree pull` brings their work back. Each machine's `[hosts]` policy says what the others may do
 
 ### Tiling
 - **BSP Tiling**: Binary Space Partitioning with spiral layout
@@ -165,7 +167,7 @@ The guide is [docs/AGENT_STATE.md](docs/AGENT_STATE.md).
 - **Kitty Keyboard Protocol**: Progressive enhancement (CSI u) with push/pop/query support. Fish 4.x compatible; Shift+printable bypasses the protocol and sends text directly.
 - **Synchronized Output**: Mode 2026 prevents screen tearing
 - **Shared Memory Support**: `t=s` passthrough for mpv `--vo-kitty-use-shm`
-- **Animation Frames**: A guest's `a=f` frame edits are forwarded to the host, so a program that patches its own image costs a rectangle instead of a whole bitmap. TUIOS also patches guests that only retransmit. Panes are told whether the host carries frame edits through `TUIOS_KITTY_ANIMATION`, because the host's reply is not relayed back into the pane and a guest cannot find out for itself.
+- **Animation Frames**: A guest's `a=f` frame edits are forwarded to the host, so a program that patches its own image costs a rectangle instead of a whole bitmap. dartuios also patches guests that only retransmit. Panes are told whether the host carries frame edits through `DARTUIOS_KITTY_ANIMATION`, because the host's reply is not relayed back into the pane and a guest cannot find out for itself.
 - **Terminal Queries**: OSC 4 palette, OSC 10-12 colors, CSI 14/16/18t sizing, DA1/DA2
 - **Experimental**: Kitty text sizing protocol (OSC 66). Basic passthrough works but has known issues with scrollback and window repositioning
 - **Kitty Animation Protocol**: Frame transmission, composition, and control (a=f, a=a, a=c), with damage-patch streaming for animated guests
@@ -175,33 +177,33 @@ The guide is [docs/AGENT_STATE.md](docs/AGENT_STATE.md).
 - **Session Resurrection**: Sessions come back after a daemon restart or reboot with their structure and working directories ([docs](docs/SESSIONS.md))
 - **Session Switcher**: In-app session list (<kbd>Prefix</kbd>+<kbd>S</kbd>)
 - **Layout Templates**: Save/load window arrangements with working directories and startup commands
-- **Layout CLI**: `tuios layout list`, `tuios layout delete`, `tuios layout export`
+- **Layout CLI**: `dartuios layout list`, `dartuios layout delete`, `dartuios layout export`
 
 ### Automation
 - **Tape Scripting**: DSL for recording and replaying terminal workflows
 - **Tape Recording**: Record live sessions (<kbd>Prefix</kbd>+<kbd>T</kbd> <kbd>r</kbd>)
-- **Headless Execution**: `tuios tape exec` runs a tape against a running daemon session
+- **Headless Execution**: `dartuios tape exec` runs a tape against a running daemon session
 - **Layout Export**: Convert layouts to tape scripts for sharing
 
 ### Discovery & Navigation
 - **Which-Key Popup**: Hold the prefix key to see the chords available (`appearance.whichkey_enabled`, [docs](docs/KEYBINDINGS.md))
 - **App Launcher**: <kbd>Alt</kbd>+<kbd>Space</kbd> runs anything on `$PATH`, frecency-ranked, with desktop-entry names and icons
-- **Keybind Manager**: <kbd>Prefix</kbd>+<kbd>k</kbd> in-app, or `tuios keybinds doctor` and `tuios keybinds explain <key>` from the shell
+- **Keybind Manager**: <kbd>Prefix</kbd>+<kbd>k</kbd> in-app, or `dartuios keybinds doctor` and `dartuios keybinds explain <key>` from the shell
 - **Aggregate View**: Searchable list of every window across every workspace, with previews ([docs](docs/LAYOUT_MODES.md#aggregate-view))
 - **Multifocus**: Broadcast typing to several panes at once, `Ctrl`+`Shift`+click to select ([docs](docs/LAYOUT_MODES.md#multifocus))
 
 ### More
 - **Showkeys Overlay**: Display pressed keys for presentations
 - **Spotlight**: Light one area of the screen and dim the rest, for demos and recordings (`[spotlight]` config table)
-- **Screenshots**: `tuios screenshot` renders a pane to PNG, SVG, ANSI, HTML or text
+- **Screenshots**: `dartuios screenshot` renders a pane to PNG, SVG, ANSI, HTML or text
 - **Dock Components**: Your own commands drawn in the dock, updated on events, from a running command, or by polling ([examples](examples/dock/README.md))
 - **Customizable Keybindings**: TOML configuration with Kitty protocol support
 - **Hooks**: Run shell commands on ten events, including window, workspace, attach and agent state changes ([docs](docs/HOOKS.md))
 - **Mouse Support**: Wheel scrollback, drag-to-select with copy on release, double-click word and triple-click line, window drag, resize, scrollbar
 - **SSH Server Mode**: Remote terminal multiplexing
-- **Web Terminal Mode**: Browser-based access (separate `tuios-web` binary)
+- **Web Terminal Mode**: Browser-based access (separate `dartuios-web` binary)
 - **Themes**: Bundled themes plus custom themes from JSON, with chrome designed for truecolor, 256 and 16 colours and for light themes ([docs](docs/THEMES.md))
-- **Host Colours**: tuios asks your terminal for its colours, passes them to programs that ask, and follows its light and dark switch
+- **Host Colours**: dartuios asks your terminal for its colours, passes them to programs that ask, and follows its light and dark switch
 - **Backgrounds**: `appearance.background` paints empty cells with the theme's background or a colour of your own, per surface if you like
 - **Motion**: `appearance.motion` is `none`, `basic` or `full` (fades, the working shimmer, confetti)
 - **Glyph Sets**: Choose the characters the chrome is drawn with ([docs](docs/GLYPHS.md))
@@ -209,12 +211,12 @@ The guide is [docs/AGENT_STATE.md](docs/AGENT_STATE.md).
 ## Quick Start
 
 ```bash
-tuios                    # Launch TUIOS
-tuios --show-keys        # Launch with key overlay for learning
-tuios --standalone       # Launch without the daemon, for this run only
+dartuios                    # Launch dartuios
+dartuios --show-keys        # Launch with key overlay for learning
+dartuios --standalone       # Launch without the daemon, for this run only
 ```
 
-`tuios` attaches to a daemon-backed session, so the session outlives the
+`dartuios` attaches to a daemon-backed session, so the session outlives the
 terminal window it started in. New panes are tiled. See
 [SESSIONS.md](docs/SESSIONS.md) to turn either off.
 
@@ -241,10 +243,10 @@ The **prefix key** is <kbd>Ctrl</kbd>+<kbd>B</kbd> by default (configurable).
 ### Daemon Mode
 
 ```bash
-tuios new mysession          # Create persistent session
-tuios attach mysession       # Reattach
-tuios ls                     # List sessions
-tuios kill-session mysession # Kill session
+dartuios new mysession          # Create persistent session
+dartuios attach mysession       # Reattach
+dartuios ls                     # List sessions
+dartuios kill-session mysession # Kill session
 ```
 
 ### Layout Templates
@@ -254,23 +256,23 @@ tuios kill-session mysession # Kill session
 # Or via command palette: Ctrl+P → "Save layout" / "Load layout"
 
 # CLI:
-tuios layout list            # List saved layouts
-tuios layout delete mysetup  # Delete a layout
-tuios layout export mysetup  # Export as tape script
+dartuios layout list            # List saved layouts
+dartuios layout delete mysetup  # Delete a layout
+dartuios layout export mysetup  # Export as tape script
 ```
 
 ### Configuration
 
 ```bash
-tuios config edit            # Edit config in $EDITOR
-tuios keybinds list          # View the common keybindings
+dartuios config edit            # Edit config in $EDITOR
+dartuios keybinds list          # View the common keybindings
 ```
 
-See the [configuration reference](https://tuios.dev/docs/configuration) (or run `tuios list-options`) for all options including `show_clock`, `show_cpu`, `show_ram`, `shared_borders`, `window_button_style`, `window_button_position`, custom themes, and keybinding customization.
+See the [configuration reference](https://dartuios.dev/docs/configuration) (or run `dartuios list-options`) for all options including `show_clock`, `show_cpu`, `show_ram`, `shared_borders`, `window_button_style`, `window_button_position`, custom themes, and keybinding customization.
 
 ## Architecture
 
-TUIOS follows the Model-View-Update pattern on Bubble Tea v2. For details, see [Architecture Guide](docs/ARCHITECTURE.md).
+dartuios follows the Model-View-Update pattern on Bubble Tea v2. For details, see [Architecture Guide](docs/ARCHITECTURE.md).
 
 **Key design decisions:**
 - **Event-driven rendering**: PTY reader goroutines signal bubbletea via a buffered channel. No fixed-rate ticking for terminal content.
@@ -297,16 +299,16 @@ TUIOS follows the Model-View-Update pattern on Bubble Tea v2. For details, see [
 ## Development
 
 ```bash
-git clone https://github.com/gaurav-gosain/tuios.git
-cd tuios
-go build -o tuios ./cmd/tuios
-./tuios
+git clone https://github.com/gaurav-gosain/dartuios.git
+cd dartuios
+go build -o dartuios ./cmd/dartuios
+./dartuios
 ```
 
 To install a local build on your PATH instead, `./scripts/install.sh` builds
 and installs into `~/.local/bin`. It builds the pure Go emulator.
 `./scripts/install.sh ghostty` builds the
-[ghostty emulator backend](./docs/ghostty-vt.md) instead, and `tuios --version`
+[ghostty emulator backend](./docs/ghostty-vt.md) instead, and `dartuios --version`
 says which is installed.
 
 ```bash
@@ -320,19 +322,19 @@ govulncheck ./...          # Known vulnerabilities in what the build reaches
 
 ## Star History
 
-[![Star History Chart](./assets/star-history.svg)](https://github.com/Gaurav-Gosain/tuios/stargazers)
+[![Star History Chart](./assets/star-history.svg)](https://github.com/darsrc/tuios/stargazers)
 
 <p style="display:flex;flex-wrap:wrap;">
-<img alt="GitHub Language Count" src="https://img.shields.io/github/languages/count/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
-<img alt="GitHub Top Language" src="https://img.shields.io/github/languages/top/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
-<img alt="Repo Size" src="https://img.shields.io/github/repo-size/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
-<img alt="GitHub Issues" src="https://img.shields.io/github/issues/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
-<img alt="GitHub Closed Issues" src="https://img.shields.io/github/issues-closed/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
-<img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
-<img alt="GitHub Closed Pull Requests" src="https://img.shields.io/github/issues-pr-closed/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
-<img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
-<img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
-<img alt="GitHub Commit Activity (Week)" src="https://img.shields.io/github/commit-activity/w/Gaurav-Gosain/tuios" style="padding:5px;margin:5px;" />
+<img alt="GitHub Language Count" src="https://img.shields.io/github/languages/count/darsrc/tuios" style="padding:5px;margin:5px;" />
+<img alt="GitHub Top Language" src="https://img.shields.io/github/languages/top/darsrc/tuios" style="padding:5px;margin:5px;" />
+<img alt="Repo Size" src="https://img.shields.io/github/repo-size/darsrc/tuios" style="padding:5px;margin:5px;" />
+<img alt="GitHub Issues" src="https://img.shields.io/github/issues/darsrc/tuios" style="padding:5px;margin:5px;" />
+<img alt="GitHub Closed Issues" src="https://img.shields.io/github/issues-closed/darsrc/tuios" style="padding:5px;margin:5px;" />
+<img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr/darsrc/tuios" style="padding:5px;margin:5px;" />
+<img alt="GitHub Closed Pull Requests" src="https://img.shields.io/github/issues-pr-closed/darsrc/tuios" style="padding:5px;margin:5px;" />
+<img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/darsrc/tuios" style="padding:5px;margin:5px;" />
+<img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/darsrc/tuios" style="padding:5px;margin:5px;" />
+<img alt="GitHub Commit Activity (Week)" src="https://img.shields.io/github/commit-activity/w/darsrc/tuios" style="padding:5px;margin:5px;" />
 </p>
 
 ## License

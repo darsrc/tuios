@@ -7,13 +7,14 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/ui"
 )
 
 // TickerMsg represents a periodic tick event for maintenance tasks
@@ -289,7 +290,7 @@ func (m *OS) reportConfigWarnings() {
 	)
 }
 
-// Init initializes the TUIOS application and returns initial commands to run.
+// Init initializes the dartuios application and returns initial commands to run.
 // It starts the tick timer and listens for window exits.
 // Note: Mouse tracking, bracketed paste, and focus reporting are now configured
 // in the View() method as per bubbletea v2.0.0-beta.5 API changes.
@@ -321,7 +322,7 @@ func (m *OS) Init() tea.Cmd {
 	}
 
 	// Arm the screen saver's idle timer for a session nobody has typed in yet.
-	// Without this a tuios left alone from the moment it opened would never
+	// Without this a dartuios left alone from the moment it opened would never
 	// start one, because arming otherwise hangs off input.
 	if cmd := m.armScreensaver(); cmd != nil {
 		cmds = append(cmds, cmd)
@@ -479,7 +480,8 @@ func (m *OS) tickNeedsWork() bool {
 	if len(m.Animations) > 0 || m.InteractionMode || m.Dragging || m.Resizing ||
 		m.PrefixActive || m.ScriptMode || len(m.Notifications) > 0 ||
 		m.SidebarMarqueeActive() || m.TooltipPending() || m.sidebarTitlePending ||
-		len(m.pendingAgentAlerts) > 0 || m.spotlightMotionPending {
+		len(m.pendingAgentAlerts) > 0 || m.spotlightMotionPending ||
+		m.hasWorkingAgent || time.Now().Before(m.pulseUntil) {
 		return true
 	}
 	// A gesture's announcement hold that nothing is holding any more. The sweep
@@ -927,6 +929,20 @@ func (m *OS) handleMsg(msg tea.Msg) (model tea.Model, cmd tea.Cmd) {
 		}
 		m.tickStats.Work++
 
+		// The living filament: while a working row is visible and motion is on,
+		// advance its clock and publish the glyph this tick. It starts on first
+		// appearance and resets when the last working row leaves, so the next
+		// working row begins on frame 0.
+		if m.hasWorkingAgent {
+			if m.filament.IsZero() {
+				m.filament = ui.NewFilament()
+			}
+			m.filamentFrame = m.filament.Frame(time.Time(msg))
+		} else {
+			m.filamentFrame = 0
+			m.filament = ui.Filament{}
+		}
+
 		// Agent alerts whose settle window has closed. Done before the window
 		// sweep below so an alert about a pane that exited this tick is dropped
 		// by its own re-validation rather than by a nil window.
@@ -1109,11 +1125,13 @@ func (m *OS) handleMsg(msg tea.Msg) (model tea.Model, cmd tea.Cmd) {
 			m.markZenDirty()
 		}
 
-		// Render on tick if something periodic needs visual updates OR background windows changed
+		// Render on tick if something periodic needs visual updates OR background windows changed.
+		// m.hasWorkingAgent is the living filament: it advances its glyph on every work
+		// tick above, and nothing else repaints it, so a tick with a live filament must draw.
 		needsRender := hadAnimations || hasAnimations || m.InteractionMode || m.PrefixActive ||
 			hasBackgroundChanges || m.notifBurnMoved() || notifExpired || leftScriptMode ||
 			m.SidebarMarqueeActive() || m.TooltipPending() || railTitleChanged || zenCrossed ||
-			m.spotlightMotionPending
+			m.spotlightMotionPending || m.hasWorkingAgent
 		if !needsRender {
 			m.renderSkipped = true
 			if len(cmds) > 1 {
@@ -1677,7 +1695,7 @@ func (m *OS) handleMsg(msg tea.Msg) (model tea.Model, cmd tea.Cmd) {
 		return m, nil
 
 	case tea.KeyboardEnhancementsMsg:
-		// The host answered the Kitty keyboard protocol query, so tuios now knows
+		// The host answered the Kitty keyboard protocol query, so dartuios now knows
 		// which of the things it asked for it actually got.
 		//
 		// Success is silent. A protocol handshake succeeding is not news to the

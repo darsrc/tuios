@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // This file answers for the socket what the reachability table answers for the
@@ -115,11 +115,11 @@ var exampleOutcomes = map[string]exampleOutcome{
 
 	// An example that names a pane by the environment variable an agent would
 	// have expanded. The literal is not a window id here.
-	"ask-agent#0":           {errCode: ErrVerbWindowNotFound, why: "$TUIOS_PANE_ID is unexpanded"},
-	"read-agent-messages#0": {errCode: ErrVerbWindowNotFound, why: "$TUIOS_PANE_ID is unexpanded"},
-	"send-agent-message#0":  {errCode: ErrVerbWindowNotFound, why: "$TUIOS_PANE_ID is unexpanded"},
-	"wait-for#2":            {errCode: ErrVerbWindowNotFound, why: "$TUIOS_PANE_ID is unexpanded"},
-	"wait-for#3":            {errCode: ErrVerbWindowNotFound, why: "$TUIOS_PANE_ID is unexpanded"},
+	"ask-agent#0":           {errCode: ErrVerbWindowNotFound, why: "$DARTUIOS_PANE_ID is unexpanded"},
+	"read-agent-messages#0": {errCode: ErrVerbWindowNotFound, why: "$DARTUIOS_PANE_ID is unexpanded"},
+	"send-agent-message#0":  {errCode: ErrVerbWindowNotFound, why: "$DARTUIOS_PANE_ID is unexpanded"},
+	"wait-for#2":            {errCode: ErrVerbWindowNotFound, why: "$DARTUIOS_PANE_ID is unexpanded"},
+	"wait-for#3":            {errCode: ErrVerbWindowNotFound, why: "$DARTUIOS_PANE_ID is unexpanded"},
 
 	// A write by selector reaches agent panes, and the fixture has none. The
 	// confirm step and the writes are proved in verb_select_test.go.

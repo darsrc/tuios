@@ -1,6 +1,6 @@
 package config
 
-// MailAlertsConfig is the [notifications.mail] table: what tuios does when
+// MailAlertsConfig is the [notifications.mail] table: what dartuios does when
 // agent mail arrives for the person, or a notice goes to the whole session.
 //
 // Every key is a pointer, and a key left out follows the same key in

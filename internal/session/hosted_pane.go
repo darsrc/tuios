@@ -12,8 +12,8 @@ import (
 	"github.com/charmbracelet/x/xpty"
 	"github.com/google/uuid"
 
-	"github.com/Gaurav-Gosain/tuios/internal/guestenv"
-	"github.com/Gaurav-Gosain/tuios/internal/ptyspawn"
+	"github.com/darsrc/tuios/internal/guestenv"
+	"github.com/darsrc/tuios/internal/ptyspawn"
 )
 
 // A pane this machine runs on another machine's behalf: the far half of a
@@ -21,7 +21,7 @@ import (
 //
 // A global session is not a new kind of session. It is an ordinary session
 // that happens to hold a window whose process runs somewhere else, which is
-// what keeps `tuios ls`, the verbs, the mailbox, hooks and rehydration working
+// what keeps `dartuios ls`, the verbs, the mailbox, hooks and rehydration working
 // on it with no special case. The near half is remotePane in remote_pane.go.
 //
 // The division of labour is the whole design, and it is deliberately lopsided.
@@ -57,7 +57,7 @@ type hostedPane struct {
 
 	// window is the id the owning daemon gives the window this pane is drawn
 	// in, when the owner sent one. It is what the pane's process sees as
-	// TUIOS_PANE_ID, so the process names itself the way every tool on the
+	// DARTUIOS_PANE_ID, so the process names itself the way every tool on the
 	// owning machine names it. Empty for an owner from before reports could
 	// cross, and then the process is given the pane id instead.
 	window string
@@ -117,7 +117,7 @@ type hostedPaneSpec struct {
 	Session   string   `json:"session,omitempty"`
 	// Window is the owning daemon's id for the window the pane is drawn in.
 	// An owner that sends it opens the pane's report channel (pane-calls)
-	// after the open, so this side exports it as TUIOS_PANE_ID and forwards
+	// after the open, so this side exports it as DARTUIOS_PANE_ID and forwards
 	// the process's own reports to it. An older owner omits it.
 	Window string `json:"window,omitempty"`
 	// Resumable asks for the pane to outlive a dropped connection for this
@@ -260,13 +260,13 @@ func clampHostedDim(v int) int {
 // hostedPaneEnv builds the environment the hosted process runs in. It mirrors
 // Session.buildEnv in what it sets and differs in where two of the values come
 // from: TERM and COLORTERM are the asking session's, because that session's
-// emulator is what the program is really talking to, while TUIOS_HOST stays
+// emulator is what the program is really talking to, while DARTUIOS_HOST stays
 // this machine's, because that is where the process actually is.
 //
 // It is not the same set Session.buildEnv exports, and the difference matters.
-// TUIOS_SOCKET, TUIOS_WINDOW_ID and TUIOS_ENV are absent, because each of them
+// DARTUIOS_SOCKET, DARTUIOS_WINDOW_ID and DARTUIOS_ENV are absent, because each of them
 // addresses something on the machine the session is on, and the link is
-// dialled one way. TUIOS_PANE_ID is set when the owner will open the pane's
+// dialled one way. DARTUIOS_PANE_ID is set when the owner will open the pane's
 // report channel: it is the owner's window id, and a report the process sends
 // to this daemon naming it is forwarded to the owner (hosted_calls.go). So an
 // agent here reports its state and reads its mail with the same commands as
@@ -289,28 +289,28 @@ func hostedPaneEnv(d *Daemon, spec hostedPaneSpec, hp *hostedPane) []string {
 	// The session the pane belongs to is deliberately not exported.
 	//
 	// It is a session on the other machine, and every tool that reads
-	// TUIOS_SESSION uses it to address a session on the machine it is running
+	// DARTUIOS_SESSION uses it to address a session on the machine it is running
 	// on. Exporting it here meant a shim on this side resolving that name
 	// against this daemon's sessions, where it names a different session or
-	// none at all. TUIOS_SESSION_REMOTE carries it for anything that wants to
+	// none at all. DARTUIOS_SESSION_REMOTE carries it for anything that wants to
 	// know where the pane came from, under a name nothing addresses with.
 	if spec.Session != "" {
-		env = append(env, "TUIOS_SESSION_REMOTE="+spec.Session)
+		env = append(env, "DARTUIOS_SESSION_REMOTE="+spec.Session)
 	}
 	if host := d.hostedPaneHostName(); host != "" {
-		env = append(env, "TUIOS_HOST="+host)
+		env = append(env, "DARTUIOS_HOST="+host)
 	}
-	// TUIOS_PANE_HOSTED tells a program in the pane that its terminal is on
+	// DARTUIOS_PANE_HOSTED tells a program in the pane that its terminal is on
 	// another machine, and that most of the usual per-pane variables are
-	// therefore absent: there is no TUIOS_SOCKET here that reaches the daemon
+	// therefore absent: there is no DARTUIOS_SOCKET here that reaches the daemon
 	// holding the window.
 	//
-	// Nothing in tuios reads it. It is for a person who is lost and for a
+	// Nothing in dartuios reads it. It is for a person who is lost and for a
 	// shell profile that wants to hold back the parts of its setup that only
 	// mean something on the machine the session is on.
-	env = append(env, "TUIOS_PANE_HOSTED=1")
+	env = append(env, "DARTUIOS_PANE_HOSTED=1")
 	if hp != nil && hp.window != "" {
-		env = append(env, "TUIOS_PANE_ID="+hp.window)
+		env = append(env, "DARTUIOS_PANE_ID="+hp.window)
 	}
 	return env
 }

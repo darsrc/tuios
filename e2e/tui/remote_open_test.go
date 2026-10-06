@@ -20,24 +20,24 @@ import (
 // is in host_attach_test.go.
 
 // TestNewOnAHostCreatesASessionAcrossTheLink is the CLI reachability proof for
-// 'tuios new --host'. The far side creates the session, and it comes back in
+// 'dartuios new --host'. The far side creates the session, and it comes back in
 // both the local listing and the host's own listing.
 func TestNewOnAHostCreatesASessionAcrossTheLink(t *testing.T) {
 	base := t.TempDir()
 	ssh := writeFakeSSH(t, base)
-	env := []string{"TUIOS_SSH=" + ssh}
-	writeHostsConfig(t, base, tuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
+	writeHostsConfig(t, base, dartuiosBin)
 
 	term := startIn(t, base, startOpts{args: []string{"new", "fed-open"}, env: env})
 	waitBoot(t, term)
 
 	// The command a person types. --detach is what lets this run without a
 	// terminal: the far side creates the session and returns.
-	out, err := tuiosCLIEnv(t, base, env, "new", "--host", "build", "extra", "--detach")
+	out, err := dartuiosCLIEnv(t, base, env, "new", "--host", "build", "extra", "--detach")
 	if err != nil {
-		t.Fatalf("ASSERTION: 'tuios new --host build extra --detach' failed: %v\n%s", err, out)
+		t.Fatalf("ASSERTION: 'dartuios new --host build extra --detach' failed: %v\n%s", err, out)
 	}
-	t.Logf("tuios new --host build extra --detach:\n%s", out)
+	t.Logf("dartuios new --host build extra --detach:\n%s", out)
 
 	// The session the far side created is in this daemon now, because the link
 	// loops back to it. Poll the session listing until it lands.
@@ -49,29 +49,29 @@ func TestNewOnAHostCreatesASessionAcrossTheLink(t *testing.T) {
 
 	// And it is in the host's own listing, which is the listing that crosses the
 	// link.
-	out, err = tuiosCLIEnv(t, base, env, "ls", "--host", "build")
+	out, err = dartuiosCLIEnv(t, base, env, "ls", "--host", "build")
 	if err != nil {
-		t.Fatalf("tuios ls --host build: %v\n%s", err, out)
+		t.Fatalf("dartuios ls --host build: %v\n%s", err, out)
 	}
 	if !strings.Contains(out, "extra") {
 		t.Errorf("ASSERTION: the session created with 'new --host' is not in the host listing:\n%s", out)
 	}
-	t.Logf("tuios ls --host build:\n%s", out)
+	t.Logf("dartuios ls --host build:\n%s", out)
 }
 
-// waitForLS polls 'tuios ls' until the output satisfies want.
+// waitForLS polls 'dartuios ls' until the output satisfies want.
 func waitForLS(t *testing.T, base string, want func(string) bool) error {
 	t.Helper()
 	deadline := time.Now().Add(30 * time.Second)
 	var out string
 	for time.Now().Before(deadline) {
-		out, _ = tuiosCLI(t, base, "ls")
+		out, _ = dartuiosCLI(t, base, "ls")
 		if want(out) {
 			return nil
 		}
 		time.Sleep(250 * time.Millisecond)
 	}
-	return fmt.Errorf("the last 'tuios ls' was:\n%s", out)
+	return fmt.Errorf("the last 'dartuios ls' was:\n%s", out)
 }
 
 // railShows blocks until the rail shows text.
@@ -84,18 +84,18 @@ func railShows(t *testing.T, term *tuitest.Terminal, want string) {
 	}
 }
 
-// TestAttachOnAHostWithSSHRunsTheFarTuios keeps the fallback reachable: with
-// --ssh the session is opened by the tuios on the far side over an interactive
+// TestAttachOnAHostWithSSHRunsTheFarDartuios keeps the fallback reachable: with
+// --ssh the session is opened by the dartuios on the far side over an interactive
 // ssh, nested in this terminal, the way it was before the link carried an
 // attach. The far side here is this test's own daemon, so the nested client
-// is a second 'tuios attach' process on the session.
-func TestAttachOnAHostWithSSHRunsTheFarTuios(t *testing.T) {
+// is a second 'dartuios attach' process on the session.
+func TestAttachOnAHostWithSSHRunsTheFarDartuios(t *testing.T) {
 	base := t.TempDir()
 	ssh := writeFakeSSH(t, base)
-	env := []string{"TUIOS_SSH=" + ssh}
-	writeHostsConfig(t, base, tuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
+	writeHostsConfig(t, base, dartuiosBin)
 
-	if out, err := tuiosCLIEnv(t, base, env, "new", "nested-target", "--detach"); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, env, "new", "nested-target", "--detach"); err != nil {
 		t.Fatalf("create the session to open: %v\n%s", err, out)
 	}
 
@@ -103,12 +103,12 @@ func TestAttachOnAHostWithSSHRunsTheFarTuios(t *testing.T) {
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
 		return strings.Contains(s.Text(), "╰──")
 	}, bootTimeout); err != nil {
-		t.Fatalf("the far tuios never drew the session: %v\n%s", err, term.Snapshot())
+		t.Fatalf("the far dartuios never drew the session: %v\n%s", err, term.Snapshot())
 	}
 
-	// The proof that ssh ran the far tuios: a plain 'tuios attach' process
+	// The proof that ssh ran the far dartuios: a plain 'dartuios attach' process
 	// for the session, which the link path never starts.
-	lines := commandLinesContaining(t, tuiosBin)
+	lines := commandLinesContaining(t, dartuiosBin)
 	nested := false
 	for _, line := range lines {
 		if strings.Contains(line, " attach nested-target") && !strings.Contains(line, "--host") {
@@ -116,7 +116,7 @@ func TestAttachOnAHostWithSSHRunsTheFarTuios(t *testing.T) {
 		}
 	}
 	if !nested {
-		t.Fatalf("ASSERTION: --ssh did not run the far tuios; no nested client for nested-target:\n%s", strings.Join(lines, "\n"))
+		t.Fatalf("ASSERTION: --ssh did not run the far dartuios; no nested client for nested-target:\n%s", strings.Join(lines, "\n"))
 	}
 	alive(t, term, "after opening a session over ssh")
 }

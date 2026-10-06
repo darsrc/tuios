@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // selectKeybindRow puts the cursor on the first row matching want, and reports
@@ -86,7 +86,7 @@ func TestUnbindingTheLastKeyLeavesTheActionRebindable(t *testing.T) {
 }
 
 // TestFreeCapturedKeyHandsTheKeyToThePane is the recorder's short path: record
-// the key your program wants, be told tuios takes it, take it back.
+// the key your program wants, be told dartuios takes it, take it back.
 //
 // Negative control: have KeybindFreeCapturedKey call UnbindKey on one action
 // rather than FreeKey, and this fails, because the key is bound in two scopes

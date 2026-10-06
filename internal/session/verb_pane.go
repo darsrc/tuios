@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/federation"
 )
 
 // The two verbs a machine serves so another machine's session can hold a

@@ -10,16 +10,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // This is the rig the rehydration matrix runs on: a real daemon in this
 // process, a real TUIClient over its socket, and a real OS driven through the
-// same entry points cmd/tuios uses to attach. Nothing here reimplements the
+// same entry points cmd/dartuios uses to attach. Nothing here reimplements the
 // client; the point of the matrix is to compare what the client's emulator ends
 // up holding against what the daemon's holds, and a reimplementation would only
 // prove itself right.
@@ -195,7 +195,7 @@ func (r *rig) otherSession() string {
 	return r.other
 }
 
-// attach runs the client-side attach sequence cmd/tuios runs: connect, attach,
+// attach runs the client-side attach sequence cmd/dartuios runs: connect, attach,
 // build the OS, restore state, restore terminal content, wire the PTYs.
 func (r *rig) attach() {
 	r.t.Helper()

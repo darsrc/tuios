@@ -167,7 +167,7 @@ func (d DaemonDiagnosis) savedSessionsPhrase() string {
 // likely cause, and the exact command that resolves it. It returns an empty
 // string when the daemon is running, so a caller can use it as a guard.
 func (d DaemonDiagnosis) Explain() string {
-	// The TUIOS_SOCKET refusal already says what failed and what to do, and
+	// The DARTUIOS_SOCKET refusal already says what failed and what to do, and
 	// no socket was probed, so the generic advice below would be wrong.
 	if _, ok := errors.AsType[*SocketEnvError](d.Err); ok {
 		return d.Err.Error()
@@ -178,31 +178,31 @@ func (d DaemonDiagnosis) Explain() string {
 
 	case DaemonAbsent:
 		if d.Restorable > 0 {
-			return "The TUIOS daemon is not running.\n" +
-				"Most likely cause: the daemon was shut down or the machine restarted. TUIOS has " +
+			return "The dartuios daemon is not running.\n" +
+				"Most likely cause: the daemon was shut down or the machine restarted. dartuios has " +
 				d.savedSessionsPhrase() + " on disk, restored automatically when a daemon starts.\n" +
 				// Both routes, because this message is also what a scripted
-				// caller sees, and 'tuios attach' takes over its terminal.
-				"Fix: run 'tuios attach' to start the daemon and reopen them, or 'tuios start-server' to bring them back without attaching."
+				// caller sees, and 'dartuios attach' takes over its terminal.
+				"Fix: run 'dartuios attach' to start the daemon and reopen them, or 'dartuios start-server' to bring them back without attaching."
 		}
-		return "The TUIOS daemon is not running, and no sessions are saved on disk.\n" +
+		return "The dartuios daemon is not running, and no sessions are saved on disk.\n" +
 			"Most likely cause: no session has been started yet.\n" +
-			"Fix: run 'tuios new' to start a session, or 'tuios start-server' for a daemon with no session."
+			"Fix: run 'dartuios new' to start a session, or 'dartuios start-server' for a daemon with no session."
 
 	case DaemonStaleSocket:
-		fix := "Fix: run 'tuios kill-server' to clear it, then 'tuios new' to start a session."
+		fix := "Fix: run 'dartuios kill-server' to clear it, then 'dartuios new' to start a session."
 		if d.Restorable > 0 {
-			fix = "Fix: run 'tuios kill-server' to clear it, then 'tuios attach' to start a daemon and reopen " +
+			fix = "Fix: run 'dartuios kill-server' to clear it, then 'dartuios attach' to start a daemon and reopen " +
 				d.savedSessionsPhrase() + "."
 		}
-		return fmt.Sprintf("The TUIOS daemon is not running, but a stale socket is left over at %s.\n"+
+		return fmt.Sprintf("The dartuios daemon is not running, but a stale socket is left over at %s.\n"+
 			"Most likely cause: the daemon crashed or was killed without cleaning up.\n"+
 			"%s", d.SocketPath, fix)
 
 	case DaemonPermissionDenied:
-		return fmt.Sprintf("Permission denied connecting to the TUIOS daemon socket at %s.\n"+
+		return fmt.Sprintf("Permission denied connecting to the dartuios daemon socket at %s.\n"+
 			"Most likely cause: the socket belongs to another user, or its directory permissions changed.\n"+
-			"Fix: check 'ls -l %s'. If it belongs to another user, set XDG_RUNTIME_DIR to a directory you own. If it is yours, remove it and run 'tuios new'.",
+			"Fix: check 'ls -l %s'. If it belongs to another user, set XDG_RUNTIME_DIR to a directory you own. If it is yours, remove it and run 'dartuios new'.",
 			d.SocketPath, d.SocketPath)
 
 	default:
@@ -210,9 +210,9 @@ func (d DaemonDiagnosis) Explain() string {
 		if d.Err != nil {
 			reason = d.Err.Error()
 		}
-		return fmt.Sprintf("Could not reach the TUIOS daemon at %s: %s.\n"+
+		return fmt.Sprintf("Could not reach the dartuios daemon at %s: %s.\n"+
 			"Most likely cause: the socket path is unusable (a full or read-only XDG_RUNTIME_DIR, or a leftover file that is not a socket).\n"+
-			"Fix: run 'tuios kill-server', then 'tuios new'. If that fails, remove %s and try again.",
+			"Fix: run 'dartuios kill-server', then 'dartuios new'. If that fails, remove %s and try again.",
 			d.SocketPath, reason, d.SocketPath)
 	}
 }

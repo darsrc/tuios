@@ -6,15 +6,15 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // feedTBFrame runs a captured/synthesised kitty graphics stream through the real
 // VT emulator + passthrough for a window that fills the whole host screen, then
-// runs a render cycle and returns everything tuios forwarded to the host.
+// runs a render cycle and returns everything dartuios forwarded to the host.
 //
 // The window is border=1 and exactly as tall as the screen, mirroring a
-// maximized tuios pane. A full-window graphics app (terminal-browser, awrit)
+// maximized dartuios pane. A full-window graphics app (terminal-browser, awrit)
 // draws an image that fills the pane, so its placement reaches the bottom screen
 // edge. That is the geometry the regression hid outright.
 func feedTBFrame(t *testing.T, stream []byte, screenW, screenH int) []byte {
@@ -81,7 +81,7 @@ func feedTBFrameBorder(t *testing.T, stream []byte, screenW, screenH, border int
 
 // TestTerminalBrowserFullPaneIsPlaced feeds a real captured terminal-browser
 // frame (testdata/tb_inline_frame.bin) through the passthrough for a pane that
-// fills the whole screen and asserts tuios both transmits the image bytes and
+// fills the whole screen and asserts dartuios both transmits the image bytes and
 // emits an a=p placement.
 //
 // Before the fix, the native bottom-edge guard hid every image whose bottom

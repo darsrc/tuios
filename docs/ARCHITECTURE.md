@@ -1,6 +1,6 @@
-# TUIOS Architecture
+# dartuios Architecture
 
-This document provides a comprehensive overview of TUIOS's internal architecture, data flow, and component organization.
+This document provides a comprehensive overview of dartuios's internal architecture, data flow, and component organization.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This document provides a comprehensive overview of TUIOS's internal architecture
 
 ## Overview
 
-TUIOS follows a layered architecture built on the Model-View-Update (MVU) pattern provided by Bubble Tea v2. The application is organized into distinct layers that handle user interaction, window management, terminal emulation, and rendering.
+dartuios follows a layered architecture built on the Model-View-Update (MVU) pattern provided by Bubble Tea v2. The application is organized into distinct layers that handle user interaction, window management, terminal emulation, and rendering.
 
 Two things this page's diagrams predate, documented elsewhere:
 
@@ -230,7 +230,7 @@ graph LR
 
 ## Theme Color System
 
-TUIOS implements a comprehensive theming system that allows terminals to use
+dartuios implements a comprehensive theming system that allows terminals to use
 configurable color palettes while maintaining compatibility with standard ANSI
 color codes.
 
@@ -364,7 +364,7 @@ By keeping the background transparent, applications can freely use indexed backg
 
 ### Dynamic Theme Updates
 
-TUIOS supports live theme switching without restarting windows:
+dartuios supports live theme switching without restarting windows:
 
 **Update Flow:**
 
@@ -438,7 +438,7 @@ graph TD
 
 ## Multi-Client Architecture
 
-TUIOS supports multiple clients connecting to the same daemon session simultaneously. All clients see synchronized state updates in real-time.
+dartuios supports multiple clients connecting to the same daemon session simultaneously. All clients see synchronized state updates in real-time.
 
 ### Thread-Safe Event Channels
 
@@ -507,7 +507,7 @@ graph TB
         C3[SSH Client N]
     end
 
-    subgraph "TUIOS SSH Server :2222"
+    subgraph "dartuios SSH Server :2222"
         WISH[Wish v2 Middleware]
         AUTH[Session Handler]
     end
@@ -545,9 +545,9 @@ graph TB
 
 ### SSH Session Isolation
 
-By default `tuios ssh` attaches each connection to a session of the daemon, like
-a local `tuios attach`, so several connections can share one session and it
-outlives them (see [CLI_REFERENCE.md](CLI_REFERENCE.md#tuios-ssh)). The diagram
+By default `dartuios ssh` attaches each connection to a session of the daemon, like
+a local `dartuios attach`, so several connections can share one session and it
+outlives them (see [CLI_REFERENCE.md](CLI_REFERENCE.md#dartuios-ssh)). The diagram
 above is `--ephemeral`, where each SSH connection receives:
 
 - Dedicated OS instance (window manager state)
@@ -617,7 +617,7 @@ This ensures:
 ### Kitty Unicode Placeholders
 
 Most applications place a kitty image themselves: they transmit it and say
-"draw it here", and tuios intercepts that, works out where "here" is on the
+"draw it here", and dartuios intercepts that, works out where "here" is on the
 host screen given the pane's position and scroll offset, and re-emits the
 placement at the recomputed coordinates. That is the passthrough described
 above, and it is what `internal/app/kitty_passthrough_placement.go` spends its
@@ -632,7 +632,7 @@ cells. Because the position lives in the text grid, the image scrolls, clips
 and reflows exactly as the text does, which is why kitty's documentation points
 multiplexers at this protocol and why a pager can use it.
 
-tuios forwards the declaration (`internal/app/kitty_passthrough_forward.go`,
+dartuios forwards the declaration (`internal/app/kitty_passthrough_forward.go`,
 `forwardVirtualPlace`) and lets the cells travel the ordinary text path. It
 tracks no placement, computes no coordinates and does no clipping for these
 images: scrolling the pane scrolls the cells, and the host redraws whatever is
@@ -649,13 +649,13 @@ Two consequences follow from the id living in a color:
   images need a truecolor host.
 
 Placeholders need a host terminal that implements them: kitty, Ghostty and
-WezTerm do, and xterm.js does not, so they do not appear in `tuios-web`.
+WezTerm do, and xterm.js does not, so they do not appear in `dartuios-web`.
 
 ### Images under a window
 
 A kitty image is painted by the host terminal over the finished frame, not
 composited with the cells, so a pane drawn on top of one does not cover it the
-way it covers text. tuios used to hide any image a higher window touched at all,
+way it covers text. dartuios used to hide any image a higher window touched at all,
 which meant one cell of overlap took the whole picture away.
 
 It is now cropped to what is actually clear
@@ -683,7 +683,7 @@ says a virtual placement must carry `c` and `r`, so a terminal that implements
 placeholders ought to refuse one without them, but Ghostty answers `OK` to
 exactly that while supporting the feature.
 
-So tuios asks the terminal who it is, with XTVERSION (`CSI > q`) in the
+So dartuios asks the terminal who it is, with XTVERSION (`CSI > q`) in the
 capability probe's existing round trip, and looks the answer up in a table of
 known versions (`internal/app/kitty_placeholder_caps.go`). That is a heuristic,
 but a better one than reading `TERM`: XTVERSION is answered by the terminal on
@@ -698,7 +698,7 @@ missing-glyph boxes instead. A table that is wrong or out of date therefore
 costs the feature and never the picture.
 
 `appearance.kitty_placeholders` overrides the table: `auto` asks the terminal,
-`on` and `off` say so outright. `TUIOS_KITTY_PLACEHOLDERS=1` or `0` overrides
+`on` and `off` say so outright. `DARTUIOS_KITTY_PLACEHOLDERS=1` or `0` overrides
 both, for a one-off.
 
 ### Why placeholder cells carry both marks
@@ -712,7 +712,7 @@ there, and a window drawn over the left half of an image replaces those cells
 with its own; either way the leftmost surviving cell has nothing to inherit
 from, and the rest of its row goes with it.
 
-So tuios fills the marks in as the cells are built, while the row is still
+So dartuios fills the marks in as the cells are built, while the row is still
 whole: every cell is given its own row and column, which is exactly what the
 cell to its left would have told it. No cell then needs a neighbour, and any of
 them can be clipped away without taking the others. The colours are what
@@ -752,9 +752,9 @@ A guest can also send a path instead of bytes: a file (`t=f`), a temporary
 file (`t=t`) or a shared memory object (`t=s`). A path means something only on
 the machine it was written on, so where it gets read decides whether it works.
 
-- **Standalone.** The pane and tuios are on one machine. When the host
-  terminal can read files there (the capability probe's `i=2` answer), tuios
-  hands it the path. When it cannot (a browser, an SSH client), tuios reads the
+- **Standalone.** The pane and dartuios are on one machine. When the host
+  terminal can read files there (the capability probe's `i=2` answer), dartuios
+  hands it the path. When it cannot (a browser, an SSH client), dartuios reads the
   file itself and sends the bytes inline. The `a=q` answer says which: file
   media are refused when the host cannot read files, so a guest that asks,
   such as icat, streams the bytes instead.
@@ -766,8 +766,8 @@ the machine it was written on, so where it gets read decides whether it works.
   accepted, and each client handles the path as in standalone. Direct
   transmission is always accepted.
 
-Reading a guest's file is not a new privilege. The pane's process and tuios
-run as the same user on the same machine, so tuios reads nothing the guest
+Reading a guest's file is not a new privilege. The pane's process and dartuios
+run as the same user on the same machine, so dartuios reads nothing the guest
 could not read and send itself. What the read guards against is the file
 itself: only a regular file is read, up to the transmit cap, so `/dev/zero`, a
 FIFO or a device cannot hang or exhaust the process. A guest on another

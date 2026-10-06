@@ -16,13 +16,13 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/hooks"
 	"github.com/google/uuid"
 )
 
-// Daemon manages the persistent TUIOS server process.
+// Daemon manages the persistent dartuios server process.
 // It owns PTYs and stores session state. Clients run the TUI.
 type Daemon struct {
 	manager *Manager
@@ -33,7 +33,7 @@ type Daemon struct {
 	// others in its own [hosts] table.
 	instance string
 	listener net.Listener
-	// linkListener is the second socket, the one `tuios stdio-proxy` dials
+	// linkListener is the second socket, the one `dartuios stdio-proxy` dials
 	// for a connection that arrived over another machine's link. Every
 	// connection accepted on it is marked viaLink; see LinkSocketPath.
 	linkListener net.Listener
@@ -173,7 +173,7 @@ type Daemon struct {
 	// id to protocol. See agent_protocol.go.
 	protocolPanes sync.Map
 	// agentProtoExe finds the binary a protocol pane runs. Nil is
-	// os.Executable; a test points it at a built tuios.
+	// os.Executable; a test points it at a built dartuios.
 	agentProtoExe func() (string, error)
 
 	// stash is the per-session file store the stash verbs write into. It is held
@@ -227,12 +227,12 @@ type Daemon struct {
 	// agentStallTimeout is how long a pane may report working while producing no
 	// output before the stall heuristic demotes it to idle. Zero disables the
 	// heuristic. It is resolved once in NewDaemon from config or the
-	// TUIOS_AGENT_STALL_SECONDS environment override.
+	// DARTUIOS_AGENT_STALL_SECONDS environment override.
 	agentStallTimeout time.Duration
 
 	// agentDetectInterval is how often the foreground-process auto-detector polls
 	// each pane to mark or clear a running agent. Zero disables auto-detection. It
-	// is resolved once in NewDaemon from config or the TUIOS_AGENT_DETECT_SECONDS
+	// is resolved once in NewDaemon from config or the DARTUIOS_AGENT_DETECT_SECONDS
 	// environment override.
 	agentDetectInterval time.Duration
 
@@ -515,7 +515,7 @@ type connState struct {
 type DaemonConfig struct {
 	Version    string
 	SocketPath string
-	// Foreground is true for `tuios daemon`, which owns a terminal. A foreground
+	// Foreground is true for `dartuios daemon`, which owns a terminal. A foreground
 	// daemon echoes its log to stderr; a background one does not, because its
 	// stderr belongs to the process that spawned it.
 	Foreground bool
@@ -542,19 +542,19 @@ type DaemonConfig struct {
 	HerdrProtocol string
 	// AgentStallTimeout overrides how long a pane may report working with no
 	// output before the stall heuristic demotes it to idle. Zero falls back to
-	// the TUIOS_AGENT_STALL_SECONDS environment override, then to the default; a
+	// the DARTUIOS_AGENT_STALL_SECONDS environment override, then to the default; a
 	// negative value disables the heuristic.
 	AgentStallTimeout time.Duration
 	// AgentAutoDetect toggles the foreground-process agent auto-detector. Nil
-	// falls back to the TUIOS_AGENT_AUTODETECT environment override, then to
+	// falls back to the DARTUIOS_AGENT_AUTODETECT environment override, then to
 	// enabled. A non-nil false disables it.
 	AgentAutoDetect *bool
 	// AgentDetectInterval overrides the auto-detector's poll interval. Zero falls
-	// back to the TUIOS_AGENT_DETECT_SECONDS environment override, then to the
+	// back to the DARTUIOS_AGENT_DETECT_SECONDS environment override, then to the
 	// default; a negative value disables auto-detection.
 	AgentDetectInterval time.Duration
 	// AgentBinaries are extra binary names to treat as agents, merged with the
-	// built-in defaults. It also picks up the TUIOS_AGENT_BINARIES environment
+	// built-in defaults. It also picks up the DARTUIOS_AGENT_BINARIES environment
 	// override (comma-separated).
 	AgentBinaries []string
 	// ResumeAgents is daemon.resume_agents: what a restore does with the agent
@@ -600,7 +600,7 @@ type DaemonConfig struct {
 	// agent-activity recap reads as a test run. Nil means the defaults.
 	RecapTestPatterns []string
 	// Permissions is [agents.permissions]: what a pane started with no
-	// grants of its own may do through tuios. The zero value is mode open,
+	// grants of its own may do through dartuios. The zero value is mode open,
 	// under which such a pane holds admin, what every pane held before
 	// grants existed. See pane_grants.go.
 	Permissions config.ResolvedPermissions
@@ -689,14 +689,14 @@ func (d *Daemon) setupFederation(hosts []federation.Host) {
 	}
 	dial := d.hostDial
 	if dial == nil {
-		// TUIOS_SSH names the ssh program to run. It exists for a machine where
+		// DARTUIOS_SSH names the ssh program to run. It exists for a machine where
 		// ssh is not on the daemon's PATH, and it is what lets the link layer be
 		// exercised end to end without an ssh server.
-		dial = federation.SSHDialer(os.Getenv("TUIOS_SSH"))
+		dial = federation.SSHDialer(os.Getenv("DARTUIOS_SSH"))
 	}
 	d.federation = federation.New(table, federation.Options{
 		Dial:            dial,
-		ClientName:      "tuios-daemon",
+		ClientName:      "dartuios-daemon",
 		ClientVersion:   d.version,
 		VerbProtocol:    VerbProtocolVersion,
 		MinVerbProtocol: MinVerbProtocolVersion,
@@ -923,7 +923,7 @@ func (d *Daemon) Start() error {
 	// A *net.UnixListener unlinks its socket file on Close by default, and
 	// shutdown closes the listener first, which silently unlinked the socket
 	// at the top of shutdown, while every session's state was still unsaved.
-	// The socket file is the signal WaitForDaemonShutdown and 'tuios
+	// The socket file is the signal WaitForDaemonShutdown and 'dartuios
 	// kill-server' rely on, and the whole contract is that it disappears last,
 	// in shutdown's own explicit Remove. Under load the early unlink was
 	// observable: the wait returned mid-shutdown and read state that was not
@@ -962,7 +962,7 @@ func (d *Daemon) Start() error {
 		return fmt.Errorf("failed to write PID file: %w", err)
 	}
 
-	log.Printf("TUIOS daemon started on %s (PID %d)", socketPath, os.Getpid())
+	log.Printf("dartuios daemon started on %s (PID %d)", socketPath, os.Getpid())
 
 	// Sweep the previous daemon's leftovers before reading the directory. Runs
 	// whether or not auto-restore is on, since the residue is there either way.
@@ -1197,7 +1197,7 @@ func (d *Daemon) shutdown() error {
 
 		// Unlinking the socket is deliberately the last thing the daemon does,
 		// after the final resurrection saves and after the pid file. It is the
-		// signal 'tuios kill-server' waits on, so anything ordered after it
+		// signal 'dartuios kill-server' waits on, so anything ordered after it
 		// would make that signal a lie: a caller could observe the socket gone,
 		// start a new daemon, and race a write from the old one. Closing the
 		// listener is not a usable signal for the same reason, since it happens
@@ -1599,7 +1599,7 @@ func (d *Daemon) cleanupLoop() {
 
 // resolveAgentStallTimeout picks the stall heuristic's silence window: an
 // explicit positive config wins, a negative config disables the heuristic, and a
-// zero config falls back to the TUIOS_AGENT_STALL_SECONDS environment override
+// zero config falls back to the DARTUIOS_AGENT_STALL_SECONDS environment override
 // (0 or less there disables it) and finally to the default.
 func resolveAgentStallTimeout(cfg time.Duration) time.Duration {
 	if cfg > 0 {
@@ -1608,7 +1608,7 @@ func resolveAgentStallTimeout(cfg time.Duration) time.Duration {
 	if cfg < 0 {
 		return 0
 	}
-	if s := os.Getenv("TUIOS_AGENT_STALL_SECONDS"); s != "" {
+	if s := os.Getenv("DARTUIOS_AGENT_STALL_SECONDS"); s != "" {
 		if n, err := strconv.Atoi(strings.TrimSpace(s)); err == nil {
 			if n <= 0 {
 				return 0
@@ -1621,10 +1621,10 @@ func resolveAgentStallTimeout(cfg time.Duration) time.Duration {
 
 // resolveAgentBinaries returns the extra agent binary names to merge with the
 // built-in defaults: the config list, plus the comma-separated
-// TUIOS_AGENT_BINARIES environment override.
+// DARTUIOS_AGENT_BINARIES environment override.
 func resolveAgentBinaries(cfg []string) []string {
 	extra := append([]string(nil), cfg...)
-	if s := os.Getenv("TUIOS_AGENT_BINARIES"); s != "" {
+	if s := os.Getenv("DARTUIOS_AGENT_BINARIES"); s != "" {
 		for name := range strings.SplitSeq(s, ",") {
 			if name = strings.TrimSpace(name); name != "" {
 				extra = append(extra, name)
@@ -1637,7 +1637,7 @@ func resolveAgentBinaries(cfg []string) []string {
 // resolveAgentDetectInterval picks the auto-detector's poll interval and, with
 // it, whether auto-detection runs at all. An explicit enable/disable from config
 // wins; then an explicit positive interval wins; a negative interval disables it;
-// a zero interval falls back to the TUIOS_AGENT_DETECT_SECONDS environment
+// a zero interval falls back to the DARTUIOS_AGENT_DETECT_SECONDS environment
 // override (0 or less there disables it), and finally to the default. A returned
 // zero means auto-detection is off.
 func resolveAgentDetectInterval(enabled *bool, cfg time.Duration) time.Duration {
@@ -1645,7 +1645,7 @@ func resolveAgentDetectInterval(enabled *bool, cfg time.Duration) time.Duration 
 		return 0
 	}
 	if enabled == nil {
-		if v := strings.TrimSpace(os.Getenv("TUIOS_AGENT_AUTODETECT")); v != "" {
+		if v := strings.TrimSpace(os.Getenv("DARTUIOS_AGENT_AUTODETECT")); v != "" {
 			switch strings.ToLower(v) {
 			case "0", "false", "no", "off":
 				return 0
@@ -1658,7 +1658,7 @@ func resolveAgentDetectInterval(enabled *bool, cfg time.Duration) time.Duration 
 	if cfg < 0 {
 		return 0
 	}
-	if s := os.Getenv("TUIOS_AGENT_DETECT_SECONDS"); s != "" {
+	if s := os.Getenv("DARTUIOS_AGENT_DETECT_SECONDS"); s != "" {
 		if n, err := strconv.Atoi(strings.TrimSpace(s)); err == nil {
 			if n <= 0 {
 				return 0

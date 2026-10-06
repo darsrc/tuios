@@ -12,8 +12,8 @@ import (
 //
 // Nothing here crosses the daemon's link. The link carries listings and refuses
 // writes, and that rule is unchanged. What this file builds is the argv of a
-// plain interactive ssh that runs tuios on the far side, so the session is
-// attached by the remote tuios in a local terminal or pane. That is the
+// plain interactive ssh that runs dartuios on the far side, so the session is
+// attached by the remote dartuios in a local terminal or pane. That is the
 // tmux-over-ssh a person already types, spelled from the [hosts] table so the
 // address, the options and the remote binary are typed once.
 //
@@ -21,10 +21,10 @@ import (
 // side can draw, and BatchMode is off, so ssh may ask a question. A pane can
 // answer a prompt. A daemon cannot, which is why the link forbids them.
 
-// SSHBinary is the ssh program to run. TUIOS_SSH overrides it, which is what
+// SSHBinary is the ssh program to run. DARTUIOS_SSH overrides it, which is what
 // the tests use to put a stand-in on the far end of every link and every open.
 func SSHBinary() string {
-	if s := os.Getenv("TUIOS_SSH"); s != "" {
+	if s := os.Getenv("DARTUIOS_SSH"); s != "" {
 		return s
 	}
 	return "ssh"
@@ -44,7 +44,7 @@ var ErrUnsafeRemoteArg = errors.New("cannot be sent to a remote shell")
 // two names.
 //
 // A plain word passes as is. A word with spaces or other characters is wrapped
-// in single quotes, which every login shell tuios can be attached from reads
+// in single quotes, which every login shell dartuios can be attached from reads
 // literally. A word holding a single quote or a backslash is refused: sh and
 // fish escape those differently inside single quotes, and there is no spelling
 // that is right on both.
@@ -64,11 +64,11 @@ func QuoteRemoteArg(arg string) (string, error) {
 }
 
 // OpenArgs is the argv, after the ssh binary, that opens a terminal on this
-// host and runs its tuios with remote as the arguments: `-t <options> <addr>
+// host and runs its dartuios with remote as the arguments: `-t <options> <addr>
 // <command> <remote...>`.
 //
 // The command is the link's own: a configured one is passed as the [hosts]
-// table spells it, unquoted, so a "~/.local/bin/tuios" is expanded by the
+// table spells it, unquoted, so a "~/.local/bin/dartuios" is expanded by the
 // remote shell on both paths, and without one the same probe the link runs
 // finds the binary (see remote.go). The remote arguments are quoted by
 // QuoteRemoteArg.

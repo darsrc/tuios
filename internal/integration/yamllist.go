@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// yamlListItem is one item tuios adds to a list two keys deep in a YAML file:
+// yamlListItem is one item dartuios adds to a list two keys deep in a YAML file:
 // Hermes Agent's plugins.enabled in config.yaml, which is how Hermes is told
 // to load a plugin. It edits lines rather than parsing the document, so the
 // user's comments, order and quoting are kept. It handles the block layouts

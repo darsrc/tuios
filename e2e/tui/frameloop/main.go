@@ -6,7 +6,7 @@
 // Guessing the pixel size instead is what makes a harness test something other
 // than the reported scenario. A real app renders to the size it was given, so
 // the image's pixels-per-cell agrees with the host's by construction, and any
-// disagreement seen downstream is tuios's own.
+// disagreement seen downstream is dartuios's own.
 package main
 
 import (
@@ -100,7 +100,7 @@ func main() {
 		if transport == "b64" {
 			return nil
 		}
-		name := fmt.Sprintf("tuios-frameloop-%d-%d", os.Getpid(), gen)
+		name := fmt.Sprintf("dartuios-frameloop-%d-%d", os.Getpid(), gen)
 		path := "/dev/shm/" + name
 		if err := os.WriteFile(path, pix, 0o600); err != nil {
 			return err
@@ -128,7 +128,7 @@ func main() {
 		return
 	}
 	// Appended, not overwritten: the harness wants every size this app was ever
-	// given, because the question it asks of tuios is whether the host was ever
+	// given, because the question it asks of dartuios is whether the host was ever
 	// told a rectangle the guest was not.
 	report := func(c, r, x, y int) {
 		if geomFile == "" {

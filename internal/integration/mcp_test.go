@@ -25,7 +25,7 @@ func TestMCPInstallClaudeKeepsTheUsersServersAndRoundTrips(t *testing.T) {
 	path := filepath.Join(env.Home, ".claude.json")
 	writeFile(t, path, `{"numStartups": 12, "mcpServers": {"mine": {"type": "stdio", "command": "mine-server"}}, "projects": {}}`)
 
-	res, err := tg.InstallMCP(env, "tuios", false)
+	res, err := tg.InstallMCP(env, "dartuios", false)
 	if err != nil || !res.Changed || res.Path != path {
 		t.Fatalf("InstallMCP = %+v, %v", res, err)
 	}
@@ -44,31 +44,31 @@ func TestMCPInstallClaudeKeepsTheUsersServersAndRoundTrips(t *testing.T) {
 		Command string   `json:"command"`
 		Args    []string `json:"args"`
 	}
-	_ = json.Unmarshal(doc.Servers["tuios"], &entry)
-	if entry.Type != "stdio" || entry.Command != "tuios" || !slices.Equal(entry.Args, []string{"mcp", "--integration", "1"}) {
+	_ = json.Unmarshal(doc.Servers["dartuios"], &entry)
+	if entry.Type != "stdio" || entry.Command != "dartuios" || !slices.Equal(entry.Args, []string{"mcp", "--integration", "1"}) {
 		t.Errorf("entry = %+v", entry)
 	}
 	if _, err := os.Stat(path + BackupSuffix); err != nil {
 		t.Errorf("no backup of the file as it was: %v", err)
 	}
 
-	st := tg.MCPState(env, "tuios")
+	st := tg.MCPState(env, "dartuios")
 	if !st.Installed || !st.Current || st.Write || st.Version != MCPVersion {
 		t.Errorf("status = %+v", st)
 	}
-	again, err := tg.InstallMCP(env, "tuios", false)
+	again, err := tg.InstallMCP(env, "dartuios", false)
 	if err != nil || again.Changed {
 		t.Errorf("a second install changed the file: %+v, %v", again, err)
 	}
 
 	// --write is a different entry, and status says so.
-	if _, err := tg.InstallMCP(env, "tuios", true); err != nil {
+	if _, err := tg.InstallMCP(env, "dartuios", true); err != nil {
 		t.Fatal(err)
 	}
-	if st := tg.MCPState(env, "tuios"); !st.Write || !st.Current {
+	if st := tg.MCPState(env, "dartuios"); !st.Write || !st.Current {
 		t.Errorf("status after --write = %+v", st)
 	}
-	if st := tg.MCPState(env, "/opt/tuios"); st.Current {
+	if st := tg.MCPState(env, "/opt/dartuios"); st.Current {
 		t.Error("an entry running another binary reads as current")
 	}
 
@@ -76,14 +76,14 @@ func TestMCPInstallClaudeKeepsTheUsersServersAndRoundTrips(t *testing.T) {
 		t.Fatal(err)
 	}
 	after := readFile(t, path)
-	if strings.Contains(after, `"tuios"`) || !strings.Contains(after, "mine-server") {
+	if strings.Contains(after, `"dartuios"`) || !strings.Contains(after, "mine-server") {
 		t.Errorf("uninstall left %s", after)
 	}
 }
 
 func TestMCPInstallGeminiAndOpenCodeShapes(t *testing.T) {
 	env, gem := mcpHome(t, GeminiCLI)
-	if _, err := gem.InstallMCP(env, "tuios", true); err != nil {
+	if _, err := gem.InstallMCP(env, "dartuios", true); err != nil {
 		t.Fatal(err)
 	}
 	g := readFile(t, filepath.Join(gem.ConfigDir(env), "settings.json"))
@@ -94,7 +94,7 @@ func TestMCPInstallGeminiAndOpenCodeShapes(t *testing.T) {
 	env, oc := mcpHome(t, OpenCode)
 	path := filepath.Join(oc.ConfigDir(env), "opencode.json")
 	writeFile(t, path, `{"$schema": "https://opencode.ai/config.json", "model": "x"}`)
-	if _, err := oc.InstallMCP(env, "tuios", false); err != nil {
+	if _, err := oc.InstallMCP(env, "dartuios", false); err != nil {
 		t.Fatal(err)
 	}
 	var doc struct {
@@ -108,11 +108,11 @@ func TestMCPInstallGeminiAndOpenCodeShapes(t *testing.T) {
 	if err := json.Unmarshal([]byte(readFile(t, path)), &doc); err != nil {
 		t.Fatal(err)
 	}
-	e := doc.MCP["tuios"]
-	if doc.Model != "x" || e.Type != "local" || !e.Enabled || !slices.Equal(e.Command, []string{"tuios", "mcp", "--integration", "1"}) {
+	e := doc.MCP["dartuios"]
+	if doc.Model != "x" || e.Type != "local" || !e.Enabled || !slices.Equal(e.Command, []string{"dartuios", "mcp", "--integration", "1"}) {
 		t.Errorf("opencode config = %s", readFile(t, path))
 	}
-	if st := oc.MCPState(env, "tuios"); !st.Current {
+	if st := oc.MCPState(env, "dartuios"); !st.Current {
 		t.Errorf("opencode status = %+v", st)
 	}
 	if _, err := oc.UninstallMCP(env); err != nil {
@@ -128,17 +128,17 @@ func TestMCPInstallCodexKeepsTheUsersTOML(t *testing.T) {
 	path := filepath.Join(tg.ConfigDir(env), "config.toml")
 	user := "model = \"gpt-5\"\n\n[mcp_servers.docs]\ncommand = \"docs-mcp\"\n"
 	writeFile(t, path, user)
-	if _, err := tg.InstallMCP(env, "/opt/my tuios", true); err != nil {
+	if _, err := tg.InstallMCP(env, "/opt/my dartuios", true); err != nil {
 		t.Fatal(err)
 	}
 	got := readFile(t, path)
 	if !strings.HasPrefix(got, user) {
 		t.Errorf("the user's config was not kept byte for byte:\n%s", got)
 	}
-	if !strings.Contains(got, "[mcp_servers.tuios]\ncommand = \"/opt/my tuios\"\nargs = [\"mcp\", \"--write\", \"--integration\", \"1\"]\n") {
+	if !strings.Contains(got, "[mcp_servers.dartuios]\ncommand = \"/opt/my dartuios\"\nargs = [\"mcp\", \"--write\", \"--integration\", \"1\"]\n") {
 		t.Errorf("block = \n%s", got)
 	}
-	if st := tg.MCPState(env, "/opt/my tuios"); !st.Current || !st.Write {
+	if st := tg.MCPState(env, "/opt/my dartuios"); !st.Current || !st.Write {
 		t.Errorf("status = %+v", st)
 	}
 	if _, err := tg.UninstallMCP(env); err != nil {
@@ -149,28 +149,28 @@ func TestMCPInstallCodexKeepsTheUsersTOML(t *testing.T) {
 	}
 
 	// A table the user wrote under the same name is left alone.
-	own := user + "\n[mcp_servers.tuios]\ncommand = \"mine\"\n"
+	own := user + "\n[mcp_servers.dartuios]\ncommand = \"mine\"\n"
 	writeFile(t, path, own)
-	if _, err := tg.InstallMCP(env, "tuios", false); err == nil {
-		t.Error("install over the user's own [mcp_servers.tuios] did not fail")
+	if _, err := tg.InstallMCP(env, "dartuios", false); err == nil {
+		t.Error("install over the user's own [mcp_servers.dartuios] did not fail")
 	}
-	if st := tg.MCPState(env, "tuios"); st.Installed || !st.Foreign {
+	if st := tg.MCPState(env, "dartuios"); st.Installed || !st.Foreign {
 		t.Errorf("status = %+v, want foreign", st)
 	}
 }
 
-func TestMCPInstallLeavesAServerTheUserNamedTuios(t *testing.T) {
+func TestMCPInstallLeavesAServerTheUserNamedDartuios(t *testing.T) {
 	env, tg := mcpHome(t, GeminiCLI)
 	path := filepath.Join(tg.ConfigDir(env), "settings.json")
-	own := `{"mcpServers": {"tuios": {"command": "my-tuios-wrapper"}}}`
+	own := `{"mcpServers": {"dartuios": {"command": "my-dartuios-wrapper"}}}`
 	writeFile(t, path, own)
-	if _, err := tg.InstallMCP(env, "tuios", false); err == nil || !strings.Contains(err.Error(), "not written by tuios") {
+	if _, err := tg.InstallMCP(env, "dartuios", false); err == nil || !strings.Contains(err.Error(), "not written by dartuios") {
 		t.Errorf("install over the user's own server = %v", err)
 	}
 	if readFile(t, path) != own {
 		t.Error("the refused install changed the file")
 	}
-	if st := tg.MCPState(env, "tuios"); st.Installed || !st.Foreign {
+	if st := tg.MCPState(env, "dartuios"); st.Installed || !st.Foreign {
 		t.Errorf("status = %+v, want foreign and not installed", st)
 	}
 	if res, err := tg.UninstallMCP(env); err != nil || res.Changed || readFile(t, path) != own {

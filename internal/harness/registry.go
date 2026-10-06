@@ -108,7 +108,7 @@ func Load(dirs ...string) (*Registry, []LoadError) {
 // UserDir is where a user's own manifests live. It follows XDG, so a manifest
 // dropped there is picked up on the next daemon start with no rebuild.
 func UserDir() string {
-	if dir := os.Getenv("TUIOS_HARNESS_DIR"); dir != "" {
+	if dir := os.Getenv("DARTUIOS_HARNESS_DIR"); dir != "" {
 		return dir
 	}
 	base := os.Getenv("XDG_CONFIG_HOME")
@@ -119,7 +119,7 @@ func UserDir() string {
 		}
 		base = filepath.Join(home, ".config")
 	}
-	return filepath.Join(base, "tuios", "harnesses")
+	return filepath.Join(base, "dartuios", "harnesses")
 }
 
 // IDs lists the harness ids the registry knows, in lookup order.

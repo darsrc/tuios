@@ -11,7 +11,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// saveFrame writes the screen to $TUIOS_E2E_FRAMES/<name>.txt when that
+// saveFrame writes the screen to $DARTUIOS_E2E_FRAMES/<name>.txt when that
 // directory is set, so a run can hand a real frame to whoever asked for proof.
 //
 // It writes the styled encoding beside it, as <name>.styled.txt. A plain frame
@@ -21,7 +21,7 @@ import (
 // thing. Proof of that half has to carry the attributes.
 func saveFrame(t *testing.T, term *tuitest.Terminal, name string) {
 	t.Helper()
-	dir := os.Getenv("TUIOS_E2E_FRAMES")
+	dir := os.Getenv("DARTUIOS_E2E_FRAMES")
 	if dir == "" {
 		return
 	}
@@ -80,7 +80,7 @@ func TestAgentMailReachesThePersonAndTheReplyReachesTheRing(t *testing.T) {
 	term, base := attachClientBase(t)
 	renameWindow(t, term, "REVIEWER")
 
-	if out, err := tuiosCLI(t, base, "send-agent-message", "-s", "e2e-ctrlp", "-w", "human",
+	if out, err := dartuiosCLI(t, base, "send-agent-message", "-s", "e2e-ctrlp", "-w", "human",
 		"--from", "REVIEWER", "--subject", "which retry policy?", "exponential or fixed? both pass"); err != nil {
 		t.Fatalf("send-agent-message failed: %v\n%s", err, out)
 	}
@@ -133,7 +133,7 @@ func TestAgentMailReachesThePersonAndTheReplyReachesTheRing(t *testing.T) {
 	saveFrame(t, term, "mail-replied")
 
 	// And the agent reads the answer with the CLI, threaded on its question.
-	out, err := tuiosCLI(t, base, "read-agent-messages", "-s", "e2e-ctrlp", "--peek", "--json")
+	out, err := dartuiosCLI(t, base, "read-agent-messages", "-s", "e2e-ctrlp", "--peek", "--json")
 	if err != nil {
 		t.Fatalf("read-agent-messages failed: %v\n%s", err, out)
 	}
@@ -178,7 +178,7 @@ func TestAgentMailReachesThePersonAndTheReplyReachesTheRing(t *testing.T) {
 	}
 
 	// Once read, the person's inbox is empty for the daemon too.
-	out, err = tuiosCLI(t, base, "list-agents", "-s", "e2e-ctrlp", "--json")
+	out, err = dartuiosCLI(t, base, "list-agents", "-s", "e2e-ctrlp", "--json")
 	if err != nil {
 		t.Fatalf("list-agents failed: %v\n%s", err, out)
 	}
@@ -230,7 +230,7 @@ func checkFencedBody(t *testing.T, screen, who, body string) {
 func TestMailNewMessageFromThePersonReachesTheAgent(t *testing.T) {
 	term, base := attachClientBase(t)
 	renameWindow(t, term, "WORKER")
-	if out, err := tuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e-ctrlp", "-w", "WORKER"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "working", "-s", "e2e-ctrlp", "-w", "WORKER"); err != nil {
 		t.Fatalf("set-agent-state failed: %v\n%s", err, out)
 	}
 
@@ -283,7 +283,7 @@ func TestMailNewMessageFromThePersonReachesTheAgent(t *testing.T) {
 	}
 	saveFrame(t, term, "mail-new-sent")
 
-	out, err := tuiosCLI(t, base, "read-agent-messages", "-s", "e2e-ctrlp", "--peek", "--json")
+	out, err := dartuiosCLI(t, base, "read-agent-messages", "-s", "e2e-ctrlp", "--peek", "--json")
 	if err != nil {
 		t.Fatalf("read-agent-messages failed: %v\n%s", err, out)
 	}
@@ -335,7 +335,7 @@ func TestARoutedKeyReplyIsAClaim(t *testing.T) {
 	term, base := attachClientBase(t)
 	renameWindow(t, term, "REVIEWER")
 
-	if out, err := tuiosCLI(t, base, "send-agent-message", "-s", "e2e-ctrlp", "-w", "human",
+	if out, err := dartuiosCLI(t, base, "send-agent-message", "-s", "e2e-ctrlp", "-w", "human",
 		"--from", "REVIEWER", "--subject", "may I delete build/?", "reply yes to approve"); err != nil {
 		t.Fatalf("send-agent-message failed: %v\n%s", err, out)
 	}
@@ -346,7 +346,7 @@ func TestARoutedKeyReplyIsAClaim(t *testing.T) {
 	// What an agent in a pane can run: open the mailbox from the command
 	// palette, then the thread and the reply line in the person's client, and
 	// type an answer.
-	if out, err := tuiosCLI(t, base, "run-command", "-s", "e2e-ctrlp", "CommandPalette"); err != nil {
+	if out, err := dartuiosCLI(t, base, "run-command", "-s", "e2e-ctrlp", "CommandPalette"); err != nil {
 		t.Fatalf("run-command CommandPalette failed: %v\n%s", err, out)
 	}
 	for _, step := range []struct {
@@ -360,7 +360,7 @@ func TestARoutedKeyReplyIsAClaim(t *testing.T) {
 		{[]string{"--raw", "yes"}, "automated reply:"},
 	} {
 		args := append([]string{"send-keys", "-s", "e2e-ctrlp"}, step.keys...)
-		if out, err := tuiosCLI(t, base, args...); err != nil {
+		if out, err := dartuiosCLI(t, base, args...); err != nil {
 			t.Fatalf("send-keys %v failed: %v\n%s", step.keys, err, out)
 		}
 		if err := term.WaitForText(step.want, uiTimeout); err != nil {
@@ -371,7 +371,7 @@ func TestARoutedKeyReplyIsAClaim(t *testing.T) {
 		t.Fatalf("the reply line never said the draft is automated: %v\n%s", err, term.Snapshot())
 	}
 	saveFrame(t, term, "mail-automated-reply")
-	if out, err := tuiosCLI(t, base, "send-keys", "-s", "e2e-ctrlp", "Enter"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-keys", "-s", "e2e-ctrlp", "Enter"); err != nil {
 		t.Fatalf("send-keys Enter failed: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -380,7 +380,7 @@ func TestARoutedKeyReplyIsAClaim(t *testing.T) {
 		t.Fatalf("the automated reply never sent: %v\n%s", err, term.Snapshot())
 	}
 
-	out, err := tuiosCLI(t, base, "read-agent-messages", "-s", "e2e-ctrlp", "--peek", "--json")
+	out, err := dartuiosCLI(t, base, "read-agent-messages", "-s", "e2e-ctrlp", "--peek", "--json")
 	if err != nil {
 		t.Fatalf("read-agent-messages failed: %v\n%s", err, out)
 	}

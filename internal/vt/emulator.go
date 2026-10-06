@@ -24,7 +24,7 @@ type Emulator struct {
 
 	// The palette is two layers. colors holds what the guest set with OSC 4,
 	// which is the guest's own business and outlives a theme change. themePal
-	// holds the sixteen the user's tuios theme asks for, and is empty whenever
+	// holds the sixteen the user's dartuios theme asks for, and is empty whenever
 	// no theme is active.
 	//
 	// A slot nobody has set stays nil in both, which is what lets an index
@@ -1004,7 +1004,7 @@ func (e *Emulator) HasAllMotionMode() bool {
 // kitty at 2s, with contour, WezTerm and Zellij declining to bound it at all.
 //
 // 150ms was the floor of that range, and it was too low to hold the guests
-// tuios actually hosts. Ink writes the opening escape, the frame and the
+// dartuios actually hosts. Ink writes the opening escape, the frame and the
 // closing escape as three separate writes, so a slow reader strands the update
 // open for as long as the middle write blocks; Neovim spans partial flushes
 // deliberately, and Textual opens the update before it renders. None of the
@@ -1013,7 +1013,7 @@ func (e *Emulator) HasAllMotionMode() bool {
 // is indistinguishable from a close by the time the renderer asks, so every
 // overrun was a torn frame.
 //
-// 1s follows tmux, which sits where tuios sits: a multiplexer holding someone
+// 1s follows tmux, which sits where dartuios sits: a multiplexer holding someone
 // else's frame. Transport does not spend it (a 207x55 SGR-heavy repaint is
 // 100-200KiB and clears the pipeline in well under 15ms), so the budget is
 // there for the guest.
@@ -1181,7 +1181,7 @@ func (e *Emulator) Resize(width int, height int) {
 	e.setCursor(x, y)
 
 	if e.isModeSet(ansi.ModeInBandResize) {
-		_, _ = io.WriteString(e.pipe, ansi.InBandResize(e.Height(), e.Width(), 0, 0))
+		_, _ = io.WriteString(e.pipe, e.inBandResizeReport())
 	}
 }
 

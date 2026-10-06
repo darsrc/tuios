@@ -111,7 +111,7 @@ func TestWatcherReportsEverySaveOfABrokenFile(t *testing.T) {
 	}
 }
 
-// TestWatcherDropsAFileThatSaysWhatIsAlreadyInForce. tuios writes this file
+// TestWatcherDropsAFileThatSaysWhatIsAlreadyInForce. dartuios writes this file
 // itself: every settings row saves. Without this, one keypress on a row would
 // come back through the watcher as somebody else's edit.
 func TestWatcherDropsAFileThatSaysWhatIsAlreadyInForce(t *testing.T) {
@@ -136,12 +136,12 @@ func TestWatcherDropsAFileThatSaysWhatIsAlreadyInForce(t *testing.T) {
 	}
 }
 
-// TestWatcherDropsTuiosOwnSave. Every row on the settings page saves this file.
+// TestWatcherDropsDartuiosOwnSave. Every row on the settings page saves this file.
 // A save coming back through the watcher as an edit would retile once per
 // arrow-key repeat for a config that was already in force, and a save still in
 // flight when the watcher read the file would put the value one keypress back
 // into the model.
-func TestWatcherDropsTuiosOwnSave(t *testing.T) {
+func TestWatcherDropsDartuiosOwnSave(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "config.toml")
 	cfg := DefaultConfig()
@@ -158,17 +158,17 @@ func TestWatcherDropsTuiosOwnSave(t *testing.T) {
 	}
 	t.Cleanup(w.Stop)
 
-	// The settings page's own save: a different config, written by tuios.
+	// The settings page's own save: a different config, written by dartuios.
 	cfg.Spotlight.Dim = 41
 	if err := WriteConfigFile(cfg, path); err != nil {
 		t.Fatalf("save from the settings page: %v", err)
 	}
-	noReport(t, reports, "tuios saving the file itself")
+	noReport(t, reports, "dartuios saving the file itself")
 
 	// The positive half: a hand edit of the same file is still delivered, so
 	// the drop above is about who wrote it and not about the watcher being dead.
 	saveLikeVim(t, path, "[appearance]\ntheme = \"nord\"\n")
-	got := nextReport(t, reports, "a hand edit after tuios saved")
+	got := nextReport(t, reports, "a hand edit after dartuios saved")
 	if got.err != nil {
 		t.Fatalf("the hand edit was reported as an error: %v", got.err)
 	}

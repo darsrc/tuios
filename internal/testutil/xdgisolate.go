@@ -12,8 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/sound"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/sound"
 )
 
 // Test binaries must not touch the developer's own XDG directories. The xdg
@@ -25,7 +25,7 @@ import (
 // written is the one that forgets to call it.
 
 // xdgVars are every base directory the app resolves paths from. All of them
-// point at the same throwaway tree; the app namespaces itself under "tuios"
+// point at the same throwaway tree; the app namespaces itself under "dartuios"
 // inside each, so sharing a root loses nothing and keeps cleanup to one call.
 var xdgVars = []string{
 	"XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_STATE_HOME",
@@ -36,7 +36,7 @@ var xdgVars = []string{
 // tree's path along with a function that removes it and reports whether the
 // redirect was still in force when the run ended.
 func isolateXDG() (dir string, check func() error) {
-	tmp, err := os.MkdirTemp("", "tuios-test-xdg")
+	tmp, err := os.MkdirTemp("", "dartuios-test-xdg")
 	if err != nil {
 		panic(fmt.Sprintf("testutil: create XDG tree: %v", err))
 	}
@@ -57,11 +57,11 @@ func isolateXDG() (dir string, check func() error) {
 	if err := os.Setenv("HOME", tmp); err != nil {
 		panic(fmt.Sprintf("testutil: set HOME: %v", err))
 	}
-	// A run started from a tuios pane inherits the pane's TUIOS_SOCKET, which
+	// A run started from a dartuios pane inherits the pane's DARTUIOS_SOCKET, which
 	// names the person's daemon. Nothing selects a daemon by it, but the check
 	// against it dials the socket it names, and a test has no business there.
-	if err := os.Unsetenv("TUIOS_SOCKET"); err != nil {
-		panic(fmt.Sprintf("testutil: unset TUIOS_SOCKET: %v", err))
+	if err := os.Unsetenv("DARTUIOS_SOCKET"); err != nil {
+		panic(fmt.Sprintf("testutil: unset DARTUIOS_SOCKET: %v", err))
 	}
 	xdg.Reload()
 

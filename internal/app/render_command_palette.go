@@ -8,8 +8,8 @@ import (
 	"unicode/utf8"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Command palette layout constants. These are the preferred sizes; a narrower
@@ -186,7 +186,7 @@ func (m *OS) renderCommandPalette() (string, overlay.Geometry, []overlayRowHit) 
 				continue
 			}
 			st := overlay.RowState{Cursor: l.item == m.CommandPaletteSelected, Focused: true}
-			lines = append(lines, pal.Row(paletteRow(filtered[l.item], st.Cursor, pal, width, metaW), width, st, bg))
+			lines = append(lines, pal.Row(paletteRow(filtered[l.item], st.Cursor, pal, width, metaW, m.filamentFrame), width, st, bg))
 		}
 		for len(lines) < visible+2 {
 			lines = append(lines, overlay.Style(bg).Render(" "))
@@ -223,7 +223,7 @@ func (m *OS) renderCommandPalette() (string, overlay.Geometry, []overlayRowHit) 
 // shortcut and, while a query is typed, its category in a column metaW wide.
 // Every name starts on the same column, which is what makes the list read as a
 // menu rather than a log.
-func paletteRow(item CommandPaletteItem, selected bool, pal overlay.Palette, width, metaW int) string {
+func paletteRow(item CommandPaletteItem, selected bool, pal overlay.Palette, width, metaW int, filament rune) string {
 	bg := pal.Ground(overlay.RowState{Cursor: selected, Focused: true}, pal.Surface)
 	nameColor := pal.FgDim
 	if selected {
@@ -250,7 +250,7 @@ func paletteRow(item CommandPaletteItem, selected bool, pal overlay.Palette, wid
 	}
 	name := overlay.Truncate(printableTitle(item.Name), max(width-2-rightW-1, 1))
 	left := overlay.Style(bg).Foreground(theme.Readable(pal.Accent, bg)).Bold(true).Render(marker) +
-		paletteRowName(name, item.AgentState, item.AgentSeen, item.Match, bg, nameColor, selected, pal)
+		paletteRowName(name, item.AgentState, item.AgentSeen, item.Match, bg, nameColor, selected, pal, filament)
 
 	gap := max(width-lipgloss.Width(left)-rightW, 1)
 	return left + overlay.Style(bg).Render(strings.Repeat(" ", gap)) + right
@@ -262,9 +262,9 @@ func paletteRow(item CommandPaletteItem, selected bool, pal overlay.Palette, wid
 //
 // match holds offsets into the untruncated name, so any that fall past the
 // truncation simply never come up.
-func paletteRowName(name, agentState string, doneSeen bool, match []int, bg, nameColor color.Color, selected bool, pal overlay.Palette) string {
+func paletteRowName(name, agentState string, doneSeen bool, match []int, bg, nameColor color.Color, selected bool, pal overlay.Palette, filament rune) string {
 	nameStyle := overlay.Style(bg).Foreground(nameColor).Bold(selected)
-	glyph, glyphColor := agentMark(agentState, doneSeen, pal)
+	glyph, glyphColor := agentMark(agentState, doneSeen, pal, filament)
 	glyphAt := -1
 	if glyph != "" {
 		glyphAt = strings.Index(name, glyph)

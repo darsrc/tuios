@@ -5,9 +5,9 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The colour-valued settings, and the one place that says what they are.
@@ -292,7 +292,7 @@ func backgroundSetting(path, label, desc, unset string,
 }
 
 // backgroundKeywordColor is the colour one keyword paints. off paints nothing,
-// and the terminal's own background is not a colour tuios can know, so the
+// and the terminal's own background is not a colour dartuios can know, so the
 // picker's ground stands in for it; theme with no theme set is off.
 func backgroundKeywordColor(keyword string, ground color.Color) color.Color {
 	if keyword == config.BackgroundTheme && theme.CurrentThemeID() != "" {

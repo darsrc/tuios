@@ -1,4 +1,4 @@
-// Package hooks implements a shell-command hooks system for tuios.
+// Package hooks implements a shell-command hooks system for dartuios.
 // Hooks fire asynchronously when specific events occur (window creation,
 // focus changes, workspace switches, etc.) and execute user-defined
 // shell commands with environment variables providing context.
@@ -251,22 +251,22 @@ func executeHook(cmdStr string, ctx Context) hookResult {
 
 	// Set environment variables
 	cmd.Env = append(os.Environ(),
-		fmt.Sprintf("TUIOS_EVENT=%s", ctx.EventType),
-		fmt.Sprintf("TUIOS_WINDOW_ID=%s", ctx.WindowID),
-		fmt.Sprintf("TUIOS_WINDOW_NAME=%s", ctx.WindowName),
-		fmt.Sprintf("TUIOS_WORKSPACE=%d", ctx.Workspace),
-		fmt.Sprintf("TUIOS_SESSION_ID=%s", ctx.SessionID),
-		fmt.Sprintf("TUIOS_PREV_WORKSPACE=%d", ctx.PreviousWorkspace),
-		fmt.Sprintf("TUIOS_LAYOUT=%s", ctx.Layout),
-		fmt.Sprintf("TUIOS_WIDTH=%d", ctx.Width),
-		fmt.Sprintf("TUIOS_HEIGHT=%d", ctx.Height),
-		fmt.Sprintf("TUIOS_AGENT_STATE=%s", ctx.AgentState),
-		fmt.Sprintf("TUIOS_AGENT_PREV_STATE=%s", ctx.PrevAgentState),
-		fmt.Sprintf("TUIOS_AGENT_HARNESS=%s", ctx.AgentHarness),
-		fmt.Sprintf("TUIOS_AGENT_MESSAGE=%s", ctx.AgentMessage),
-		fmt.Sprintf("TUIOS_COMMAND=%s", ctx.Command),
-		fmt.Sprintf("TUIOS_EXIT_CODE=%s", ctx.ExitCode),
-		fmt.Sprintf("TUIOS_DURATION_MS=%s", ctx.DurationMS),
+		fmt.Sprintf("DARTUIOS_EVENT=%s", ctx.EventType),
+		fmt.Sprintf("DARTUIOS_WINDOW_ID=%s", ctx.WindowID),
+		fmt.Sprintf("DARTUIOS_WINDOW_NAME=%s", ctx.WindowName),
+		fmt.Sprintf("DARTUIOS_WORKSPACE=%d", ctx.Workspace),
+		fmt.Sprintf("DARTUIOS_SESSION_ID=%s", ctx.SessionID),
+		fmt.Sprintf("DARTUIOS_PREV_WORKSPACE=%d", ctx.PreviousWorkspace),
+		fmt.Sprintf("DARTUIOS_LAYOUT=%s", ctx.Layout),
+		fmt.Sprintf("DARTUIOS_WIDTH=%d", ctx.Width),
+		fmt.Sprintf("DARTUIOS_HEIGHT=%d", ctx.Height),
+		fmt.Sprintf("DARTUIOS_AGENT_STATE=%s", ctx.AgentState),
+		fmt.Sprintf("DARTUIOS_AGENT_PREV_STATE=%s", ctx.PrevAgentState),
+		fmt.Sprintf("DARTUIOS_AGENT_HARNESS=%s", ctx.AgentHarness),
+		fmt.Sprintf("DARTUIOS_AGENT_MESSAGE=%s", ctx.AgentMessage),
+		fmt.Sprintf("DARTUIOS_COMMAND=%s", ctx.Command),
+		fmt.Sprintf("DARTUIOS_EXIT_CODE=%s", ctx.ExitCode),
+		fmt.Sprintf("DARTUIOS_DURATION_MS=%s", ctx.DurationMS),
 	)
 
 	// Stdout stays discarded: a hook is run for its side effects and nothing

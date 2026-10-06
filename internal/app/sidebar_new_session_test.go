@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // daemonRailOS is a rail with a daemon client attached but no live connection:

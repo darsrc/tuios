@@ -51,7 +51,7 @@ func TestSSHKittyShmDoesNotKillSession(t *testing.T) {
 	}
 
 	// Marker line the text flood prints; see the drain goroutine below.
-	const textMarker = "TUIOS-TEXT-FLOOD"
+	const textMarker = "dartuios-TEXT-FLOOD"
 
 	// Two real shm objects: one sized like the captured browser pane
 	// (1810x800 px RGBA, ~7.7MB of inline data per re-encoded frame) and one
@@ -82,7 +82,7 @@ func TestSSHKittyShmDoesNotKillSession(t *testing.T) {
 		const buffers = 4
 		names := make([]string, buffers)
 		for b := range buffers {
-			shmName := fmt.Sprintf("tuios-crash-%d-%d-%d", os.Getpid(), si, b)
+			shmName := fmt.Sprintf("dartuios-crash-%d-%d-%d", os.Getpid(), si, b)
 			shmPath := "/dev/shm/" + shmName
 			shmData := make([]byte, shape.pxW*shape.pxH*4)
 			for i := range shmData {

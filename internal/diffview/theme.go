@@ -3,9 +3,9 @@ package diffview
 import (
 	"image/color"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/exp/charmtone"
+	"github.com/darsrc/tuios/internal/overlay"
 )
 
 // Palette is what a Theme is built from: the ground the diff is drawn on,
@@ -348,7 +348,7 @@ func SyntaxFromANSI(pal [16]color.Color) [NumClasses]color.Color {
 }
 
 // DefaultSyntax is the classes' colours when no terminal theme is set, from
-// the charmtone palette the rest of tuios's chrome is drawn in.
+// the charmtone palette the rest of dartuios's chrome is drawn in.
 func DefaultSyntax() [NumClasses]color.Color {
 	var s [NumClasses]color.Color
 	s[Keyword] = charmtone.Mauve

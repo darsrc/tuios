@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // Whether the host terminal can draw kitty Unicode placeholders.

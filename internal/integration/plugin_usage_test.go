@@ -13,14 +13,14 @@ import (
 )
 
 // TestOpenCodePluginFeedsUsage runs the rendered opencode plugin under node,
-// with a stand-in tuios that records each run, and feeds it opencode's
+// with a stand-in dartuios that records each run, and feeds it opencode's
 // message.updated, session.idle and session.status events. It checks the plugin runs
 // agent-statusline with the model and the sum of its assistant messages'
 // cost, only when either changed, once more at the end of the turn, and
 // never for a subagent's session.
 func TestOpenCodePluginFeedsUsage(t *testing.T) {
 	if runtime.GOOS == "windows" {
-		t.Skip("the stand-in tuios is a shell script")
+		t.Skip("the stand-in dartuios is a shell script")
 	}
 	node, err := exec.LookPath("node")
 	if err != nil {
@@ -31,7 +31,7 @@ func TestOpenCodePluginFeedsUsage(t *testing.T) {
 	if err := os.Mkdir(calls, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	fake := filepath.Join(dir, "tuios")
+	fake := filepath.Join(dir, "dartuios")
 	script := "#!/bin/sh\nf=$(mktemp \"" + calls + "/call.XXXXXX\")\n{ printf '%s\\n' \"$*\"; cat; } > \"$f\"\n"
 	if err := os.WriteFile(fake, []byte(script), 0o755); err != nil {
 		t.Fatal(err)
@@ -59,8 +59,8 @@ func TestOpenCodePluginFeedsUsage(t *testing.T) {
 		{"type": "session.status", "properties": map[string]any{"sessionID": "ses_1", "status": map[string]any{"type": "idle"}}},
 	}
 	evJSON, _ := json.Marshal(events)
-	code := `import { TuiosAgentState } from ` + jsString(plugin) + `;
-const hooks = await TuiosAgentState({});
+	code := `import { DartuiosAgentState } from ` + jsString(plugin) + `;
+const hooks = await DartuiosAgentState({});
 for (const event of ` + string(evJSON) + `) {
   await hooks.event({ event });
 }
@@ -69,7 +69,7 @@ for (const event of ` + string(evJSON) + `) {
 		t.Fatal(err)
 	}
 	cmd := exec.Command(node, driver)
-	cmd.Env = append(os.Environ(), "TUIOS_ENV=1")
+	cmd.Env = append(os.Environ(), "DARTUIOS_ENV=1")
 	if out, err := cmd.CombinedOutput(); err != nil {
 		t.Fatalf("node: %v\n%s", err, out)
 	}

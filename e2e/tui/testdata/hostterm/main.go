@@ -1,7 +1,7 @@
 // Command hostterm stands in for a host terminal with colours of its own, for
 // the tests that need a terminal tuitest's emulator cannot be: one on a light
 // background, one whose palette is not the xterm default, and one that
-// switches between light and dark while tuios runs.
+// switches between light and dark while dartuios runs.
 //
 // It has two modes.
 //
@@ -365,7 +365,7 @@ func (f *filter) oscQuery(body string) bool {
 		f.h.mu.Unlock()
 		if !ok {
 			// Swallowed without an answer: a host that does not know a
-			// slot says nothing, which is what tuios has to cope with.
+			// slot says nothing, which is what dartuios has to cope with.
 			return true
 		}
 		f.h.note("answer 4;%d %s", idx, hex)

@@ -1,6 +1,6 @@
 # CLI Reference
 
-This document provides a complete reference for TUIOS command-line interface.
+This document provides a complete reference for dartuios command-line interface.
 
 ## Table of Contents
 
@@ -16,14 +16,14 @@ This document provides a complete reference for TUIOS command-line interface.
   - [Inspection Commands](#inspection-commands)
   - [More Commands](#more-commands)
   - [Scripting Examples](#scripting-examples)
-  - [tuios ssh](#tuios-ssh)
-  - [tuios-web (separate binary)](#tuios-web-separate-binary)
-  - [tuios config](#tuios-config)
-  - [tuios keybinds](#tuios-keybinds)
-  - [tuios update](#tuios-update)
-  - [tuios layout](#tuios-layout)
-  - [tuios completion](#tuios-completion)
-  - [tuios help](#tuios-help)
+  - [dartuios ssh](#dartuios-ssh)
+  - [dartuios-web (separate binary)](#dartuios-web-separate-binary)
+  - [dartuios config](#dartuios-config)
+  - [dartuios keybinds](#dartuios-keybinds)
+  - [dartuios update](#dartuios-update)
+  - [dartuios layout](#dartuios-layout)
+  - [dartuios completion](#dartuios-completion)
+  - [dartuios help](#dartuios-help)
 - [Global Flags](#global-flags)
 - [Common Usage Examples](#common-usage-examples)
 - [Environment Variables](#environment-variables)
@@ -35,7 +35,7 @@ This document provides a complete reference for TUIOS command-line interface.
 
 ## Overview
 
-TUIOS uses a modern command-line interface built with Cobra and Fang, providing:
+dartuios uses a modern command-line interface built with Cobra and Fang, providing:
 - Subcommand structure for better organization
 - Styled help output and error messages
 - Shell completion generation
@@ -45,74 +45,74 @@ TUIOS uses a modern command-line interface built with Cobra and Fang, providing:
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew install tuios
+brew install dartuios
 ```
 
 ### Arch Linux (AUR)
 
 ```bash
 # Using yay
-yay -S tuios-bin
+yay -S dartuios-bin
 
 # Using paru
-paru -S tuios-bin
+paru -S dartuios-bin
 ```
 
 ### Nix
 
 ```bash
 # Run a release (put the tag after the repo name)
-nix run github:Gaurav-Gosain/tuios/v0.8.0#tuios
+nix run github:darsrc/tuios/v0.8.0#dartuios
 
 # Run the newest commit on main
-nix run github:Gaurav-Gosain/tuios#tuios
+nix run github:darsrc/tuios#dartuios
 
 # Or add to your configuration
-nix-shell -p tuios
+nix-shell -p dartuios
 ```
 
 ### Quick Install Script (Linux/macOS)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Gaurav-Gosain/tuios/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/darsrc/tuios/main/install.sh | bash
 ```
 
 ### Go Install
 
 ```bash
-go install github.com/Gaurav-Gosain/tuios/cmd/tuios@latest
+go install github.com/darsrc/tuios/cmd/dartuios@latest
 ```
 
 ### Pre-built Binaries
 
-Download from [GitHub Releases](https://github.com/Gaurav-Gosain/tuios/releases)
+Download from [GitHub Releases](https://github.com/darsrc/tuios/releases)
 
 ---
 
 ## Usage
 
 ```bash
-tuios [command] [flags]
+dartuios [command] [flags]
 ```
 
 ## Commands
 
 ### Root Command
 
-Run TUIOS. A plain `tuios` attaches to a daemon-backed session, because
+Run dartuios. A plain `dartuios` attaches to a daemon-backed session, because
 `startup.daemon` ships on. Add `--standalone` for a local session that lives and
 dies with this process:
 
 ```bash
-tuios
-tuios --standalone
+dartuios
+dartuios --standalone
 ```
 
 **Flags:**
 
-`tuios --help` is the authoritative list. These are the flags it shows today:
+`dartuios --help` is the authoritative list. These are the flags it shows today:
 
-- `--standalone`: Run a standalone session without the daemon, overriding `startup.daemon`. `TUIOS_NO_DAEMON=1` does the same for a whole shell
+- `--standalone`: Run a standalone session without the daemon, overriding `startup.daemon`. `DARTUIOS_NO_DAEMON=1` does the same for a whole shell
 - `--theme <name>`: Color theme to use, such as dracula, nord or tokyonight. Leave it empty (the default) to use the terminal's own colors without theming
 - `--list-themes`: List all available themes and exit
 - `--preview-theme <name>`: Preview a theme's 16 ANSI colors and exit
@@ -138,43 +138,43 @@ tuios --standalone
 - `--debug`: Enable debug logging
 - `--cpuprofile <file>`: Write CPU profile to file
 - `--pprof <addr>`: Serve /debug/pprof profiles on this address for live profiling, such as localhost:6060. Delta profiles (`?seconds=` on heap and the like) are not served; take two and compare them with `go tool pprof -diff_base`
-- `-h, --help`: Show help for tuios
+- `-h, --help`: Show help for dartuios
 - `-v, --version`: Show version information
 
 **Examples:**
 ```bash
-tuios                          # Start TUIOS normally
-tuios --theme dracula          # Start with Dracula theme
-tuios --ascii-only             # Start without Nerd Font icons
-tuios --show-keys              # Start with showkeys overlay enabled
-tuios --list-themes            # List all available themes
-tuios --preview-theme nord     # Preview Nord theme colors
-tuios --skill                  # Print the agent skill and exit
-tuios --skill recipes          # Print one topic of it
-tuios --debug                  # Start with debug logging
-tuios --cpuprofile cpu.prof    # Start with CPU profiling
+dartuios                          # Start dartuios normally
+dartuios --theme dracula          # Start with Dracula theme
+dartuios --ascii-only             # Start without Nerd Font icons
+dartuios --show-keys              # Start with showkeys overlay enabled
+dartuios --list-themes            # List all available themes
+dartuios --preview-theme nord     # Preview Nord theme colors
+dartuios --skill                  # Print the agent skill and exit
+dartuios --skill recipes          # Print one topic of it
+dartuios --debug                  # Start with debug logging
+dartuios --cpuprofile cpu.prof    # Start with CPU profiling
 
 # Combine multiple flags
-tuios --theme nord --show-keys # Use Nord theme with showkeys enabled
+dartuios --theme nord --show-keys # Use Nord theme with showkeys enabled
 
 # Interactive theme selection with fzf
-tuios --theme $(tuios --list-themes | fzf --preview 'tuios --preview-theme {}')
+dartuios --theme $(dartuios --list-themes | fzf --preview 'dartuios --preview-theme {}')
 ```
 
 ---
 
 ## Theming
 
-TUIOS includes 300+ built-in color themes from various sources including Gogh, iTerm2, and custom themes.
+dartuios includes 300+ built-in color themes from various sources including Gogh, iTerm2, and custom themes.
 
 ### Available Themes
 
 List all available themes:
 ```bash
-tuios --list-themes
+dartuios --list-themes
 ```
 
-With no theme set, tuios uses the terminal's own colors.
+With no theme set, dartuios uses the terminal's own colors.
 
 **Popular themes include:**
 - `tokyonight`: A clean, dark theme with vibrant colors
@@ -191,7 +191,7 @@ With no theme set, tuios uses the terminal's own colors.
 
 Preview a theme's 16 ANSI colors before using it:
 ```bash
-tuios --preview-theme dracula
+dartuios --preview-theme dracula
 ```
 
 The preview shows all 16 colors (8 standard + 8 bright variants) with their color codes.
@@ -200,7 +200,7 @@ The preview shows all 16 colors (8 standard + 8 bright variants) with their colo
 
 Set a theme at startup:
 ```bash
-tuios --theme nord
+dartuios --theme nord
 ```
 
 The theme affects:
@@ -215,7 +215,7 @@ The theme affects:
 
 Use `fzf` for interactive theme selection with live preview:
 ```bash
-tuios --theme $(tuios --list-themes | fzf --preview 'tuios --preview-theme {}')
+dartuios --theme $(dartuios --list-themes | fzf --preview 'dartuios --preview-theme {}')
 ```
 
 This allows you to browse all themes with a live color preview before selecting one.
@@ -227,66 +227,66 @@ Themes are set via command-line flag and not currently stored in configuration. 
 **Shell alias:**
 ```bash
 # Add to ~/.bashrc, ~/.zshrc, etc.
-alias tuios='tuios --theme nord'
+alias dartuios='dartuios --theme nord'
 ```
 
 **Script wrapper:**
 ```bash
 #!/bin/bash
-exec tuios --theme dracula "$@"
+exec dartuios --theme dracula "$@"
 ```
 
 ---
 
 ## Agent Skill
 
-`tuios --skill` prints the agent skill embedded in the binary and exits. The
-skill teaches an agent to drive TUIOS from inside a pane. It is split so an
+`dartuios --skill` prints the agent skill embedded in the binary and exits. The
+skill teaches an agent to drive dartuios from inside a pane. It is split so an
 agent loads only what it needs:
 
-- `tuios --skill` (or `--skill core`) prints the core (about 280 lines): how to tell it is in a
+- `dartuios --skill` (or `--skill core`) prints the core (about 280 lines): how to tell it is in a
   pane, what its pane may do, addressing, reading and writing panes, running
   work and waiting for it, reporting its own state, talking to other agents and
   the person safely, and a table of the topics.
-- `tuios --skill TOPIC` prints one topic: `panes`, `state`, `inbox`, `mail`,
+- `dartuios --skill TOPIC` prints one topic: `panes`, `state`, `inbox`, `mail`,
   `fleet`, `hosts`, `events`, `mcp`, `tmux`, `grants`, `config`, `errors` or
   `recipes`. `recipes` has end-to-end recipes: a fleet of agents, answering
   from the Inbox, approvals, agents on another machine, MCP setup, the tmux
   shim, scoped grants, a conductor pane and a phone alert.
-- `tuios --skill all` prints the core and every topic.
+- `dartuios --skill all` prints the core and every topic.
 - An unknown topic is an error that lists the topics.
 
 ```bash
-tuios --skill
-tuios --skill fleet
-tuios --skill all
+dartuios --skill
+dartuios --skill fleet
+dartuios --skill all
 ```
 
-The text ships inside the binary as `skills/tuios/SKILL.md` and the other
-files in `skills/tuios/`, so it always describes the TUIOS that printed it.
-Nothing is fetched and no daemon is needed. `tuios --skill=TOPIC` works too.
+The text ships inside the binary as `skills/dartuios/SKILL.md` and the other
+files in `skills/dartuios/`, so it always describes the dartuios that printed it.
+Nothing is fetched and no daemon is needed. `dartuios --skill=TOPIC` works too.
 
 **Examples:**
 ```bash
 # Install the core where an agent harness looks for skills. The core tells
-# the agent to run tuios --skill TOPIC for the rest.
-mkdir -p ~/.claude/skills/tuios
-tuios --skill > ~/.claude/skills/tuios/SKILL.md
+# the agent to run dartuios --skill TOPIC for the rest.
+mkdir -p ~/.claude/skills/dartuios
+dartuios --skill > ~/.claude/skills/dartuios/SKILL.md
 ```
 
 ---
 
 ## Daemon Mode (Session Persistence)
 
-TUIOS supports persistent sessions through a daemon process, similar to tmux or screen. Sessions continue running in the background even when you disconnect, allowing you to reattach later with all windows and content preserved.
+dartuios supports persistent sessions through a daemon process, similar to tmux or screen. Sessions continue running in the background even when you disconnect, allowing you to reattach later with all windows and content preserved.
 
-### `tuios new`
+### `dartuios new`
 
 Create a new persistent session.
 
 **Usage:**
 ```bash
-tuios new [session-name] [flags]
+dartuios new [session-name] [flags]
 ```
 
 **Flags:**
@@ -296,81 +296,81 @@ tuios new [session-name] [flags]
 - `--no-animations`: Disable UI animations
 - `-d, --detach`: Create the session headless without attaching a client
 - `--host <name>`: Create the session on this host from the `[hosts]` table
-- `--ssh`: With `--host`, run ssh to the host and its own tuios instead of attaching here
+- `--ssh`: With `--host`, run ssh to the host and its own dartuios instead of attaching here
 - `--global`: Create a global session, which holds panes from more than one machine
 - `--hold`: After a failure, wait for enter before the command exits
-- The appearance flags of the root command (`tuios new --help` lists them)
+- The appearance flags of the root command (`dartuios new --help` lists them)
 
 **Examples:**
 ```bash
-tuios new                      # Create session with auto-generated name
-tuios new mysession            # Create session named "mysession"
-tuios new work --theme dracula # Create session with Dracula theme
-tuios new ci --detach          # Create a headless session and return
-tuios new --host build         # Create a session on the host build and attach it
-tuios new deploy --global      # Create a global session
+dartuios new                      # Create session with auto-generated name
+dartuios new mysession            # Create session named "mysession"
+dartuios new work --theme dracula # Create session with Dracula theme
+dartuios new ci --detach          # Create a headless session and return
+dartuios new --host build         # Create a session on the host build and attach it
+dartuios new deploy --global      # Create a global session
 ```
 
-### `tuios attach`
+### `dartuios attach`
 
 Attach to an existing session.
 
 **Usage:**
 ```bash
-tuios attach [session-name] [flags]
+dartuios attach [session-name] [flags]
 ```
 
 **Flags:**
 - `-c, --create`: Create session if it doesn't exist
 - `--host <name>`: Attach to a session on this host from the `[hosts]` table
-- `--ssh`: With `--host`, run ssh to the host and its own tuios instead of attaching here
+- `--ssh`: With `--host`, run ssh to the host and its own dartuios instead of attaching here
 - `--hold`: After a failure, wait for enter before the command exits
-- Same as `tuios new` (theme, ascii-only, etc.)
+- Same as `dartuios new` (theme, ascii-only, etc.)
 
 **Examples:**
 ```bash
-tuios attach                   # Attach to most recent session (or only session)
-tuios attach mysession         # Attach to session named "mysession"
-tuios attach mysession -c      # Attach or create if doesn't exist
-tuios attach mysession --theme nord  # Attach with different theme
-tuios attach --host build api  # Attach the session api on the host build
+dartuios attach                   # Attach to most recent session (or only session)
+dartuios attach mysession         # Attach to session named "mysession"
+dartuios attach mysession -c      # Attach or create if doesn't exist
+dartuios attach mysession --theme nord  # Attach with different theme
+dartuios attach --host build api  # Attach the session api on the host build
 ```
 
-Inside a tuios pane, `tuios attach` refuses to attach the session that holds
-the pane. A bare `tuios attach` or `tuios` in a pane also refuses, because
+Inside a dartuios pane, `dartuios attach` refuses to attach the session that holds
+the pane. A bare `dartuios attach` or `dartuios` in a pane also refuses, because
 it does not name a session. To show a different session in the pane, name
-that session. To attach the same session, open a new terminal outside tuios.
-To attach anyway, use `--force` or set `TUIOS_ALLOW_NESTED=1`.
+that session. To attach the same session, open a new terminal outside dartuios.
+To attach anyway, use `--force` or set `DARTUIOS_ALLOW_NESTED=1`.
 
 The same refusal applies when the session would show itself through a
 chain. For example, session A shows session B in a pane, and a pane of B
 then attaches A.
 
-tuios finds the pane in these ways:
+dartuios finds the pane in these ways:
 
 - The client runs on the pane's terminal.
 - The client's output reaches the pane. This finds `script`, and ssh from
-  the pane to the same machine or to the tuios SSH server. The attach does
-  not wait for this check. If tuios finds it in the first 2 seconds after
+  the pane to the same machine or to the dartuios SSH server. The attach does
+  not wait for this check. If dartuios finds it in the first 2 seconds after
   the attach, it detaches the client with the same message.
 - A client with no terminal runs under the pane's shell or has the pane's
-  `TUIOS_` variables.
+  `DARTUIOS_` variables.
 
 A terminal window started from a pane attaches. Its output does not reach
 the pane.
 
-tuios cannot find a client behind tmux or mosh in a pane. These redraw
+dartuios cannot find a client behind tmux or mosh in a pane. These redraw
 the screen and do not pass the output through. Such an attach goes
 through, and the session shrinks to 20x6. It stays at 20x6 until the
 inner client exits. A forced attach also stays at 20x6 or more.
 
-### `tuios ls`
+### `dartuios ls`
 
-List all TUIOS sessions.
+List all dartuios sessions.
 
 **Usage:**
 ```bash
-tuios ls [flags]
+dartuios ls [flags]
 ```
 
 **Flags:**
@@ -378,7 +378,7 @@ tuios ls [flags]
 - `--all-hosts`: Also list the sessions on every host in the `[hosts]` table. A host that does not answer gets a row saying so and never fails the command. Its sessions from when it last answered follow, under "As of ..., when it last answered", and are not counted in the total
 - `--host <name>`: List the sessions on one host (`local` means this machine)
 
-With no daemon running, `tuios ls` lists the sessions saved on disk instead,
+With no daemon running, `dartuios ls` lists the sessions saved on disk instead,
 marked `saved`, and exits 3.
 
 **Output:**
@@ -399,7 +399,7 @@ Shows a table with:
 ╰───────────────┴─────────┴──────────┴───────────────┴─────────────────╯
 ```
 
-`tuios ls --json` prints one object per session. Two fields say where the session's focused pane is:
+`dartuios ls --json` prints one object per session. Two fields say where the session's focused pane is:
 
 - `dir` is the base name of the shell's directory. It is `~` for the home directory.
 - `branch` is the git branch checked out there. A detached HEAD reads as its short hash.
@@ -409,25 +409,25 @@ Both come from the directory the shell last reported over OSC 7, or the director
 A session whose directory is inside a linked git worktree (not a main
 checkout) also carries `worktree`: the repository (`repo`, `repo_root`), the
 `branch` and the worktree's `path`, `gone: true` once the directory no longer
-exists, and for one tuios made, its `base`, its fan `group` and the prompt a
+exists, and for one dartuios made, its `base`, its fan `group` and the prompt a
 fan sent it. It is what the rail groups by. `global: true` marks a global session, and
 `restored: true` one rebuilt from saved state that nobody has attached to yet.
 
-### `tuios kill-session`
+### `dartuios kill-session`
 
 Kill a specific session.
 
 **Usage:**
 ```bash
-tuios kill-session <session-name>
+dartuios kill-session <session-name>
 ```
 
 **Examples:**
 ```bash
-tuios kill-session mysession   # Kill session named "mysession"
+dartuios kill-session mysession   # Kill session named "mysession"
 ```
 
-### `tuios worktree`
+### `dartuios worktree`
 
 A git worktree as a session. `worktree new` makes a worktree of the repository
 you are in and a session whose directory is that worktree. The rail groups these
@@ -435,26 +435,26 @@ sessions under the repository and labels each by its branch.
 
 **Usage:**
 ```bash
-tuios worktree new <branch> [--repo <dir>] [--base <ref>] [--name <session>] [--agent <cli>] [--host <host> [--clone]] [--detach]
-tuios worktree ls [--repo <name>] [--group <stem>] [--host <host>] [--json]
-tuios worktree rm [<host>:]<session> [--stash | --force] [--keep-session]
-tuios worktree diff <session> [--stat]
-tuios worktree pull <host>:<session> [--repo <dir>] [--branch <name>] [--name <session>] [--detach] [--json]
+dartuios worktree new <branch> [--repo <dir>] [--base <ref>] [--name <session>] [--agent <cli>] [--host <host> [--clone]] [--detach]
+dartuios worktree ls [--repo <name>] [--group <stem>] [--host <host>] [--json]
+dartuios worktree rm [<host>:]<session> [--stash | --force] [--keep-session]
+dartuios worktree diff <session> [--stat]
+dartuios worktree pull <host>:<session> [--repo <dir>] [--branch <name>] [--name <session>] [--detach] [--json]
 ```
 
 **Examples:**
 ```bash
-tuios worktree new feat/retry                          # A new branch from HEAD, attached
-tuios worktree new feat/retry --agent claude --detach  # Headless, running Claude Code
-tuios worktree ls                                      # Repo, branch, agent state, changes
-tuios worktree rm api-feat-retry --stash               # Keep the changes in git stash
+dartuios worktree new feat/retry                          # A new branch from HEAD, attached
+dartuios worktree new feat/retry --agent claude --detach  # Headless, running Claude Code
+dartuios worktree ls                                      # Repo, branch, agent state, changes
+dartuios worktree rm api-feat-retry --stash               # Keep the changes in git stash
 ```
 
 The session is named `<repo>-<branch>`, with every slash turned into a hyphen.
-Worktrees go under `$XDG_DATA_HOME/tuios/worktrees/<repo>/<branch>`.
+Worktrees go under `$XDG_DATA_HOME/dartuios/worktrees/<repo>/<branch>`.
 
 `worktree rm` refuses a worktree with uncommitted changes and removes nothing.
-`--stash` keeps the changes in git stash as `tuios: <branch>`. `--force`
+`--stash` keeps the changes in git stash as `dartuios: <branch>`. `--force`
 discards them, and is the only option that does. The branch is never deleted.
 A session whose worktree directory was removed under it shows `gone` in the
 listing and is kept.
@@ -463,11 +463,11 @@ listing and is kept.
 machine from the `[hosts]` table, and `worktree rm` takes `HOST:SESSION`. Run
 them inside your checkout: the repository is sent as its origin URL, and the
 host finds its own checkout of it under `[hosts.NAME] repos_root` (set with
-`tuios hosts add NAME ADDR --repos-root ~/src`), or else under `~/src`,
+`dartuios hosts add NAME ADDR --repos-root ~/src`), or else under `~/src`,
 `~/dev`, `~/code`, `~/projects`, `~/repos`, `~/git`, `~/work` and `~/go/src`
 there. `--clone` clones it there when it has none; only https, ssh and git URLs
 are cloned. With `--host`, `--repo` names a directory on the host. A host whose
-tuios is too old for this is named, with what to upgrade.
+dartuios is too old for this is named, with what to upgrade.
 
 `worktree diff` reads files on this machine, so it refuses `HOST:SESSION` and
 names `worktree pull`.
@@ -489,62 +489,62 @@ patch does not apply, it is kept under the temporary directory and the command
 names it.
 
 ```bash
-tuios worktree new feat/retry --host build --clone --detach
-tuios worktree ls --host build
-tuios worktree pull build:api-feat-retry --detach
-tuios worktree rm build:api-feat-retry --stash
+dartuios worktree new feat/retry --host build --clone --detach
+dartuios worktree ls --host build
+dartuios worktree pull build:api-feat-retry --detach
+dartuios worktree rm build:api-feat-retry --stash
 ```
 
-### `tuios fan`
+### `dartuios fan`
 
 Fan a prompt out across several agents, each in its own worktree.
 
 **Usage:**
 ```bash
-tuios fan <count> --agent <agent>[,<agent>...] [--env NAME[=VALUE]]... [--repo <dir>] [--base <ref>] [--name <stem>] [--host <host> [--clone]] [--wait] <prompt>
-tuios fan [<count>] --agent <agent>[,<agent>...] --prompt <prompt> --prompt <prompt>... [flags]
-tuios fan keep [<host>:]<session> [--stash | --force]
-tuios fan compare [[<host>:]<session>] [--no-changes] [--json]
-tuios fan verify [<host>:]<session> [--timeout <duration>] [--no-wait] [--json] -- <command>...
-tuios fan diff <session-a> <session-b> [--stat]
+dartuios fan <count> --agent <agent>[,<agent>...] [--env NAME[=VALUE]]... [--repo <dir>] [--base <ref>] [--name <stem>] [--host <host> [--clone]] [--wait] <prompt>
+dartuios fan [<count>] --agent <agent>[,<agent>...] --prompt <prompt> --prompt <prompt>... [flags]
+dartuios fan keep [<host>:]<session> [--stash | --force]
+dartuios fan compare [[<host>:]<session>] [--no-changes] [--json]
+dartuios fan verify [<host>:]<session> [--timeout <duration>] [--no-wait] [--json] -- <command>...
+dartuios fan diff <session-a> <session-b> [--stat]
 ```
 
 **Flags:**
 - `--agent <agent>`: The agent as you would type it, arguments included: `claude`, `'codex --model o5'`, or any program. Several, comma-separated or repeated, are cycled across the sessions (required)
 - `--prompt <prompt>`: One session's prompt, repeated once per session, in place of the prompt argument. The count is then how many there are
 - `--env NAME` or `--env NAME=VALUE`: Pass your value of a variable, or set one, for every agent. Repeatable. `PATH` is always sent, so the agents are found where your shell finds them
-- `--grants <grant>[,<grant>...]`: What every agent may do through tuios, as for `start-agent`
+- `--grants <grant>[,<grant>...]`: What every agent may do through dartuios, as for `start-agent`
 - `--repo <dir>`, `--base <ref>`, `--name <stem>`, `--wait`, `--json`
 
 **Examples:**
 ```bash
-tuios fan 3 --agent claude 'Add a retry with backoff to the HTTP client.'
-tuios fan 3 --agent 'claude,codex --model o5,gemini' 'Add a retry with backoff.'
-tuios fan --agent claude --env ANTHROPIC_API_KEY --prompt 'Add a retry.' --prompt 'Add a timeout.'
-tuios worktree ls --group fan/add-retry-backoff-http   # Which prompts were sent, what changed
-tuios worktree diff api-fan-add-retry-backoff-http-2   # What one of them produced
-tuios fan compare api-fan-add-retry-backoff-http       # Every attempt side by side
-tuios fan verify api-fan-add-retry-backoff-http -- go test ./...
-tuios fan diff api-fan-add-retry-backoff-http api-fan-add-retry-backoff-http-2
-tuios fan keep api-fan-add-retry-backoff-http-2 --stash
+dartuios fan 3 --agent claude 'Add a retry with backoff to the HTTP client.'
+dartuios fan 3 --agent 'claude,codex --model o5,gemini' 'Add a retry with backoff.'
+dartuios fan --agent claude --env ANTHROPIC_API_KEY --prompt 'Add a retry.' --prompt 'Add a timeout.'
+dartuios worktree ls --group fan/add-retry-backoff-http   # Which prompts were sent, what changed
+dartuios worktree diff api-fan-add-retry-backoff-http-2   # What one of them produced
+dartuios fan compare api-fan-add-retry-backoff-http       # Every attempt side by side
+dartuios fan verify api-fan-add-retry-backoff-http -- go test ./...
+dartuios fan diff api-fan-add-retry-backoff-http api-fan-add-retry-backoff-http-2
+dartuios fan keep api-fan-add-retry-backoff-http-2 --stash
 ```
 
 The branches are a stem, then `stem-2`, `stem-3`. The stem is `fan/` and the
 first words of the prompt, or `--name`. Each prompt is typed once its agent
 shows it is at its prompt, as one paste submitted with a carriage return (the
-Enter key), so the command returns at once and `tuios worktree ls` shows
+Enter key), so the command returns at once and `dartuios worktree ls` shows
 `pending`, `held: look at the pane`, `sent`, `not sent` or `stalled` per
 session. `held` means the agent has not been ready for 30 seconds, most often
 because it shows a first-run choice; the Inbox asks you to look, and the
 prompt is typed once it is ready. A program no harness manifest recognises is
-ready only once it reports a state (`tuios set-agent-state idle`). `stalled`
+ready only once it reports a state (`dartuios set-agent-state idle`). `stalled`
 means the prompt was typed and the agent showed no sign of taking it within
 five seconds: it did not turn working or needs_input. Look at the pane before
 sending it again, since the text may be in the agent's input box. `--wait`
 blocks until every prompt is sent or given up on.
 
 The agent string is split into words the way a shell splits them and exec'd
-directly: nothing in it is expanded. `TUIOS_` variables, `TMUX` and
+directly: nothing in it is expanded. `DARTUIOS_` variables, `TMUX` and
 `TMUX_PANE` cannot be passed with `--env`.
 
 `fan compare` prints one line per attempt of the fan the session belongs to:
@@ -563,7 +563,7 @@ fan/retry in api, 3 attempts against main
   api-fan-retry    claude  done     4 files  +120 -31  go test ./... passed 14m ago
   api-fan-retry-2  codex   working  2 files    +40 -3  no check yet
   api-fan-retry-3  claude  errored  0 files     +0 -0  last command exited 1 (make lint)
-Keep one with 'tuios fan keep <session>'. Compare two with 'tuios fan diff A B'.
+Keep one with 'dartuios fan keep <session>'. Compare two with 'dartuios fan diff A B'.
 ```
 
 `fan verify` runs the command after `--` in every attempt, in a window named
@@ -571,8 +571,8 @@ Keep one with 'tuios fan keep <session>'. Compare two with 'tuios fan diff A B'.
 word after `--` is a shell line, so `'make lint && make test'` keeps its `&&`.
 Several words are one command and its arguments: each is quoted for the shell
 as you gave it, so `-- go test -run 'TestA|TestB' ./...` passes the pattern
-as one argument. The command is always yours: tuios never reads one from the repository. The
-window holds no grants, so the check cannot drive tuios. A window whose check
+as one argument. The command is always yours: dartuios never reads one from the repository. The
+window holds no grants, so the check cannot drive dartuios. A window whose check
 passed closes; one whose check failed stays open with the output until you
 press enter in it. The command waits for every check, prints one line each,
 and exits 1 when any failed. `--timeout` fails a check that runs longer and
@@ -598,31 +598,31 @@ host. `fan keep HOST:SESSION` keeps one there, and `worktree pull
 HOST:SESSION` brings its work here.
 
 ```bash
-tuios fan 3 --host build --agent claude 'Add a retry.'
-tuios worktree pull build:api-fan-add-retry-2
-tuios fan keep build:api-fan-add-retry-2 --stash
+dartuios fan 3 --host build --agent claude 'Add a retry.'
+dartuios worktree pull build:api-fan-add-retry-2
+dartuios fan keep build:api-fan-add-retry-2 --stash
 ```
 
-### `tuios start-agent`
+### `dartuios start-agent`
 
 Start an agent in a new pane, here or on another machine, and return once it
 is ready for a prompt.
 
 **Usage:**
 ```bash
-tuios start-agent <agent> [-s [<host>:]<session>] [--name <name>] [--cwd <dir> | --repo <dir> | --clone] [--workspace <n>] [--focus] [--prompt <prompt>] [--ready-timeout <ms>] [--protocol acp|codex] [--env NAME[=VALUE]]... [--grants <grant>[,<grant>...]] [--json] [-- <args>...]
+dartuios start-agent <agent> [-s [<host>:]<session>] [--name <name>] [--cwd <dir> | --repo <dir> | --clone] [--workspace <n>] [--focus] [--prompt <prompt>] [--ready-timeout <ms>] [--protocol acp|codex] [--env NAME[=VALUE]]... [--grants <grant>[,<grant>...]] [--json] [-- <args>...]
 ```
 
-`--grants` says what the agent may do through tuios: `read`, `write`, `fan`,
-`respond`, `admin`, or `none` (see [`tuios pane-grants`](#tuios-pane-grants)).
+`--grants` says what the agent may do through dartuios: `read`, `write`, `fan`,
+`respond`, `admin`, or `none` (see [`dartuios pane-grants`](#dartuios-pane-grants)).
 Without it the pane holds the default of `[agents.permissions]`, or, started
 from a pane without `admin`, that pane's own grants.
 
 **Examples:**
 ```bash
-tuios start-agent claude --name reviewer
-tuios ask-agent -w reviewer 'review the diff on this branch'
-tuios start-agent 'codex --model o5' --name tests --prompt 'Run the tests and fix what fails.'
+dartuios start-agent claude --name reviewer
+dartuios ask-agent -w reviewer 'review the diff on this branch'
+dartuios start-agent 'codex --model o5' --name tests --prompt 'Run the tests and fix what fails.'
 ```
 
 `<agent>` is written as for `fan`. The command waits until the agent shows it
@@ -647,7 +647,7 @@ machine's checkout of the repository you are in, found and cloned the way
 Arguments after `--` are passed to the agent as an argv.
 
 ```bash
-tuios start-agent -s build:api claude --prompt 'Profile the build.' -- --model opus
+dartuios start-agent -s build:api claude --prompt 'Profile the build.' -- --model opus
 ```
 
 `--protocol` runs the agent headless over a structured protocol instead of in
@@ -655,27 +655,27 @@ its own TUI, and the pane shows the conversation as a transcript you type
 prompts into:
 
 ```bash
-tuios start-agent --protocol acp 'opencode acp' --name helper --prompt 'List the TODOs.'
-tuios start-agent --protocol codex codex --name tests
+dartuios start-agent --protocol acp 'opencode acp' --name helper --prompt 'List the TODOs.'
+dartuios start-agent --protocol codex codex --name tests
 ```
 
 `acp` is the Agent Client Protocol, version 1, for any agent command that
 speaks it. `codex` is the Codex app-server, and `app-server` is added to the
-`codex` command. The pane runs [`tuios agent-proto`](#tuios-agent-proto),
+`codex` command. The pane runs [`dartuios agent-proto`](#dartuios-agent-proto),
 which reports the agent's state itself, so the command returns once that
 report says idle. A permission the agent asks for is answered in the pane with
 a number key, or from the Inbox when one line shows the whole request, with no
 `[agents.approvals]` needed. A daemon older than `--protocol` refuses it by
 name.
 
-### `tuios agent-proto`
+### `dartuios agent-proto`
 
 The pane program of `start-agent --protocol`: run an agent headless over ACP
 or the Codex app-server, and show it as a transcript with a prompt line.
 
 **Usage:**
 ```bash
-tuios agent-proto --protocol acp|codex [--harness <id>] [--cwd <dir>] -- <agent> [args...]
+dartuios agent-proto --protocol acp|codex [--harness <id>] [--cwd <dir>] -- <agent> [args...]
 ```
 
 It starts the agent with pipes, in a session of its own with no controlling
@@ -687,10 +687,10 @@ Ctrl+D on an empty line quits. A permission is shown with a number key per
 answer; a key counts once the question has been up for half a second, and a
 paste never answers one.
 
-Inside a tuios pane it reports the pane's state under `--harness` (default:
+Inside a dartuios pane it reports the pane's state under `--harness` (default:
 the protocol): `idle`, `working`, `done` or `errored`, and `needs_input` with
 kind `approval` for a permission, which it also holds for the Inbox with
-`request-approval` when one line shows the whole request. Outside tuios it
+`request-approval` when one line shows the whole request. Outside dartuios it
 reports nothing and works the same. When the agent exits, the pane shows the
 end of its stderr and waits for Enter.
 
@@ -711,18 +711,18 @@ pane whose agent names its model shows it in the first line, `connected to
 opencode 1.2 (Claude Sonnet 4)`, as a Codex pane does.
 
 ```bash
-tuios agent-proto --protocol acp -- opencode acp
+dartuios agent-proto --protocol acp -- opencode acp
 ```
 
-### `tuios agent-statusline`
+### `dartuios agent-statusline`
 
-What Claude Code's status line runs once `tuios integration install
+What Claude Code's status line runs once `dartuios integration install
 claude-code --statusline` is installed: read the status line payload on stdin
 and write the model, context use and cost to the pane's agent metadata.
 
 **Usage:**
 ```bash
-tuios agent-statusline claude-code|opencode|kilo [--then CMD] [--turn-end] [--explain]
+dartuios agent-statusline claude-code|opencode|kilo [--then CMD] [--turn-end] [--explain]
 ```
 
 | Payload field | Metadata key |
@@ -738,7 +738,7 @@ runs your own status line command through `sh -c` with the same stdin and
 prints its output unchanged, and the command exits with its status; that is
 how a status line of your own is kept.
 
-The pane is found from `-w`, then `TUIOS_PANE_ID`, then the process's terminal
+The pane is found from `-w`, then `DARTUIOS_PANE_ID`, then the process's terminal
 and parent processes, as for `agent-hook`; a process in no pane asks the
 daemon again at most once a minute. It calls only `set-agent-meta`, for that
 pane, at most once every 15 seconds while the values change, and not at all
@@ -748,22 +748,22 @@ session goes idle) go at once, and unchanged values are sent again after 10
 minutes so a daemon that restarted gets them back. The last values sent, and
 any the interval held back, are kept in `statusline-<session>-<pane>.json`
 (mode 0600) beside the daemon's socket. Held values go with the next run that
-is due, or when the turn ends: Claude Code's `Stop` hook (`tuios agent-hook
+is due, or when the turn ends: Claude Code's `Stop` hook (`dartuios agent-hook
 claude-code`) sends them, and a run after the `Stop` goes at once. It reads at most 1 MiB of stdin, gives up on the daemon after 300ms
-(`--timeout`), and exits 0 whatever goes wrong on the tuios side.
+(`--timeout`), and exits 0 whatever goes wrong on the dartuios side.
 
 ```bash
-tuios agent-statusline claude-code --then '~/.claude/statusline.sh'
-echo '{"model":{"display_name":"Opus"},"context_window":{"used_percentage":42}}' | tuios agent-statusline claude-code --explain
+dartuios agent-statusline claude-code --then '~/.claude/statusline.sh'
+echo '{"model":{"display_name":"Opus"},"context_window":{"used_percentage":42}}' | dartuios agent-statusline claude-code --explain
 ```
 
-### `tuios kill-server`
+### `dartuios kill-server`
 
-Stop the TUIOS daemon process. This stops all sessions.
+Stop the dartuios daemon process. This stops all sessions.
 
 **Usage:**
 ```bash
-tuios kill-server
+dartuios kill-server
 ```
 
 **Contract:** the command is synchronous. It returns only once the daemon has
@@ -771,7 +771,7 @@ written every session's resurrection state and removed its socket, so a script
 may start a new daemon as soon as it returns:
 
 ```bash
-tuios kill-server && tuios start-server   # safe: no race
+dartuios kill-server && dartuios start-server   # safe: no race
 ```
 
 The daemon unlinks its socket last, after the final saves, and that unlink is
@@ -788,18 +788,18 @@ save and loses any state written since the last periodic save.
 When no daemon is running, the command reports that and removes a stale socket
 if one is present. It exits 0 in that case.
 
-### `tuios daemon`
+### `dartuios daemon`
 
 Run the daemon in the foreground (for debugging).
 
 **Usage:**
 ```bash
-tuios daemon [flags]
+dartuios daemon [flags]
 ```
 
 **Flags:**
 - `--log-level <level>`: Debug log level: `off`, `errors`, `basic`, `messages`, `verbose`, `trace`
-- `--no-restore`: Do not restore saved sessions on start. Run `tuios resurrect` to restore one on demand
+- `--no-restore`: Do not restore saved sessions on start. Run `dartuios resurrect` to restore one on demand
 
 **Debug log levels:**
 - `off`: No debug output (default)
@@ -809,35 +809,35 @@ tuios daemon [flags]
 - `verbose`: All messages including PTY I/O
 - `trace`: Full payload hex dumps
 
-**Note:** This is primarily for debugging. The daemon starts automatically in the background when you run `tuios new` or `tuios attach`. Use this command to run the daemon in the foreground with debug logging.
+**Note:** This is primarily for debugging. The daemon starts automatically in the background when you run `dartuios new` or `dartuios attach`. Use this command to run the daemon in the foreground with debug logging.
 
 ### Workflow Example
 
 ```bash
 # Start a new session for work
-tuios new work
+dartuios new work
 
 # ... do some work, then detach with Ctrl+B d ...
 
 # Later, list your sessions
-tuios ls
+dartuios ls
 
 # Reattach to continue working
-tuios attach work
+dartuios attach work
 
 # When done, kill the session
-tuios kill-session work
+dartuios kill-session work
 ```
 
 ---
 
 ## Remote Control Commands
 
-TUIOS provides commands to control a running session from external scripts and tools. These commands communicate with the TUIOS daemon to send keystrokes, execute commands, and query state. This enables powerful scripting, automation, and integration with external tools.
+dartuios provides commands to control a running session from external scripts and tools. These commands communicate with the dartuios daemon to send keystrokes, execute commands, and query state. This enables powerful scripting, automation, and integration with external tools.
 
-> **Note:** When sending TUIOS commands via `send-keys`, `Ctrl+B` refers to the default leader key. This is configurable via the `leader_key` option in your config file.
+> **Note:** When sending dartuios commands via `send-keys`, `Ctrl+B` refers to the default leader key. This is configurable via the `leader_key` option in your config file.
 
-### `tuios send-keys`
+### `dartuios send-keys`
 
 Send keys to the program in a window: arrows, page keys, Enter, `ctrl+c`.
 
@@ -848,7 +848,7 @@ or the focused window; with no client attached they go to the focused window.
 
 **Usage:**
 ```bash
-tuios send-keys <keys> [flags]
+dartuios send-keys <keys> [flags]
 ```
 
 **Flags:**
@@ -893,31 +893,31 @@ Arrows, `Home` and `End` are sent in the form the program asked for
 nothing is sent. A plain lower-case word such as `ls` is typed as its letters.
 
 **send-keys is not for text.** `send-keys 'echo hello'` types `echohello`. Use
-[`tuios send-text`](#tuios-send-text).
+[`dartuios send-text`](#dartuios-send-text).
 
 **Examples:**
 ```bash
 # Scroll the pager in the window named docs
-tuios send-keys -w docs Down
-tuios send-keys -w docs Down --repeat 10
-tuios send-keys -w docs 'PageDown PageDown'
+dartuios send-keys -w docs Down
+dartuios send-keys -w docs Down --repeat 10
+dartuios send-keys -w docs 'PageDown PageDown'
 
 # Interrupt what runs in the window named build
-tuios send-keys -w build ctrl+c
+dartuios send-keys -w build ctrl+c
 
 # A window by the id new-window printed
-id=$(tuios new-window logs --print-id)
-tuios send-keys -w "$id" End
+id=$(dartuios new-window logs --print-id)
+dartuios send-keys -w "$id" End
 
 # Keys for the window manager: the leader key and then q, no -w
-tuios send-keys "ctrl+b q"
-tuios send-keys "\$PREFIX q"
+dartuios send-keys "ctrl+b q"
+dartuios send-keys "\$PREFIX q"
 
 # Enter terminal mode in the attached client (press 'i')
-tuios send-keys i
+dartuios send-keys i
 ```
 
-### `tuios send-text`
+### `dartuios send-text`
 
 Write text verbatim to a pane's PTY, with no key parsing at all.
 
@@ -927,7 +927,7 @@ makes this one call where `send-keys` needs two.
 
 **Usage:**
 ```bash
-tuios send-text <text> [flags]
+dartuios send-text <text> [flags]
 ```
 
 **Flags:**
@@ -937,17 +937,17 @@ tuios send-text <text> [flags]
 **Examples:**
 ```bash
 # Run a command in the focused pane (the trailing newline submits it)
-tuios send-text 'go build ./...
+dartuios send-text 'go build ./...
 '
 
 # Type without submitting
-tuios send-text -w build 'partial input'
+dartuios send-text -w build 'partial input'
 
 # Text with spaces, quotes and commas needs no flags
-tuios send-text -w build 'git commit -m "fix: cache, retries"'
+dartuios send-text -w build 'git commit -m "fix: cache, retries"'
 ```
 
-### `tuios new-window`
+### `dartuios new-window`
 
 Open a new window in a session and print its id.
 
@@ -957,13 +957,13 @@ holding on to the id.
 
 **Usage:**
 ```bash
-tuios new-window [name] [command...] [flags]
+dartuios new-window [name] [command...] [flags]
 ```
 
 Words after the name are the argv the window runs instead of a shell, with no
-shell in between: `tuios new-window htop /usr/bin/htop`. Put `--` before a
-command that has flags of its own, or tuios reads them as its own flags:
-`tuios new-window log -- git log --oneline -20`.
+shell in between: `dartuios new-window htop /usr/bin/htop`. Put `--` before a
+command that has flags of its own, or dartuios reads them as its own flags:
+`dartuios new-window log -- git log --oneline -20`.
 
 **Flags:**
 - `-s, --session <name>`: Target session (default: most recently active)
@@ -971,7 +971,7 @@ command that has flags of its own, or tuios reads them as its own flags:
 - `--cwd <dir>`: Directory to start the shell in (default: the daemon's)
 - `--no-focus`: Leave the focus where it is
 - `--host <name>`: Run the window's process on this machine from the `[hosts]` table (default: this machine)
-- `--grants <grant>[,<grant>...]`: What the window's process may do through tuios: `read`, `write`, `fan`, `respond`, `admin`, or `none` (default: `[agents.permissions]`). See [`tuios pane-grants`](#tuios-pane-grants)
+- `--grants <grant>[,<grant>...]`: What the window's process may do through dartuios: `read`, `write`, `fan`, `respond`, `admin`, or `none` (default: `[agents.permissions]`). See [`dartuios pane-grants`](#dartuios-pane-grants)
 - `--json`: Output result as JSON
 - `--print-id`: Print only the new window's full id
 
@@ -983,31 +983,31 @@ a1b2c3d4  build
 ```
 
 That id prefix, and the name, are what `-w` accepts everywhere else. With
-`--print-id` the output is the full id alone, for `id=$(tuios new-window build --print-id)`.
+`--print-id` the output is the full id alone, for `id=$(dartuios new-window build --print-id)`.
 
 **Examples:**
 ```bash
 # Open an unnamed window
-tuios new-window
+dartuios new-window
 
 # Open a named window and run something in it
-tuios new-window build
-tuios send-text -w build 'go build ./...
+dartuios new-window build
+dartuios send-text -w build 'go build ./...
 '
 
 # Capture the new window's id for scripting
-id=$(tuios new-window build --print-id)
-tuios new-window --json | jq -r .window_id
+id=$(dartuios new-window build --print-id)
+dartuios new-window --json | jq -r .window_id
 
 # JSON output carries the full id and the name
-tuios new-window --json build
+dartuios new-window --json build
 # Output: {"focused":true,"host":"","message":"command executed","name":"build","pty_id":"8fe359af-0f9e-4efe-9595-7b1d3467dc50","success":true,"unplaced":true,"window_id":"a6e55709-071e-4345-9363-ff4ef0a63c02","workspace":1}
 
 # Target a specific session
-tuios new-window -s mysession dev
+dartuios new-window -s mysession dev
 ```
 
-### `tuios popup`
+### `dartuios popup`
 
 Run a command in a floating pane centred over the layout, and print its id.
 
@@ -1029,7 +1029,7 @@ the popup or send the selection to another pane.
 
 **Usage:**
 ```bash
-tuios popup [flags] -- <command> [args...]
+dartuios popup [flags] -- <command> [args...]
 ```
 
 **Flags:**
@@ -1059,36 +1059,36 @@ esc in window mode to close one by hand, or close it like any other pane.
 **Examples:**
 ```bash
 # Pick a file in a centred popup and use the answer
-file=$(tuios popup --capture-stdout -- fzf)
+file=$(dartuios popup --capture-stdout -- fzf)
 
 # Wait for a confirmation and branch on it
-tuios popup --wait -- gum confirm "Deploy?" && ./deploy.sh
+dartuios popup --wait -- gum confirm "Deploy?" && ./deploy.sh
 
 # Keep the answer in a file instead
-tuios popup -- sh -c 'ls | fzf > /tmp/pick'
+dartuios popup -- sh -c 'ls | fzf > /tmp/pick'
 
 # Send the selection straight to the pane you came from
-tuios popup -- sh -c 'tuios send-text -w main "$(ls | fzf)"'
+dartuios popup -- sh -c 'dartuios send-text -w main "$(ls | fzf)"'
 
 # A small popup, in cells
-tuios popup --width 60 --height 20 -- gum choose one two three
+dartuios popup --width 60 --height 20 -- gum choose one two three
 
 # Watch something, then press q to close it
-tuios popup --width 90% --height 80% -- htop
+dartuios popup --width 90% --height 80% -- htop
 
 # Capture the popup's id for scripting
-tuios popup --json -- fzf | jq -r .window_id
+dartuios popup --json -- fzf | jq -r .window_id
 ```
 
-### `tuios ask-human`
+### `dartuios ask-human`
 
 Ask the person a question with a fixed set of answers, wait for them to pick
 one, and print it.
 
 **Usage:**
 ```bash
-tuios ask-human [flags] <question> -o <answer> [-o <answer>...]
-tuios ask-human --request-id <id>
+dartuios ask-human [flags] <question> -o <answer> [-o <answer>...]
+dartuios ask-human --request-id <id>
 ```
 
 The question goes in the Inbox as a row under Questions. A client that shows the
@@ -1100,12 +1100,12 @@ client can answer; an agent cannot.
 
 When `--timeout` runs out first, the command exits `2` and the question stays.
 The answer is then mailed to the asking pane from `human`, marked
-`verified_human`, so `tuios wait-for agent-message` picks it up; or come back
+`verified_human`, so `dartuios wait-for agent-message` picks it up; or come back
 with `--request-id`. From inside a pane the question is asked as that pane,
 and naming another is refused. An answer to a call that was killed while it
 waited is mailed the same way. A caller whose tool stops commands after a
 while (two minutes for many agent harnesses) keeps `--timeout` below that, or
-asks with `--no-wait` and waits with `tuios wait-for agent-message`.
+asks with `--no-wait` and waits with `dartuios wait-for agent-message`.
 
 **Flags:**
 - `-s, --session <name>`: Target session (default: most recently active)
@@ -1125,22 +1125,22 @@ a newer question from the same pane, or its pane closed).
 **Examples:**
 ```bash
 # Ask, and branch on the answer
-if [ "$(tuios ask-human 'Deploy to staging?' -o yes -o no)" = yes ]; then ./deploy.sh; fi
+if [ "$(dartuios ask-human 'Deploy to staging?' -o yes -o no)" = yes ]; then ./deploy.sh; fi
 
 # Ask and move on; the answer arrives as mail
-tuios ask-human 'Which region?' -o us -o eu --no-wait
+dartuios ask-human 'Which region?' -o us -o eu --no-wait
 
 # Come back for an answer
-tuios ask-human --request-id 9f86d081884c7d65
+dartuios ask-human --request-id 9f86d081884c7d65
 ```
 
-### `tuios run-command`
+### `dartuios run-command`
 
-Execute a TUIOS command (same commands available via tape scripts).
+Execute a dartuios command (same commands available via tape scripts).
 
 **Usage:**
 ```bash
-tuios run-command <command> [args...] [flags]
+dartuios run-command <command> [args...] [flags]
 ```
 
 **Flags:**
@@ -1149,13 +1149,13 @@ tuios run-command <command> [args...] [flags]
 - `--list`: List all available commands
 
 `run-command` sends a client protocol message, so from inside a pane it needs
-the `admin` grant (see [`tuios pane-grants`](#tuios-pane-grants)). Under the
+the `admin` grant (see [`dartuios pane-grants`](#dartuios-pane-grants)). Under the
 default `mode = "open"` every pane holds `admin`. Prefer a verb where one
-exists: `tuios get-window` and `tuios list-windows` read windows with `read`.
+exists: `dartuios get-window` and `dartuios list-windows` read windows with `read`.
 
 **Available Commands:**
 
-`tuios run-command --list` prints this list from the binary.
+`dartuios run-command --list` prints this list from the binary.
 
 | Command | Arguments | Description |
 |---------|-----------|-------------|
@@ -1187,41 +1187,41 @@ exists: `tuios get-window` and `tuios list-windows` read windows with `read`.
 **Examples:**
 ```bash
 # List all available commands
-tuios run-command --list
+dartuios run-command --list
 
 # Create a new window
-tuios run-command NewWindow "my-terminal"
+dartuios run-command NewWindow "my-terminal"
 
 # Create window and get JSON output with window ID
-tuios run-command --json NewWindow "my-terminal"
+dartuios run-command --json NewWindow "my-terminal"
 # Output: {"message":"command executed","name":"my-terminal","success":true,"window_id":"75684348-98ba-4e60-a9c4-0b1e1920b25e"}
 
 # Switch workspace
-tuios run-command SwitchWorkspace 2
+dartuios run-command SwitchWorkspace 2
 
 # Toggle tiling
-tuios run-command ToggleTiling
+dartuios run-command ToggleTiling
 
 # Close focused window
-tuios run-command CloseWindow
+dartuios run-command CloseWindow
 
 # Target a specific session
-tuios run-command -s mysession NewWindow "dev"
+dartuios run-command -s mysession NewWindow "dev"
 ```
 
-### `tuios set-config`
+### `dartuios set-config`
 
-Change TUIOS configuration at runtime.
+Change dartuios configuration at runtime.
 
 **Usage:**
 ```bash
-tuios set-config <path> <value> [flags]
+dartuios set-config <path> <value> [flags]
 ```
 
 **Flags:**
 - `-s, --session <name>`: Target session (default: most recently active)
 
-**Paths:** every option `tuios list-options` prints can be set, by its full
+**Paths:** every option `dartuios list-options` prints can be set, by its full
 path (`appearance.dockbar_position`) or, for an `[appearance]` option, by its
 name alone. Some of them:
 
@@ -1247,36 +1247,36 @@ name alone. Some of them:
 **Examples:**
 ```bash
 # Change dockbar position
-tuios set-config dockbar_position bottom
+dartuios set-config dockbar_position bottom
 
 # Change border style
-tuios set-config border_style rounded
+dartuios set-config border_style rounded
 
 # Turn animations off
-tuios set-config motion none
+dartuios set-config motion none
 
 # Hide window buttons
-tuios set-config hide_window_buttons true
-tuios set-config window_button_style dots
-tuios set-config window_button_position left
+dartuios set-config hide_window_buttons true
+dartuios set-config window_button_style dots
+dartuios set-config window_button_position left
 
 # Paint the theme's background behind pane content, or a colour of your own
-tuios set-config pane_background theme
-tuios set-config pane_background '#1e1e2e'
+dartuios set-config pane_background theme
+dartuios set-config pane_background '#1e1e2e'
 
 # Paint every surface at once, then give the dock its own colour and leave
 # the rail on the terminal's background. A surface's own value wins, and
 # empty puts it back to following background.
-tuios set-config background theme
-tuios set-config dock_background '#11111b'
-tuios set-config appearance.sidebar.background off
-tuios set-config appearance.sidebar.background ''
+dartuios set-config background theme
+dartuios set-config dock_background '#11111b'
+dartuios set-config appearance.sidebar.background off
+dartuios set-config appearance.sidebar.background ''
 
 # Target a specific session
-tuios set-config -s mysession dockbar_position hidden
+dartuios set-config -s mysession dockbar_position hidden
 ```
 
-### `tuios wait-for`
+### `dartuios wait-for`
 
 Block until the daemon reports that a condition matched.
 
@@ -1287,7 +1287,7 @@ and non-zero with the `timeout` error when it does not match before
 
 **Usage:**
 ```bash
-tuios wait-for <condition> [flags]
+dartuios wait-for <condition> [flags]
 ```
 
 **Conditions:**
@@ -1329,41 +1329,41 @@ the one command.
 **Examples:**
 ```bash
 # Wait for a build to print its marker
-tuios wait-for window-output -w build --pattern 'BUILD OK'
+dartuios wait-for window-output -w build --pattern 'BUILD OK'
 
 # Wait for a pane to go quiet for two seconds
-tuios wait-for window-idle -w build --idle 2000
+dartuios wait-for window-idle -w build --idle 2000
 
 # Wait for a command's shell to exit, allowing ten minutes
-tuios wait-for window-exit -w build --timeout 600000
+dartuios wait-for window-exit -w build --timeout 600000
 
 # Wait for a session to appear
-tuios wait-for session-exists -s work
+dartuios wait-for session-exists -s work
 
 # Wait until any agent in the session is waiting on a human
-tuios wait-for agent-state -s work --until needs_input
+dartuios wait-for agent-state -s work --until needs_input
 
 # Wait until an agent in any session is waiting on a human
-tuios wait-for agent-state --any-session --until needs_input
+dartuios wait-for agent-state --any-session --until needs_input
 
 # Wait until every agent of a fan-out has finished its turn
-tuios wait-for agent-state --select 'group:fan/add-retry' --until idle,done --every --timeout 3600000
+dartuios wait-for agent-state --select 'group:fan/add-retry' --until idle,done --every --timeout 3600000
 
 # Wait for mail in your own inbox
-tuios wait-for agent-message -s work -w "$TUIOS_PANE_ID" --timeout 600000
+dartuios wait-for agent-message -s work -w "$DARTUIOS_PANE_ID" --timeout 600000
 
 # Branch on the result
-if tuios wait-for window-output -w build --pattern 'BUILD OK' --timeout 60000; then
+if dartuios wait-for window-output -w build --pattern 'BUILD OK' --timeout 60000; then
     echo "build finished"
 else
     echo "build timed out"
 fi
 
 # Wait for the command after the 4th in the build pane, with its exit code
-tuios wait-for command-finished -w build --command-seq 4 --timeout 600000
+dartuios wait-for command-finished -w build --command-seq 4 --timeout 600000
 ```
 
-### `tuios run`
+### `dartuios run`
 
 Type one command line at a pane's shell prompt, wait for it to finish, print
 what it printed, and exit with its exit status.
@@ -1375,7 +1375,7 @@ types into a running program.
 
 **Usage:**
 ```bash
-tuios run [flags] -- <command line>
+dartuios run [flags] -- <command line>
 ```
 
 The words after `--` are joined with spaces into one line that the shell
@@ -1401,16 +1401,16 @@ is refused before typing.
 **Examples:**
 ```bash
 # Run the tests in the build pane and branch on the status
-tuios run -w build --timeout 600000 -- go test ./... && echo passed
+dartuios run -w build --timeout 600000 -- go test ./... && echo passed
 
 # Only the last 40 lines of a long build
-tuios run -w build --lines 40 -- make
+dartuios run -w build --lines 40 -- make
 
 # The whole result
-tuios run -w build --json -- make lint
+dartuios run -w build --json -- make lint
 ```
 
-### `tuios subscribe`
+### `dartuios subscribe`
 
 Print the daemon's event stream, one JSON object per line.
 
@@ -1425,7 +1425,7 @@ does not.
 
 **Usage:**
 ```bash
-tuios subscribe [flags]
+dartuios subscribe [flags]
 ```
 
 **Flags:**
@@ -1444,30 +1444,30 @@ cannot replay everything you missed, a `gap` line comes first with a `reason`:
 `evicted` (the oldest events you missed are gone), `boot_changed` (the daemon
 restarted), `not_retained` (your filter includes `output`, which is never
 replayed) or, on a live stream, `overflow` (you read too slowly). After a gap,
-read current state again with `tuios list-agents` or `tuios list-windows`.
+read current state again with `dartuios list-agents` or `dartuios list-windows`.
 
 **Examples:**
 ```bash
 # Every agent state change on the daemon
-tuios subscribe --types agent-state
+dartuios subscribe --types agent-state
 
 # One session's window lifecycle
-tuios subscribe -s work --types window-created,window-closed
+dartuios subscribe -s work --types window-created,window-closed
 
 # Resume where a previous run stopped
-tuios subscribe --types agent-state --after-seq 118 --boot-id 9f2c41d07a3e8b65
+dartuios subscribe --types agent-state --after-seq 118 --boot-id 9f2c41d07a3e8b65
 
 # Wait for the next bell anywhere, then exit
-tuios subscribe --types bell --count 1
+dartuios subscribe --types bell --count 1
 
 # Follow the Inbox: every item that opens, changes or closes
-tuios subscribe --types attention
+dartuios subscribe --types attention
 
 # Every agent on every machine, and every host coming or going
-tuios subscribe --hosts --types agent-state,host-changed
+dartuios subscribe --hosts --types agent-state,host-changed
 ```
 
-### `tuios list-attention`
+### `dartuios list-attention`
 
 List the Inbox: every approval and question an agent is blocked on, mail to
 you, errored agents, conversations a daemon restart left to resume, and
@@ -1495,7 +1495,7 @@ no prompt while it is held. See
 
 **Usage:**
 ```bash
-tuios list-attention [flags]
+dartuios list-attention [flags]
 ```
 
 **Flags:**
@@ -1509,19 +1509,19 @@ tuios list-attention [flags]
 **Examples:**
 ```bash
 # What needs me?
-tuios list-attention
+dartuios list-attention
 
 # Only what blocks an agent
-tuios list-attention --kind approval --kind question
+dartuios list-attention --kind approval --kind question
 
 # Only what waits on the build host
-tuios list-attention --host build
+dartuios list-attention --host build
 
 # The oldest approval's pane, for a script
-tuios list-attention --json --kind approval | jq -r '.items[0].window'
+dartuios list-attention --json --kind approval | jq -r '.items[0].window'
 
 # Everything, the snoozed items too
-tuios list-attention --snoozed
+dartuios list-attention --snoozed
 ```
 
 Output:
@@ -1536,7 +1536,7 @@ Finished
 2 waiting. Open the Inbox with the prefix key then i, or jump to the oldest with the prefix key then o.
 ```
 
-### `tuios peek-prompt`
+### `dartuios peek-prompt`
 
 Show the prompt an agent is blocked on without attaching: the lines its
 harness's `needs_input` rule reads, the numbered options, how long it has
@@ -1548,7 +1548,7 @@ question in the Inbox shows the same thing. See
 
 **Usage:**
 ```bash
-tuios peek-prompt -w <window> [flags]
+dartuios peek-prompt -w <window> [flags]
 ```
 
 **Flags:**
@@ -1559,13 +1559,13 @@ tuios peek-prompt -w <window> [flags]
 **Examples:**
 ```bash
 # What does the reviewer want?
-tuios peek-prompt -w review
+dartuios peek-prompt -w review
 
 # The same on another machine, for a script
-tuios peek-prompt -w buildbox:api:review --json
+dartuios peek-prompt -w buildbox:api:review --json
 ```
 
-### `tuios respond`
+### `dartuios respond`
 
 Answer the prompt an agent is blocked on with the keys its harness's manifest
 declares, without attaching. The action is `approve`, `approve_always`, `deny`,
@@ -1585,7 +1585,7 @@ with `not_human` either way.
 
 **Usage:**
 ```bash
-tuios respond <action> [value] -w <window> [flags]
+dartuios respond <action> [value] -w <window> [flags]
 ```
 
 **Flags:**
@@ -1598,14 +1598,14 @@ tuios respond <action> [value] -w <window> [flags]
 **Examples:**
 ```bash
 # Read the prompt, then approve exactly that prompt
-tuios peek-prompt -w review
-tuios respond -w review --prompt-id 75f8b9fadb5b5dfc approve
+dartuios peek-prompt -w review
+dartuios respond -w review --prompt-id 75f8b9fadb5b5dfc approve
 
 # Pick option 2 of a question
-tuios respond -w review choose 2
+dartuios respond -w review choose 2
 ```
 
-### `tuios queue`
+### `dartuios queue`
 
 Queue a message for the agent in a pane. It is typed as a prompt once the
 agent has been at rest (`idle` or `done`, or `unknown` for a harness that can
@@ -1627,9 +1627,9 @@ the pane's grants again when it is typed. See
 
 **Usage:**
 ```bash
-tuios queue [flags] TEXT...
-tuios queue ls [-w <window>] [flags]
-tuios queue rm ID | --all -w <window> [flags]
+dartuios queue [flags] TEXT...
+dartuios queue ls [-w <window>] [flags]
+dartuios queue rm ID | --all -w <window> [flags]
 ```
 
 **Flags:**
@@ -1649,17 +1649,17 @@ from the Inbox, which only the attached client can drop.
 **Examples:**
 ```bash
 # Reply to the agent in the build pane once it finishes its turn
-tuios queue -w build 'make the backoff jitter configurable'
+dartuios queue -w build 'make the backoff jitter configurable'
 
 # What waits, and drop one message
-tuios queue ls
-tuios queue rm q3
+dartuios queue ls
+dartuios queue rm q3
 
 # Everything queued for one pane
-tuios queue rm --all -w build
+dartuios queue rm --all -w build
 ```
 
-### `tuios review`
+### `dartuios review`
 
 Show what the agent in a pane changed, leave notes on its lines, and send the
 notes to the agent. The diff is the pane's worktree against the base it was
@@ -1672,12 +1672,12 @@ files are not changed. See
 
 **Usage:**
 ```bash
-tuios review [SESSION] [-w <window>] [--base <ref> | --against <session> | --uncommitted] [--stat] [--path <path>]... [--context <n>] [--json]
-tuios review note [-w <window>] FILE:LINE TEXT... [--side old]
-tuios review note [-w <window>] --hunk '<header>' FILE TEXT...
-tuios review note --edit ID TEXT... | --remove ID
-tuios review notes [-w <window>] [--clear] [--json]
-tuios review send [-w <window>] [--id ID]... [--now] [--json]
+dartuios review [SESSION] [-w <window>] [--base <ref> | --against <session> | --uncommitted] [--stat] [--path <path>]... [--context <n>] [--json]
+dartuios review note [-w <window>] FILE:LINE TEXT... [--side old]
+dartuios review note [-w <window>] --hunk '<header>' FILE TEXT...
+dartuios review note --edit ID TEXT... | --remove ID
+dartuios review notes [-w <window>] [--clear] [--json]
+dartuios review send [-w <window>] [--id ID]... [--now] [--json]
 ```
 
 **Flags:**
@@ -1697,7 +1697,7 @@ tuios review send [-w <window>] [--id ID]... [--now] [--json]
 - `--now` (`send`): Send only if the agent is at rest with nothing queued; never queue
 - `--json`: Output the verb result as JSON
 
-`tuios review` prints a heading, one line per changed file (its status `A`,
+`dartuios review` prints a heading, one line per changed file (its status `A`,
 `M`, `D`, `R`, or `U` for untracked, and its counts), then each file's hunks
 with both line numbers and the notes under the lines they are on. A diff stops
 at 400 files, 2 MiB of text or 5000 lines in one file; files past that show
@@ -1710,7 +1710,7 @@ a pane only the notes that pane wrote can be edited or removed; from a shell,
 any but the ones left from the attached client.
 
 `review send` sends the unsent notes as one message through the delivery
-queue ([`tuios queue`](#tuios-queue)): typed when the agent is at rest, never
+queue ([`dartuios queue`](#dartuios-queue)): typed when the agent is at rest, never
 over a prompt. The message says who sent it: "a script" from a shell, the pane
 from inside one, and "the person" only from the attached client. A note
 written by someone else says who wrote it. A note whose author may not type
@@ -1721,31 +1721,31 @@ into.
 The review commands work on this machine's sessions. A `HOST:SESSION` or
 `HOST:SESSION:WINDOW` target is refused: attach to that machine and review
 there, or bring the work here with
-[`tuios worktree pull`](#tuios-worktree) and review that.
+[`dartuios worktree pull`](#dartuios-worktree) and review that.
 
 **Examples:**
 ```bash
 # What the agent in the focused pane changed
-tuios review
+dartuios review
 
 # A fan attempt against its base, or against another attempt
-tuios review api-fan-retry-2
-tuios review api-fan-retry-2 --against api-fan-retry
+dartuios review api-fan-retry-2
+dartuios review api-fan-retry-2 --against api-fan-retry
 
 # Leave two notes and send them
-tuios review note -s api-fan-retry-2 api/retry.go:42 'log the attempt number here too'
-tuios review note -s api-fan-retry-2 --hunk '@@ -88,4 +100,6 @@' api/retry.go 'wrap with context'
-tuios review send -s api-fan-retry-2
+dartuios review note -s api-fan-retry-2 api/retry.go:42 'log the attempt number here too'
+dartuios review note -s api-fan-retry-2 --hunk '@@ -88,4 +100,6 @@' api/retry.go 'wrap with context'
+dartuios review send -s api-fan-retry-2
 ```
 
-### `tuios set-agent-state`
+### `dartuios set-agent-state`
 
 Report a pane's agent state so the session can show which panes need
 attention.
 
 **Usage:**
 ```bash
-tuios set-agent-state <state> [flags]
+dartuios set-agent-state <state> [flags]
 ```
 
 **States:** `none`, `working`, `needs_input`, `idle`, `done`, `errored`, `unknown`
@@ -1762,7 +1762,7 @@ tuios set-agent-state <state> [flags]
 - `--if-state <states>`: Apply only when the pane is in one of these comma-separated states
 
 **Hook fields:**
-The last four flags are what `tuios agent-hook` sends, and each is sent only when
+The last four flags are what `dartuios agent-hook` sends, and each is sent only when
 set, so a call that uses none of them works against an older daemon. An older
 daemon ignores these fields rather than refusing them, so `--if-state` asks the
 daemon first and fails, sending nothing, when the daemon does not support it.
@@ -1772,7 +1772,7 @@ daemon first and fails, sending nothing, when the daemon does not support it.
 agent is `working` or `needs_input` by its own report and the report names a
 different session, or a different harness: that is a nested run, such as a
 `claude -p` a tool call started inside the pane. At rest a different session
-takes the pane over, as `/clear` or a restart should. `tuios agent-hook` also
+takes the pane over, as `/clear` or a restart should. `dartuios agent-hook` also
 sends the harness's pid, which lets a new session from the same harness process
 take the pane over mid-turn, as `/clear` after an interrupted turn does. This
 command has no flag for it, so a report from here with a different
@@ -1814,25 +1814,25 @@ not hold, or a nested run from another conversation or another harness.
 **Examples:**
 ```bash
 # Mark the focused pane as working
-tuios set-agent-state working
+dartuios set-agent-state working
 
 # Mark a specific pane as needing input, with a note
-tuios set-agent-state needs_input -w build -m "awaiting approval"
+dartuios set-agent-state needs_input -w build -m "awaiting approval"
 
 # Say the block is an approval, for a named conversation
-tuios set-agent-state needs_input --kind approval --agent-session-id 5f1c -m "approve Bash: make"
+dartuios set-agent-state needs_input --kind approval --agent-session-id 5f1c -m "approve Bash: make"
 
 # Clear a block after the tool ran, and leave any other state alone
-tuios set-agent-state working --if-state needs_input
+dartuios set-agent-state working --if-state needs_input
 
 # Report on behalf of a named harness, from an escape sequence
-tuios set-agent-state working --source osc --harness claude-code
+dartuios set-agent-state working --source osc --harness claude-code
 
 # Clear a pane's agent state
-tuios set-agent-state none
+dartuios set-agent-state none
 ```
 
-### `tuios set-agent-meta`
+### `dartuios set-agent-meta`
 
 Record short facts about the agent in a pane, such as its model, how full its
 context is, or a one-line summary of the task. The rail draws them on the
@@ -1841,7 +1841,7 @@ agent state, a wait, an alert or a message.
 
 **Usage:**
 ```bash
-tuios set-agent-meta [key=value ...] [flags]
+dartuios set-agent-meta [key=value ...] [flags]
 ```
 
 Each argument is `key=value`, and `key=` removes the key. A key is 1 to 24
@@ -1854,27 +1854,27 @@ row. The metadata clears when the agent leaves the pane.
 A call that repeats the values the pane already holds changes nothing and sends
 nothing to attached clients, and renews a TTL only once less than half of it is
 left, so a feed may write on every tick. The keys `now` and `prompt` are
-written by tuios from what the harness hooks report, and are refused here; see
-[`tuios agent-log`](#tuios-agent-log).
+written by dartuios from what the harness hooks report, and are refused here; see
+[`dartuios agent-log`](#dartuios-agent-log).
 
 **Flags:**
 - `-s, --session <name>`: Target session (default: most recently active)
 - `-w, --window <id-or-name>`: Target window (default: focused)
 - `--source <name>`: Who is writing, so `--clear` removes only this writer's keys
 - `--ttl <duration>`: Drop the keys this call sets after this long, at most `24h` (default: keep until removed)
-- `--clear`: Remove every key this source wrote (every key with no `--source`) first. The keys tuios writes, `now` and `prompt`, stay
+- `--clear`: Remove every key this source wrote (every key with no `--source`) first. The keys dartuios writes, `now` and `prompt`, stay
 - `--json`: Print the result
 
 **Examples:**
 ```bash
 # From a statusline or hook: the model and context use, for a minute
-tuios set-agent-meta -w "$TUIOS_PANE_ID" --source statusline --ttl 60s model=opus context=42%
+dartuios set-agent-meta -w "$DARTUIOS_PANE_ID" --source statusline --ttl 60s model=opus context=42%
 
 # Remove one key
-tuios set-agent-meta summary=
+dartuios set-agent-meta summary=
 
 # Remove every key this source wrote
-tuios set-agent-meta --source statusline --clear
+dartuios set-agent-meta --source statusline --clear
 ```
 
 With `--json`:
@@ -1887,18 +1887,18 @@ With `--json`:
 }
 ```
 
-### `tuios agent-log`
+### `dartuios agent-log`
 
 Show what the agent in a pane has been doing, from the activity ring the daemon
 keeps from its hooks: the prompts it was given, its tool calls and how they
 ended, the turns it finished, the commands its shell ran and its state
 changes, oldest first. The daemon keeps the newest 256 per pane, in memory
 only. A pane fills only when its harness's hooks are installed
-(`tuios integration install claude-code` or `codex`).
+(`dartuios integration install claude-code` or `codex`).
 
 **Usage:**
 ```bash
-tuios agent-log [flags]
+dartuios agent-log [flags]
 ```
 
 **Flags:**
@@ -1912,10 +1912,10 @@ tuios agent-log [flags]
 **Examples:**
 ```bash
 # The focused pane's recent activity
-tuios agent-log
+dartuios agent-log
 
 # What the agent in api did in the last half hour, summarised
-tuios agent-log -w api --since 30m --recap
+dartuios agent-log -w api --since 30m --recap
 ```
 
 Output:
@@ -1946,7 +1946,7 @@ masked; read it as what the agent said. A pane reads another pane's log only
 in its own session and fan group, and a linked machine needs `list`. See
 [Agent state](AGENT_STATE.md#what-the-agent-has-been-doing).
 
-### `tuios set-agent-session`
+### `dartuios set-agent-session`
 
 Record which conversation the agent in a pane runs, so it can be resumed
 later, without changing the pane's agent state. The integrations for harnesses
@@ -1955,7 +1955,7 @@ send this (see [Agent state](AGENT_STATE.md#session-identity)).
 
 **Usage:**
 ```bash
-tuios set-agent-session <agent-session-id> --harness <id> [flags]
+dartuios set-agent-session <agent-session-id> --harness <id> [flags]
 ```
 
 The id is stored as the pane's `agent_session_id`, the same field
@@ -1973,10 +1973,10 @@ bytes.
 **Example:**
 ```bash
 # From a SessionStart hook
-tuios set-agent-session --harness qwen -w "$TUIOS_PANE_ID" "$SESSION_ID"
+dartuios set-agent-session --harness qwen -w "$DARTUIOS_PANE_ID" "$SESSION_ID"
 ```
 
-### `tuios resume-agent`
+### `dartuios resume-agent`
 
 Resume the agent conversation a pane ran before a daemon restart: type the
 harness's resume command, from its manifest's `[resume]` block, with the id a
@@ -1986,7 +1986,7 @@ brings back the conversation, not the process. See
 
 **Usage:**
 ```bash
-tuios resume-agent [flags]
+dartuios resume-agent [flags]
 ```
 
 It types only when the pane's shell is at its prompt, and fails with
@@ -2005,10 +2005,10 @@ had exited before the restart, which the restore itself does not offer.
 
 **Example:**
 ```bash
-tuios resume-agent -w build --dry-run
+dartuios resume-agent -w build --dry-run
 # claude --resume 5f1c2b7e-9a3d-4c1e-8f00-1234567890ab
 
-tuios resume-agent -w build
+dartuios resume-agent -w build
 # Resumed claude-code conversation 5f1c2b7e-... in 3f2a9c1e: claude --resume 5f1c2b7e-...
 ```
 
@@ -2030,17 +2030,17 @@ What a daemon restart does with these conversations is
 Inbox, answered with `y`; `auto` types the command into each restored shell;
 `off` does neither.
 
-### `tuios set-session-name`
+### `dartuios set-session-name`
 
 Set the label a session shows in the sidebar and the dock.
 
 The session keeps its own name for addressing, persistence and
-`TUIOS_SESSION`, so a script that targets it by name keeps working. Pass no
+`DARTUIOS_SESSION`, so a script that targets it by name keeps working. Pass no
 name to clear the label.
 
 **Usage:**
 ```bash
-tuios set-session-name [name] [flags]
+dartuios set-session-name [name] [flags]
 ```
 
 **Flags:**
@@ -2049,23 +2049,23 @@ tuios set-session-name [name] [flags]
 **Examples:**
 ```bash
 # Label the current session
-tuios set-session-name "Payments API"
+dartuios set-session-name "Payments API"
 
 # Label a specific session
-tuios set-session-name -s work "Payments API"
+dartuios set-session-name -s work "Payments API"
 
 # Clear the label
-tuios set-session-name
+dartuios set-session-name
 ```
 
-### `tuios set-session-accent`
+### `dartuios set-session-accent`
 
 Set the accent a session uses. It is shared by every client attached to the
 session and kept across a reattach. Pass no accent to clear it.
 
 **Usage:**
 ```bash
-tuios set-session-accent [accent] [flags]
+dartuios set-session-accent [accent] [flags]
 ```
 
 **Flags:**
@@ -2074,16 +2074,16 @@ tuios set-session-accent [accent] [flags]
 **Examples:**
 ```bash
 # Accent the current session
-tuios set-session-accent cyan
+dartuios set-session-accent cyan
 
 # Accent a specific session
-tuios set-session-accent -s work cyan
+dartuios set-session-accent -s work cyan
 
 # Clear the accent
-tuios set-session-accent
+dartuios set-session-accent
 ```
 
-### `tuios set-workspace-name`
+### `dartuios set-workspace-name`
 
 Name a workspace so the dock and the sidebar show the label instead of the
 number. The number stays the workspace's identity, and is the label an unnamed
@@ -2091,7 +2091,7 @@ workspace shows. Pass no name to clear it.
 
 **Usage:**
 ```bash
-tuios set-workspace-name <workspace> [name] [flags]
+dartuios set-workspace-name <workspace> [name] [flags]
 ```
 
 **Arguments:**
@@ -2104,34 +2104,34 @@ tuios set-workspace-name <workspace> [name] [flags]
 **Examples:**
 ```bash
 # Name workspace 2
-tuios set-workspace-name 2 review
+dartuios set-workspace-name 2 review
 
 # Name a workspace in a specific session
-tuios set-workspace-name -s work 2 review
+dartuios set-workspace-name -s work 2 review
 
 # Clear the name
-tuios set-workspace-name 2
+dartuios set-workspace-name 2
 ```
 
 ---
 
 ## Inspection Commands
 
-Query the state of a running TUIOS session. These commands are designed for scripting and return structured data about windows and session state.
+Query the state of a running dartuios session. These commands are designed for scripting and return structured data about windows and session state.
 
 **Note:** These commands query the daemon's stored state directly and work even when no TUI client is attached to the session. This makes them ideal for background scripting and monitoring.
 
-### `tuios list-verbs`
+### `dartuios list-verbs`
 
 Print the control protocol's verb catalog: every verb with its parameter schema,
 accepted values, and example requests, plus the protocol version and the stable
 error codes.
 
 ```bash
-tuios list-verbs [verb] [--json]
+dartuios list-verbs [verb] [--json]
 ```
 
-This is the discovery entry point for scripting and for agents driving TUIOS. It
+This is the discovery entry point for scripting and for agents driving dartuios. It
 needs no documentation to interpret: the schema, the value sets, and the error
 vocabulary are all in the output.
 
@@ -2139,22 +2139,22 @@ vocabulary are all in the output.
 
 ```bash
 # Every verb with its parameters
-tuios list-verbs
+dartuios list-verbs
 
 # Just one verb
-tuios list-verbs capture-pane
+dartuios list-verbs capture-pane
 
 # Machine-readable
-tuios list-verbs --json | jq '.verbs[].verb'
+dartuios list-verbs --json | jq '.verbs[].verb'
 ```
 
-### `tuios list-hooks`
+### `dartuios list-hooks`
 
 List the hooks and what each one last did.
 
 **Usage:**
 ```bash
-tuios list-hooks [flags]
+dartuios list-hooks [flags]
 ```
 
 **Flags:**
@@ -2167,8 +2167,8 @@ tuios list-hooks [flags]
 ╭────────────────────┬─────────┬──────────────────────────┬──────┬────────┬───────────────────────────╮
 │ EVENT              │ SIDE    │ COMMAND                  │ RUNS │ STATE  │ LAST                      │
 ├────────────────────┼─────────┼──────────────────────────┼──────┼────────┼───────────────────────────┤
-│ after-new-window   │ session │ ~/.config/tuios/new.sh   │ 2    │ ran    │ 2026-08-31T21:16:32+04:00 │
-│ after-agent-state  │ session │ notify-send "$TUIOS_AG…  │ 0    │ waiting│                           │
+│ after-new-window   │ session │ ~/.config/dartuios/new.sh   │ 2    │ ran    │ 2026-08-31T21:16:32+04:00 │
+│ after-agent-state  │ session │ notify-send "$DARTUIOS_AG…  │ 0    │ waiting│                           │
 │ after-attach       │ client  │ tmux-style-banner        │ 1    │ failed │ exit 127: command not fo… │
 ╰────────────────────┴─────────┴──────────────────────────┴──────┴────────┴───────────────────────────╯
 ```
@@ -2192,7 +2192,7 @@ listed while a client is attached.
     {
       "event": "after-new-window",
       "side": "session",
-      "command": "~/.config/tuios/new.sh",
+      "command": "~/.config/dartuios/new.sh",
       "runs": 2,
       "last_exit": 0,
       "last_run": "2026-08-31T21:16:32+04:00",
@@ -2210,14 +2210,14 @@ listed while a client is attached.
 whether a client answered for its half of the table: false means the client rows
 are missing because nobody is attached, not that no client hooks exist.
 
-### `tuios list-dock-components`
+### `dartuios list-dock-components`
 
 List the dock's components: what the bar is made of, what each cell reads, and
 what each component's command last did.
 
 **Usage:**
 ```bash
-tuios list-dock-components [flags]
+dartuios list-dock-components [flags]
 ```
 
 **Flags:**
@@ -2255,7 +2255,7 @@ The dock is composed by the attached client, so this needs a client attached.
       "source": "custom",
       "refresh": "event",
       "events": "after-focus-change",
-      "command": "~/.config/tuios/dock/git-branch.sh",
+      "command": "~/.config/dartuios/dock/git-branch.sh",
       "on_click": "",
       "max_width": 24,
       "text": "\u001b[35m\uf418\u001b[0m main",
@@ -2276,13 +2276,13 @@ included. `last_error` and `last_exit` describe the component's last run, and
 `stopped` says it has failed enough times to be left alone until a
 `refresh-dock`.
 
-### `tuios refresh-dock`
+### `dartuios refresh-dock`
 
 Re-run a dock component now, whatever its `refresh` mode says.
 
 **Usage:**
 ```bash
-tuios refresh-dock [component] [flags]
+dartuios refresh-dock [component] [flags]
 ```
 
 With no argument every component is re-run. Refreshing also clears a give-up, so
@@ -2296,22 +2296,22 @@ is fixed, without restarting the session.
 **Examples:**
 ```bash
 # After editing the script it runs
-tuios refresh-dock agents
+dartuios refresh-dock agents
 
 # From a hook, so the cell updates the moment the thing it reports changes
 #   [hooks]
-#   after-agent-state = "tuios refresh-dock agents"
+#   after-agent-state = "dartuios refresh-dock agents"
 ```
 
 See `examples/dock/` for working components and the config that wires them up.
 
-### `tuios list-windows`
+### `dartuios list-windows`
 
-List all windows in a TUIOS session.
+List all windows in a dartuios session.
 
 **Usage:**
 ```bash
-tuios list-windows [flags]
+dartuios list-windows [flags]
 ```
 
 **Flags:**
@@ -2321,13 +2321,13 @@ tuios list-windows [flags]
 **Examples:**
 ```bash
 # List windows in table format
-tuios list-windows
+dartuios list-windows
 
 # Output as JSON for scripting
-tuios list-windows --json
+dartuios list-windows --json
 
 # Query a specific session
-tuios list-windows -s mysession --json
+dartuios list-windows -s mysession --json
 ```
 
 **Example output:**
@@ -2343,7 +2343,7 @@ tuios list-windows -s mysession --json
 ```
 
 The `ID` column is the 8-character prefix that `-w` accepts. With no windows
-the command says so and points at `tuios new-window`.
+the command says so and points at `dartuios new-window`.
 
 **JSON Output Structure:**
 ```json
@@ -2400,13 +2400,13 @@ process runs on another machine. `agent_message` and `agent_state_at` appear
 once a pane has reported an agent state. The daemon answers this from its own
 state, so the shape is the same whether or not a client is attached.
 
-### `tuios get-window`
+### `dartuios get-window`
 
 Get detailed information about a specific window.
 
 **Usage:**
 ```bash
-tuios get-window [id-or-name] [flags]
+dartuios get-window [id-or-name] [flags]
 ```
 
 **Arguments:**
@@ -2425,19 +2425,19 @@ it used to.
 **Examples:**
 ```bash
 # Get focused window info
-tuios get-window
+dartuios get-window
 
 # Get focused window as JSON
-tuios get-window --json
+dartuios get-window --json
 
 # Get specific window by name
-tuios get-window dev --json
+dartuios get-window dev --json
 
 # Get window by ID
-tuios get-window a1b2c3d4 --json
+dartuios get-window a1b2c3d4 --json
 
 # Query a specific session
-tuios get-window -s mysession dev --json
+dartuios get-window -s mysession dev --json
 ```
 
 **Example output:**
@@ -2490,13 +2490,13 @@ With no client attached, the daemon answers with one entry of the
 `list-windows` shape above: `window_id` rather than `id`, plus `index`, `cwd`
 and `agent_state`, and no cursor or process fields.
 
-### `tuios session-info`
+### `dartuios session-info`
 
-Get information about the TUIOS session state.
+Get information about the dartuios session state.
 
 **Usage:**
 ```bash
-tuios session-info [flags]
+dartuios session-info [flags]
 ```
 
 **Flags:**
@@ -2506,13 +2506,13 @@ tuios session-info [flags]
 **Examples:**
 ```bash
 # Get session info in human-readable format
-tuios session-info
+dartuios session-info
 
 # Get session info as JSON
-tuios session-info --json
+dartuios session-info --json
 
 # Query a specific session
-tuios session-info -s mysession --json
+dartuios session-info -s mysession --json
 ```
 
 **Example output:**
@@ -2577,15 +2577,15 @@ and `host focus` only while a client is attached.
 | `host_focus` | Whether the person can be looking at the session, from the focus events of the attached clients' terminals: `focused` when any client's terminal has focus, `unfocused` when every one reported losing it, `unknown` when none is attached or a terminal never reports focus |
 
 The theme is not listed here. It is a session option: read it with
-`tuios get-config appearance.theme`.
+`dartuios get-config appearance.theme`.
 
-### `tuios capture-pane`
+### `dartuios capture-pane`
 
 Capture the content of a terminal pane and write it to stdout.
 
 **Usage:**
 ```bash
-tuios capture-pane [flags]
+dartuios capture-pane [flags]
 ```
 
 **Flags:**
@@ -2616,36 +2616,36 @@ without pulling all of it.
 **Examples:**
 ```bash
 # Capture the focused window's visible screen
-tuios capture-pane
+dartuios capture-pane
 
 # Capture a specific window with its scrollback
-tuios capture-pane -w build --scrollback
+dartuios capture-pane -w build --scrollback
 
 # Read the last 40 lines a build printed
-tuios capture-pane -w build --scrollback --lines 40
+dartuios capture-pane -w build --scrollback --lines 40
 
 # Capture with ANSI colors preserved
-tuios capture-pane --ansi
+dartuios capture-pane --ansi
 
 # Capture with colours resolved to RGB against the current theme palette
-tuios capture-pane --ansi --resolved --palette "#45475a,#f38ba8,#a6e3a1,#f9e2af,#89b4fa,#f5c2e7,#94e2d5,#bac2de,#585b70,#f38ba8,#a6e3a1,#f9e2af,#89b4fa,#f5c2e7,#94e2d5,#a6adc8"
+dartuios capture-pane --ansi --resolved --palette "#45475a,#f38ba8,#a6e3a1,#f9e2af,#89b4fa,#f5c2e7,#94e2d5,#bac2de,#585b70,#f38ba8,#a6e3a1,#f9e2af,#89b4fa,#f5c2e7,#94e2d5,#a6adc8"
 
 # Pipe to a file
-tuios capture-pane -w editor --scrollback > pane.txt
+dartuios capture-pane -w editor --scrollback > pane.txt
 
 # What the last command in the build pane printed, and nothing else
-tuios capture-pane -w build --last-command
+dartuios capture-pane -w build --last-command
 ```
 
 ---
 
-### `tuios screenshot`
+### `dartuios screenshot`
 
 Render a window to a styled image and save it.
 
 **Usage:**
 ```bash
-tuios screenshot [flags]
+dartuios screenshot [flags]
 ```
 
 **Flags:**
@@ -2686,28 +2686,28 @@ silent blank.
 
 `screenshot.font_file` also embeds that font in SVG and HTML output so those
 files stand alone, which makes them megabytes rather than kilobytes. Only that
-setting does: a font tuios found by asking your terminal is used to draw the
+setting does: a font dartuios found by asking your terminal is used to draw the
 picture and is not copied into an export you did not ask to be standalone.
 
 **Examples:**
 ```bash
 # The focused window, as a PNG under screenshot.directory
-tuios screenshot
+dartuios screenshot
 
 # A named window on a named session, detached is fine
-tuios screenshot -s work -w build
+dartuios screenshot -s work -w build
 
 # With history above the screen
-tuios screenshot --scrollback --lines 200
+dartuios screenshot --scrollback --lines 200
 
 # An SVG for a README
-tuios screenshot --format svg --out demo.svg
+dartuios screenshot --format svg --out demo.svg
 
 # Re-render in another palette
-tuios screenshot --theme catppuccin_mocha
+dartuios screenshot --theme catppuccin_mocha
 
 # For a script
-tuios screenshot --json
+dartuios screenshot --json
 ```
 
 Region and full screen captures are not CLI commands. They need a viewport and
@@ -2719,14 +2719,14 @@ in the TUI and drag, or press `f`.
 ## More Commands
 
 These commands have no section of their own here. Each one's `--help` lists
-its flags and examples, and `tuios --skill` shows how an agent in a pane uses
+its flags and examples, and `dartuios --skill` shows how an agent in a pane uses
 them.
 
 **Sessions:**
 
 | Command | What it does |
 |---------|--------------|
-| `tuios resurrect [session-name]` | List the sessions saved on disk, or restore one and attach (also `tuios restore`) |
+| `dartuios resurrect [session-name]` | List the sessions saved on disk, or restore one and attach (also `dartuios restore`) |
 
 Some commands also answer to a short name: `attach` to `a`, `new` to `n`,
 `ls` to `list-sessions`, `resurrect` to `restore`, `hosts remove` to `rm`, and
@@ -2736,100 +2736,100 @@ Some commands also answer to a short name: `attach` to `a`, `new` to `n`,
 
 | Command | What it does |
 |---------|--------------|
-| `tuios focus-window [window]` | Move the focus to a pane, by name, id, `--relative next` or `--direction left` |
-| `tuios move-window <workspace>` | Move a window to another workspace (`--follow` goes with it) |
-| `tuios select-workspace <workspace>` | Show a workspace |
-| `tuios list-workspaces` | List the workspaces in a session and how many windows each holds |
-| `tuios set-window` | Rename a window (`--name`), minimize it (`--minimize`) or restore it (`--restore`) |
-| `tuios split-window <horizontal\|vertical>` | Divide a pane and open a new one beside it. Needs an attached client and tiling on |
-| `tuios set-layout` | Turn tiling on or off (`--tiling`), reset split ratios (`--equalize`), or flip the focused split (`--rotate`) |
+| `dartuios focus-window [window]` | Move the focus to a pane, by name, id, `--relative next` or `--direction left` |
+| `dartuios move-window <workspace>` | Move a window to another workspace (`--follow` goes with it) |
+| `dartuios select-workspace <workspace>` | Show a workspace |
+| `dartuios list-workspaces` | List the workspaces in a session and how many windows each holds |
+| `dartuios set-window` | Rename a window (`--name`), minimize it (`--minimize`) or restore it (`--restore`) |
+| `dartuios split-window <horizontal\|vertical>` | Divide a pane and open a new one beside it. Needs an attached client and tiling on |
+| `dartuios set-layout` | Turn tiling on or off (`--tiling`), reset split ratios (`--equalize`), or flip the focused split (`--rotate`) |
 
 **Agents:**
 
 | Command | What it does |
 |---------|--------------|
-| `tuios list-agents` | List the agent panes in a session and what each is doing. `--all-sessions` lists every session on this machine, each row named `session/name`; `--all-hosts` lists every session on every host, with a SESSION column, and a host that is down shows the rows it last gave. `--select` lists the panes a [selector](AGENT_STATE.md#selectors) matches, in every session, and prints the `--confirm` token for them. Each row carries `identity`, `confidence` and `evidence_age_ms` (see [AGENT_STATE.md](AGENT_STATE.md#confidence)) |
-| `tuios list-attention` | List the Inbox: what is waiting for you in every session, on this machine and on every linked host (see below). `--host` narrows it to one machine, `--select` to what a selector matches |
-| `tuios peek-prompt` | Show the prompt an agent is blocked on, its options and the answers it takes, without attaching |
-| `tuios respond <action> [value]` | Answer the prompt an agent is blocked on. Only from the person: an attached client's Inbox, or a shell outside every pane with `[daemon] respond_from_shell`, or from a pane the person gave the `respond` grant |
-| `tuios get-agent-state` | Read a pane's reported agent state. `--json` carries `identity`, `confidence` and `evidence_age_ms`: the milliseconds since the last evidence about the state arrived, or `null` for a pane that never had a state |
-| `tuios set-agent-meta [key=value ...]` | Record display metadata about a pane's agent (model, context, a summary) for the rail |
-| `tuios set-agent-session <id> --harness <h>` | Record which conversation a pane's agent runs, for a later resume, without changing its state |
-| `tuios resume-agent [-w pane] [--dry-run]` | Type the pane's recorded conversation's resume command into its shell, after a daemon restart |
-| `tuios send-agent-message <text>` | Leave a message in another agent's inbox, or post a notice to the session. `--from human` from inside a pane is refused with `forbidden`: only the person at an attached client can send as `human` (see [Who can act as the person](AGENT_STATE.md#who-can-act-as-the-person)). With `-s HOST:SESSION` and that host's link down, the message waits on this machine and goes when the link is back; the Inbox shows it under Waiting to send. `--select` sends one message to every agent pane a selector matches, after listing them: it asks at a terminal, and takes `--yes` or `--confirm TOKEN` otherwise. `--subject` gives it a one-line subject (at most 120 characters), `--reply-to ID` joins that message's thread, and `--attach PATH` (absolute, repeatable, at most 8) attaches files |
-| `tuios read-agent-messages` | Read the messages agents have left in this session. Each body prints inside the untrusted fence, and every body line starts with `│ `, as in `ask-agent` replies and `peek-prompt`. Reading `-w human` from inside a pane is always a peek. `--unread` shows only unread messages, `--peek` reads without marking anything read, and `--notices` includes the session-wide notices |
-| `tuios ask-agent <text>` | Ask another agent a question and wait for its answer. Fails with `prompt_stalled` when the target shows no sign of taking the question within `--stall-timeout` (5000 ms) of Enter. `--select` asks every agent pane a selector matches, at most 16 at once, after the same confirmation as `send-agent-message --select`; a pane on `needs_input` is refused in its own row. `--settle MS` (2000) is the silence that counts as finished for a pane that reports no state; `--allow-blocked` types at a target on `needs_input`, answering its prompt |
-| `tuios queue <text>` | Leave a message for an agent that is typed as a prompt when it comes to rest, never over a prompt it waits on and never twice. `queue ls` lists what waits, `queue rm ID` or `queue rm --all -w PANE` drops it. See [`tuios queue`](#tuios-queue) |
-| `tuios review [SESSION]` | Show what the agent in a pane changed against its base, with the notes left on it. `review note FILE:LINE TEXT` leaves one, `review notes` lists them, `review send` sends the unsent ones to the agent as one queued message. See [`tuios review`](#tuios-review) |
-| `tuios start-agent <agent>` | Start an agent in a new pane and return once it shows it is at its prompt, optionally typing a first `--prompt`. `-s HOST:SESSION` starts it on another machine, in its checkout of the repository you are in. `--protocol acp\|codex` runs it headless as a transcript. See [above](#tuios-start-agent) |
-| `tuios agent-proto --protocol P -- <agent>` | The pane program of `start-agent --protocol`: run an agent headless over ACP or the Codex app-server and show it as a transcript. See [above](#tuios-agent-proto) |
-| `tuios explain-agent-detect` | Show what the agent detector sees in a pane |
-| `tuios explain-agent-screen` | Show what a harness's screen and title rules make of a pane: the tail, each rule's region and the text it read there, why each refusal refused (strings, patterns, nested groups), the title and last OSC 9;4 progress report, and which manifest file is in force |
-| `tuios integration install [harness...]` | Write tuios's managed hook entries or plugin into a harness's configuration: claude-code, codex, copilot, cursor-agent, gemini-cli, opencode, kilo, amp, kimi, pi, omp and qwen report state; antigravity, crush, devin, droid, grok, hermes and qoder report the session id only (`--all` for every harness that has run here, `--command` for a tuios not on PATH). `--mcp` also registers `tuios mcp` as an MCP server named tuios with claude-code, codex, gemini-cli and opencode; `--mcp-write` registers it with `--write`. `--statusline` points Claude Code's status line at `tuios agent-statusline`, which feeds the model, context use and cost to the rail; a status line of your own is never replaced, and `--then CMD` (which implies `--statusline`) chains to it. See [Agent state](AGENT_STATE.md#harness-integrations) |
-| `tuios integration uninstall [harness...]` | Remove the hook entries tuios wrote, the MCP server entry it wrote and the Claude Code status line it wrote (putting back the command it chained to), and nothing else |
-| `tuios integration status [harness...]` | Say whether each integration is installed and current, and whether it reports state or the session id, for the four harnesses with an MCP registration whether `tuios mcp` is registered, and for Claude Code whether the status line feed is installed (`--json`, with `reports`, `mcp` and `status_line`) |
-| `tuios mcp` | Serve tuios to an agent harness as an MCP server over stdio. Read-only by default and held to the session of the pane it runs in; `--write` adds the tools that type into panes, `--scope all` reaches every session. See [tuios mcp](#tuios-mcp) |
-| `tuios doctor shell` | Per pane: whether its shell marks its commands with OSC 133, which `tuios run`, `wait-for command-finished` and `capture-pane --last-command` need, and, when one does not, the lines that turn the marks on for your `$SHELL` (zsh, and bash 4.4 or newer; fish 4 sends them itself). A pane that marks its prompts and ran a command without marking it is flagged as prompt marks only, and one that has not run a command yet is said to mark its prompts (`-s`, `--json`, with `command_mark_seen` and `prompt_marks_only`) |
-| `tuios doctor agents` | Per harness: on PATH or not, integration installed and current or not, what it reports, the recognised harnesses with no integration and why, the running agent panes missing theirs, and the harness manifests loaded from the user manifest directory, which of them replace a bundled one, and the files there that failed to load (`--json`) |
-| `tuios agent-hook <harness> [event]` | What an installed hook runs: read the hook payload on stdin and report the pane's state, or for a session integration only its conversation id (`set-agent-session`). For Claude Code and Codex the prompt, tool and Stop events also carry the event as activity for [`tuios agent-log`](#tuios-agent-log), and a `Stop` reports `done` with the first line of what the agent said last. A report that ends a turn also sends what the pane's `agent-statusline` feed held back (`set-agent-meta`). `--explain` prints the decision to stderr. With `[agents.approvals]` naming the harness, a permission prompt (Claude Code `PermissionRequest`, including an `ExitPlanMode` plan unless `hold_plans = false`, Qwen Code `PermissionRequest`, opencode or Kilo `permission.asked`) then waits for an answer from the Inbox and prints the harness's decision, or nothing when there is none. See [Agent state](AGENT_STATE.md#harness-integrations) and [Approvals from the Inbox](AGENT_STATE.md#approvals-from-the-inbox) |
-| `tuios agent-statusline <harness>` | What the Claude Code status line `integration install --statusline` writes runs, and what the opencode and Kilo plugins run for the model and cost: write the model, context use and cost on stdin to the pane's agent metadata. `--then CMD` chains to your own status line. See [above](#tuios-agent-statusline) |
-| `tuios tmux-shim [-- command]` | Run a command (your shell when none is given) with a `tmux` on PATH that answers in this tuios session, so a tool that drives tmux, such as Claude Code agent teams (`tuios tmux-shim -- env CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude`), opens its panes here. Off until you run it. `--log FILE` moves the log of calls the shim could not answer from `$XDG_STATE_HOME/tuios/tmux-shim.log`; `--log-all` records every call. Not on Windows. See [The tmux shim](TMUX_SHIM.md) |
-| `tuios tmux <tmux arguments>` | The shim asked for by name: answer one tmux command line in the caller's session (`tuios tmux display-message -p '#{pane_id}'`). A tmux session is the tuios session, a window `@N` is workspace N, a pane `%N` is a tuios window. See [The tmux shim](TMUX_SHIM.md#commands) for the commands it answers |
-| `tuios pane-grants` | Show the pane this runs in and what it may do through tuios. See [below](#tuios-pane-grants) |
-| `tuios set-pane-grants` | Give a pane grants (`--grants read,write`), or the default back (`--reset`). See [below](#tuios-pane-grants) |
-| `tuios stash put <file>` | Copy a file into the session store and print the stored path |
-| `tuios stash get <stored-path> [file]` | Copy a stashed file out of the session store, across a link |
-| `tuios stash list` | List the files in the session store |
+| `dartuios list-agents` | List the agent panes in a session and what each is doing. `--all-sessions` lists every session on this machine, each row named `session/name`; `--all-hosts` lists every session on every host, with a SESSION column, and a host that is down shows the rows it last gave. `--select` lists the panes a [selector](AGENT_STATE.md#selectors) matches, in every session, and prints the `--confirm` token for them. Each row carries `identity`, `confidence` and `evidence_age_ms` (see [AGENT_STATE.md](AGENT_STATE.md#confidence)) |
+| `dartuios list-attention` | List the Inbox: what is waiting for you in every session, on this machine and on every linked host (see below). `--host` narrows it to one machine, `--select` to what a selector matches |
+| `dartuios peek-prompt` | Show the prompt an agent is blocked on, its options and the answers it takes, without attaching |
+| `dartuios respond <action> [value]` | Answer the prompt an agent is blocked on. Only from the person: an attached client's Inbox, or a shell outside every pane with `[daemon] respond_from_shell`, or from a pane the person gave the `respond` grant |
+| `dartuios get-agent-state` | Read a pane's reported agent state. `--json` carries `identity`, `confidence` and `evidence_age_ms`: the milliseconds since the last evidence about the state arrived, or `null` for a pane that never had a state |
+| `dartuios set-agent-meta [key=value ...]` | Record display metadata about a pane's agent (model, context, a summary) for the rail |
+| `dartuios set-agent-session <id> --harness <h>` | Record which conversation a pane's agent runs, for a later resume, without changing its state |
+| `dartuios resume-agent [-w pane] [--dry-run]` | Type the pane's recorded conversation's resume command into its shell, after a daemon restart |
+| `dartuios send-agent-message <text>` | Leave a message in another agent's inbox, or post a notice to the session. `--from human` from inside a pane is refused with `forbidden`: only the person at an attached client can send as `human` (see [Who can act as the person](AGENT_STATE.md#who-can-act-as-the-person)). With `-s HOST:SESSION` and that host's link down, the message waits on this machine and goes when the link is back; the Inbox shows it under Waiting to send. `--select` sends one message to every agent pane a selector matches, after listing them: it asks at a terminal, and takes `--yes` or `--confirm TOKEN` otherwise. `--subject` gives it a one-line subject (at most 120 characters), `--reply-to ID` joins that message's thread, and `--attach PATH` (absolute, repeatable, at most 8) attaches files |
+| `dartuios read-agent-messages` | Read the messages agents have left in this session. Each body prints inside the untrusted fence, and every body line starts with `│ `, as in `ask-agent` replies and `peek-prompt`. Reading `-w human` from inside a pane is always a peek. `--unread` shows only unread messages, `--peek` reads without marking anything read, and `--notices` includes the session-wide notices |
+| `dartuios ask-agent <text>` | Ask another agent a question and wait for its answer. Fails with `prompt_stalled` when the target shows no sign of taking the question within `--stall-timeout` (5000 ms) of Enter. `--select` asks every agent pane a selector matches, at most 16 at once, after the same confirmation as `send-agent-message --select`; a pane on `needs_input` is refused in its own row. `--settle MS` (2000) is the silence that counts as finished for a pane that reports no state; `--allow-blocked` types at a target on `needs_input`, answering its prompt |
+| `dartuios queue <text>` | Leave a message for an agent that is typed as a prompt when it comes to rest, never over a prompt it waits on and never twice. `queue ls` lists what waits, `queue rm ID` or `queue rm --all -w PANE` drops it. See [`dartuios queue`](#dartuios-queue) |
+| `dartuios review [SESSION]` | Show what the agent in a pane changed against its base, with the notes left on it. `review note FILE:LINE TEXT` leaves one, `review notes` lists them, `review send` sends the unsent ones to the agent as one queued message. See [`dartuios review`](#dartuios-review) |
+| `dartuios start-agent <agent>` | Start an agent in a new pane and return once it shows it is at its prompt, optionally typing a first `--prompt`. `-s HOST:SESSION` starts it on another machine, in its checkout of the repository you are in. `--protocol acp\|codex` runs it headless as a transcript. See [above](#dartuios-start-agent) |
+| `dartuios agent-proto --protocol P -- <agent>` | The pane program of `start-agent --protocol`: run an agent headless over ACP or the Codex app-server and show it as a transcript. See [above](#dartuios-agent-proto) |
+| `dartuios explain-agent-detect` | Show what the agent detector sees in a pane |
+| `dartuios explain-agent-screen` | Show what a harness's screen and title rules make of a pane: the tail, each rule's region and the text it read there, why each refusal refused (strings, patterns, nested groups), the title and last OSC 9;4 progress report, and which manifest file is in force |
+| `dartuios integration install [harness...]` | Write dartuios's managed hook entries or plugin into a harness's configuration: claude-code, codex, copilot, cursor-agent, gemini-cli, opencode, kilo, amp, kimi, pi, omp and qwen report state; antigravity, crush, devin, droid, grok, hermes and qoder report the session id only (`--all` for every harness that has run here, `--command` for a dartuios not on PATH). `--mcp` also registers `dartuios mcp` as an MCP server named dartuios with claude-code, codex, gemini-cli and opencode; `--mcp-write` registers it with `--write`. `--statusline` points Claude Code's status line at `dartuios agent-statusline`, which feeds the model, context use and cost to the rail; a status line of your own is never replaced, and `--then CMD` (which implies `--statusline`) chains to it. See [Agent state](AGENT_STATE.md#harness-integrations) |
+| `dartuios integration uninstall [harness...]` | Remove the hook entries dartuios wrote, the MCP server entry it wrote and the Claude Code status line it wrote (putting back the command it chained to), and nothing else |
+| `dartuios integration status [harness...]` | Say whether each integration is installed and current, and whether it reports state or the session id, for the four harnesses with an MCP registration whether `dartuios mcp` is registered, and for Claude Code whether the status line feed is installed (`--json`, with `reports`, `mcp` and `status_line`) |
+| `dartuios mcp` | Serve dartuios to an agent harness as an MCP server over stdio. Read-only by default and held to the session of the pane it runs in; `--write` adds the tools that type into panes, `--scope all` reaches every session. See [dartuios mcp](#dartuios-mcp) |
+| `dartuios doctor shell` | Per pane: whether its shell marks its commands with OSC 133, which `dartuios run`, `wait-for command-finished` and `capture-pane --last-command` need, and, when one does not, the lines that turn the marks on for your `$SHELL` (zsh, and bash 4.4 or newer; fish 4 sends them itself). A pane that marks its prompts and ran a command without marking it is flagged as prompt marks only, and one that has not run a command yet is said to mark its prompts (`-s`, `--json`, with `command_mark_seen` and `prompt_marks_only`) |
+| `dartuios doctor agents` | Per harness: on PATH or not, integration installed and current or not, what it reports, the recognised harnesses with no integration and why, the running agent panes missing theirs, and the harness manifests loaded from the user manifest directory, which of them replace a bundled one, and the files there that failed to load (`--json`) |
+| `dartuios agent-hook <harness> [event]` | What an installed hook runs: read the hook payload on stdin and report the pane's state, or for a session integration only its conversation id (`set-agent-session`). For Claude Code and Codex the prompt, tool and Stop events also carry the event as activity for [`dartuios agent-log`](#dartuios-agent-log), and a `Stop` reports `done` with the first line of what the agent said last. A report that ends a turn also sends what the pane's `agent-statusline` feed held back (`set-agent-meta`). `--explain` prints the decision to stderr. With `[agents.approvals]` naming the harness, a permission prompt (Claude Code `PermissionRequest`, including an `ExitPlanMode` plan unless `hold_plans = false`, Qwen Code `PermissionRequest`, opencode or Kilo `permission.asked`) then waits for an answer from the Inbox and prints the harness's decision, or nothing when there is none. See [Agent state](AGENT_STATE.md#harness-integrations) and [Approvals from the Inbox](AGENT_STATE.md#approvals-from-the-inbox) |
+| `dartuios agent-statusline <harness>` | What the Claude Code status line `integration install --statusline` writes runs, and what the opencode and Kilo plugins run for the model and cost: write the model, context use and cost on stdin to the pane's agent metadata. `--then CMD` chains to your own status line. See [above](#dartuios-agent-statusline) |
+| `dartuios tmux-shim [-- command]` | Run a command (your shell when none is given) with a `tmux` on PATH that answers in this dartuios session, so a tool that drives tmux, such as Claude Code agent teams (`dartuios tmux-shim -- env CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude`), opens its panes here. Off until you run it. `--log FILE` moves the log of calls the shim could not answer from `$XDG_STATE_HOME/dartuios/tmux-shim.log`; `--log-all` records every call. Not on Windows. See [The tmux shim](TMUX_SHIM.md) |
+| `dartuios tmux <tmux arguments>` | The shim asked for by name: answer one tmux command line in the caller's session (`dartuios tmux display-message -p '#{pane_id}'`). A tmux session is the dartuios session, a window `@N` is workspace N, a pane `%N` is a dartuios window. See [The tmux shim](TMUX_SHIM.md#commands) for the commands it answers |
+| `dartuios pane-grants` | Show the pane this runs in and what it may do through dartuios. See [below](#dartuios-pane-grants) |
+| `dartuios set-pane-grants` | Give a pane grants (`--grants read,write`), or the default back (`--reset`). See [below](#dartuios-pane-grants) |
+| `dartuios stash put <file>` | Copy a file into the session store and print the stored path |
+| `dartuios stash get <stored-path> [file]` | Copy a stashed file out of the session store, across a link |
+| `dartuios stash list` | List the files in the session store |
 
 **Other machines:**
 
 | Command | What it does |
 |---------|--------------|
-| `tuios hosts` | List the machines in the `[hosts]` config table and the state of each link. A host whose tuios is too old to stream its agents is named below the table, with what to update: its agents are polled and what waits there is not in the Inbox. A host with mail waiting here for its link says how many |
-| `tuios hosts add <name> <addr>` | Add a machine. `--tailnet` takes the address from your tailnet; `--command`, `--ssh-option` and `--connect-timeout` tune the link; `--repos-root DIR` says where the host keeps its checkouts, for `fan --host`, `worktree new --host` and `start-agent -s HOST:SESSION`, and is kept when the host is added again without it, as its link policy fields are |
-| `tuios hosts remove <name>` | Remove a machine |
-| `tuios hosts test <name>` | Open one link to a host and report what happened |
-| `tuios hosts tailnet` | List the machines on your tailnet and which are offered as addresses |
-| `tuios stdio-proxy [--as NAME]` | Hidden. What the other machine's daemon runs over ssh for a link. `--as` pins the name this machine's link policy is resolved for, whatever the other machine calls itself: put it in a forced command in `authorized_keys` (`command="tuios stdio-proxy --as laptop",restrict ...`) to make the policy a boundary. See [What another machine may do here](CONFIGURATION.md#what-another-machine-may-do-here) |
+| `dartuios hosts` | List the machines in the `[hosts]` config table and the state of each link. A host whose dartuios is too old to stream its agents is named below the table, with what to update: its agents are polled and what waits there is not in the Inbox. A host with mail waiting here for its link says how many |
+| `dartuios hosts add <name> <addr>` | Add a machine. `--tailnet` takes the address from your tailnet; `--command`, `--ssh-option` and `--connect-timeout` tune the link; `--repos-root DIR` says where the host keeps its checkouts, for `fan --host`, `worktree new --host` and `start-agent -s HOST:SESSION`, and is kept when the host is added again without it, as its link policy fields are |
+| `dartuios hosts remove <name>` | Remove a machine |
+| `dartuios hosts test <name>` | Open one link to a host and report what happened |
+| `dartuios hosts tailnet` | List the machines on your tailnet and which are offered as addresses |
+| `dartuios stdio-proxy [--as NAME]` | Hidden. What the other machine's daemon runs over ssh for a link. `--as` pins the name this machine's link policy is resolved for, whatever the other machine calls itself: put it in a forced command in `authorized_keys` (`command="dartuios stdio-proxy --as laptop",restrict ...`) to make the policy a boundary. See [What another machine may do here](CONFIGURATION.md#what-another-machine-may-do-here) |
 
 A call over a link that the far machine's policy does not allow fails with
 `forbidden`, and the message names the capability and the `[hosts]` table on
 that machine that grants it. By default a linked machine may not answer
-prompts: `tuios respond -w HOST:SESSION:WINDOW` needs `"respond"` in `allow`
+prompts: `dartuios respond -w HOST:SESSION:WINDOW` needs `"respond"` in `allow`
 there.
 
 **Configuration and appearance:**
 
 | Command | What it does |
 |---------|--------------|
-| `tuios list-options [prefix]` | List every settable configuration option, with its type, default and accepted values. `--section NAME` lists one group, such as `sidebar` or `dock` |
-| `tuios list-options --search <query>` | The options matching a fuzzy query on path, value or description, best first, as the settings page searches |
-| `tuios get-config <path>` | Read a configuration option from a running session |
-| `tuios list-themes [theme]` | List the themes, and describe one. `--filter TEXT` lists only the ids that contain it, such as `gruvbox` |
-| `tuios import-theme <file>` | Convert a terminal colour scheme into a tuios theme |
-| `tuios list-glyphs [set]` | List the glyph sets, and describe one |
-| `tuios logs` | View daemon logs |
+| `dartuios list-options [prefix]` | List every settable configuration option, with its type, default and accepted values. `--section NAME` lists one group, such as `sidebar` or `dock` |
+| `dartuios list-options --search <query>` | The options matching a fuzzy query on path, value or description, best first, as the settings page searches |
+| `dartuios get-config <path>` | Read a configuration option from a running session |
+| `dartuios list-themes [theme]` | List the themes, and describe one. `--filter TEXT` lists only the ids that contain it, such as `gruvbox` |
+| `dartuios import-theme <file>` | Convert a terminal colour scheme into a dartuios theme |
+| `dartuios list-glyphs [set]` | List the glyph sets, and describe one |
+| `dartuios logs` | View daemon logs |
 
 **Tape scripts:**
 
 | Command | What it does |
 |---------|--------------|
-| `tuios tape play <file.tape>` | Run a tape file in interactive mode |
-| `tuios tape exec <file.tape>` | Execute a tape file in a running session |
-| `tuios tape validate <file.tape>` | Validate a tape file without running it |
-| `tuios tape list` | List all saved tape recordings |
-| `tuios tape show <name>` | Display the contents of a tape file |
-| `tuios tape delete <name>` | Delete a tape recording |
-| `tuios tape dir` | Show the tape recordings directory path |
+| `dartuios tape play <file.tape>` | Run a tape file in interactive mode |
+| `dartuios tape exec <file.tape>` | Execute a tape file in a running session |
+| `dartuios tape validate <file.tape>` | Validate a tape file without running it |
+| `dartuios tape list` | List all saved tape recordings |
+| `dartuios tape show <name>` | Display the contents of a tape file |
+| `dartuios tape delete <name>` | Delete a tape recording |
+| `dartuios tape dir` | Show the tape recordings directory path |
 
-### `tuios pane-grants`
+### `dartuios pane-grants`
 
-Show what the pane this command runs in may do through tuios.
+Show what the pane this command runs in may do through dartuios.
 
 **Usage:**
 ```bash
-tuios pane-grants [--json]
-tuios set-pane-grants [-s <session>] [-w <window>] (--grants <grant>[,<grant>...] | --reset) [--json]
+dartuios pane-grants [--json]
+dartuios set-pane-grants [-s <session>] [-w <window>] (--grants <grant>[,<grant>...] | --reset) [--json]
 ```
 
 Every pane holds grants, and the daemon checks every call from a pane against
@@ -2873,13 +2873,13 @@ Pane a1b2c3d4 in session work holds read, write, fan (the default of [agents.per
 **Examples:**
 ```bash
 # From inside an agent's pane
-tuios pane-grants
+dartuios pane-grants
 
 # Let the reviewer only read
-tuios set-pane-grants -w reviewer --grants read
+dartuios set-pane-grants -w reviewer --grants read
 
 # Drop this pane's grants, then start an agent in it
-tuios set-pane-grants --grants read,write && exec claude
+dartuios set-pane-grants --grants read,write && exec claude
 ```
 
 ---
@@ -2895,18 +2895,18 @@ These remote control and inspection commands enable powerful scripting workflows
 # Create a development layout
 
 # Create windows and capture their IDs
-EDITOR_ID=$(tuios run-command --json NewWindow "editor" | jq -r '.window_id')
-TERMINAL_ID=$(tuios run-command --json NewWindow "terminal" | jq -r '.window_id')
-LOGS_ID=$(tuios run-command --json NewWindow "logs" | jq -r '.window_id')
+EDITOR_ID=$(dartuios run-command --json NewWindow "editor" | jq -r '.window_id')
+TERMINAL_ID=$(dartuios run-command --json NewWindow "terminal" | jq -r '.window_id')
+LOGS_ID=$(dartuios run-command --json NewWindow "logs" | jq -r '.window_id')
 
 # Enable tiling
-tuios run-command ToggleTiling
+dartuios run-command ToggleTiling
 
 # Send commands to each window
-tuios send-keys --literal --raw "nvim ." && tuios send-keys Enter
-tuios run-command FocusWindow "$TERMINAL_ID"
-tuios run-command FocusWindow "$LOGS_ID"
-tuios send-keys --literal --raw "tail -f /var/log/system.log" && tuios send-keys Enter
+dartuios send-keys --literal --raw "nvim ." && dartuios send-keys Enter
+dartuios run-command FocusWindow "$TERMINAL_ID"
+dartuios run-command FocusWindow "$LOGS_ID"
+dartuios send-keys --literal --raw "tail -f /var/log/system.log" && dartuios send-keys Enter
 ```
 
 ### Query and React to State
@@ -2917,7 +2917,7 @@ tuios send-keys --literal --raw "tail -f /var/log/system.log" && tuios send-keys
 
 # Wait until there are at least 3 windows
 while true; do
-    WINDOW_COUNT=$(tuios session-info --json | jq '.window_count')
+    WINDOW_COUNT=$(dartuios session-info --json | jq '.window_count')
     if [ "$WINDOW_COUNT" -ge 3 ]; then
         echo "Ready with $WINDOW_COUNT windows"
         break
@@ -2932,8 +2932,8 @@ When the pane's shell marks its commands with OSC 133, one call does it and
 exits with the build's own status:
 
 ```bash
-tuios new-window build
-tuios run -w build --timeout 120000 --lines 40 -- go build ./...
+dartuios new-window build
+dartuios run -w build --timeout 120000 --lines 40 -- go build ./...
 ```
 
 Without shell integration, assemble a marker:
@@ -2944,14 +2944,14 @@ Without shell integration, assemble a marker:
 # The marker is assembled by printf so the literal BUILD_OK never appears in
 # the command line the pane echoes, which would match the wait immediately.
 
-tuios new-window build
-tuios send-text -w build 'go build ./... ; printf "BUILD_%s %s\n" OK "$?"
+dartuios new-window build
+dartuios send-text -w build 'go build ./... ; printf "BUILD_%s %s\n" OK "$?"
 '
 
-if tuios wait-for window-output -w build --pattern 'BUILD_OK' --timeout 120000; then
-    tuios capture-pane -w build --scrollback --lines 5
+if dartuios wait-for window-output -w build --pattern 'BUILD_OK' --timeout 120000; then
+    dartuios capture-pane -w build --scrollback --lines 5
 else
-    tuios capture-pane -w build --scrollback --lines 40
+    dartuios capture-pane -w build --scrollback --lines 40
     exit 1
 fi
 ```
@@ -2962,13 +2962,13 @@ fi
 #!/bin/bash
 # Use fzf to select and focus a window
 
-WINDOW=$(tuios list-windows --json | \
+WINDOW=$(dartuios list-windows --json | \
     jq -r '.windows[] | "\(.display_name)\t\(.window_id)"' | \
     fzf --with-nth=1 | \
     cut -f2)
 
 if [ -n "$WINDOW" ]; then
-    tuios run-command FocusWindow "$WINDOW"
+    dartuios run-command FocusWindow "$WINDOW"
 fi
 ```
 
@@ -2978,12 +2978,12 @@ fi
 #!/bin/bash
 # Run a command and verify output
 
-tuios send-keys --literal --raw "echo 'test-marker-12345'" && tuios send-keys Enter
+dartuios send-keys --literal --raw "echo 'test-marker-12345'" && dartuios send-keys Enter
 sleep 0.5
 
 # The marker shows twice once the command ran: in the echoed command line and
 # in its output
-COUNT=$(tuios capture-pane | grep -c 'test-marker-12345')
+COUNT=$(dartuios capture-pane | grep -c 'test-marker-12345')
 if [ "$COUNT" -ge 2 ]; then
     echo "command ran"
 fi
@@ -2991,29 +2991,29 @@ fi
 
 ---
 
-### `tuios mcp`
+### `dartuios mcp`
 
-Serve tuios to an agent harness as a Model Context Protocol server over stdin
+Serve dartuios to an agent harness as a Model Context Protocol server over stdin
 and stdout. The harness starts it; nobody runs it by hand.
 
 ```bash
-tuios mcp [--write] [--scope own|all]
+dartuios mcp [--write] [--scope own|all]
 ```
 
 **Flags:**
 
-- `--write`: Also list the tools that type into panes: `tuios_send_text`,
-  `tuios_send_keys`, `tuios_ask_agent`, `tuios_respond` and `tuios_fan`
+- `--write`: Also list the tools that type into panes: `dartuios_send_text`,
+  `dartuios_send_keys`, `dartuios_ask_agent`, `dartuios_respond` and `dartuios_fan`
 - `--scope`: `own` (the default) reaches only the session of the pane the
   server runs in, its fan group, and the sessions a `fan` from it started.
-  `all` reaches every session, for a harness that runs outside tuios
+  `all` reaches every session, for a harness that runs outside dartuios
 
-**Tools, by default:** `tuios_list_agents`, `tuios_list_windows`,
-`tuios_get_agent_state`, `tuios_capture_pane`, `tuios_peek_prompt`,
-`tuios_wait_for`, `tuios_read_agent_messages`, `tuios_send_agent_message`,
-`tuios_set_agent_state`, `tuios_set_agent_meta` and `tuios_events`. Each is a
+**Tools, by default:** `dartuios_list_agents`, `dartuios_list_windows`,
+`dartuios_get_agent_state`, `dartuios_capture_pane`, `dartuios_peek_prompt`,
+`dartuios_wait_for`, `dartuios_read_agent_messages`, `dartuios_send_agent_message`,
+`dartuios_set_agent_state`, `dartuios_set_agent_meta` and `dartuios_events`. Each is a
 daemon verb, and its input schema is generated from the verb table, so it takes
-the verb's own parameters. `tuios_events` follows the event stream: it returns
+the verb's own parameters. `dartuios_events` follows the event stream: it returns
 what happened since `after_seq`, or waits up to `wait_ms` for the next events,
 and answers with the `last_seq` and `boot_id` to pass to the next call.
 `last_seq` is where the daemon's stream stood when the call returned, even when
@@ -3025,42 +3025,42 @@ short is it the seq of the last event returned.
 the daemon and calls `restrict-connection` on it first, so the daemon refuses
 what the flags do not grant, with `forbidden`. The server finds its pane from
 the kernel's record of its pid, and where the kernel cannot say, from
-`TUIOS_PANE_ID` and `TUIOS_PANE_TOKEN`. A server with `--scope own` that runs
+`DARTUIOS_PANE_ID` and `DARTUIOS_PANE_TOKEN`. A server with `--scope own` that runs
 in no pane reaches nothing. A daemon too old to know `restrict-connection` runs
 nothing, and the tool says to restart it. Text read from a pane or a message is
 marked as data, not instructions. See [restrict-connection](protocol.md#restrict-connection).
 
-The daemon's socket is `TUIOS_SOCKET` when the harness passes it, else the one
-`tuios` always uses. A harness that starts its MCP servers without
+The daemon's socket is `DARTUIOS_SOCKET` when the harness passes it, else the one
+`dartuios` always uses. A harness that starts its MCP servers without
 `XDG_RUNTIME_DIR` still finds a daemon under `/run/user/<uid>` on Linux.
 
 **Registering it:**
 
 ```bash
 # Hooks and the read-only MCP server
-tuios integration install claude-code --mcp
+dartuios integration install claude-code --mcp
 
 # With the tools that type into panes
-tuios integration install codex --mcp-write
+dartuios integration install codex --mcp-write
 
 # By hand, in Claude Code
-claude mcp add --scope user tuios -- tuios mcp
+claude mcp add --scope user dartuios -- dartuios mcp
 ```
 
 ---
 
-### `tuios ssh`
+### `dartuios ssh`
 
-Run TUIOS as an SSH server for remote access.
+Run dartuios as an SSH server for remote access.
 
-By default, SSH sessions connect to the TUIOS daemon for persistent sessions with multi-client support. This means:
+By default, SSH sessions connect to the dartuios daemon for persistent sessions with multi-client support. This means:
 - Sessions persist even when clients disconnect
 - Multiple clients can view/control the same session simultaneously
 - Session state (windows, workspaces) is preserved across reconnections
 
 **Usage:**
 ```bash
-tuios ssh [flags]
+dartuios ssh [flags]
 ```
 
 **Flags:**
@@ -3069,14 +3069,14 @@ tuios ssh [flags]
 - `--key-path <string>`: Path to SSH host key (auto-generated if not specified)
 - `--default-session <string>`: Default session name for all connections
 - `--ephemeral`: Run in ephemeral mode (standalone, no daemon)
-- `--authorized-keys <string>`: Path to the public keys allowed to connect (default: `~/.config/tuios/authorized_keys`, then `~/.ssh/authorized_keys`)
+- `--authorized-keys <string>`: Path to the public keys allowed to connect (default: `~/.config/dartuios/authorized_keys`, then `~/.ssh/authorized_keys`)
 - `--no-auth`: Give every connection a shell without checking who it is (trusted networks only)
 
 **Who can connect:**
 
 Every connection gets a shell on the machine running the server, so the server
 checks who is connecting. It reads public keys from
-`~/.config/tuios/authorized_keys`, and from `~/.ssh/authorized_keys` when the
+`~/.config/dartuios/authorized_keys`, and from `~/.ssh/authorized_keys` when the
 first file is absent.
 
 - With keys: only the holders of those keys connect. Add a key while the server
@@ -3092,9 +3092,9 @@ Only an absent file means "no keys are configured".
 
 ```bash
 # Let one key in
-mkdir -p ~/.config/tuios
-cat ~/.ssh/id_ed25519.pub >> ~/.config/tuios/authorized_keys
-tuios ssh --host 0.0.0.0 --port 2222
+mkdir -p ~/.config/dartuios
+cat ~/.ssh/id_ed25519.pub >> ~/.config/dartuios/authorized_keys
+dartuios ssh --host 0.0.0.0 --port 2222
 ```
 
 The interface flags (`--theme`, `--border-style`, `--dockbar-position`,
@@ -3107,32 +3107,32 @@ the server operator's config file is never written from an SSH client.
 
 **Session Selection Priority:**
 1. `--default-session` flag (if specified)
-2. SSH username (if not generic like "tuios", "root", "anonymous")
+2. SSH username (if not generic like "dartuios", "root", "anonymous")
 3. SSH command argument (e.g., `ssh host attach mysession`)
 4. First available session or create new
 
 **Examples:**
 ```bash
 # Start SSH server on default port (daemon mode)
-tuios ssh
+dartuios ssh
 
 # Start on custom port
-tuios ssh --port 8022
+dartuios ssh --port 8022
 
 # Listen on all interfaces (needs an authorized_keys file, or --no-auth)
-tuios ssh --host 0.0.0.0 --port 2222
+dartuios ssh --host 0.0.0.0 --port 2222
 
 # Read the allowed public keys from somewhere else
-tuios ssh --authorized-keys /etc/tuios/authorized_keys
+dartuios ssh --authorized-keys /etc/dartuios/authorized_keys
 
 # Use custom host key
-tuios ssh --key-path /path/to/host_key
+dartuios ssh --key-path /path/to/host_key
 
 # All clients share a single session
-tuios ssh --default-session shared
+dartuios ssh --default-session shared
 
 # Run in ephemeral mode (no session persistence)
-tuios ssh --ephemeral
+dartuios ssh --ephemeral
 ```
 
 **Connecting:**
@@ -3154,11 +3154,11 @@ ssh -p 2222 localhost attach mysession
 
 ---
 
-## `tuios-web` (Separate Binary)
+## `dartuios-web` (Separate Binary)
 
-**Security Notice:** The web terminal functionality has been extracted to a separate binary (`tuios-web`) to provide better security isolation. This prevents the web server from being used as a potential backdoor in the main TUIOS binary.
+**Security Notice:** The web terminal functionality has been extracted to a separate binary (`dartuios-web`) to provide better security isolation. This prevents the web server from being used as a potential backdoor in the main dartuios binary.
 
-By default, web sessions connect to the TUIOS daemon for persistent sessions with multi-client support. This means:
+By default, web sessions connect to the dartuios daemon for persistent sessions with multi-client support. This means:
 - Sessions persist even when browser tabs close
 - Multiple browsers/tabs can view/control the same session simultaneously
 - Session state (windows, workspaces) is preserved across reconnections
@@ -3167,18 +3167,18 @@ By default, web sessions connect to the TUIOS daemon for persistent sessions wit
 **Installation:**
 ```bash
 # Homebrew
-brew install tuios-web
+brew install dartuios-web
 
 # AUR
-yay -S tuios-web-bin
+yay -S dartuios-web-bin
 
 # Go install
-go install github.com/Gaurav-Gosain/tuios/cmd/tuios-web@latest
+go install github.com/darsrc/tuios/cmd/dartuios-web@latest
 ```
 
 **Usage:**
 ```bash
-tuios-web [flags]
+dartuios-web [flags]
 ```
 
 **Flags:**
@@ -3188,12 +3188,12 @@ tuios-web [flags]
 - `--max-connections <int>`: Maximum concurrent connections (default: 0 = unlimited)
 - `--cert <path>`: TLS certificate in PEM form (serves HTTPS; required to bind a non-loopback host)
 - `--key <path>`: TLS private key in PEM form (required with `--cert`)
-- `--auto-tls`: Generate and serve a self-signed certificate (managed with `tuios-web cert`)
+- `--auto-tls`: Generate and serve a self-signed certificate (managed with `dartuios-web cert`)
 - `--insecure`: Serve a non-loopback host over plain HTTP, unencrypted (trusted networks only)
 - `--touch <auto|on|off>`: Touch support and the on-screen key bar (default: auto-detect)
 - `--default-session <string>`: Default session name for all connections (creates shared session)
 - `--ephemeral`: Disable daemon mode (sessions don't persist)
-- `--theme <name>`: Color theme forwarded to TUIOS instances
+- `--theme <name>`: Color theme forwarded to dartuios instances
 - `--show-keys`: Enable showkeys overlay
 - `--ascii-only`: Use ASCII characters instead of Nerd Font icons
 - `--border-style <style>`: Window border style
@@ -3206,11 +3206,11 @@ tuios-web [flags]
 - `--debug`: Enable debug logging
 
 **Subcommands:**
-- `tuios-web cert`: Show the status of the self-signed TLS certificate `--auto-tls` uses
-- `tuios-web cert new|info|path|remove`: Rotate, explain, locate, or delete it
+- `dartuios-web cert`: Show the status of the self-signed TLS certificate `--auto-tls` uses
+- `dartuios-web cert new|info|path|remove`: Rotate, explain, locate, or delete it
 
 **Features:**
-- Full TUIOS experience in the browser
+- Full dartuios experience in the browser
 - WebGL-accelerated rendering via xterm.js for smooth 60fps
 - WebSocket and WebTransport (HTTP/3 over QUIC) protocols
 - Bundled JetBrains Mono Nerd Font for proper icon rendering
@@ -3225,35 +3225,35 @@ tuios-web [flags]
 **Examples:**
 ```bash
 # Start web server on default port (daemon mode)
-tuios-web
+dartuios-web
 
 # Start on custom port
-tuios-web --port 8080
+dartuios-web --port 8080
 
 # Reach the server from a phone on the same network, over TLS with a
-# self-signed certificate tuios-web generates and keeps for you
-tuios-web --host 0.0.0.0 --port 7681 --auto-tls
+# self-signed certificate dartuios-web generates and keeps for you
+dartuios-web --host 0.0.0.0 --port 7681 --auto-tls
 
 # Or bring your own certificate
-tuios-web --host 0.0.0.0 --port 7681 --cert tuios-cert.pem --key tuios-key.pem
+dartuios-web --host 0.0.0.0 --port 7681 --cert dartuios-cert.pem --key dartuios-key.pem
 
 # Same, on a network you trust, with nothing encrypted
-tuios-web --host 0.0.0.0 --port 7681 --insecure
+dartuios-web --host 0.0.0.0 --port 7681 --insecure
 
 # Start in read-only mode (view only)
-tuios-web --read-only
+dartuios-web --read-only
 
 # Start with theme and show-keys overlay
-tuios-web --theme dracula --show-keys
+dartuios-web --theme dracula --show-keys
 
 # Limit concurrent connections
-tuios-web --max-connections 10
+dartuios-web --max-connections 10
 
 # All clients share a single session
-tuios-web --default-session shared
+dartuios-web --default-session shared
 
 # Run in ephemeral mode (no session persistence)
-tuios-web --ephemeral
+dartuios-web --ephemeral
 ```
 
 **Multi-Client Behavior:**
@@ -3282,26 +3282,26 @@ For complete documentation, see [Web Terminal Mode](WEB.md).
 
 ---
 
-### `tuios config`
+### `dartuios config`
 
-Manage TUIOS configuration file.
+Manage dartuios configuration file.
 
 **Subcommands:**
-- `tuios config path`: Print configuration file path
-- `tuios config edit`: Edit configuration in $EDITOR
-- `tuios config reset`: Reset configuration to defaults
+- `dartuios config path`: Print configuration file path
+- `dartuios config edit`: Edit configuration in $EDITOR
+- `dartuios config reset`: Reset configuration to defaults
 
-#### `tuios config path`
+#### `dartuios config path`
 
-Print the location of the TUIOS configuration file.
+Print the location of the dartuios configuration file.
 
 **Example:**
 ```bash
-tuios config path
-# Output: /Users/username/.config/tuios/config.toml
+dartuios config path
+# Output: /Users/username/.config/dartuios/config.toml
 ```
 
-#### `tuios config edit`
+#### `dartuios config edit`
 
 Open the configuration file in your default editor.
 
@@ -3310,10 +3310,10 @@ Open the configuration file in your default editor.
 **Example:**
 ```bash
 export EDITOR=vim
-tuios config edit
+dartuios config edit
 ```
 
-#### `tuios config reset`
+#### `dartuios config reset`
 
 Reset the configuration file to default settings.
 
@@ -3321,34 +3321,34 @@ Reset the configuration file to default settings.
 
 **Example:**
 ```bash
-tuios config reset
+dartuios config reset
 # Prompts: Are you sure you want to reset to defaults? (yes/no):
 ```
 
 ---
 
-### `tuios keybinds`
+### `dartuios keybinds`
 
 View and inspect keybinding configuration.
 
 **Aliases:** `keys`, `kb`
 
 **Subcommands:**
-- `tuios keybinds list`: List all configured keybindings
-- `tuios keybinds list-custom`: List only customized keybindings
-- `tuios keybinds doctor`: Report every key claimed twice and every key tuios takes from the pane
-- `tuios keybinds explain <key>`: Say what tuios does with one key
-- `tuios keybinds unbind <action> [key]`: Take a key off one action
-- `tuios keybinds free <key>`: Hand a key back to the program in the pane
+- `dartuios keybinds list`: List all configured keybindings
+- `dartuios keybinds list-custom`: List only customized keybindings
+- `dartuios keybinds doctor`: Report every key claimed twice and every key dartuios takes from the pane
+- `dartuios keybinds explain <key>`: Say what dartuios does with one key
+- `dartuios keybinds unbind <action> [key]`: Take a key off one action
+- `dartuios keybinds free <key>`: Hand a key back to the program in the pane
 
-#### `tuios keybinds list`
+#### `dartuios keybinds list`
 
 Display the common keybindings, as configured, in formatted tables organized
-by category. `tuios keybinds doctor` lists every scope.
+by category. `dartuios keybinds doctor` lists every scope.
 
 **Example:**
 ```bash
-tuios keybinds list
+dartuios keybinds list
 ```
 
 **Output:** One table per category, and a category with nothing bound is left
@@ -3361,13 +3361,13 @@ out:
 - Selection
 - System
 
-#### `tuios keybinds list-custom`
+#### `dartuios keybinds list-custom`
 
 Show only keybindings that differ from defaults, with a comparison view.
 
 **Example:**
 ```bash
-tuios keybinds list-custom
+dartuios keybinds list-custom
 ```
 
 **Output:** Three-column table showing:
@@ -3375,16 +3375,16 @@ tuios keybinds list-custom
 - Default keybinding
 - Your custom keybinding
 
-#### `tuios keybinds unbind`
+#### `dartuios keybinds unbind`
 
 Take a key off one action and write the change to `config.toml`.
 
 ```bash
 # Stop w closing a window, leaving x
-tuios keybinds unbind close_window w
+dartuios keybinds unbind close_window w
 
 # Leave the action with no key at all
-tuios keybinds unbind close_window
+dartuios keybinds unbind close_window
 ```
 
 An action with no keys is written as an empty list:
@@ -3395,44 +3395,44 @@ close_window = []
 ```
 
 That is not the same as leaving the action out of the file. An action the file
-does not mention gets its default back the next time tuios starts. An empty list
+does not mention gets its default back the next time dartuios starts. An empty list
 stays empty.
 
-#### `tuios keybinds free`
+#### `dartuios keybinds free`
 
 Take one key off every action in every scope, so the program in your pane
 receives it.
 
 ```bash
 # Give alt+left back to your shell
-tuios keybinds free alt+left
+dartuios keybinds free alt+left
 ```
 
-Every scope at once is the point. A key tuios still claims anywhere is a key the
+Every scope at once is the point. A key dartuios still claims anywhere is a key the
 program never sees. Two keys cannot be freed this way: the leader key, which is
 `keybindings.leader_key` and is moved rather than unbound, and a handful of keys
 the input path reads directly. The command says so instead of reporting success.
 
-You can do both from inside tuios as well. Open the keybind manager with the
+You can do both from inside dartuios as well. Open the keybind manager with the
 leader key then `k`, or from the command palette, and press `ctrl+d` on a
 binding to remove it or `ctrl+x` to take its key off every action. Typing `#`
 in the command palette searches actions rather than commands.
 
 ---
 
-### `tuios update`
+### `dartuios update`
 
-Replace this tuios with the newest published release.
+Replace this dartuios with the newest published release.
 
 ```bash
 # See whether there is a newer release, without installing it
-tuios update --check
+dartuios update --check
 
 # Install it
-tuios update
+dartuios update
 
 # Include prereleases
-tuios update --check --pre
+dartuios update --check --pre
 ```
 
 **Flags:**
@@ -3441,21 +3441,21 @@ tuios update --check --pre
 
 **What it will and will not replace.** This only updates a binary that came from
 a release archive, which is what the [install script](#quick-install-script-linuxmacos)
-downloads. Every other way of installing tuios has something that owns the file,
+downloads. Every other way of installing dartuios has something that owns the file,
 and overwriting one of those leaves its records describing a file that is no
 longer there. The command detects where the binary came from and refuses with
 the right command instead:
 
-| Installed by | `tuios update` | What to run |
+| Installed by | `dartuios update` | What to run |
 | --- | --- | --- |
-| Install script, or a release archive unpacked by hand | Updates it | `tuios update` |
-| Homebrew | Refuses | `brew upgrade --cask tuios` |
-| AUR or another system package | Refuses | `yay -S tuios-bin` |
-| Nix | Refuses | `nix profile upgrade tuios` |
-| `go install` | Refuses | `go install github.com/Gaurav-Gosain/tuios/cmd/tuios@latest` |
+| Install script, or a release archive unpacked by hand | Updates it | `dartuios update` |
+| Homebrew | Refuses | `brew upgrade --cask dartuios` |
+| AUR or another system package | Refuses | `yay -S dartuios-bin` |
+| Nix | Refuses | `nix profile upgrade dartuios` |
+| `go install` | Refuses | `go install github.com/darsrc/tuios/cmd/dartuios@latest` |
 | `scripts/install.sh` from a checkout | Refuses | `git pull && ./scripts/install.sh` |
 
-**tuios-web** is updated at the same time when it sits beside `tuios`. The two
+**dartuios-web** is updated at the same time when it sits beside `dartuios`. The two
 talk to one daemon and it compares their versions, so they move together or not
 at all: both are downloaded and verified before either is put in place.
 
@@ -3464,8 +3464,8 @@ A file that does not match is discarded, nothing is installed, and the old
 binary is untouched.
 
 **The running daemon** keeps the old build. Sessions you have open go on
-working. To move them to the new build, detach, run `tuios kill-server`, then
-start tuios again. Panes are restored; the programs that were running in them
+working. To move them to the new build, detach, run `dartuios kill-server`, then
+start dartuios again. Panes are restored; the programs that were running in them
 are not.
 
 Set `GITHUB_TOKEN` or `GH_TOKEN` to raise the release lookup's rate limit. It is
@@ -3477,74 +3477,74 @@ not on its command line.
 
 ---
 
-### `tuios layout`
+### `dartuios layout`
 
 Manage saved layout templates.
 
 **Subcommands:**
-- `tuios layout list`: List all saved layout templates
-- `tuios layout delete <name>`: Delete a saved layout template
-- `tuios layout dir`: Print the layout templates directory path
-- `tuios layout export <name>`: Print a layout template as a tape script
+- `dartuios layout list`: List all saved layout templates
+- `dartuios layout delete <name>`: Delete a saved layout template
+- `dartuios layout dir`: Print the layout templates directory path
+- `dartuios layout export <name>`: Print a layout template as a tape script
 
-#### `tuios layout list`
+#### `dartuios layout list`
 
 List all saved layout templates.
 
 **Example:**
 ```bash
-tuios layout list
+dartuios layout list
 ```
 
-#### `tuios layout delete`
+#### `dartuios layout delete`
 
 Delete a saved layout template by name.
 
 **Usage:**
 ```bash
-tuios layout delete <name>
+dartuios layout delete <name>
 ```
 
 **Example:**
 ```bash
-tuios layout delete dev-layout
+dartuios layout delete dev-layout
 ```
 
-#### `tuios layout dir`
+#### `dartuios layout dir`
 
 Print the path to the layout templates directory.
 
 **Example:**
 ```bash
-tuios layout dir
-# Output: /home/user/.config/tuios/layouts
+dartuios layout dir
+# Output: /home/user/.config/dartuios/layouts
 ```
 
-#### `tuios layout export`
+#### `dartuios layout export`
 
 Print a saved layout template as a tape script on stdout. The script turns
 tiling on or off as the layout had it, opens one window per saved window,
 renames each window that had a name, and types the `cd` and startup command
-each window was saved with. Run it with `tuios tape play` or, against a
-running session, `tuios tape exec`.
+each window was saved with. Run it with `dartuios tape play` or, against a
+running session, `dartuios tape exec`.
 
-The template itself is a JSON file in the directory `tuios layout dir` prints;
+The template itself is a JSON file in the directory `dartuios layout dir` prints;
 copy that file to share the layout as it is stored.
 
 **Usage:**
 ```bash
-tuios layout export <name>
+dartuios layout export <name>
 ```
 
 **Example:**
 ```bash
-tuios layout export dev-layout > dev-layout.tape
-tuios tape play dev-layout.tape
+dartuios layout export dev-layout > dev-layout.tape
+dartuios tape play dev-layout.tape
 ```
 
 ---
 
-### `tuios completion`
+### `dartuios completion`
 
 Generate shell completion scripts for command-line autocompletion.
 
@@ -3556,7 +3556,7 @@ Generate shell completion scripts for command-line autocompletion.
 
 **Usage:**
 ```bash
-tuios completion [shell]
+dartuios completion [shell]
 ```
 
 **Examples:**
@@ -3564,54 +3564,54 @@ tuios completion [shell]
 **Bash:**
 ```bash
 # Generate and install completion
-tuios completion bash > /etc/bash_completion.d/tuios
+dartuios completion bash > /etc/bash_completion.d/dartuios
 
 # Or for user-specific completion
-tuios completion bash > ~/.local/share/bash-completion/completions/tuios
+dartuios completion bash > ~/.local/share/bash-completion/completions/dartuios
 source ~/.bashrc
 ```
 
 **Zsh:**
 ```bash
 # Generate and install completion
-tuios completion zsh > "${fpath[1]}/_tuios"
+dartuios completion zsh > "${fpath[1]}/_tuios"
 
 # Or add to your .zshrc
 echo "autoload -U compinit; compinit" >> ~/.zshrc
-tuios completion zsh > ~/.zsh/completions/_tuios
+dartuios completion zsh > ~/.zsh/completions/_tuios
 ```
 
 **Fish:**
 ```bash
 # Generate and install completion
-tuios completion fish > ~/.config/fish/completions/tuios.fish
+dartuios completion fish > ~/.config/fish/completions/dartuios.fish
 ```
 
 **PowerShell:**
 ```bash
 # Generate completion script
-tuios completion powershell > tuios.ps1
+dartuios completion powershell > dartuios.ps1
 
 # Add to your PowerShell profile
-echo ". $(pwd)/tuios.ps1" >> $PROFILE
+echo ". $(pwd)/dartuios.ps1" >> $PROFILE
 ```
 
 ---
 
-### `tuios help`
+### `dartuios help`
 
 Get help about any command.
 
 **Usage:**
 ```bash
-tuios help [command]
+dartuios help [command]
 ```
 
 **Examples:**
 ```bash
-tuios help              # Show general help
-tuios help ssh          # Show help for ssh command
-tuios help config edit  # Show help for config edit subcommand
+dartuios help              # Show general help
+dartuios help ssh          # Show help for ssh command
+dartuios help config edit  # Show help for config edit subcommand
 ```
 
 ---
@@ -3627,129 +3627,129 @@ The root command's flags are listed under [Root Command](#root-command).
 
 ### Basic Usage
 
-Start TUIOS normally:
+Start dartuios normally:
 ```bash
-tuios
+dartuios
 
 # Start with showkeys overlay for screencasting
-tuios --show-keys
+dartuios --show-keys
 ```
 
 ### Theming
 
 ```bash
 # Start with a specific theme
-tuios --theme dracula
+dartuios --theme dracula
 
 # List all available themes
-tuios --list-themes
+dartuios --list-themes
 
 # Preview a theme before using it
-tuios --preview-theme nord
+dartuios --preview-theme nord
 
 # Interactive theme selection with fzf
-tuios --theme $(tuios --list-themes | fzf --preview 'tuios --preview-theme {}')
+dartuios --theme $(dartuios --list-themes | fzf --preview 'dartuios --preview-theme {}')
 
 # Use ASCII mode (no Nerd Font required)
-tuios --ascii-only
+dartuios --ascii-only
 
 # Combine theme with ASCII mode
-tuios --theme gruvbox_dark --ascii-only
+dartuios --theme gruvbox_dark --ascii-only
 ```
 
 ### Configuration Management
 
 ```bash
 # Find config file location
-tuios config path
+dartuios config path
 
 # Edit configuration
-tuios config edit
+dartuios config edit
 
 # View all keybindings
-tuios keybinds list
+dartuios keybinds list
 
 # View your customizations
-tuios keybinds list-custom
+dartuios keybinds list-custom
 
 # Reset to defaults
-tuios config reset
+dartuios config reset
 ```
 
 ### Daemon Mode (Session Persistence)
 
 ```bash
 # Create a new persistent session
-tuios new mysession
+dartuios new mysession
 
 # List all sessions
-tuios ls
+dartuios ls
 
 # Attach to an existing session
-tuios attach mysession
+dartuios attach mysession
 
-# Detach from session (inside TUIOS)
+# Detach from session (inside dartuios)
 # Press Ctrl+B d
 
 # Kill a session
-tuios kill-session mysession
+dartuios kill-session mysession
 
 # Stop the daemon (kills all sessions)
-tuios kill-server
+dartuios kill-server
 ```
 
 ### SSH Server Setup
 
 ```bash
 # Start SSH server on default port
-tuios ssh
+dartuios ssh
 
 # Start on custom port with remote access. A host outside this machine
 # needs keys, so add one first.
-mkdir -p ~/.config/tuios
-cat ~/.ssh/id_ed25519.pub >> ~/.config/tuios/authorized_keys
-tuios ssh --host 0.0.0.0 --port 8022
+mkdir -p ~/.config/dartuios
+cat ~/.ssh/id_ed25519.pub >> ~/.config/dartuios/authorized_keys
+dartuios ssh --host 0.0.0.0 --port 8022
 
 # Connect from another machine, with the matching private key
 ssh -p 8022 your-server-hostname
 ```
 
-### Web Terminal Setup (tuios-web)
+### Web Terminal Setup (dartuios-web)
 
 ```bash
 # Start web terminal on default port
-tuios-web
+dartuios-web
 
 # Start on custom port with remote access
-tuios-web --host 0.0.0.0 --port 8080
+dartuios-web --host 0.0.0.0 --port 8080
 
 # Open in browser
 open http://localhost:7681
 
 # Start in read-only mode for demonstrations
-tuios-web --read-only
+dartuios-web --read-only
 
 # Start with theme and overlay
-tuios-web --theme dracula --show-keys
+dartuios-web --theme dracula --show-keys
 
 # Limit connections for production use
-tuios-web --max-connections 50 --host 0.0.0.0
+dartuios-web --max-connections 50 --host 0.0.0.0
 ```
 
 ### Development & Debugging
 
 ```bash
 # Run with debug logging
-tuios --debug
+dartuios --debug
 # Then press Ctrl+L during runtime to view logs
 
 # CPU profiling
-tuios --cpuprofile cpu.prof
+dartuios --cpuprofile cpu.prof
 # Use the application, then exit
 go tool pprof cpu.prof
 
 # Screencasting with showkeys overlay
-tuios --show-keys
+dartuios --show-keys
 # Or toggle during runtime with: Ctrl+B D k
 ```
 
@@ -3757,13 +3757,13 @@ tuios --show-keys
 
 ```bash
 # Install bash completion
-tuios completion bash | sudo tee /etc/bash_completion.d/tuios
+dartuios completion bash | sudo tee /etc/bash_completion.d/dartuios
 
 # Install zsh completion
-tuios completion zsh > "${fpath[1]}/_tuios"
+dartuios completion zsh > "${fpath[1]}/_tuios"
 
 # Install fish completion
-tuios completion fish > ~/.config/fish/completions/tuios.fish
+dartuios completion fish > ~/.config/fish/completions/dartuios.fish
 ```
 
 ---
@@ -3772,112 +3772,112 @@ tuios completion fish > ~/.config/fish/completions/tuios.fish
 
 ### `$EDITOR` / `$VISUAL`
 
-Used by `tuios config edit` to determine which editor to open.
+Used by `dartuios config edit` to determine which editor to open.
 
 **Example:**
 ```bash
 export EDITOR=vim
 export VISUAL=code
-tuios config edit
+dartuios config edit
 ```
 
 **Fallback order:** `$EDITOR` → `$VISUAL` → vim → vi → nano → emacs
 
-### `XDG_RUNTIME_DIR`, and `TUIOS_SOCKET`
+### `XDG_RUNTIME_DIR`, and `DARTUIOS_SOCKET`
 
 `XDG_RUNTIME_DIR` chooses the daemon a command reaches: its socket is
-`$XDG_RUNTIME_DIR/tuios/tuios.sock`, or `/tmp/tuios-<uid>/tuios.sock` when the
-variable is unset (`%LOCALAPPDATA%\tuios\tuios.sock` on Windows). Set it, with
+`$XDG_RUNTIME_DIR/dartuios/dartuios.sock`, or `/tmp/dartuios-<uid>/dartuios.sock` when the
+variable is unset (`%LOCALAPPDATA%\dartuios\dartuios.sock` on Windows). Set it, with
 `XDG_STATE_HOME` for separate saved sessions, to run a separate daemon. See
 [Running a separate daemon](SESSIONS.md#running-a-separate-daemon).
 
-`TUIOS_SOCKET` does not choose the daemon. It is set in every pane to the
-socket of the daemon that runs it. A command refuses when `TUIOS_SOCKET` names a
+`DARTUIOS_SOCKET` does not choose the daemon. It is set in every pane to the
+socket of the daemon that runs it. A command refuses when `DARTUIOS_SOCKET` names a
 different socket with no daemon listening, since that is an attempt to select a
-daemon that would otherwise reach the one `XDG_RUNTIME_DIR` names. `tuios mcp`
-is the one reader: it connects to `TUIOS_SOCKET` when it is set, see below.
+daemon that would otherwise reach the one `XDG_RUNTIME_DIR` names. `dartuios mcp`
+is the one reader: it connects to `DARTUIOS_SOCKET` when it is set, see below.
 
-### `TUIOS_NO_DAEMON`
+### `DARTUIOS_NO_DAEMON`
 
-Set to `1` to make a plain `tuios` run a standalone session without the daemon,
+Set to `1` to make a plain `dartuios` run a standalone session without the daemon,
 the same as `--standalone`, for every run in that shell.
 
 ```bash
-export TUIOS_NO_DAEMON=1
-tuios
+export DARTUIOS_NO_DAEMON=1
+dartuios
 ```
 
-### `TUIOS_AGENT`
+### `DARTUIOS_AGENT`
 
-Set on a wrapper that runs an agent tuios cannot see, such as one in a
+Set on a wrapper that runs an agent dartuios cannot see, such as one in a
 container or a VM, to name its harness. The daemon reads it from the pane's
 foreground process when nothing else identifies the process, and attributes
-the pane to that harness, so its screen and title rules run. `tuios agent-hook`
+the pane to that harness, so its screen and title rules run. `dartuios agent-hook`
 ignores a hook from a different harness than the one it names, which may be any
-harness tuios recognises, one with no integration included. The plugins tuios
-installs report only when `TUIOS_ENV` or `TUIOS_AGENT` is set.
+harness dartuios recognises, one with no integration included. The plugins dartuios
+installs report only when `DARTUIOS_ENV` or `DARTUIOS_AGENT` is set.
 
 ```bash
-TUIOS_AGENT=claude-code docker run -it sandbox claude
+DARTUIOS_AGENT=claude-code docker run -it sandbox claude
 ```
 
-### Variables tuios sets in a pane
+### Variables dartuios sets in a pane
 
-`TUIOS_ENV`, `TUIOS_SOCKET`, `TUIOS_PANE_ID`, `TUIOS_WINDOW_ID`,
-`TUIOS_SESSION`, `TUIOS_HOST`, `TUIOS_PANE_TOKEN` and `TUIOS_PANE_GRANTS`. See
+`DARTUIOS_ENV`, `DARTUIOS_SOCKET`, `DARTUIOS_PANE_ID`, `DARTUIOS_WINDOW_ID`,
+`DARTUIOS_SESSION`, `DARTUIOS_HOST`, `DARTUIOS_PANE_TOKEN` and `DARTUIOS_PANE_GRANTS`. See
 [Environment](AGENT_STATE.md#environment) for what each one means.
 
 ### Agent detection
 
-`TUIOS_AGENT_AUTODETECT`, `TUIOS_AGENT_DETECT_SECONDS`,
-`TUIOS_AGENT_BINARIES` and `TUIOS_AGENT_STALL_SECONDS`, read by the daemon as
+`DARTUIOS_AGENT_AUTODETECT`, `DARTUIOS_AGENT_DETECT_SECONDS`,
+`DARTUIOS_AGENT_BINARIES` and `DARTUIOS_AGENT_STALL_SECONDS`, read by the daemon as
 it starts. See
 [Turning detection off or widening it](AGENT_STATE.md#turning-detection-off-or-widening-it)
 and [The stall heuristic](AGENT_STATE.md#the-stall-heuristic).
 
-### `TUIOS_WORKTREE_DIR`
+### `DARTUIOS_WORKTREE_DIR`
 
-Where the daemon puts the worktrees `tuios worktree new` and `tuios fan`
-create, instead of `$XDG_DATA_HOME/tuios/worktrees`. Set it in the daemon's
+Where the daemon puts the worktrees `dartuios worktree new` and `dartuios fan`
+create, instead of `$XDG_DATA_HOME/dartuios/worktrees`. Set it in the daemon's
 environment, before it starts.
 
-### `TUIOS_LOG_LEVEL`
+### `DARTUIOS_LOG_LEVEL`
 
 The daemon's log level from the start: `off`, `errors`, `basic`, `messages`,
 `verbose` or `trace` (or `0` to `5`). It wins over `daemon.log_level`.
-`tuios logs` reads what it records.
+`dartuios logs` reads what it records.
 
-### `TUIOS_NO_SOUND`
+### `DARTUIOS_NO_SOUND`
 
 Any value silences the agent alert sounds, whatever
 `notifications.agent.sound` says. For a CI job or a recording.
 
-### `TUIOS_SSH`
+### `DARTUIOS_SSH`
 
 The ssh program to run instead of `ssh` on `PATH`: for the daemon's links to
 the `[hosts]` machines (set it where the daemon starts), and for `--ssh` and
-`tuios hosts test`.
+`dartuios hosts test`.
 
-### `TUIOS_HOST_RECONNECT_BUDGET`
+### `DARTUIOS_HOST_RECONNECT_BUDGET`
 
 How long a client attached to a session on another machine keeps dialing a
 dropped link before it gives up, as a Go duration (`10m`). Three minutes when
 unset. Read once, when the client starts.
 
-### `TUIOS_CELL_SIZE`
+### `DARTUIOS_CELL_SIZE`
 
 The terminal's cell size in pixels, as `WIDTHxHEIGHT` (`10x20`), for a terminal
 that does not answer the pixel geometry query. Images and captures drawn in
 cells are sized from it. The SSH server reads the same variable.
 
-### `TUIOS_KITTY_GRAPHICS`, `TUIOS_KITTY_PLACEHOLDERS`, `TUIOS_KITTY_ANIMATION`, `TUIOS_SIXEL_GRAPHICS`
+### `DARTUIOS_KITTY_GRAPHICS`, `DARTUIOS_KITTY_PLACEHOLDERS`, `DARTUIOS_KITTY_ANIMATION`, `DARTUIOS_SIXEL_GRAPHICS`
 
-`1` or `0` overrides what tuios detected about the host terminal's kitty
+`1` or `0` overrides what dartuios detected about the host terminal's kitty
 graphics, kitty Unicode placeholders, kitty animation and sixel support.
 
 ### `$SHELL`
 
-TUIOS uses your default shell from this variable. If not set, it attempts to detect the appropriate shell for your platform.
+dartuios uses your default shell from this variable. If not set, it attempts to detect the appropriate shell for your platform.
 
 ### `COLORTERM`
 
@@ -3886,13 +3886,13 @@ For best color support, set this to `truecolor`:
 export COLORTERM=truecolor
 ```
 
-tuios draws its chrome for the colour depth it detects: truecolor, 256 or 16
+dartuios draws its chrome for the colour depth it detects: truecolor, 256 or 16
 colours (see [THEMES.md](THEMES.md#colour-depth)).
 
-Without it, tuios falls back to 256 colours unless `TERM` names a terminal
+Without it, dartuios falls back to 256 colours unless `TERM` names a terminal
 known to have 24-bit colour. **Mosh** is the common case: mosh 1.4 and
 later pass 24-bit colour through, but mosh-server sets `TERM=xterm-256color` and does not pass
-`COLORTERM` to the remote shell, so tuios sees a 256 colour terminal. If both
+`COLORTERM` to the remote shell, so dartuios sees a 256 colour terminal. If both
 ends of your mosh connection are 1.4 or later and your local terminal has
 truecolor, set it on the remote host, for example in your shell's startup file:
 
@@ -3900,17 +3900,17 @@ truecolor, set it on the remote host, for example in your shell's startup file:
 export COLORTERM=truecolor
 ```
 
-tuios does not try to detect mosh. mosh-server sets no variable of its own
+dartuios does not try to detect mosh. mosh-server sets no variable of its own
 that marks it, and the version of the mosh client on the other end, which
 decides whether 24-bit colour survives, is not visible from the server. Mosh
-also answers no colour queries, so with no theme tuios cannot learn the
+also answers no colour queries, so with no theme dartuios cannot learn the
 terminal's background there; see "Programs that ask" in CONFIGURATION.md.
 
 ---
 
 ## When Something Goes Wrong
 
-Every failure `tuios` reports answers three questions in order: what failed, the
+Every failure `dartuios` reports answers three questions in order: what failed, the
 most likely cause, and the exact command that fixes it. If you meet a message
 that does not, it is a bug worth reporting.
 
@@ -3920,25 +3920,25 @@ There are three distinct versions of this, and they have different fixes:
 
 | Message says | What it means | Fix |
 | --- | --- | --- |
-| "is not running" | No socket exists. The daemon has never run, or was stopped. | `tuios new` |
-| "a stale socket is left over at ..." | The daemon crashed without cleaning up. | `tuios kill-server`, which removes it |
+| "is not running" | No socket exists. The daemon has never run, or was stopped. | `dartuios new` |
+| "a stale socket is left over at ..." | The daemon crashed without cleaning up. | `dartuios kill-server`, which removes it |
 | "Permission denied ... socket" | The socket belongs to another user, or its mode changed. | Check `ls -l` on the path; set `XDG_RUNTIME_DIR` to a directory you own |
 
 ### The daemon is older than the CLI
 
-After upgrading TUIOS, the old daemon keeps running and serving the socket. It
+After upgrading dartuios, the old daemon keeps running and serving the socket. It
 cannot speak the control protocol the new CLI uses, so commands fail:
 
 ```
-The running TUIOS daemon does not speak this CLI's control protocol (daemon 0.9.0, CLI 1.4.0).
-Most likely cause: TUIOS was upgraded while the daemon kept running, so the old daemon is still serving the socket.
-Fix: run 'tuios kill-server', then run this command again.
+The running dartuios daemon does not speak this CLI's control protocol (daemon 0.9.0, CLI 1.4.0).
+Most likely cause: dartuios was upgraded while the daemon kept running, so the old daemon is still serving the socket.
+Fix: run 'dartuios kill-server', then run this command again.
 ```
 
-Run `tuios kill-server`. This ends every program running in your panes. Each
+Run `dartuios kill-server`. This ends every program running in your panes. Each
 session's layout, window names and working directories are saved before the
 daemon exits and come back when it next starts, each pane with a new shell;
-`tuios resurrect` lists what is restorable.
+`dartuios resurrect` lists what is restorable.
 
 ### A session name is not found
 
@@ -3949,27 +3949,27 @@ Session "wrok" was not found.
 Most likely cause: the name does not match any live session.
 Did you mean "work"?
 Sessions: notes, work.
-Fix: run 'tuios ls' to list sessions, or 'tuios new wrok' to create this one.
+Fix: run 'dartuios ls' to list sessions, or 'dartuios new wrok' to create this one.
 ```
 
-A session killed with `tuios kill-session` is gone for good: killing is a
+A session killed with `dartuios kill-session` is gone for good: killing is a
 deliberate teardown, so its saved state is removed too. A session that merely
-outlived its daemon is still restorable with `tuios resurrect`.
+outlived its daemon is still restorable with `dartuios resurrect`.
 
 ### A saved session will not restore
 
-`tuios resurrect <name>` distinguishes three cases: no saved state at all, state
-that is corrupt, and state written by a newer TUIOS. Unreadable state is moved
+`dartuios resurrect <name>` distinguishes three cases: no saved state at all, state
+that is corrupt, and state written by a newer dartuios. Unreadable state is moved
 into an archive directory rather than deleted, and the message names that
 directory so you can inspect or recover the file.
 
 ### The terminal cannot host the interface
 
-`tuios attach`, `tuios new`, and `tuios resurrect` check the terminal before
+`dartuios attach`, `dartuios new`, and `dartuios resurrect` check the terminal before
 taking over the screen, and refuse with an explanation when it is too small
 (minimum 40x12), when `TERM` is unset or `dumb`, or when stdout is not a
-terminal at all. For non-interactive use, drive a session with `tuios send-keys`
-and `tuios capture-pane` instead of attaching.
+terminal at all. For non-interactive use, drive a session with `dartuios send-keys`
+and `dartuios capture-pane` instead of attaching.
 
 ### A session was killed while you were attached
 
@@ -3985,15 +3985,15 @@ connection instead.
 
 ### Discovering the control protocol
 
-`tuios list-verbs` prints every verb the daemon supports with its parameters,
+`dartuios list-verbs` prints every verb the daemon supports with its parameters,
 accepted values, and runnable examples, plus the stable error codes. It is the
 discovery entry point that the error hints point at, and `--json` makes it
 machine-readable for an agent or a script.
 
 ```bash
-tuios list-verbs                 # everything
-tuios list-verbs capture-pane    # one verb
-tuios list-verbs --json          # for scripting
+dartuios list-verbs                 # everything
+dartuios list-verbs capture-pane    # one verb
+dartuios list-verbs --json          # for scripting
 ```
 
 ---
@@ -4002,16 +4002,16 @@ tuios list-verbs --json          # for scripting
 
 - `0`: Success
 - `1`: Error (configuration error, network error, file not found, etc.)
-- `2`: `tuios ask-human` returned before an answer, because of `--no-wait` or
+- `2`: `dartuios ask-human` returned before an answer, because of `--no-wait` or
   because `--timeout` ran out. The question stays in the Inbox
-- `3`: The command needed a daemon and found none running. `tuios ls` lists the
+- `3`: The command needed a daemon and found none running. `dartuios ls` lists the
   sessions saved on disk instead, so a script can tell a stopped daemon from a
   running one with no sessions, which exits `0`
 
-`tuios run` exits with the status of the command it ran, and `tuios popup
+`dartuios run` exits with the status of the command it ran, and `dartuios popup
 --wait` with its command's status (`130` when the popup is closed).
 
-A `tuios attach` that ends because its session was killed, or because the daemon
+A `dartuios attach` that ends because its session was killed, or because the daemon
 was lost, exits `1`. A normal detach exits `0`.
 
 ---
@@ -4021,12 +4021,12 @@ was lost, exits `1`. A normal detach exits `0`.
 The `--version` flag shows detailed build information:
 
 ```bash
-tuios --version
+dartuios --version
 ```
 
 **Output:**
 ```
-tuios version 0.8.0 [pure-Go backend]
+dartuios version 0.8.0 [pure-Go backend]
 Commit: a1b2c3d
 Built: 2026-09-27T10:30:00Z
 By: goreleaser
@@ -4038,25 +4038,25 @@ The bracket names the terminal emulator backend the binary was built with.
 
 ## Command Migration Guide
 
-If you're upgrading from an older version of TUIOS, here's how the commands have changed:
+If you're upgrading from an older version of dartuios, here's how the commands have changed:
 
 | Old Flag | New Command |
 |----------|-------------|
-| `--config-path` | `tuios config path` |
-| `--edit-config` | `tuios config edit` |
-| `--reset-config` | `tuios config reset` |
-| `--list-keybinds` | `tuios keybinds list` |
-| `--list-custom-keybinds` | `tuios keybinds list-custom` |
-| `--ssh` | `tuios ssh` |
-| `--ssh --host X --port Y` | `tuios ssh --host X --port Y` |
-| `--version` | `tuios --version` |
-| `--help` | `tuios --help` or `tuios help` |
+| `--config-path` | `dartuios config path` |
+| `--edit-config` | `dartuios config edit` |
+| `--reset-config` | `dartuios config reset` |
+| `--list-keybinds` | `dartuios keybinds list` |
+| `--list-custom-keybinds` | `dartuios keybinds list-custom` |
+| `--ssh` | `dartuios ssh` |
+| `--ssh --host X --port Y` | `dartuios ssh --host X --port Y` |
+| `--version` | `dartuios --version` |
+| `--help` | `dartuios --help` or `dartuios help` |
 
 ---
 
 ## Related Documentation
 
-- [Configuration Guide](CONFIGURATION.md): How to customize TUIOS
+- [Configuration Guide](CONFIGURATION.md): How to customize dartuios
 - [Keybindings Reference](KEYBINDINGS.md): Complete keyboard shortcut reference
 - [Architecture Guide](ARCHITECTURE.md): Technical architecture details
 - [README](../README.md): Project overview and quick start

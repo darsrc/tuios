@@ -19,7 +19,7 @@ import (
 //
 // DECSCUSR is CSI Ps SP q: 0/1 blinking block, 2 steady block, 3 blinking
 // underline, 4 steady underline, 5 blinking bar, 6 steady bar. Only the shape is
-// asserted; whether tuios also asks for blinking is a separate question from the
+// asserted; whether dartuios also asks for blinking is a separate question from the
 // reported bug, which is a bar turning into a block.
 var decscusrRE = regexp.MustCompile(`\x1b\[([0-9]{0,2}) q`)
 
@@ -172,7 +172,7 @@ func TestCursorShapeSurvivesNeighbourAndSwitches(t *testing.T) {
 
 	// Holding the shape by sending it on every frame would be correct on screen
 	// and wrong on the wire: this pane repaints for each of the neighbour's
-	// writes, and tuios counts bytes per frame. The shape has not changed, so
+	// writes, and dartuios counts bytes per frame. The shape has not changed, so
 	// the host should hear nothing about it.
 	if n := decscusrCount(stream.bytes()) - before; n > 2 {
 		t.Errorf("the host was sent %d cursor shapes in a second of a neighbour writing, want at most 2:\n%s",
@@ -221,7 +221,7 @@ func TestCursorShapeSurvivesReattach(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-cursor", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-cursor", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 
@@ -241,7 +241,7 @@ func TestCursorShapeSurvivesReattach(t *testing.T) {
 	}
 	waitExit(t, first, "after leader d")
 	if !sessionListed(t, base, "e2e-cursor") {
-		out, _ := tuiosCLI(t, base, "ls")
+		out, _ := dartuiosCLI(t, base, "ls")
 		t.Fatalf("the session did not survive the detach\nls:\n%s", out)
 	}
 

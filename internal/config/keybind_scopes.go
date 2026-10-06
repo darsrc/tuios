@@ -36,7 +36,7 @@ type Scope struct {
 type Reach int
 
 const (
-	// ReachModal means tuios owns the whole keyboard while the scope is active,
+	// ReachModal means dartuios owns the whole keyboard while the scope is active,
 	// so no binding here can be said to steal anything: the guest is not being
 	// typed at in the first place.
 	ReachModal Reach = iota

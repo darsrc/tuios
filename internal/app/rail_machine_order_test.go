@@ -4,8 +4,8 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // railMachineOrder is the machines the rail draws, top to bottom.

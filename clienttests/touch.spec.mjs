@@ -1,4 +1,4 @@
-// What a phone can actually do to tuios-web, driven with real touch.
+// What a phone can actually do to dartuios-web, driven with real touch.
 //
 // Two mechanisms, for two reasons. Input.dispatchTouchEvent injects touch
 // points straight into the renderer and skips the gesture recognizer, so it
@@ -39,7 +39,7 @@ async function boot(page) {
       return send(frame);
     };
   }, MSG_INPUT);
-  // tuios has to have drawn before a chord means anything.
+  // dartuios has to have drawn before a chord means anything.
   await page.waitForTimeout(3000);
 }
 
@@ -98,7 +98,7 @@ const cell = (g, col, row) => ({
   y: Math.round(g.top + (row + 0.5) * g.h),
 });
 
-/** Tap a bar button and give tuios time to act on the chord. */
+/** Tap a bar button and give dartuios time to act on the chord. */
 async function press(page, cdp, label, wait = 1400) {
   const { x, y } = await buttonCentre(page, label);
   await tap(cdp, x, y);
@@ -150,7 +150,7 @@ async function resetToOneFloatingPane(page, cdp) {
 /**
  * The drawn frame of the topmost pane, in terminal cells.
  *
- * Read off the buffer rather than asked of tuios, because a pane that has moved
+ * Read off the buffer rather than asked of dartuios, because a pane that has moved
  * has only moved if it is drawn somewhere else. The corner glyphs are the
  * border style's, so they are read from the line rather than assumed.
  */
@@ -190,7 +190,7 @@ test.describe('the touch key bar', () => {
     expect(barH).toBeGreaterThan(20);
   });
 
-  test('a chord button sends the leader and the key, and tuios acts on it', async ({ page }) => {
+  test('a chord button sends the leader and the key, and dartuios acts on it', async ({ page }) => {
     await boot(page);
     const cdp = await page.context().newCDPSession(page);
     const before = (await screen(page)).join('\n');
@@ -302,10 +302,10 @@ test.describe('the terminal surface', () => {
   });
 });
 
-// What the gestures reach once they are inside tuios. Everything above stops at
+// What the gestures reach once they are inside dartuios. Everything above stops at
 // the wire; these follow the same finger through to a pane moving, a menu
 // opening, or a keystroke arriving where the tap said it should.
-test.describe('a finger on tuios itself', () => {
+test.describe('a finger on dartuios itself', () => {
   test('a tap on a pane focuses it, and typing lands there', async ({ page }) => {
     await boot(page);
     const cdp = await page.context().newCDPSession(page);
@@ -334,7 +334,7 @@ test.describe('a finger on tuios itself', () => {
     expect(hit).toBeLessThan(frame.bottom);
   });
 
-  test('a long press opens tuios own pane menu', async ({ page }) => {
+  test('a long press opens dartuios own pane menu', async ({ page }) => {
     await boot(page);
     const cdp = await page.context().newCDPSession(page);
     await resetToOneFloatingPane(page, cdp);
@@ -357,14 +357,14 @@ test.describe('a finger on tuios itself', () => {
   });
 
   // Turning the phone is the one gesture that is not a touch at all, and it was
-  // the one that did nothing. tuios kept drawing the portrait width: the daemon
+  // the one that did nothing. dartuios kept drawing the portrait width: the daemon
   // recalculated the session size and said so, and the message sat in a channel
   // whose listener the previous resize had failed to re-arm. Height appeared to
   // follow only because the render size is the minimum of the two, and 16 rows
   // is less than the 42 it was stuck on while 105 columns is more than 48.
-  test('turning the phone sideways gives tuios the columns', async ({ page }) => {
+  test('turning the phone sideways gives dartuios the columns', async ({ page }) => {
     await boot(page);
-    // The widest line tuios drew is how wide it thinks it is. Asked of the
+    // The widest line dartuios drew is how wide it thinks it is. Asked of the
     // buffer, because a session that resized but did not redraw has not
     // resized as far as anyone holding the phone is concerned.
     const drawn = async () => Math.max(...(await screen(page)).map((l) => l.length));
@@ -375,7 +375,7 @@ test.describe('a finger on tuios itself', () => {
 
     const cols = await page.evaluate(() => window.sipTerm.term.cols);
     expect(cols, 'the browser did not give the terminal a landscape width').toBeGreaterThan(portrait);
-    expect(await drawn(), 'tuios kept drawing at the portrait width').toBe(cols);
+    expect(await drawn(), 'dartuios kept drawing at the portrait width').toBe(cols);
 
     // And back, which is the direction that always worked and must keep doing so.
     await page.setViewportSize({ width: 390, height: 844 });

@@ -4,7 +4,7 @@
 # manifest reads: the "›" marker at column zero and the footer under it.
 ---
 • Ran go test ./internal/harness/
-  └ ok  	github.com/Gaurav-Gosain/tuios/internal/harness	0.014s
+  └ ok  	github.com/darsrc/tuios/internal/harness	0.014s
 
 • All tests pass.
 

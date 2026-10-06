@@ -16,16 +16,16 @@ import (
 	"strings"
 )
 
-//go:embed assets/opencode/tuios-agent-state.js
+//go:embed assets/opencode/dartuios-agent-state.js
 var openCodePluginTemplate string
 
-//go:embed assets/amp/tuios-agent-state.ts
+//go:embed assets/amp/dartuios-agent-state.ts
 var ampPluginTemplate string
 
-//go:embed assets/pi/tuios-agent-state.ts
+//go:embed assets/pi/dartuios-agent-state.ts
 var piExtensionTemplate string
 
-//go:embed assets/omp/tuios-omp-agent-state.ts
+//go:embed assets/omp/dartuios-omp-agent-state.ts
 var ompExtensionTemplate string
 
 //go:embed assets/hermes/__init__.py
@@ -85,7 +85,7 @@ const (
 	ReportsSession = "session"
 )
 
-// Target is one harness tuios can wire itself into.
+// Target is one harness dartuios can wire itself into.
 type Target struct {
 	// ID is the harness id, as the manifests name it.
 	ID string
@@ -104,7 +104,7 @@ type Target struct {
 	// ConfigDir is the harness's configuration directory. Install refuses when
 	// it does not exist: the harness has not run here.
 	ConfigDir func(Env) string
-	// File is the file tuios edits or writes, relative to ConfigDir.
+	// File is the file dartuios edits or writes, relative to ConfigDir.
 	File string
 	// Events are the hook events registered, for a target whose file lists
 	// hook commands. A plugin registers its events in its own code and lists
@@ -117,7 +117,7 @@ type Target struct {
 	// removed before it.
 	extra []extraFile
 	// ownedDir, when set, is a directory relative to ConfigDir that holds
-	// only tuios's files. Uninstall removes it once it is empty.
+	// only dartuios's files. Uninstall removes it once it is empty.
 	ownedDir string
 }
 
@@ -146,22 +146,22 @@ func (t *Target) files(env Env) []extraFile {
 
 // renderTemplate fills a plugin template: the program to run, the version,
 // and for the opencode template, which Kilo shares, the harness.
-func renderTemplate(tmpl string) func(t *Target, tuios string) []byte {
-	return func(t *Target, tuios string) []byte {
-		cmd, _ := json.Marshal(tuios)
-		out := strings.ReplaceAll(tmpl, "__TUIOS_COMMAND__", string(cmd))
-		out = strings.ReplaceAll(out, "__TUIOS_VERSION__", strconv.Itoa(t.Version))
-		out = strings.ReplaceAll(out, "__TUIOS_HARNESS__", t.ID)
-		out = strings.ReplaceAll(out, "__TUIOS_NAME__", t.Name)
+func renderTemplate(tmpl string) func(t *Target, dartuios string) []byte {
+	return func(t *Target, dartuios string) []byte {
+		cmd, _ := json.Marshal(dartuios)
+		out := strings.ReplaceAll(tmpl, "__DARTUIOS_COMMAND__", string(cmd))
+		out = strings.ReplaceAll(out, "__DARTUIOS_VERSION__", strconv.Itoa(t.Version))
+		out = strings.ReplaceAll(out, "__DARTUIOS_HARNESS__", t.ID)
+		out = strings.ReplaceAll(out, "__DARTUIOS_NAME__", t.Name)
 		return []byte(out)
 	}
 }
 
-// renderJSON renders a hook file tuios owns whole, from its events. build
+// renderJSON renders a hook file dartuios owns whole, from its events. build
 // makes the object for one event.
-func renderJSON(top map[string]any, build func(command string, ev HookEvent) any) func(t *Target, tuios string) []byte {
-	return func(t *Target, tuios string) []byte {
-		cmd := HookCommand(tuios, t.ID, t.Version)
+func renderJSON(top map[string]any, build func(command string, ev HookEvent) any) func(t *Target, dartuios string) []byte {
+	return func(t *Target, dartuios string) []byte {
+		cmd := HookCommand(dartuios, t.ID, t.Version)
 		hooks := newObject()
 		for _, ev := range t.Events {
 			v, _ := marshalPlain([]any{build(cmd, ev)})
@@ -243,7 +243,7 @@ var targets = []*Target{
 		ID: OpenCode, Name: "opencode", Binary: "opencode", Version: 4, Reports: ReportsState,
 		Source:    "https://opencode.ai/docs/plugins/ (global plugins load from ~/.config/opencode/plugins)",
 		ConfigDir: func(e Env) string { return e.xdgConfig("opencode") },
-		File:      filepath.Join("plugins", "tuios-agent-state.js"),
+		File:      filepath.Join("plugins", "dartuios-agent-state.js"),
 		format:    ownedFile{render: renderTemplate(openCodePluginTemplate)},
 	},
 	{
@@ -253,7 +253,7 @@ var targets = []*Target{
 		ID: Amp, Name: "Amp", Binary: "amp", Version: 2, Reports: ReportsState,
 		Source:    "https://ampcode.com/manual/plugin-api (TypeScript plugins run by Bun from ~/.config/amp/plugins; session.start, agent.start, agent.end, tool.call, tool.result)",
 		ConfigDir: func(e Env) string { return e.xdgConfig("amp") },
-		File:      filepath.Join("plugins", "tuios-agent-state.ts"),
+		File:      filepath.Join("plugins", "dartuios-agent-state.ts"),
 		format:    ownedFile{render: renderTemplate(ampPluginTemplate)},
 	},
 	{
@@ -261,7 +261,7 @@ var targets = []*Target{
 		Source:    "herdr src/integration/targets.rs install_antigravity_cli (~/.gemini/config/hooks.json keyed by hook name, PreInvocation takes a flat handler list, timeout in seconds, stdout a JSON object)",
 		ConfigDir: func(e Env) string { return e.dirFromEnv("ANTIGRAVITY_CLI_CONFIG_DIR", ".gemini", "config") },
 		File:      "hooks.json",
-		format:    namedBlock{key: "tuios"},
+		format:    namedBlock{key: "dartuios"},
 		Events:    []HookEvent{{"PreInvocation", 5}},
 	},
 	{
@@ -270,7 +270,7 @@ var targets = []*Target{
 		ID: Copilot, Name: "GitHub Copilot CLI", Binary: "copilot", Version: 2, Reports: ReportsState,
 		Source:    "https://docs.github.com/en/copilot/reference/hooks-reference (every ~/.copilot/hooks/*.json is loaded; version 1, command hooks with bash, powershell and timeoutSec; PascalCase event names get snake_case payloads)",
 		ConfigDir: func(e Env) string { return e.dirFromEnv("COPILOT_HOME", ".copilot") },
-		File:      filepath.Join("hooks", "tuios.json"),
+		File:      filepath.Join("hooks", "dartuios.json"),
 		format: ownedFile{render: renderJSON(map[string]any{"version": 1}, func(cmd string, ev HookEvent) any {
 			return map[string]any{"type": "command", "bash": cmd, "powershell": powershellCommand(cmd), "timeoutSec": ev.Timeout}
 		})},
@@ -286,7 +286,7 @@ var targets = []*Target{
 		ConfigDir: func(e Env) string { return e.xdgConfig("crush") },
 		File:      "crush.json",
 		format: flatHooks{entry: func(cmd string, ev HookEvent) map[string]any {
-			return map[string]any{"name": "tuios", "command": cmd, "timeout": ev.Timeout}
+			return map[string]any{"name": "dartuios", "command": cmd, "timeout": ev.Timeout}
 		}},
 		Events: []HookEvent{{"PreToolUse", 5}},
 	},
@@ -335,7 +335,7 @@ var targets = []*Target{
 		ID: Grok, Name: "Grok CLI", Binary: "grok", Version: 1, Reports: ReportsSession,
 		Source:    "herdr src/integration/targets.rs install_grok (Grok merges every ~/.grok/hooks/*.json; Claude Code's hook shape, timeout in seconds)",
 		ConfigDir: func(e Env) string { return e.dirFromEnv("GROK_HOME", ".grok") },
-		File:      filepath.Join("hooks", "tuios.json"),
+		File:      filepath.Join("hooks", "dartuios.json"),
 		format: ownedFile{render: renderJSON(nil, func(cmd string, ev HookEvent) any {
 			return map[string]any{"hooks": []any{map[string]any{"type": "command", "command": cmd, "timeout": ev.Timeout}}}
 		})},
@@ -352,13 +352,13 @@ var targets = []*Target{
 			}
 			return e.dirFromEnv("HERMES_HOME", ".hermes")
 		},
-		File:   filepath.Join("plugins", "tuios-agent-state", "__init__.py"),
+		File:   filepath.Join("plugins", "dartuios-agent-state", "__init__.py"),
 		format: ownedFile{render: renderTemplate(hermesPluginTemplate)},
 		extra: []extraFile{
-			{file: filepath.Join("plugins", "tuios-agent-state", "plugin.yaml"), format: ownedFile{render: renderTemplate(hermesManifestTemplate)}},
-			{file: "config.yaml", format: yamlListItem{key: "plugins", sub: "enabled", item: "tuios-agent-state"}},
+			{file: filepath.Join("plugins", "dartuios-agent-state", "plugin.yaml"), format: ownedFile{render: renderTemplate(hermesManifestTemplate)}},
+			{file: "config.yaml", format: yamlListItem{key: "plugins", sub: "enabled", item: "dartuios-agent-state"}},
 		},
-		ownedDir: filepath.Join("plugins", "tuios-agent-state"),
+		ownedDir: filepath.Join("plugins", "dartuios-agent-state"),
 	},
 	{
 		// Version 2: the opencode plugin it shares offers permission requests
@@ -367,7 +367,7 @@ var targets = []*Target{
 		ID: Kilo, Name: "Kilo", Binary: "kilo", Version: 4, Reports: ReportsState,
 		Source:    "herdr src/integration/assets/kilo (Kilo Code CLI is an opencode fork; plugins load from ~/.config/kilo/plugin)",
 		ConfigDir: func(e Env) string { return e.xdgConfig("kilo") },
-		File:      filepath.Join("plugin", "tuios-agent-state.js"),
+		File:      filepath.Join("plugin", "dartuios-agent-state.js"),
 		format:    ownedFile{render: renderTemplate(openCodePluginTemplate)},
 	},
 	{
@@ -389,7 +389,7 @@ var targets = []*Target{
 		ID: Pi, Name: "Pi", Binary: "pi", Version: 2, Reports: ReportsState,
 		Source:    "herdr src/integration/assets/pi (TypeScript extensions load from ~/.pi/agent/extensions, or PI_CODING_AGENT_DIR/extensions)",
 		ConfigDir: func(e Env) string { return e.dirFromEnv("PI_CODING_AGENT_DIR", ".pi", "agent") },
-		File:      filepath.Join("extensions", "tuios-agent-state.ts"),
+		File:      filepath.Join("extensions", "dartuios-agent-state.ts"),
 		format:    ownedFile{render: renderTemplate(piExtensionTemplate)},
 	},
 	{
@@ -398,7 +398,7 @@ var targets = []*Target{
 		ID: OMP, Name: "oh-my-pi", Binary: "omp", Version: 1, Reports: ReportsState,
 		Source:    "https://github.com/can1357/oh-my-pi/blob/main/docs/extension-loading.md (TypeScript extensions load from ~/.omp/agent/extensions, or PI_CODING_AGENT_DIR/extensions)",
 		ConfigDir: func(e Env) string { return e.dirFromEnv("PI_CODING_AGENT_DIR", ".omp", "agent") },
-		File:      filepath.Join("extensions", "tuios-omp-agent-state.ts"),
+		File:      filepath.Join("extensions", "dartuios-omp-agent-state.ts"),
 		format:    ownedFile{render: renderTemplate(ompExtensionTemplate)},
 	},
 	{
@@ -455,23 +455,23 @@ type Unsupported struct {
 	Reason  string `json:"reason"`
 }
 
-// UnsupportedHarnesses lists the bundled harnesses tuios has no integration
+// UnsupportedHarnesses lists the bundled harnesses dartuios has no integration
 // for, each with the reason, so doctor can say so rather than leave them out.
 // Their state comes from their manifests' screen and title rules.
 func UnsupportedHarnesses() []Unsupported {
 	return []Unsupported{
 		{"aider", "its only hook is notifications-command, one command that replaces the user's own and carries no payload"},
-		{"cline", "its hooks are one executable per event in a directory that has moved between releases, behind a setting, and a file tuios wrote would take the name of the user's own"},
+		{"cline", "its hooks are one executable per event in a directory that has moved between releases, behind a setting, and a file dartuios wrote would take the name of the user's own"},
 		{"goose", "its hooks have no event for a prompt that waits on the person (goose issue 12007), and a working report from a hook would outrank the screen that shows one"},
 		{"kiro", "its CLI hooks live in per-agent files with no documented user-wide location or payload"},
-		{"maki", "it has Lua plugins but no documented user-wide plugin file tuios could own without editing the user's init.lua"},
+		{"maki", "it has Lua plugins but no documented user-wide plugin file dartuios could own without editing the user's init.lua"},
 	}
 }
 
-// HookCommand is the command a managed hook entry runs. tuios is the program
-// to run, normally "tuios" so an upgrade that moves the binary keeps working.
-func HookCommand(tuios, harnessID string, version int) string {
-	return shellWord(tuios) + " agent-hook " + harnessID + " " + managedMarker + " " + strconv.Itoa(version)
+// HookCommand is the command a managed hook entry runs. dartuios is the program
+// to run, normally "dartuios" so an upgrade that moves the binary keeps working.
+func HookCommand(dartuios, harnessID string, version int) string {
+	return shellWord(dartuios) + " agent-hook " + harnessID + " " + managedMarker + " " + strconv.Itoa(version)
 }
 
 // shellWord quotes a program path for the shell a harness runs its hook
@@ -516,7 +516,7 @@ type filePlan struct {
 }
 
 // plan works out every file's new content.
-func (t *Target) plan(env Env, tuios string, install bool) ([]filePlan, error) {
+func (t *Target) plan(env Env, dartuios string, install bool) ([]filePlan, error) {
 	dir := t.ConfigDir(env)
 	var plans []filePlan
 	for _, f := range t.files(env) {
@@ -525,7 +525,7 @@ func (t *Target) plan(env Env, tuios string, install bool) ([]filePlan, error) {
 		if err != nil {
 			return nil, err
 		}
-		out, changed, remove, err := f.format.apply(t, have, tuios, install)
+		out, changed, remove, err := f.format.apply(t, have, dartuios, install)
 		switch {
 		case errors.Is(err, errNotOurs):
 			return nil, fmt.Errorf("%s %w", path, err)
@@ -566,8 +566,8 @@ func (t *Target) carryOut(env Env, res *Result, plans []filePlan, removing bool)
 
 // Install writes this build's managed entries. It is idempotent: a second
 // install with nothing changed writes nothing. Entries from an older version
-// are replaced, and nothing that tuios did not write is touched.
-func (t *Target) Install(env Env, tuios string) (Result, error) {
+// are replaced, and nothing that dartuios did not write is touched.
+func (t *Target) Install(env Env, dartuios string) (Result, error) {
 	dir := t.ConfigDir(env)
 	res := Result{Harness: t.ID, Path: t.Path(env)}
 	if st, err := os.Stat(dir); err != nil || !st.IsDir() {
@@ -593,7 +593,7 @@ func (t *Target) Install(env Env, tuios string) (Result, error) {
 			return res, fmt.Errorf("%s is %s's agent directory. Refusing to install %s there. Unset PI_CODING_AGENT_DIR or choose the intended agent directory", dir, foreign.Name, t.Name)
 		}
 	}
-	plans, err := t.plan(env, tuios, true)
+	plans, err := t.plan(env, dartuios, true)
 	if err != nil {
 		return res, err
 	}
@@ -605,7 +605,7 @@ func (t *Target) Install(env Env, tuios string) (Result, error) {
 }
 
 // Uninstall removes what Install wrote and nothing else. A harness with
-// nothing of tuios's installed is not an error.
+// nothing of dartuios's installed is not an error.
 func (t *Target) Uninstall(env Env) (Result, error) {
 	res := Result{Harness: t.ID, Path: t.Path(env)}
 	plans, err := t.plan(env, "", false)
@@ -635,17 +635,17 @@ type Status struct {
 	WantVersion     int      `json:"want_version"`
 	Binary          string   `json:"binary"`
 	BinaryPath      string   `json:"binary_path,omitempty"`
-	TuiosOnPath     bool     `json:"tuios_on_path"`
+	DartuiosOnPath  bool     `json:"dartuios_on_path"`
 	Notes           []string `json:"notes,omitempty"`
-	// MCP is the MCP server registration, for a harness tuios can register
+	// MCP is the MCP server registration, for a harness dartuios can register
 	// one with. See mcp.go.
 	MCP *MCPStatus `json:"mcp,omitempty"`
-	// StatusLine is the status line slot, for a harness tuios can feed from
+	// StatusLine is the status line slot, for a harness dartuios can feed from
 	// one (Claude Code). See statusline.go.
 	StatusLine *StatusLineStatus `json:"status_line,omitempty"`
 }
 
-var versionRe = regexp.MustCompile(`TUIOS_INTEGRATION_VERSION=(\d+)|` + managedMarker + ` (\d+)`)
+var versionRe = regexp.MustCompile(`DARTUIOS_INTEGRATION_VERSION=(\d+)|` + managedMarker + ` (\d+)`)
 
 func parseVersion(s string) int {
 	m := versionRe.FindStringSubmatch(s)
@@ -656,16 +656,16 @@ func parseVersion(s string) int {
 	return v
 }
 
-// Status reports what is installed. tuios is the command a current install
+// Status reports what is installed. dartuios is the command a current install
 // runs, so an install pointing at another binary reads as not current.
-func (t *Target) Status(env Env, tuios string) Status {
+func (t *Target) Status(env Env, dartuios string) Status {
 	st := Status{Harness: t.ID, Name: t.Name, Path: t.Path(env), Reports: t.Reports, WantVersion: t.Version, Binary: t.Binary}
 	if t.SupportsMCP() {
-		m := t.MCPState(env, tuios)
+		m := t.MCPState(env, dartuios)
 		st.MCP = &m
 	}
 	if t.SupportsStatusLine() {
-		sl := t.StatusLineState(env, tuios)
+		sl := t.StatusLineState(env, dartuios)
 		st.StatusLine = &sl
 	}
 	if fi, err := os.Stat(t.ConfigDir(env)); err == nil && fi.IsDir() {
@@ -675,8 +675,8 @@ func (t *Target) Status(env Env, tuios string) Status {
 		if p, err := env.LookPath(t.Binary); err == nil {
 			st.BinaryPath = p
 		}
-		_, err := env.LookPath("tuios")
-		st.TuiosOnPath = err == nil
+		_, err := env.LookPath("dartuios")
+		st.DartuiosOnPath = err == nil
 	}
 	allCurrent := true
 	for i, f := range t.files(env) {
@@ -686,7 +686,7 @@ func (t *Target) Status(env Env, tuios string) Status {
 			st.Notes = append(st.Notes, "cannot read "+path+": "+err.Error())
 			return st
 		}
-		installed, current, version, err := f.format.state(t, have, tuios)
+		installed, current, version, err := f.format.state(t, have, dartuios)
 		if err != nil {
 			st.Notes = append(st.Notes, "cannot parse "+path+": "+err.Error())
 			return st
@@ -729,8 +729,8 @@ func (t *Target) notes(env Env) []string {
 	var out []string
 	switch t.ID {
 	case ClaudeCode:
-		if data, _ := readOptional(t.Path(env)); bytes.Contains(data, []byte("tuios-agent-state.sh")) {
-			out = append(out, "the older tuios-agent-state.sh shim is also wired in "+t.Path(env)+". It now runs the same reporter, so every event is reported twice. Remove its entries.")
+		if data, _ := readOptional(t.Path(env)); bytes.Contains(data, []byte("dartuios-agent-state.sh")) {
+			out = append(out, "the older dartuios-agent-state.sh shim is also wired in "+t.Path(env)+". It now runs the same reporter, so every event is reported twice. Remove its entries.")
 		}
 	case Codex:
 		data, _ := readOptional(filepath.Join(t.ConfigDir(env), "config.toml"))

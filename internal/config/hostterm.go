@@ -5,11 +5,11 @@ import (
 	"strings"
 )
 
-// HostTerminal names the terminal emulator tuios is running inside, as far as the
+// HostTerminal names the terminal emulator dartuios is running inside, as far as the
 // environment gives it away.
 type HostTerminal string
 
-// The hosts tuios can recognise. Unknown is not a failure: it only means the
+// The hosts dartuios can recognise. Unknown is not a failure: it only means the
 // advice has to stay generic.
 const (
 	HostUnknown       HostTerminal = ""
@@ -73,7 +73,7 @@ func detectHostTerminal(getenv func(string) string) HostTerminal {
 	return HostUnknown
 }
 
-// InsideMultiplexer reports whether another multiplexer sits between tuios and
+// InsideMultiplexer reports whether another multiplexer sits between dartuios and
 // the terminal. It swallows keys of its own and has to be told to pass the
 // Option chords through, so the advice has to mention it.
 func InsideMultiplexer() bool {
@@ -94,8 +94,8 @@ func insideMultiplexer(getenv func(string) string) bool {
 // "alt+n".
 //
 // Every one of these settings makes the terminal send the ESC-prefixed Meta
-// encoding, which tuios already reads, so the advice is complete on its own: no
-// tuios-side setting is involved.
+// encoding, which dartuios already reads, so the advice is complete on its own: no
+// dartuios-side setting is involved.
 func MacOptionAdvice(host HostTerminal, chord string) string {
 	var fix string
 	switch host {
@@ -118,7 +118,7 @@ func MacOptionAdvice(host HostTerminal, chord string) string {
 	default:
 		fix = "turn on your terminal's \"Option as Meta/Alt\" setting"
 	}
-	advice := "Option is composing a character, so " + chord + " never reaches tuios: " + fix
+	advice := "Option is composing a character, so " + chord + " never reaches dartuios: " + fix
 	if InsideMultiplexer() {
 		advice += " (and let the outer multiplexer pass the chord through)"
 	}
@@ -128,6 +128,6 @@ func MacOptionAdvice(host HostTerminal, chord string) string {
 // GhosttyAltArrowAdvice is the extra step Ghostty needs for the alt+arrow binds.
 // Ghostty ships keybinds that rewrite alt+left/alt+right into the readline word
 // motions ESC b and ESC f before any encoding happens, so those two chords never
-// reach tuios even with macos-option-as-alt on and the Kitty protocol negotiated.
+// reach dartuios even with macos-option-as-alt on and the Kitty protocol negotiated.
 const GhosttyAltArrowAdvice = "Ghostty rewrites alt+left/alt+right to word motions: " +
 	"add keybind = alt+left=unbind and keybind = alt+right=unbind to unbind them"

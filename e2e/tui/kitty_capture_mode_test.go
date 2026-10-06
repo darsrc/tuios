@@ -24,7 +24,7 @@ func TestKittyImageSurvivesCaptureMode(t *testing.T) {
 			host := newKittyHost()
 			term, base := start(t, startOpts{
 				cols: 120, rows: 40,
-				env:           []string{"TUIOS_SIXEL_GRAPHICS=0", "TMPDIR=" + t.TempDir()},
+				env:           []string{"DARTUIOS_SIXEL_GRAPHICS=0", "TMPDIR=" + t.TempDir()},
 				out:           host,
 				daemonDefault: daemon,
 			})

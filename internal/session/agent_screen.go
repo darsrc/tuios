@@ -3,7 +3,7 @@ package session
 import (
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // screenScanInterval bounds how often output drives a screen scan, so a pane

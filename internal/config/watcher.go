@@ -12,7 +12,7 @@ import (
 )
 
 // The config file watcher: editing config.toml in one pane takes effect in the
-// running tuios in the next one, with no restart and no reload command.
+// running dartuios in the next one, with no restart and no reload command.
 //
 // # Why the directory and not the file
 //
@@ -44,11 +44,11 @@ import (
 //
 // # Why some saves are dropped
 //
-// tuios writes this file itself: every settings row saves. Without a guard the
+// dartuios writes this file itself: every settings row saves. Without a guard the
 // save would come back through the watcher as somebody else's edit, and a held
 // arrow key would retile once per repeat for a config already in force. The
 // content is hashed, and two hashes are dropped: the one already in force, and
-// one tuios itself wrote (see selfWrites in save.go). The first also drops the
+// one dartuios itself wrote (see selfWrites in save.go). The first also drops the
 // second and third events of an editor's save when the debounce has not merged
 // them.
 //
@@ -70,7 +70,7 @@ type ConfigReloadCallback func(newConfig *UserConfig, err error)
 
 // WatcherOptions tune one watcher.
 type WatcherOptions struct {
-	// DeliverSelfWrites delivers a change tuios itself wrote, which is normally
+	// DeliverSelfWrites delivers a change dartuios itself wrote, which is normally
 	// dropped (see the note above on why some saves are dropped).
 	//
 	// The daemon sets it. The settings page writes the config file from the
@@ -180,7 +180,7 @@ func (cw *Watcher) arm() {
 }
 
 // reload reads the file and calls the callback, unless the file says what is
-// already in force or tuios wrote it itself.
+// already in force or dartuios wrote it itself.
 func (cw *Watcher) reload() {
 	select {
 	case <-cw.stopCh:
@@ -199,7 +199,7 @@ func (cw *Watcher) reload() {
 	same := sum == cw.lastHash
 	cw.mu.Unlock()
 	if same || (!cw.opts.DeliverSelfWrites && isSelfWrite(sum)) {
-		// Either the file says what is already in force, or tuios wrote it
+		// Either the file says what is already in force, or dartuios wrote it
 		// itself from a settings row. Both are already applied.
 		cw.mu.Lock()
 		cw.lastHash = sum

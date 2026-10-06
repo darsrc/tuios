@@ -1,6 +1,6 @@
 package input
 
-import "github.com/Gaurav-Gosain/tuios/internal/listnav"
+import "github.com/darsrc/tuios/internal/listnav"
 
 // listKey moves a list when key is one of the movement keys, and reports
 // whether it was. Every list overlay reads its movement through here, so the

@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // sample is shaped like herdr's own manifests: nested gates, a narrowed
-// region, title and progress rules, and the rules tuios cannot carry.
+// region, title and progress rules, and the rules dartuios cannot carry.
 const sample = `id = "sample"
 version = "2026.09.11.1"
 
@@ -70,7 +70,7 @@ contains = ["busy"]
 
 // TestConvertCarriesNestedGatesRegionsAndTitles converts the sample, loads the
 // draft through the real loader, and classifies screens and titles with it, so
-// the conversion is held to what tuios does with the result rather than to
+// the conversion is held to what dartuios does with the result rather than to
 // its text.
 func TestConvertCarriesNestedGatesRegionsAndTitles(t *testing.T) {
 	res, err := convert([]byte(sample))

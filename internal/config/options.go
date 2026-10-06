@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/hints"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/hints"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Option describes one settable configuration path.
@@ -122,7 +122,7 @@ var optionSpecs = []Option{
 	{
 		Path: "appearance.border_style", Type: OptionString, Section: "appearance",
 		Description: "Border style drawn around every pane",
-		Accepted:    BorderStyles, Default: "rounded",
+		Accepted:    BorderStyles, Default: BorderStyleDAR,
 	},
 	{
 		Path: "appearance.zen_mode", Type: OptionString, Section: "appearance",
@@ -293,7 +293,7 @@ var optionSpecs = []Option{
 	},
 	{
 		Path: "appearance.max_fps", Type: OptionInt, Section: "appearance",
-		Description: fmt.Sprintf("Highest frame rate tuios draws at. 0 uses 60. The range is %d to %d.",
+		Description: fmt.Sprintf("Highest frame rate dartuios draws at. 0 uses 60. The range is %d to %d.",
 			MinConfiguredFPS, MaxFPSCap),
 		Default: "0", Min: 0, Max: MaxFPSCap,
 	},
@@ -330,7 +330,7 @@ var optionSpecs = []Option{
 	{
 		Path: "appearance.glyphs", Type: OptionString, Section: "appearance",
 		Description: "Chrome glyph set: the characters the border, controls, rules and rail marks are drawn with",
-		Default:     theme.GlyphSetNone, GlyphSet: true,
+		Default:     theme.GlyphSetDAR, GlyphSet: true,
 	},
 	{
 		Path: "appearance.gap", Type: OptionInt, Section: "appearance",
@@ -396,7 +396,7 @@ var optionSpecs = []Option{
 	},
 	{
 		Path: "appearance.dim_unfocused", Type: OptionInt, Section: "appearance",
-		Description: "How much tuios fades a pane you are not in, as a percent. 0 is off.",
+		Description: "How much dartuios fades a pane you are not in, as a percent. 0 is off.",
 		Default:     "0", Min: 0, Max: DimUnfocusedMax,
 		Percent: true,
 	},
@@ -532,7 +532,7 @@ var optionSpecs = []Option{
 	{
 		Path: "appearance.scrollbar.style", Type: OptionString, Section: "scrollbar",
 		Description: "Hairline thumb over the content column, or a full-height track",
-		Accepted:    ScrollbarStyles, Default: ScrollbarStyleTrack,
+		Accepted:    ScrollbarStyles, Default: ScrollbarStyleThin,
 	},
 	{
 		Path: "appearance.scrollbar.thumb", Type: OptionString, Section: "scrollbar",
@@ -750,7 +750,7 @@ var optionSpecs = []Option{
 	},
 	{
 		Path: "startup.daemon", Type: OptionBool, Section: "startup",
-		Description: "Make a bare \"tuios\" attach to a daemon-backed session instead of running standalone. TUIOS_NO_DAEMON=1 or --standalone overrides it",
+		Description: "Make a bare \"dartuios\" attach to a daemon-backed session instead of running standalone. DARTUIOS_NO_DAEMON=1 or --standalone overrides it",
 		Default:     "true",
 	},
 
@@ -840,7 +840,7 @@ var optionSpecs = []Option{
 	},
 	{
 		Path: "notifications.agent.settle_seconds", Type: OptionInt, Section: "notifications",
-		Description: "Seconds to wait. tuios drops the alert if the pane changes state.",
+		Description: "Seconds to wait. dartuios drops the alert if the pane changes state.",
 		Default:     "2", Min: 0, Max: 3600,
 	},
 	{

@@ -1,5 +1,5 @@
 {
-  "name": "tuios-clienttests",
+  "name": "dartuios-clienttests",
   "private": true,
   "type": "module",
   "scripts": {

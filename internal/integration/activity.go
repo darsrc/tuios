@@ -7,7 +7,7 @@ import (
 
 // Hook activity: what a hook event says the agent did, beyond the state it
 // puts the pane in. It feeds the pane's activity ring in the daemon, which the
-// rail's "now" line, the away recap and `tuios agent-log` read. It is display
+// rail's "now" line, the away recap and `dartuios agent-log` read. It is display
 // only, so it is read from fields a harness documents and left out when a
 // field is missing, never guessed.
 

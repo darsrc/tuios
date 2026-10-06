@@ -10,11 +10,11 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/pool"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/pool"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 func (m *OS) GetCanvas(render bool) *frameCanvas {
@@ -490,14 +490,14 @@ func (m *OS) renderWindowBox(window *terminal.Window, index int, isFocused bool,
 	// fastWindowBox; the title bar comes out identical either way.
 	if preShaped {
 		if out, ok := m.fastWindowBox(content, window, borderColorObj,
-			m.workspacePosition(window), m.AutoTiling); ok {
+			m.workspacePosition(window), m.AutoTiling, isFocused); ok {
 			return out
 		}
 	}
 	box := sizeContentBox(lipgloss.NewStyle().
 		Align(lipgloss.Left).
 		AlignVertical(lipgloss.Top).
-		Border(getBorder(&m.Settings)).
+		Border(windowBorder(&m.Settings, isFocused)).
 		BorderTop(false), window, preShaped)
 	// The title bar keeps showing the name the window still has while a rename
 	// is in flight: the dialog owns the new one, so the two together are the
@@ -509,6 +509,7 @@ func (m *OS) renderWindowBox(window *terminal.Window, index int, isFocused bool,
 		window,
 		m.workspacePosition(window),
 		m.AutoTiling,
+		isFocused,
 	)
 }
 
@@ -563,21 +564,21 @@ func (m *OS) renderWindowBoxZen(window *terminal.Window, content string, preShap
 	return strings.Repeat(" ", window.Width) + "\n" + box.Render(content)
 }
 
-// fastPathDisabled turns the fullscreen fast path off (TUIOS_NO_FASTPATH=1) so it
+// fastPathDisabled turns the fullscreen fast path off (DARTUIOS_NO_FASTPATH=1) so it
 // can be compared against the compositor path.
-var fastPathDisabled = os.Getenv("TUIOS_NO_FASTPATH") == "1"
+var fastPathDisabled = os.Getenv("DARTUIOS_NO_FASTPATH") == "1"
 
 // preShapedDisabled makes every pane body go back through the wrap
-// (TUIOS_NO_PRESHAPED=1), so the two border-box paths can be compared for both
+// (DARTUIOS_NO_PRESHAPED=1), so the two border-box paths can be compared for both
 // output and cost on one binary. See sizeContentBox.
-var preShapedDisabled = os.Getenv("TUIOS_NO_PRESHAPED") == "1"
+var preShapedDisabled = os.Getenv("DARTUIOS_NO_PRESHAPED") == "1"
 
 // crashView is the whole frame while the crash overlay is up.
 //
 // It sets only what it can set from constants. Every other field View fills in
 // is a model read: getRealCursor walks the focused window's emulator and
 // keyboardEnhancements reads the settings, and on this path either could be the
-// thing that panicked. A crash screen with no cursor and the mouse modes tuios
+// thing that panicked. A crash screen with no cursor and the mouse modes dartuios
 // always asks for is worth more than a richer one that cannot be drawn.
 func (m *OS) crashView() tea.View {
 	m.hideGraphicsForCrash()
@@ -856,6 +857,11 @@ func (m *OS) chargeRenderCost(d time.Duration) {
 func (m *OS) View() tea.View {
 	var view tea.View
 
+	// The living filament's arming term, computed fresh each render pass so the
+	// tick clock knows whether a working row is visible with motion on. See
+	// anyWorkingWindow and the TickerMsg case.
+	m.hasWorkingAgent = m.anyWorkingWindow() && m.Settings.MotionAllows(config.MotionFull)
+
 	// The last frame of a remote client that lost its session or its daemon.
 	// It leaves the alternate screen so the reason stays on the user's terminal
 	// or in the browser tab after the program stops, which is the only place an
@@ -923,7 +929,7 @@ func (m *OS) View() tea.View {
 
 	view.AltScreen = true
 
-	// All-motion tracking, always. Every hover affordance tuios draws (the rail
+	// All-motion tracking, always. Every hover affordance dartuios draws (the rail
 	// rows and its footer controls, overlay rows, context menu rows) and
 	// focus-follows-mouse are driven by motion with no button held, and only mode
 	// 1003 makes the host report that. Asking for button-event tracking whenever
@@ -931,7 +937,7 @@ func (m *OS) View() tea.View {
 	// dead for as long as the user was in terminal mode, which is where they
 	// spend their time, and alive again the moment they left it.
 	//
-	// This governs what the host reports to tuios. Forwarding to the guest is a
+	// This governs what the host reports to dartuios. Forwarding to the guest is a
 	// separate decision, filtered there against the guest's own mouse mode so an
 	// app that asked for less than 1003 still sees only what it asked for (#78);
 	// see guestWantsMotion.

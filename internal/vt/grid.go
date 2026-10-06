@@ -19,7 +19,7 @@ import (
 // flood never allocates a row it already has.
 //
 // The second is that uv.RenderBuffer tracks which cells changed, for a
-// renderer that diffs frames. Nothing in tuios reads that: the app diffs its
+// renderer that diffs frames. Nothing in dartuios reads that: the app diffs its
 // own composed frame. The tracking cost a cell comparison on every write and
 // a touch of every row on every scroll, for nothing.
 //

@@ -16,7 +16,7 @@ import (
 // release.
 const ChecksumFile = "checksums.txt"
 
-// maxBinarySize bounds what will be read out of an archive. A tuios binary is
+// maxBinarySize bounds what will be read out of an archive. A dartuios binary is
 // around forty megabytes with the ghostty backend; anything an order of
 // magnitude past that is not the file this is looking for, and decompressing it
 // into memory to find that out is how a bad download becomes an OOM.
@@ -34,7 +34,7 @@ var ErrNotInArchive = errors.New("the archive does not contain the binary")
 // version drops its leading v, and amd64 and 386 are renamed to x86_64 and
 // i386 while every other architecture keeps its Go name.
 //
-// version is the tag, with or without the v. binary is "tuios" or "tuios-web".
+// version is the tag, with or without the v. binary is "dartuios" or "dartuios-web".
 func AssetName(binary, version, goos, goarch string) (string, error) {
 	arch, err := archName(goarch)
 	if err != nil {

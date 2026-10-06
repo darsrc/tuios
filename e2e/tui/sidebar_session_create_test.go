@@ -39,7 +39,7 @@ func TestSidebarKeepsSessionCreatedFromInside(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "origin", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "origin", "--detach"); err != nil {
 		t.Fatalf("create origin: %v: %s", err, out)
 	}
 

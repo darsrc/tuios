@@ -32,11 +32,11 @@ import (
 //     forwarded verbatim from forwardFileTransmit; only a host that cannot
 //     takes the direct-transmission path the earlier test exercised.
 //   - The host answers the capability probe, so KittyFileTransfer is true.
-//     Without an answer tuios assumes a browser-shaped host and re-encodes
+//     Without an answer dartuios assumes a browser-shaped host and re-encodes
 //     every file transmission inline, which is a different writer entirely.
 //
-// kittyHost plays a real kitty terminal: it records every byte tuios writes and
-// answers the capability probe with the replies kitty gives, so tuios takes the
+// kittyHost plays a real kitty terminal: it records every byte dartuios writes and
+// answers the capability probe with the replies kitty gives, so dartuios takes the
 // native file-transmission path rather than the browser fallback.
 type kittyHost struct {
 	mu    sync.Mutex
@@ -167,7 +167,7 @@ func startFrameloopOpts(t *testing.T, term *tuitest.Terminal, repaintMS, fps int
 // a host that has no /dev/shm directory to put them in.
 //
 // The frameloop guest writes its frames as files under /dev/shm, the Linux
-// layout, and tuios reads a t=s name from the same place. macOS has no such
+// layout, and dartuios reads a t=s name from the same place. macOS has no such
 // directory: POSIX shared memory there lives behind shm_open and has no path.
 // Without this the guest prints FRAMELOOP-ERR, nothing is ever drawn, and the
 // test fails as if the passthrough had lost the image.
@@ -274,7 +274,7 @@ func TestKittyLeftPaneImageSurvivesRightPaneFlood(t *testing.T) {
 	term, _ := start(t, startOpts{
 		cols: 120, rows: 40,
 		args: []string{"--shared-borders"},
-		env:  []string{"TUIOS_SIXEL_GRAPHICS=0"},
+		env:  []string{"DARTUIOS_SIXEL_GRAPHICS=0"},
 		out:  host,
 	})
 	host.answerProbe(t, term)
@@ -307,7 +307,7 @@ func TestKittyLeftPaneImageSurvivesRightPaneFlood(t *testing.T) {
 	host.mark("neighbour-flood")
 	time.Sleep(6 * time.Second)
 
-	if dump := os.Getenv("TUIOS_KITTY_CAPTURE"); dump != "" {
+	if dump := os.Getenv("DARTUIOS_KITTY_CAPTURE"); dump != "" {
 		if err := os.WriteFile(dump, host.bytes(), 0o644); err != nil {
 			t.Fatalf("write capture: %v", err)
 		}

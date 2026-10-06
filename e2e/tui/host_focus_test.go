@@ -32,7 +32,7 @@ import (
 // sessionHostFocus reads host_focus from session-info.
 func sessionHostFocus(t *testing.T, base, session string) string {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "session-info", "-s", session, "--json")
+	out, err := dartuiosCLI(t, base, "session-info", "-s", session, "--json")
 	if err != nil {
 		t.Fatalf("session-info: %v\n%s", err, out)
 	}
@@ -95,8 +95,8 @@ func TestHostFocusHoldsAlertsForThePaneYouAreLookingAt(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	hookOut := filepath.Join(base, "hook.log")
-	writeConfig(t, base, "[notifications.agent]\nsettle_seconds = 0\n\n[hooks]\nafter-agent-state = \"echo $TUIOS_AGENT_STATE >> "+hookOut+"\"\n")
-	if out, err := tuiosCLI(t, base, "new", session, "--detach"); err != nil {
+	writeConfig(t, base, "[notifications.agent]\nsettle_seconds = 0\n\n[hooks]\nafter-agent-state = \"echo $DARTUIOS_AGENT_STATE >> "+hookOut+"\"\n")
+	if out, err := dartuiosCLI(t, base, "new", session, "--detach"); err != nil {
 		t.Fatalf("create %s: %v: %s", session, err, out)
 	}
 	stream := &hostStream{}
@@ -110,7 +110,7 @@ func TestHostFocusHoldsAlertsForThePaneYouAreLookingAt(t *testing.T) {
 
 	setState := func(state string) {
 		t.Helper()
-		if out, err := tuiosCLI(t, base, "set-agent-state", state, "-s", session, "-w", "AGENT"); err != nil {
+		if out, err := dartuiosCLI(t, base, "set-agent-state", state, "-s", session, "-w", "AGENT"); err != nil {
 			t.Fatalf("set-agent-state %s: %v\n%s", state, err, out)
 		}
 	}
@@ -124,7 +124,7 @@ func TestHostFocusHoldsAlertsForThePaneYouAreLookingAt(t *testing.T) {
 		t.Fatal(err)
 	}
 	waitHostFocus(t, base, session, "focused")
-	info, _ := tuiosCLI(t, base, "session-info", "-s", session)
+	info, _ := dartuiosCLI(t, base, "session-info", "-s", session)
 	if !strings.Contains(info, "host focus") || !strings.Contains(info, "focused") {
 		t.Errorf("session-info does not show the host focus:\n%s", info)
 	}

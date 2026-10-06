@@ -32,7 +32,7 @@ import (
 // nestProbePrefix starts a probe. 7717 is not an OSC number any terminal
 // assigns a meaning to, so a terminal that is not a pane ignores it.
 const (
-	nestProbePrefix = "\x1b]7717;tuios-nest;"
+	nestProbePrefix = "\x1b]7717;dartuios-nest;"
 	nestProbeEnd    = "\x1b\\"
 	nestNonceLen    = 32
 	nestProbeMax    = len(nestProbePrefix) + nestNonceLen + len(nestProbeEnd)

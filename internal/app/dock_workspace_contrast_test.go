@@ -4,7 +4,7 @@ import (
 	"image/color"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // TestWorkspaceStripInkClearsTheContrastFloor is the measurement the strip was

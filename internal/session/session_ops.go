@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/worktree"
 	"github.com/google/uuid"
 )
 
@@ -216,11 +216,11 @@ type NewWindowOptions struct {
 	extraFiles []*os.File
 	// Env is KEY=VALUE pairs the process gets on top of the daemon's own
 	// environment, from a caller that passed its own (fan, start-agent). The
-	// TUIOS_ variables are set after it, so it cannot change them. It is not
+	// DARTUIOS_ variables are set after it, so it cannot change them. It is not
 	// saved: a window a restore brings back starts with the daemon's
 	// environment. A window on another machine ignores it.
 	Env []string
-	// Grants is what the window's process may do through tuios, nil for the
+	// Grants is what the window's process may do through dartuios, nil for the
 	// default of [agents.permissions]. It is in force before the process
 	// starts, and it is saved with the window. See pane_grants.go.
 	Grants *Grants

@@ -14,7 +14,7 @@ import (
 // starts is built as an SSH client, which is what makes it ConfigReadOnly, and
 // that it takes the server's --show-keys.
 //
-// `tuios ssh` authenticates no client: the session is chosen by the SSH
+// `dartuios ssh` authenticates no client: the session is chosen by the SSH
 // username, and with --host 0.0.0.0 anyone who can reach the port gets a
 // session. The settings page inside it applies to that session and must not
 // decide the contents of the host's config.toml on behalf of whoever else is
@@ -68,7 +68,7 @@ func TestSSHSessionsDoNotWriteTheHostConfig(t *testing.T) {
 			}
 			if !setsSelector(lit, "ShowKeys", "cfg", "ShowKeys") {
 				t.Errorf("app.OSOptions at %s does not pass ShowKeys: cfg.ShowKeys; "+
-					"`tuios ssh --show-keys` is registered and ignored", where)
+					"`dartuios ssh --show-keys` is registered and ignored", where)
 			}
 			return true
 		})

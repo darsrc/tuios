@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // countingWriter stands in for the ssh session output. It accepts every write
@@ -35,7 +35,7 @@ func (w *countingWriter) Total() int {
 // name (without the /dev/shm/ prefix, as a guest transmits it).
 func makeShmFrame(t *testing.T, w, h int) string {
 	t.Helper()
-	name := fmt.Sprintf("tuios-repro-%d", os.Getpid())
+	name := fmt.Sprintf("dartuios-repro-%d", os.Getpid())
 	path := "/dev/shm/" + name
 	data := make([]byte, w*h*4)
 	for i := range data {

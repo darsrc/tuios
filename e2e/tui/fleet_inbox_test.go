@@ -22,7 +22,7 @@ func waitForAttention(t *testing.T, base string, env []string, want ...string) s
 	deadline := time.Now().Add(uiTimeout * 3)
 	var out string
 	for time.Now().Before(deadline) {
-		out, _ = tuiosCLIEnv(t, base, env, "list-attention")
+		out, _ = dartuiosCLIEnv(t, base, env, "list-attention")
 		if containsAll(out, want...) {
 			return out
 		}
@@ -41,12 +41,12 @@ func waitForAttention(t *testing.T, base string, env []string, want ...string) s
 func TestAnAgentOnAnotherMachineReachesThisInbox(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
-	if out, err := tuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
 	term := startIn(t, base, startOpts{args: []string{"new", "home"}, env: env})
 	waitBoot(t, term)
@@ -54,7 +54,7 @@ func TestAnAgentOnAnotherMachineReachesThisInbox(t *testing.T) {
 		return containsAll(s, "build", "up")
 	}, "the daemon never reported build up")
 
-	if out, err := tuiosCLI(t, remote, "set-agent-state", "-s", "far", "errored", "-m", "rate limited by the api"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "set-agent-state", "-s", "far", "errored", "-m", "rate limited by the api"); err != nil {
 		t.Fatalf("set-agent-state on build: %v\n%s", err, out)
 	}
 	out := waitForAttention(t, base, env, "build:far", "rate limited by the api")
@@ -79,12 +79,12 @@ func TestAnAgentOnAnotherMachineReachesThisInbox(t *testing.T) {
 	saveFrame(t, term, "fleet-inbox")
 
 	// The agent on build moves on, and the item leaves this Inbox too.
-	if out, err := tuiosCLI(t, remote, "set-agent-state", "-s", "far", "working"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "set-agent-state", "-s", "far", "working"); err != nil {
 		t.Fatalf("set-agent-state working on build: %v\n%s", err, out)
 	}
 	deadline := time.Now().Add(uiTimeout * 3)
 	for {
-		out, _ = tuiosCLIEnv(t, base, env, "list-attention")
+		out, _ = dartuiosCLIEnv(t, base, env, "list-attention")
 		if !strings.Contains(out, "build:far") {
 			break
 		}
@@ -98,7 +98,7 @@ func TestAnAgentOnAnotherMachineReachesThisInbox(t *testing.T) {
 
 // TestAnAgentInAPaneOnAnotherMachineReportsHere is P18: a pane of this
 // machine's session whose process runs on build reports its state with
-// 'tuios set-agent-state -w "$TUIOS_PANE_ID"', run on build, and the approval
+// 'dartuios set-agent-state -w "$DARTUIOS_PANE_ID"', run on build, and the approval
 // lands in this machine's Inbox on this machine's window.
 //
 // Negative control: with the forward cut from dispatchVerbLine, build's daemon
@@ -107,12 +107,12 @@ func TestAnAgentOnAnotherMachineReachesThisInbox(t *testing.T) {
 func TestAnAgentInAPaneOnAnotherMachineReportsHere(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
-	if out, err := tuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
 	term := startIn(t, base, startOpts{args: []string{"new", "home"}, env: env})
 	waitBoot(t, term)
@@ -120,8 +120,8 @@ func TestAnAgentInAPaneOnAnotherMachineReportsHere(t *testing.T) {
 		return containsAll(s, "build", "up")
 	}, "the daemon never reported build up")
 
-	script := tuiosBin + ` set-agent-state -w "$TUIOS_PANE_ID" needs_input --kind approval -m "approve Bash: make deploy"; echo "REPORTED $?"; sleep 600`
-	if out, err := tuiosCLIEnv(t, base, env, "new-window", "hosted", "-s", "home",
+	script := dartuiosBin + ` set-agent-state -w "$DARTUIOS_PANE_ID" needs_input --kind approval -m "approve Bash: make deploy"; echo "REPORTED $?"; sleep 600`
+	if out, err := dartuiosCLIEnv(t, base, env, "new-window", "hosted", "-s", "home",
 		"--host", "build", "--", "/bin/sh", "-c", script); err != nil {
 		t.Fatalf("create a window on build: %v\n%s", err, out)
 	}

@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/worktree"
 )
 
 // The worktree verbs: a git worktree as a session, and one prompt fanned out
@@ -75,7 +75,7 @@ func (d *Daemon) worktreeTarget(name string) (*Session, *WorktreeInfo, *verbErro
 		return nil, nil, hintedVerbError(ErrVerbNotWorktree, "session "+sess.Name+" is not in a git worktree", &VerbHint{
 			Param:     "session",
 			Verb:      "list-worktrees",
-			Command:   "tuios worktree ls",
+			Command:   "dartuios worktree ls",
 			Available: d.worktreeSessionNames(),
 		})
 	}
@@ -132,7 +132,7 @@ func (d *Daemon) createWorktreeSession(root, branch, base, sessionName string, c
 	if d.manager.GetSession(sessionName) != nil {
 		return nil, hintedVerbError(ErrVerbSessionExists, "session "+sessionName+" already exists", &VerbHint{
 			Param:     "name",
-			Command:   "tuios ls",
+			Command:   "dartuios ls",
 			Available: d.sessionNames(),
 			Detail:    "Choose another session name with name, or attach to the session that exists.",
 		})
@@ -149,7 +149,7 @@ func (d *Daemon) createWorktreeSession(root, branch, base, sessionName string, c
 	sess, err := d.manager.CreateSession(sessionName, &SessionConfig{}, defaultVerbSessionWidth, defaultVerbSessionHeight)
 	if err != nil {
 		return nil, hintedVerbError(ErrVerbInternal, "the worktree was created at "+path+" but its session could not: "+err.Error(), &VerbHint{
-			Detail: "The worktree is kept. Start a session in it with: tuios new-window --cwd " + path,
+			Detail: "The worktree is kept. Start a session in it with: dartuios new-window --cwd " + path,
 		})
 	}
 	info := &WorktreeInfo{
@@ -180,7 +180,7 @@ func (d *Daemon) createWorktreeSession(root, branch, base, sessionName string, c
 	}, onExit)
 	if err != nil {
 		return nil, hintedVerbError(ErrVerbInternal, "the worktree and session were created but the first window could not start: "+err.Error(), &VerbHint{
-			Detail: "Both are kept. Open a window in the session with: tuios new-window -s " + sessionName + " --cwd " + path,
+			Detail: "Both are kept. Open a window in the session with: dartuios new-window -s " + sessionName + " --cwd " + path,
 		})
 	}
 	return map[string]any{
@@ -323,7 +323,7 @@ func (d *Daemon) verbRemoveWorktree(_ *connState, params json.RawMessage) (any, 
 	if p.Session == "" {
 		return nil, hintedVerbError(ErrVerbInvalidParams,
 			"session is required (remove-worktree never guesses which worktree to remove)",
-			&VerbHint{Param: "session", Command: "tuios worktree ls", Available: d.worktreeSessionNames()})
+			&VerbHint{Param: "session", Command: "dartuios worktree ls", Available: d.worktreeSessionNames()})
 	}
 	sess, info, verr := d.worktreeTarget(p.Session)
 	if verr != nil {
@@ -364,18 +364,18 @@ func (d *Daemon) verbRemoveWorktree(_ *connState, params json.RawMessage) (any, 
 				fmt.Sprintf("%s holds %d uncommitted %s. Nothing was removed.", info.Path, changes, plural(changes, "change", "changes")),
 				&VerbHint{
 					Param:   "stash",
-					Command: "tuios worktree rm " + sess.Name + " --stash",
+					Command: "dartuios worktree rm " + sess.Name + " --stash",
 					Detail:  "Pass stash to keep the changes in git stash, or force to discard them. The branch " + info.Branch + " is kept either way.",
 				})
 		}
 		if changes > 0 && p.Stash {
-			if err := worktree.Stash(info.Path, "tuios: "+info.Branch); err != nil {
+			if err := worktree.Stash(info.Path, "dartuios: "+info.Branch); err != nil {
 				return nil, hintedVerbError(ErrVerbGitFailed, err.Error(), &VerbHint{
 					Detail: "git could not stash the changes, so nothing was removed.",
 				})
 			}
 			out["stashed"] = true
-			out["stash_message"] = "tuios: " + info.Branch
+			out["stash_message"] = "dartuios: " + info.Branch
 		}
 		discard := changes > 0 && !p.Stash
 		if err := worktree.Remove(info.RepoRoot, info.Path, discard); err != nil {
@@ -472,7 +472,7 @@ func (d *Daemon) verbFan(cs *connState, params json.RawMessage) (any, *verbError
 	if verr := decodeParams(params, &p); verr != nil {
 		return nil, verr
 	}
-	// What every new pane may do through tuios, decided before anything is
+	// What every new pane may do through dartuios, decided before anything is
 	// made. See pane_grants.go.
 	grants, verr := d.launchGrants(cs, p.Grants)
 	if verr != nil {
@@ -634,7 +634,7 @@ func (d *Daemon) verbFan(cs *connState, params json.RawMessage) (any, *verbError
 // person watches the rail rather than a blocked command.
 func (d *Daemon) deliverFanPrompt(sess *Session, windowID, harness, text string, timeout time.Duration) {
 	w, outcome := d.waitAgentStart(sess, windowID, harness, timeout, false, false, func(WindowState) {
-		sess.setPromptStatus(PromptHeld, "The agent is not at a prompt tuios recognises. Look at the pane: it may be showing a first-run choice. The prompt is typed as soon as the agent is ready.", 0)
+		sess.setPromptStatus(PromptHeld, "The agent is not at a prompt dartuios recognises. Look at the pane: it may be showing a first-run choice. The prompt is typed as soon as the agent is ready.", 0)
 	})
 	switch outcome {
 	case agentStartReady:

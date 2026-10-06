@@ -13,9 +13,9 @@ import (
 // dumps into. Empty means the harness is skipped.
 func depDiffOut(t *testing.T) string {
 	t.Helper()
-	dir := os.Getenv("TUIOS_DEPDIFF_OUT")
+	dir := os.Getenv("DARTUIOS_DEPDIFF_OUT")
 	if dir == "" {
-		t.Skip("TUIOS_DEPDIFF_OUT unset")
+		t.Skip("DARTUIOS_DEPDIFF_OUT unset")
 	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatalf("mkdir %s: %v", dir, err)

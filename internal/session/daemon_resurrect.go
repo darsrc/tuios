@@ -52,7 +52,7 @@ func (d *Daemon) restoreAllSessions() {
 		}
 		if len(state.Windows) == 0 {
 			// It can never restore, so leaving it would keep offering a session
-			// that 'tuios resurrect' lists and cannot bring back.
+			// that 'dartuios resurrect' lists and cannot bring back.
 			log.Printf("Discarding saved state for %q: it has no windows", name)
 			RemoveResurrectionState(name)
 			continue
@@ -101,7 +101,7 @@ func (d *Daemon) restoreSessionOffers(state *SessionState) (*Session, []resumeOf
 	// restoring it produced a session with nothing in it that no surface tells
 	// apart from a real one. There is nothing to bring back, so it is not a
 	// session; refusing here covers the automatic restore and the on-demand
-	// 'tuios resurrect' alike. Checked after the live lookup above, which is
+	// 'dartuios resurrect' alike. Checked after the live lookup above, which is
 	// about the session that already exists rather than about what was saved.
 	if len(state.Windows) == 0 {
 		return nil, nil, fmt.Errorf("saved state for session %q has no windows, there is nothing to restore", state.Name)
@@ -250,7 +250,7 @@ func (d *Daemon) restoreSessionOffers(state *SessionState) (*Session, []resumeOf
 
 	// The worktree record goes back on for the same reason: it is
 	// daemon-owned, and the canonical one is what the respawned first shell
-	// detected, which knows the repository and the branch and nothing tuios
+	// detected, which knows the repository and the branch and nothing dartuios
 	// wrote. A fan's sessions lost their group and their managed mark on every
 	// restart, so review fell back to the default base and compare found no
 	// fan. A detected record is left to detection, which follows the shell.

@@ -61,7 +61,7 @@ type flashFrame struct {
 // startFlashClient starts a client with the sweep on, a white light so the
 // brightest cell is the centre of the band, and a horizontal sweep so the
 // centre is a column on every row. With daemon, the client attaches to a
-// daemon session, which is how tuios ships.
+// daemon session, which is how dartuios ships.
 func startFlashClient(t *testing.T, motion string, daemon bool) *tuitest.Terminal {
 	t.Helper()
 	base := t.TempDir()
@@ -80,7 +80,7 @@ func startFlashClient(t *testing.T, motion string, daemon bool) *tuitest.Termina
 		return term
 	}
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "e2e-flash", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-flash", "--detach"); err != nil {
 		t.Fatalf("create session: %v\n%s", err, out)
 	}
 	opts.args = []string{"attach", "e2e-flash"}

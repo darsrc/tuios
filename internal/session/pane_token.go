@@ -16,7 +16,7 @@ import (
 //
 // Some platforms do not give the peer's pid (Windows, the BSDs), and a process
 // can leave its pane's process tree. For those the pane's environment carries
-// TUIOS_PANE_TOKEN beside TUIOS_PANE_ID. The token is an HMAC of the window id
+// DARTUIOS_PANE_TOKEN beside DARTUIOS_PANE_ID. The token is an HMAC of the window id
 // under a key this daemon picks at start and never writes anywhere, so a token
 // names exactly one window of this daemon start, cannot be made for another
 // window without the key, and stops working when the daemon restarts.
@@ -49,7 +49,7 @@ func (m *Manager) PaneToken(windowID string) string {
 		return ""
 	}
 	mac := hmac.New(sha256.New, m.paneTokenKey)
-	mac.Write([]byte("tuios-pane-token\x00" + windowID))
+	mac.Write([]byte("dartuios-pane-token\x00" + windowID))
 	return hex.EncodeToString(mac.Sum(nil)[:paneTokenBytes])
 }
 

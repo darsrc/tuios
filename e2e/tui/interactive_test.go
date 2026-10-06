@@ -61,7 +61,7 @@ func TestRenameWindow(t *testing.T) {
 // The burst is the interesting half. Focus changes invalidate render caches and,
 // in daemon mode, trigger a state sync that resizes emulators; a burst of them
 // lands those on top of each other. The assertion is that after the storm every
-// window's content is intact and the UI still responds, not merely that tuios
+// window's content is intact and the UI still responds, not merely that dartuios
 // is alive.
 func TestFocusCycleWithRapidKeyRepeat(t *testing.T) {
 	term, _ := start(t, startOpts{args: []string{"--shared-borders"}})
@@ -236,7 +236,7 @@ func TestZoomToggle(t *testing.T) {
 	alive(t, term, "after zoom toggling")
 }
 
-// TestResizeKeepsPaneContent resizes the terminal underneath tuios, which
+// TestResizeKeepsPaneContent resizes the terminal underneath dartuios, which
 // delivers a real SIGWINCH and drives every emulator resize path, and asserts
 // the pane's content survives each size.
 func TestResizeKeepsPaneContent(t *testing.T) {
@@ -253,7 +253,7 @@ func TestResizeKeepsPaneContent(t *testing.T) {
 
 	for _, size := range [][2]int{{100, 30}, {140, 50}, {90, 24}, {120, 40}} {
 		if err := term.Resize(size[0], size[1]); err != nil {
-			t.Fatalf("resize to %dx%d failed (tuios likely died): %v\n%s",
+			t.Fatalf("resize to %dx%d failed (dartuios likely died): %v\n%s",
 				size[0], size[1], err, term.Snapshot())
 		}
 		if err := term.WaitForText("RESIZEMARK-9", shellTimeout); err != nil {
@@ -274,7 +274,7 @@ func TestTwoClientsSeeConsistentState(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-shared", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-shared", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 

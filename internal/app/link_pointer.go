@@ -1,15 +1,15 @@
 package app
 
-import "github.com/Gaurav-Gosain/tuios/internal/terminal"
+import "github.com/darsrc/tuios/internal/terminal"
 
 // The pointer's side of the link feature: what it is on, and what changes when
 // that moves.
 //
 // The rule for who owns a pointer event over pane content is the one the click
 // path already keeps: a pane in terminal mode whose guest asked for mouse
-// reporting owns the mouse, and tuios does not draw on top of a program that is
+// reporting owns the mouse, and dartuios does not draw on top of a program that is
 // tracking the cursor itself. Underlining a link a click would forward to vim
-// anyway would be a promise tuios does not keep, so the highlight is suppressed
+// anyway would be a promise dartuios does not keep, so the highlight is suppressed
 // under exactly the condition the click is forwarded under, and nowhere else.
 
 // LinkHoverActive reports whether the pointer is on a link. The motion filter
@@ -167,7 +167,7 @@ func (m *OS) LinkAt(x, y int) (PaneLink, bool) {
 
 // guestOwnsPointer reports whether the program in this pane is tracking the
 // mouse and would receive a click on it. It is the same three-part test the
-// click handler applies before forwarding: the pane is focused, tuios is in
+// click handler applies before forwarding: the pane is focused, dartuios is in
 // terminal mode, and the guest asked for mouse reporting.
 func (m *OS) guestOwnsPointer(window *terminal.Window) bool {
 	if window == nil || window.Terminal == nil || m.Mode != TerminalMode {

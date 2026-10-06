@@ -306,14 +306,14 @@ func fleetConnOn(replies ...string) *fleetConn {
 	return &fleetConn{rw: c, br: bufio.NewReader(c)}
 }
 
-// TestAnOldHostIsPolledWithANote is the version skew: a host whose tuios has
+// TestAnOldHostIsPolledWithANote is the version skew: a host whose dartuios has
 // no Inbox, or cannot resume its stream, is not streamed, and what it is told
 // to do about it is in the note list-hosts carries.
 func TestAnOldHostIsPolledWithANote(t *testing.T) {
 	noInbox := fleetConnOn(`{"id":1,"error":{"code":"unknown_verb","message":"unknown verb"}}`)
 	_, err := noInbox.listAttention()
 	var old errFleetOld
-	if !errors.As(err, &old) || !strings.Contains(old.note, "Update tuios on the host") {
+	if !errors.As(err, &old) || !strings.Contains(old.note, "Update dartuios on the host") {
 		t.Errorf("a host with no Inbox gave %v, want an errFleetOld naming the update", err)
 	}
 

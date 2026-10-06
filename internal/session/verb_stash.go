@@ -187,7 +187,7 @@ func (d *Daemon) verbStashGet(_ *connState, params json.RawMessage) (any, *verbE
 	if err != nil {
 		return nil, hintedVerbError(ErrVerbInvalidParams, "stash get "+echoName(p.Path)+": not a file in this session's stash", &VerbHint{
 			Param:   "path",
-			Command: "tuios stash list -s " + sess.Name,
+			Command: "dartuios stash list -s " + sess.Name,
 			Detail:  "Only a path the stash printed can be read back. The listing shows them.",
 		})
 	}

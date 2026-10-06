@@ -10,7 +10,7 @@ import (
 // it, and 3.4 has every command the shim answers.
 const Version = "3.4"
 
-// PaneNumber is the number in a pane's tmux id, derived from the tuios window
+// PaneNumber is the number in a pane's tmux id, derived from the dartuios window
 // id. It is stable for the life of the window and needs no state: FNV-1a, 31
 // bits, so it prints as a plain positive integer the way tmux's %N does.
 func PaneNumber(windowID string) uint32 {
@@ -19,7 +19,7 @@ func PaneNumber(windowID string) uint32 {
 	return h.Sum32() & 0x7fffffff
 }
 
-// PaneID is the tmux pane id ("%N") of a tuios window.
+// PaneID is the tmux pane id ("%N") of a dartuios window.
 func PaneID(windowID string) string {
 	return "%" + strconv.FormatUint(uint64(PaneNumber(windowID)), 10)
 }
@@ -61,7 +61,7 @@ func ForShim(g Global, tmuxEnv, dir string) bool {
 	return SocketFromTmux(tmuxEnv) == SocketPath(dir)
 }
 
-// LauncherEnv is the environment `tuios tmux-shim` runs its command with:
+// LauncherEnv is the environment `dartuios tmux-shim` runs its command with:
 // base with TMUX and TMUX_PANE naming the shim, the shim's bin directory first
 // on PATH, and the log settings.
 func LauncherEnv(base []string, dir, window, logPath string, logAll bool) []string {

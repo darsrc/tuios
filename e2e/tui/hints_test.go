@@ -74,7 +74,7 @@ func startHintsIn(t *testing.T, daemon bool, config string, out *lockedBuffer) (
 		return term, base
 	}
 	killDaemon(t, base)
-	if o, err := tuiosCLI(t, base, "new", "e2e-hints", "--detach"); err != nil {
+	if o, err := dartuiosCLI(t, base, "new", "e2e-hints", "--detach"); err != nil {
 		t.Fatalf("create session: %v\n%s", err, o)
 	}
 	opts.args = []string{"attach", "e2e-hints"}
@@ -185,7 +185,7 @@ func printHintsLine(t *testing.T, term *tuitest.Terminal) map[string][2]int {
 // TestHintCopiesTheMatch opens hints, checks a label is drawn on each of the
 // four matches, types the label of each in turn and checks the clipboard gets
 // exactly that text, once, and that the pane is drawn as it was afterwards.
-// Standalone and against a daemon session, which is how tuios ships.
+// Standalone and against a daemon session, which is how dartuios ships.
 func TestHintCopiesTheMatch(t *testing.T) {
 	for _, daemon := range []bool{false, true} {
 		t.Run(map[bool]string{false: "standalone", true: "daemon"}[daemon], func(t *testing.T) {
@@ -559,11 +559,11 @@ func TestHintsCloseOnWorkspaceSwitch(t *testing.T) {
 	openHints(t, term)
 	waitHintsUp(t, term, at)
 
-	if out, err := tuiosCLI(t, base, "select-workspace", "2"); err != nil {
+	if out, err := dartuiosCLI(t, base, "select-workspace", "2"); err != nil {
 		t.Fatalf("select workspace 2: %v\n%s", err, out)
 	}
 	waitHintsGone(t, term, "after the workspace changed")
-	if out, err := tuiosCLI(t, base, "select-workspace", "1"); err != nil {
+	if out, err := dartuiosCLI(t, base, "select-workspace", "1"); err != nil {
 		t.Fatalf("select workspace 1: %v\n%s", err, out)
 	}
 	p := at[hintsURL]

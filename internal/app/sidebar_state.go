@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The sidebar keeps the view preferences worth surviving a restart: the user's
@@ -21,7 +21,7 @@ import (
 // sidebarStateDir returns the directory the sidebar state file lives in. A
 // variable so tests can point it at a scratch directory.
 var sidebarStateDir = func() string {
-	return filepath.Join(xdg.StateHome, "tuios")
+	return filepath.Join(xdg.StateHome, "dartuios")
 }
 
 const sidebarStateFileName = "sidebar.json"
@@ -43,7 +43,7 @@ type sidebarStateFile struct {
 	// so an accent set today is still on the row tomorrow.
 	//
 	// Two fields rather than one union-typed field because this file is shared
-	// with whatever tuios binary the user runs next. A slot written as an int
+	// with whatever dartuios binary the user runs next. A slot written as an int
 	// still loads into a build that predates the colour picker, and that build
 	// ignores the colours instead of failing to parse the whole file and
 	// dropping the order, the collapse state and the width with it. A window

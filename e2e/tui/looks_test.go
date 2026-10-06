@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-// The suite runs with the looks tuios shipped before v0.8.0, the way it runs
+// The suite runs with the looks dartuios shipped before v0.8.0, the way it runs
 // standalone (see startIn): almost every test here was written against that
 // screen. The dock row is the last line, the rail is off or on the left, a
 // click on a pane starts typing in it, a zoomed pane fills the screen. Left to
@@ -48,11 +48,11 @@ var preV080Pins = []lookPin{
 }
 
 // shippedLooksBases holds the isolation roots whose tests asked for the
-// shipped looks, so no tuios started against them gets the pins, whichever
+// shipped looks, so no dartuios started against them gets the pins, whichever
 // helper starts it.
 var shippedLooksBases sync.Map
 
-// useShippedLooks keeps the pins out of every tuios started against base.
+// useShippedLooks keeps the pins out of every dartuios started against base.
 func useShippedLooks(base string) { shippedLooksBases.Store(base, true) }
 
 var (
@@ -80,7 +80,7 @@ func pinPreV080LooksIn(t *testing.T, base, configHome string) {
 	if _, ok := shippedLooksBases.Load(base); ok {
 		return
 	}
-	path := filepath.Join(configHome, "tuios", "config.toml")
+	path := filepath.Join(configHome, "dartuios", "config.toml")
 	data, err := os.ReadFile(path)
 	replace := false
 	if errors.Is(err, fs.ErrNotExist) {
@@ -111,7 +111,7 @@ func pinPreV080LooksIn(t *testing.T, base, configHome string) {
 // writes, by running a subcommand that loads the config, and returns it.
 func firstRunConfig(t *testing.T, base, configHome, path string) ([]byte, error) {
 	t.Helper()
-	cmd := exec.Command(tuiosBin, "keybinds", "list")
+	cmd := exec.Command(dartuiosBin, "keybinds", "list")
 	cmd.Dir = workDirIn(t, base)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {

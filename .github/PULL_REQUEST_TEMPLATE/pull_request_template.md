@@ -17,7 +17,7 @@ Why is this change needed? What problem does it solve?
 
 List out key changes:
 - Added/changed file `…`
-- Updated logic in `cmd/tuios`
+- Updated logic in `cmd/dartuios`
 - Added tests for `<component>`
 - Updated docs: `docs/…`
 
@@ -26,7 +26,7 @@ List out key changes:
 ## How to verify this change
 
 Include steps to test this on different platforms/install methods:
-1. Clone and build: `go build ./cmd/tuios`
+1. Clone and build: `go build ./cmd/dartuios`
 2. Run on Linux (x86_64) / Docker etc.
 3. Verify the behavior: …
 4. For installers, test via Homebrew or AUR if relevant.

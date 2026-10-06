@@ -7,7 +7,7 @@ import (
 
 // A kitty-graphics web browser (terminal-browser, awrit) enables SGR-pixel mouse
 // (DEC mode 1016) and, once it sees it enabled, reads every mouse report as
-// pixels. tuios must then report the pointer in host pixels, not cells; reporting
+// pixels. dartuios must then report the pointer in host pixels, not cells; reporting
 // cells while 1016 is on places every event a cell-count of pixels from the
 // origin, which is why hover and clicks land in the top-left corner.
 //

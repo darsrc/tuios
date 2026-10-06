@@ -2,8 +2,8 @@ package app
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // getRealCursor returns a real terminal cursor for the focused window,

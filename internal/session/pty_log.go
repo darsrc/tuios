@@ -15,7 +15,7 @@ import (
 // With the bytes, the emulator can be fed exactly what it was fed and the
 // frame where it diverges can be found.
 //
-// It is off unless TUIOS_PTY_LOG names a directory, and it writes one file per
+// It is off unless DARTUIOS_PTY_LOG names a directory, and it writes one file per
 // pane. Nothing is filtered or decoded on the way in: the point is to have the
 // stream as the program wrote it, escape sequences and all.
 //
@@ -24,7 +24,7 @@ import (
 // is meant for one purpose, which is to be replayed into an emulator.
 
 // ptyLogDir is the directory the raw logs go in, empty when logging is off.
-func ptyLogDir() string { return os.Getenv("TUIOS_PTY_LOG") }
+func ptyLogDir() string { return os.Getenv("DARTUIOS_PTY_LOG") }
 
 // ptyLogger appends one pane's raw output to a file.
 type ptyLogger struct {

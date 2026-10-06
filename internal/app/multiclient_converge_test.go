@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // A convergence harness for N clients on one session.
@@ -111,7 +111,7 @@ import (
 // # Reproducibility
 //
 // Every sequence is a seed. The seed and the whole action journal are printed
-// on failure, and TUIOS_CONVERGE_SEED replays one.
+// on failure, and DARTUIOS_CONVERGE_SEED replays one.
 //
 // What the seed fixes is the actions: which client acts, what it does, and the
 // sizes and configs the fleet was built with. It does not fix the order the
@@ -132,8 +132,8 @@ const (
 	convergeSeqs  = 5
 	// convergeSeed is the base seed. It is fixed so the normal suite runs the
 	// same sequences every time and cannot become a new source of flake: this
-	// is a regression test by default, and searching is what TUIOS_CONVERGE_SEED
-	// and TUIOS_CONVERGE_SEQS are for.
+	// is a regression test by default, and searching is what DARTUIOS_CONVERGE_SEED
+	// and DARTUIOS_CONVERGE_SEQS are for.
 	convergeSeed = 0x7c105
 	// convergeMaxPanes bounds how many real shells a sequence can spawn.
 	convergeMaxPanes = 5
@@ -347,7 +347,7 @@ func newFleet(t *testing.T, seed uint64) *fleet {
 		fc := &fleetClient{m: p.m, c: p.c, name: string(rune('A' + i)), cols: cols, rows: rows, g: g}
 		f.cs = append(f.cs, fc)
 		f.route(fc)
-		// What the first window-size message does in cmd/tuios: say what this
+		// What the first window-size message does in cmd/dartuios: say what this
 		// client keeps for its own chrome, then push.
 		f.trace(fc, "attached")
 		fc.m.AnnounceLayoutReserve()
@@ -359,7 +359,7 @@ func newFleet(t *testing.T, seed uint64) *fleet {
 }
 
 // route wires one client's incoming broadcasts into its model, by the route
-// cmd/tuios and internal/input use: a state sync is applied and then this
+// cmd/dartuios and internal/input use: a state sync is applied and then this
 // client's chrome is announced, because adopting a session's rail can have
 // changed what this client keeps; a session resize goes through Update, which
 // re-lays the panes out and announces in its turn.
@@ -391,7 +391,7 @@ func (f *fleet) route(fc *fleetClient) {
 }
 
 // Zooming is in the default action set, and used not to be. It was behind
-// TUIOS_CONVERGE_ZOOM for as long as zoom was client-local state whose rectangle
+// DARTUIOS_CONVERGE_ZOOM for as long as zoom was client-local state whose rectangle
 // was session state: the pane's covering box was pushed and adopted everywhere
 // and the flag that said why was not, so a peer read the box as a layout
 // computed for somebody else's screen, tiled it away and resized the shared
@@ -400,7 +400,7 @@ func (f *fleet) route(fc *fleetClient) {
 // switch went with it: the action guards the thing now.
 //
 // Opening and closing a pane push the state afterwards the way every other
-// action does, and they used not to. They were behind TUIOS_CONVERGE_STALEPUSH
+// action does, and they used not to. They were behind DARTUIOS_CONVERGE_STALEPUSH
 // for as long as a client pushed a snapshot it built before the mutation it had
 // asked the daemon for: the push carried the window set as it was, lost the race
 // to the daemon's own change and was reconciled as stale, and reconcileStale
@@ -411,7 +411,7 @@ func (f *fleet) route(fc *fleetClient) {
 // pane that was to be split stayed at its full width. SyncStateToDaemon declines
 // that snapshot now, and the switch went with it: the action guards the thing.
 
-// TUIOS_CONVERGE_MODES makes the "another tiling layout" action cycle the three
+// DARTUIOS_CONVERGE_MODES makes the "another tiling layout" action cycle the three
 // tiling modes. It is off for the same reason the two above were: this tree does
 // not converge under it, and the three ways it does not are none of them about
 // the action itself.
@@ -431,23 +431,23 @@ func (f *fleet) route(fc *fleetClient) {
 //     out stacked in one column on the client that made the switch (@24,2 and
 //     @24,19) and side by side on the other two (@24,2 and @50,2), which the
 //     failure names as the guest grid the stacked client keeps a border out of.
-//     Reproduce with TUIOS_CONVERGE_MODES=1 TUIOS_CONVERGE_SEED=4354685564937353519.
+//     Reproduce with DARTUIOS_CONVERGE_MODES=1 DARTUIOS_CONVERGE_SEED=4354685564937353519.
 //   - a pane opened in the scrolling layout is not placed by the strip on every
 //     client: one held it at the box's corner while the others had it in a
 //     column. Reproduce with
-//     TUIOS_CONVERGE_MODES=1 TUIOS_CONVERGE_SEED=11400714819323706650.
+//     DARTUIOS_CONVERGE_MODES=1 DARTUIOS_CONVERGE_SEED=11400714819323706650.
 //   - one pane alone on a workspace under master-stack with shared borders on:
 //     one client hands its guest the whole rectangle and another deducts a
 //     border, so the same rectangle carries two guest grids. Reproduce with
-//     TUIOS_CONVERGE_MODES=1 TUIOS_CONVERGE_SEED=508165.
+//     DARTUIOS_CONVERGE_MODES=1 DARTUIOS_CONVERGE_SEED=508165.
 //
 // The strip's offset (the thing this switch was added while pinning) is not
 // among them: it is session state now (SessionState.ScrollStrip) and
 // clientView compares it.
-var convergeModes = os.Getenv("TUIOS_CONVERGE_MODES") != ""
+var convergeModes = os.Getenv("DARTUIOS_CONVERGE_MODES") != ""
 
 // convergeTrace turns on a line per delivery, for reading a failing seed.
-var convergeTrace = os.Getenv("TUIOS_CONVERGE_TRACE") != ""
+var convergeTrace = os.Getenv("DARTUIOS_CONVERGE_TRACE") != ""
 
 func (f *fleet) trace(fc *fleetClient, what string) {
 	if !convergeTrace {
@@ -746,7 +746,7 @@ func (f *fleet) fail(what, why string) {
 	f.t.Helper()
 	var b strings.Builder
 	fmt.Fprintf(&b, "%s: %s\n", what, why)
-	fmt.Fprintf(&b, "\nreplay with TUIOS_CONVERGE_SEED=%d\n", f.seed)
+	fmt.Fprintf(&b, "\nreplay with DARTUIOS_CONVERGE_SEED=%d\n", f.seed)
 	fmt.Fprintf(&b, "(the seed fixes the actions, not the order real sockets deliver in,\n")
 	fmt.Fprintf(&b, " so a divergence that needed a particular interleaving wants -count=N)\n")
 	fmt.Fprintf(&b, "\nactions:\n")
@@ -1009,19 +1009,19 @@ func convergeEnvInt(name string, def int) int {
 //
 // To run it longer, or to replay a failure:
 //
-//	TUIOS_CONVERGE_SEQS=200 go test ./internal/app -run Convergence
-//	TUIOS_CONVERGE_SEED=12345 go test ./internal/app -run Convergence
-//	TUIOS_CONVERGE_SEED=random TUIOS_CONVERGE_SEQS=50 go test ./internal/app -run Convergence
+//	DARTUIOS_CONVERGE_SEQS=200 go test ./internal/app -run Convergence
+//	DARTUIOS_CONVERGE_SEED=12345 go test ./internal/app -run Convergence
+//	DARTUIOS_CONVERGE_SEED=random DARTUIOS_CONVERGE_SEQS=50 go test ./internal/app -run Convergence
 //
-// TUIOS_CONVERGE_MODES turns on an action this tree does not converge under, and
-// names the three bugs it reproduces above. TUIOS_CONVERGE_TRACE prints a line
+// DARTUIOS_CONVERGE_MODES turns on an action this tree does not converge under, and
+// names the three bugs it reproduces above. DARTUIOS_CONVERGE_TRACE prints a line
 // per delivery, which is how a failing seed is read.
 func TestMultiClientConvergence(t *testing.T) {
-	seqs := convergeEnvInt("TUIOS_CONVERGE_SEQS", convergeSeqs)
-	steps := convergeEnvInt("TUIOS_CONVERGE_STEPS", convergeSteps)
+	seqs := convergeEnvInt("DARTUIOS_CONVERGE_SEQS", convergeSeqs)
+	steps := convergeEnvInt("DARTUIOS_CONVERGE_STEPS", convergeSteps)
 
 	base := uint64(convergeSeed)
-	if v := os.Getenv("TUIOS_CONVERGE_SEED"); v != "" {
+	if v := os.Getenv("DARTUIOS_CONVERGE_SEED"); v != "" {
 		if v == "random" {
 			base = uint64(time.Now().UnixNano())
 		} else if n, err := strconv.ParseUint(v, 10, 64); err == nil {

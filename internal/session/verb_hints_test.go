@@ -116,7 +116,7 @@ func TestVerbErrorHints(t *testing.T) {
 			wantHint: map[string]string{
 				"param":   "window",
 				"verb":    "list-windows",
-				"command": "tuios list-windows --json",
+				"command": "dartuios list-windows --json",
 			},
 		},
 		{
@@ -125,7 +125,7 @@ func TestVerbErrorHints(t *testing.T) {
 			wantCode: ErrVerbNoWindows,
 			wantHint: map[string]string{
 				"verb":    "new-window",
-				"command": "tuios run-command NewWindow",
+				"command": "dartuios run-command NewWindow",
 			},
 		},
 		{
@@ -191,7 +191,7 @@ func TestVerbErrorHints(t *testing.T) {
 			wantMessage: []string{"session is required"},
 			wantHint: map[string]string{
 				"param":   "session",
-				"command": "tuios ls",
+				"command": "dartuios ls",
 			},
 			wantAvailable: []string{"work", "scratch", "empty"},
 		},

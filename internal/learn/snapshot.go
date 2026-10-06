@@ -4,11 +4,11 @@ import (
 	"sort"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/scrollback"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/scrollback"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Overlay names, as the page sees them in overlay.open and overlay.close and
@@ -178,7 +178,7 @@ func (s Snapshot) window(id string) (windowSnap, bool) {
 	return windowSnap{}, false
 }
 
-// ToMap is the snapshot as the page reads it from tuios.state() and from the
+// ToMap is the snapshot as the page reads it from dartuios.state() and from the
 // state field of an event.
 func (s Snapshot) ToMap() map[string]any {
 	var overlays []any

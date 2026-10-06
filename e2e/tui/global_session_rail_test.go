@@ -22,13 +22,13 @@ func TestTheRailNamesTheMachineAPaneRunsOn(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
 	// Creating a session on the far machine is what starts its daemon. Without
-	// it the link comes up against a machine with no tuios running on it, and
+	// it the link comes up against a machine with no dartuios running on it, and
 	// a pane cannot be opened there.
-	if out, err := tuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 
@@ -41,7 +41,7 @@ func TestTheRailNamesTheMachineAPaneRunsOn(t *testing.T) {
 		return containsAll(s, "build", "up")
 	}, "the daemon never reported build up")
 
-	if out, err := tuiosCLIEnv(t, base, env, "new-window", "faraway", "-s", "home", "--host", "build"); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, env, "new-window", "faraway", "-s", "home", "--host", "build"); err != nil {
 		t.Fatalf("create a window on build: %v\n%s\n%s", err, out, term.Snapshot())
 	}
 
@@ -78,7 +78,7 @@ func TestTheRailNamesTheMachineAPaneRunsOn(t *testing.T) {
 	// wiped it: the rail named the machine for a moment and then stopped, and
 	// which panes still showed one depended on when each last synced. Making
 	// another window is the cheapest way to make this client push.
-	if out, err := tuiosCLIEnv(t, base, env, "new-window", "local-one", "-s", "home"); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, env, "new-window", "local-one", "-s", "home"); err != nil {
 		t.Fatalf("make a second window: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -168,12 +168,12 @@ func TestTheRailPutsTheGlobalGroupAboveTheMachines(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
 	// The group appears once a second machine is reachable, so the far daemon
 	// has to be up before the rail is read.
-	if out, err := tuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 

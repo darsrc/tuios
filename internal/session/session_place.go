@@ -237,7 +237,7 @@ func isHex(s string) bool {
 // generatedSessionName matches the names GenerateSessionName hands out.
 var generatedSessionName = regexp.MustCompile(`^session-[0-9]+$`)
 
-// IsGeneratedSessionName reports whether a session name is one tuios made up
+// IsGeneratedSessionName reports whether a session name is one dartuios made up
 // rather than one a person chose. A surface labels such a session by where it
 // is, because "session-3" says nothing and a directory says something.
 func IsGeneratedSessionName(name string) bool {

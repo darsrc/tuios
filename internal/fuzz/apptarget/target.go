@@ -3,7 +3,7 @@
 //
 // It exists because the demo binary has to link a target and a test file cannot
 // be linked: the in-process target in internal/app lives in _test.go files, so
-// cmd/tuios-fuzz cannot reach it. The stronger oracle stays there, where it can
+// cmd/dartuios-fuzz cannot reach it. The stronger oracle stays there, where it can
 // read package app's internals, and it remains the CI gate.
 //
 // The rules here are the subset that can be decided honestly from outside, so
@@ -23,11 +23,11 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/fuzz"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // Target is the model under test plus the bookkeeping the oracle needs: the
@@ -137,7 +137,7 @@ func (t *Target) Reset() error {
 	// and the next replay loaded it back at construction and started somewhere
 	// else. A shrunk script that begins from a different rail is a repro that
 	// does not reproduce.
-	if err := os.RemoveAll(filepath.Join(t.dir, "tuios")); err != nil {
+	if err := os.RemoveAll(filepath.Join(t.dir, "dartuios")); err != nil {
 		return err
 	}
 
@@ -145,7 +145,7 @@ func (t *Target) Reset() error {
 	// No daemon client, on purpose. The panes are daemon-backed windows, which
 	// is what gives them an emulator and a resize hook without forking a shell,
 	// but the transport is left out: a client with no connection panics inside
-	// its own send, which would be reported as a finding in tuios and is not
+	// its own send, which would be reported as a finding in dartuios and is not
 	// one. Everything this oracle reads is client-side, and the announcement it
 	// depends on arrives through DaemonResizeFunc per pane.
 	m := app.NewOS(app.OSOptions{

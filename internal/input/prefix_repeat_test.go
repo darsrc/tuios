@@ -5,8 +5,8 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // repeatOS is a client with the prefix repeat window on.
@@ -93,7 +93,7 @@ func TestTheWindowExpires(t *testing.T) {
 }
 
 // TestTurningItOffArmsNothing. Zero is a real value for this setting and means
-// every prefix command takes its own prefix, which is what tuios did before
+// every prefix command takes its own prefix, which is what dartuios did before
 // the window existed.
 func TestTurningItOffArmsNothing(t *testing.T) {
 	m := repeatOS(t)

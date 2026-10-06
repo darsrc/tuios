@@ -6,13 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // A guest that streams frames over the direct medium (t=d, the payload inline
 // in the escape) and one that streams them over shared memory (t=s) are the
 // same guest as far as the pane is concerned: same bitmap, same pixel size,
-// same cell rectangle. What tuios tells the host to draw must be the same too.
+// same cell rectangle. What dartuios tells the host to draw must be the same too.
 //
 // It was not. The file and shared-memory path refreshes a repeat stream's
 // placement record in full on every frame, so a pane that changed size is
@@ -29,7 +29,7 @@ import (
 // one axis froze, which is the shape that reads as a distorted picture.
 
 // paneRig drives one long-lived pane through frames and resizes and reports
-// everything tuios forwarded to the host for each of them.
+// everything dartuios forwarded to the host for each of them.
 type paneRig struct {
 	kp       *KittyPassthrough
 	em       *vt.Emulator
@@ -76,7 +76,7 @@ func newPaneRig(t *testing.T, screenW, screenH, border int) *paneRig {
 }
 
 // frame feeds one guest frame and runs a render cycle, returning the graphics
-// commands tuios emitted for it.
+// commands dartuios emitted for it.
 func (r *paneRig) frame(stream []byte) []string {
 	_, _ = r.em.Write(stream)
 	info := &WindowPositionInfo{

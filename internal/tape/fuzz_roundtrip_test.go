@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/tape"
 )
 
 // Fuzzing the tape recorder against the tape parser. The tape manager records

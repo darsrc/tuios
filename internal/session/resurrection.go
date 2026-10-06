@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	resurrectionDir = "tuios/sessions"
+	resurrectionDir = "dartuios/sessions"
 	// resurrectionInterval is how often a session is saved regardless of whether
 	// anything changed, which is what keeps each window's captured working
 	// directory current: a user typing cd changes no session structure.
@@ -36,7 +36,7 @@ const (
 
 	// RestoredTag is the marker every surface shows on a session that came back
 	// from saved state, and RestoredNote is the sentence that says what came back
-	// with it. Both live here so the rail, the switcher, `tuios ls` and the
+	// with it. Both live here so the rail, the switcher, `dartuios ls` and the
 	// attach path cannot word the same fact differently.
 	RestoredTag  = "restored"
 	RestoredNote = "the layout came back from saved state, and the shells are new"
@@ -249,7 +249,7 @@ func LoadResurrectionState(sessionName string) (*SessionState, error) {
 
 	if state.ResurrectionVersion > ResurrectionVersion {
 		dest := archiveResurrectionFile(path)
-		return nil, fmt.Errorf("saved state for session %q was written by a newer TUIOS (state version %d, this build reads up to %d) and cannot be restored (%s)",
+		return nil, fmt.Errorf("saved state for session %q was written by a newer dartuios (state version %d, this build reads up to %d) and cannot be restored (%s)",
 			sessionName, state.ResurrectionVersion, ResurrectionVersion, archivedNote(dest))
 	}
 

@@ -1,13 +1,13 @@
 package app
 
 import (
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // NoteComposedOptionChord reports, once per run, that the host terminal is
 // composing characters out of Option chords instead of sending Alt.
 //
-// It fires on a chord tuios recognised anyway, which is deliberate: that is the
+// It fires on a chord dartuios recognised anyway, which is deliberate: that is the
 // moment it can be certain of the diagnosis, having just had to translate a
 // composed glyph back into the chord the user meant. The glyph tables cover the
 // characters macOS composes, and nothing can cover a dead key the terminal
@@ -62,7 +62,7 @@ func (m *OS) noteOptionProblem(bound, named string) {
 	}
 	m.optionAdviceShown = true
 
-	// The environment this process reads belongs to the machine tuios runs on.
+	// The environment this process reads belongs to the machine dartuios runs on.
 	// For a client on the far end of a network that is the server, not the
 	// terminal the user is sitting at, so name no product and give the step that
 	// is true of every terminal.

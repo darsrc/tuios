@@ -9,7 +9,7 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // These tests pin the reply editor's boundaries: no reply to a pane waiting
@@ -150,7 +150,7 @@ func TestReplyOnAnOlderDaemon(t *testing.T) {
 	m.InboxReply()
 	m.InboxReplyType("more")
 	runMsg(t, m, m.InboxReplySend())
-	if !strings.Contains(lastNotice(m).Message, "tuios kill-server") {
+	if !strings.Contains(lastNotice(m).Message, "dartuios kill-server") {
 		t.Errorf("the dock said %q", lastNotice(m).Message)
 	}
 	m.InboxReply()

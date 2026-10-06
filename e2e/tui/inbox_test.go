@@ -20,10 +20,10 @@ import (
 func TestInboxBringsAnotherSessionsAgentToYou(t *testing.T) {
 	term, base := attachClientBase(t)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-fan", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-fan", "--detach"); err != nil {
 		t.Fatalf("create the second session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-fan", "needs_input",
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-fan", "needs_input",
 		"--kind", "approval", "--harness", "claude-code", "-m", "approve Bash: go test ./..."); err != nil {
 		t.Fatalf("set-agent-state in the other session: %v\n%s", err, out)
 	}
@@ -38,7 +38,7 @@ func TestInboxBringsAnotherSessionsAgentToYou(t *testing.T) {
 	saveFrame(t, term, "inbox-dock")
 
 	// The command line sees the same queue.
-	out, err := tuiosCLI(t, base, "list-attention")
+	out, err := dartuiosCLI(t, base, "list-attention")
 	if err != nil || !strings.Contains(out, "Approvals") || !strings.Contains(out, "approve Bash: go test ./...") {
 		t.Fatalf("list-attention does not list the approval: %v\n%s", err, out)
 	}
@@ -83,12 +83,12 @@ func TestInboxBringsAnotherSessionsAgentToYou(t *testing.T) {
 	saveFrame(t, term, "inbox-jumped")
 
 	// The agent moves on, and the item goes by itself.
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-fan", "working"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-fan", "working"); err != nil {
 		t.Fatalf("set-agent-state working: %v\n%s", err, out)
 	}
 	deadline := time.Now().Add(uiTimeout)
 	for {
-		out, _ = tuiosCLI(t, base, "list-attention")
+		out, _ = dartuiosCLI(t, base, "list-attention")
 		if strings.Contains(out, "Nothing is waiting for you.") {
 			break
 		}

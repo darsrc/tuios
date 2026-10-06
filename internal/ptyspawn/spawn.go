@@ -1,4 +1,4 @@
-// Package ptyspawn is the one door every PTY-backed process in tuios goes
+// Package ptyspawn is the one door every PTY-backed process in dartuios goes
 // through. Allocating the pty, giving the child its controlling terminal, and
 // starting it are one operation here, because they have one failure mode that
 // has to be handled in one place.

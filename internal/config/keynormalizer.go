@@ -37,7 +37,7 @@ func isSingleRuneLetter(s string) bool {
 	return unicode.IsLetter(r)
 }
 
-// modifierAliases maps every modifier spelling tuios accepts in config.toml to
+// modifierAliases maps every modifier spelling dartuios accepts in config.toml to
 // the name Bubble Tea gives the modifier in a key event. opt and option are the
 // macOS names for Alt, cmd and command the macOS names for Super.
 var modifierAliases = map[string]string{
@@ -84,16 +84,16 @@ func splitKeyChord(lower string) (mods []string, base string, ok bool) {
 	return mods, base, true
 }
 
-// CanonicalKey is the one spelling of a key that tuios compares against a key
+// CanonicalKey is the one spelling of a key that dartuios compares against a key
 // event. Every key that comes from config.toml or from a command line goes
 // through it before it is matched: the leader, every binding table, and the
-// argument of `tuios keybinds explain`, `free` and `unbind`.
+// argument of `dartuios keybinds explain`, `free` and `unbind`.
 //
 // A single letter keeps its case (m and M are different keys). Anything else
 // is lowercased, each modifier alias becomes the name Bubble Tea uses
 // (opt+f12 and option+f12 become alt+f12, cmd+v becomes super+v, control+b
 // becomes ctrl+b), a repeated modifier is dropped, and the modifiers are put
-// in Bubble Tea's order. A chord with a modifier tuios does not know, or with
+// in Bubble Tea's order. A chord with a modifier dartuios does not know, or with
 // an empty part, comes back lowercased and otherwise untouched, so the
 // validator can still name what is wrong with it.
 func CanonicalKey(key string) string {
@@ -196,12 +196,12 @@ var macOptionTabMap = map[string]string{
 
 // macOptionLetters is the character a US macOS layout produces for Option+letter
 // while the terminal composes instead of sending Alt (the default in Terminal.app,
-// iTerm2, Ghostty and kitty). tuios never sees a modifier for those chords, only
+// iTerm2, Ghostty and kitty). dartuios never sees a modifier for those chords, only
 // the composed glyph, so a binding written as alt+n has to answer to it as well.
 //
 // The four dead keys (e, i, n, u) emit their accent only once a second key ends
 // the composition, so the glyph below is what arrives after that; a terminal that
-// swallows the dead key entirely gives tuios nothing to match, which is what
+// swallows the dead key entirely gives dartuios nothing to match, which is what
 // MacOptionAdvice exists to explain.
 var macOptionLetters = map[string]string{
 	"a": "å", "b": "∫", "c": "ç", "d": "∂", "e": "´", "f": "ƒ", "g": "©",

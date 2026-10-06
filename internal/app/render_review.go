@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/diffview"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/review"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/diffview"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/review"
 )
 
 // Drawing the review overlay: one frame over the whole screen, a header line,
@@ -354,7 +354,7 @@ func (m *OS) reviewRows(width int) []reviewRow {
 	case e.file.Binary:
 		info("Binary file, " + reviewFileCounts(*r, *e) + ". No text is shown.")
 	case e.file.Truncated:
-		info("Too large to show here: " + reviewFileCounts(*r, *e) + " lines. tuios review --json reads it.")
+		info("Too large to show here: " + reviewFileCounts(*r, *e) + " lines. dartuios review --json reads it.")
 	case len(e.file.Hunks) == 0:
 		info("No lines changed (" + reviewStatusWord(e.file.Status) + ").")
 	}

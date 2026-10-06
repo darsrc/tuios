@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
 	"github.com/Gaurav-Gosain/tuitest"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // The rail's worktree groups, end to end: a throwaway repository, two
@@ -16,14 +16,14 @@ import (
 // real client drawing the rail. Nothing here touches any repository but the
 // one testutil.GitRepo makes under the test.
 
-// tuiosCLIIn is tuiosCLI with a working directory of its own. It exists for
+// dartuiosCLIIn is dartuiosCLI with a working directory of its own. It exists for
 // the one command whose directory decides what the daemon records: this suite
-// runs inside a git worktree of tuios itself, so a session created from here
+// runs inside a git worktree of dartuios itself, so a session created from here
 // is a worktree session and cannot be the control.
-func tuiosCLIIn(t *testing.T, base, dir string, args ...string) (string, error) {
+func dartuiosCLIIn(t *testing.T, base, dir string, args ...string) (string, error) {
 	t.Helper()
 	pinPreV080Looks(t, base)
-	cmd := exec.Command(tuiosBin, args...)
+	cmd := exec.Command(dartuiosBin, args...)
 	cmd.Dir = dir
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -57,19 +57,19 @@ func TestSidebarGroupsWorktrees(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	repo := testutil.GitRepo(t)
-	// The worktrees land under the test's own directory. tuiosCLI passes this
+	// The worktrees land under the test's own directory. dartuiosCLI passes this
 	// process's environment through, so the daemon it starts sees it too.
-	t.Setenv("TUIOS_WORKTREE_DIR", filepath.Join(base, "worktrees"))
+	t.Setenv("DARTUIOS_WORKTREE_DIR", filepath.Join(base, "worktrees"))
 
 	// A session that is not a worktree, which is the control on screen and the
 	// one this client attaches to.
 	// It is created from a directory that is in no repository, and it starts
 	// the daemon, so the daemon's own directory is that one too.
-	if out, err := tuiosCLIIn(t, base, t.TempDir(), "new", "plain", "--detach"); err != nil {
+	if out, err := dartuiosCLIIn(t, base, t.TempDir(), "new", "plain", "--detach"); err != nil {
 		t.Fatalf("create the plain session: %v: %s", err, out)
 	}
 	for _, branch := range []string{"feat/one", "feat/two"} {
-		out, err := tuiosCLI(t, base, "worktree", "new", branch, "--repo", repo, "--detach")
+		out, err := dartuiosCLI(t, base, "worktree", "new", branch, "--repo", repo, "--detach")
 		if err != nil {
 			t.Fatalf("worktree new %s: %v: %s", branch, err, out)
 		}

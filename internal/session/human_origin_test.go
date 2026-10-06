@@ -17,23 +17,23 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // The helper process these tests start: this test binary, run again with
-// TUIOS_HELPER_SOCK set, as a stand in for an agent calling the socket. It is
+// DARTUIOS_HELPER_SOCK set, as a stand in for an agent calling the socket. It is
 // started inside a pane, or detached from everything, and writes what the
-// daemon told it to TUIOS_HELPER_OUT.
+// daemon told it to DARTUIOS_HELPER_OUT.
 const (
-	helperSockEnv = "TUIOS_HELPER_SOCK"
-	helperOutEnv  = "TUIOS_HELPER_OUT"
-	helperModeEnv = "TUIOS_HELPER_MODE"
-	helperArgsEnv = "TUIOS_HELPER_ARGS"
+	helperSockEnv = "DARTUIOS_HELPER_SOCK"
+	helperOutEnv  = "DARTUIOS_HELPER_OUT"
+	helperModeEnv = "DARTUIOS_HELPER_MODE"
+	helperArgsEnv = "DARTUIOS_HELPER_ARGS"
 	// helperDetachEnv makes the helper wait until it has been reparented.
-	helperDetachEnv = "TUIOS_HELPER_DETACH"
+	helperDetachEnv = "DARTUIOS_HELPER_DETACH"
 	// helperSizeEnv is the size an attaching helper reports, WxH.
-	helperSizeEnv = "TUIOS_HELPER_SIZE"
+	helperSizeEnv = "DARTUIOS_HELPER_SIZE"
 )
 
 // ppidAtStart is the helper's parent when the binary started.
@@ -59,7 +59,7 @@ func TestHelperSocketCaller(t *testing.T) {
 	switch os.Getenv(helperModeEnv) {
 	case "attach-host":
 		// args is "host session": attach to a session on another machine
-		// through the daemon at sock, the way tuios attach --host does.
+		// through the daemon at sock, the way dartuios attach --host does.
 		host, sessName, _ := strings.Cut(os.Getenv(helperArgsEnv), " ")
 		conn, err := net.DialTimeout("unix", sock, 3*time.Second)
 		if err != nil {
@@ -253,7 +253,7 @@ func TestADetachedProcessWithAPaneEnvironmentCannotSendAsHuman(t *testing.T) {
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 		env := []string{}
 		for _, kv := range os.Environ() {
-			if !strings.HasPrefix(kv, "TUIOS_PANE_ID=") && !strings.HasPrefix(kv, "TUIOS_WINDOW_ID=") && !strings.HasPrefix(kv, "TUIOS_SOCKET=") {
+			if !strings.HasPrefix(kv, "DARTUIOS_PANE_ID=") && !strings.HasPrefix(kv, "DARTUIOS_WINDOW_ID=") && !strings.HasPrefix(kv, "DARTUIOS_SOCKET=") {
 				env = append(env, kv)
 			}
 		}
@@ -273,17 +273,17 @@ func TestADetachedProcessWithAPaneEnvironmentCannotSendAsHuman(t *testing.T) {
 		return resp
 	}
 
-	// TUIOS_PANE_ID is what a pane's processes carry, TUIOS_WINDOW_ID what the
-	// client's hook commands carry, and TUIOS_SOCKET what its dock components
+	// DARTUIOS_PANE_ID is what a pane's processes carry, DARTUIOS_WINDOW_ID what the
+	// client's hook commands carry, and DARTUIOS_SOCKET what its dock components
 	// carry. Each places the process with the automation, not the person.
-	for name, value := range map[string]string{"TUIOS_PANE_ID": b, "TUIOS_WINDOW_ID": b, "TUIOS_SOCKET": sp} {
+	for name, value := range map[string]string{"DARTUIOS_PANE_ID": b, "DARTUIOS_WINDOW_ID": b, "DARTUIOS_SOCKET": sp} {
 		resp := run(name, value)
 		if e, _ := resp["error"].(map[string]any); e == nil || e["code"] != ErrVerbForbidden {
 			t.Errorf("a detached process with %s=%s was not refused: %v", name, value, resp)
 		}
 	}
 	// A window id this daemon does not hold is someone else's pane.
-	if resp := run("TUIOS_PANE_ID", "not-a-window-here"); resp["error"] != nil {
+	if resp := run("DARTUIOS_PANE_ID", "not-a-window-here"); resp["error"] != nil {
 		t.Errorf("a pane id this daemon does not hold was refused: %v", resp)
 	}
 	res := result(t, run("", ""))
@@ -389,7 +389,7 @@ func TestPaneOriginOfThisProcess(t *testing.T) {
 }
 
 // startHubAndLinkedFar is startHubAndFar with the far side's proxy doing what
-// tuios stdio-proxy does: dial the link-human socket for a stream the hub
+// dartuios stdio-proxy does: dial the link-human socket for a stream the hub
 // vouched for, and the plain link socket for any other.
 func startHubAndLinkedFar(t *testing.T) (*Daemon, *farSide) {
 	t.Helper()

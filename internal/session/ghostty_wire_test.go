@@ -12,8 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // runWireCase writes a stream, snapshots the source, restores into the

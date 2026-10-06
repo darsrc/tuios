@@ -22,7 +22,7 @@ func TestRailRightClickKillsTheSessionUnderThePointer(t *testing.T) {
 	killDaemon(t, base)
 
 	for _, name := range []string{"alpha", "bravo"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create %s: %v: %s", name, err, out)
 		}
 	}
@@ -77,7 +77,7 @@ func TestRailRightClickKillsTheSessionUnderThePointer(t *testing.T) {
 	}
 	// The daemon is the authority on which session died, and it is the assertion
 	// that would fail if the row's kill had reached the attached session instead.
-	out, err := tuiosCLI(t, base, "ls")
+	out, err := dartuiosCLI(t, base, "ls")
 	if err != nil {
 		t.Fatalf("list sessions: %v: %s", err, out)
 	}

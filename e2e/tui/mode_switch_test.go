@@ -143,7 +143,7 @@ func scrollingStrip(t *testing.T, panes int) (*tuitest.Terminal, string) {
 	term := startIn(t, base, startOpts{cols: 120, rows: 40, args: []string{"new", "strip"}})
 	waitWindowCount(t, term, 1, "first column")
 	for n := 2; n <= panes; n++ {
-		if out, err := tuiosCLI(t, base, "run-command", "NewWindow"); err != nil {
+		if out, err := dartuiosCLI(t, base, "run-command", "NewWindow"); err != nil {
 			t.Fatalf("NewWindow: %v\n%s", err, out)
 		}
 		waitWindowCount(t, term, n, "another column")
@@ -186,7 +186,7 @@ func TestTilingOffBringsTheStripOnScreen(t *testing.T) {
 				runPaletteRow(t, term, "disable tiling", "Layout: disable tiling", "Tiling off")
 			default:
 				cmd := strings.TrimPrefix(door, "tape ")
-				if out, err := tuiosCLI(t, base, "run-command", cmd); err != nil {
+				if out, err := dartuiosCLI(t, base, "run-command", cmd); err != nil {
 					t.Fatalf("%s: %v\n%s", cmd, err, out)
 				}
 			}
@@ -282,7 +282,7 @@ func TestTapeTilingCommandsSettleTheBorders(t *testing.T) {
 		{"ToggleTiling", 2},
 		{"ToggleTiling", 0},
 	} {
-		if out, err := tuiosCLI(t, base, "run-command", step.cmd); err != nil {
+		if out, err := dartuiosCLI(t, base, "run-command", step.cmd); err != nil {
 			t.Fatalf("%s: %v\n%s", step.cmd, err, out)
 		}
 		waitPaneCorners(t, term, step.corners, "after "+step.cmd)

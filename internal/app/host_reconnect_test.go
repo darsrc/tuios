@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The policy for getting a lost link back, pinned where it can be read.
@@ -49,7 +49,7 @@ func TestAFailureThatCannotBeFixedByTryingIsNotTried(t *testing.T) {
 	final := map[string]error{
 		"an unknown host":        &session.HostConnectError{Host: "oci", Code: session.ErrVerbUnknownHost, Message: "no such host"},
 		"a local daemon too old": &session.HostConnectError{Host: "oci", Code: session.ErrVerbProtocolMismatch, Message: "too old"},
-		"a remote tuios that cannot serve this client": &session.HostHandshakeError{
+		"a remote dartuios that cannot serve this client": &session.HostHandshakeError{
 			Host: "oci", Err: &session.ProtocolMismatchError{},
 		},
 	}

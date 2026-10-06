@@ -18,7 +18,7 @@ import (
 //
 // It is display only. Nothing reads it to decide a state, a wait, an alert or
 // a message: a harness can put anything here, and a value that could steer
-// tuios would be an input nobody validated. That is also why it has hard
+// dartuios would be an input nobody validated. That is also why it has hard
 // limits and a TTL: a statusline feed that stops writing leaves nothing stale
 // behind for longer than it said.
 

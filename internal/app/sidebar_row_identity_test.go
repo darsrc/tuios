@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // bareShellOS is the case the rail was worst at: n panes in one repo, none
@@ -19,7 +19,7 @@ func bareShellOS(t *testing.T, n int) *OS {
 	m.Windows = nil
 	for i := range n {
 		w := &terminal.Window{ID: "w" + strconv.Itoa(i), Width: 40, Height: 20, Workspace: 1}
-		w.SetTitle("~/dev/tuios - fish")
+		w.SetTitle("~/dev/dartuios - fish")
 		m.Windows = append(m.Windows, w)
 	}
 	m.FocusedWindow = 0
@@ -43,10 +43,10 @@ func paneRows(rows []string, want string) []string {
 
 // TestRailRowsDistinguishBareShells is the acceptance criterion, on a rendered
 // frame: five shells in one directory used to draw five rows reading
-// "~/dev/tuios - fish", which cannot answer which pane is which.
+// "~/dev/dartuios - fish", which cannot answer which pane is which.
 func TestRailRowsDistinguishBareShells(t *testing.T) {
 	m := bareShellOS(t, 5)
-	rows := paneRows(railText(t, m), "tuios")
+	rows := paneRows(railText(t, m), "dartuios")
 
 	if len(rows) != 5 {
 		t.Fatalf("expected 5 pane rows, got %d:\n%s", len(rows), strings.Join(rows, "\n"))

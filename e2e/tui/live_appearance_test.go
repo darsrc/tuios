@@ -12,7 +12,7 @@ import (
 // issue #210, where the sidebar and the controls leave the panes little room.
 const liveCols, liveRows = 84, 30
 
-// liveAppearanceCase is one appearance option set with `tuios set-config`
+// liveAppearanceCase is one appearance option set with `dartuios set-config`
 // while a client is attached, and the value that puts it back.
 type liveAppearanceCase struct {
 	path, value, restore string
@@ -41,7 +41,7 @@ var liveAppearanceCases = []liveAppearanceCase{
 }
 
 // TestLiveAppearanceKeepsTheScreen sets each option in liveAppearanceCases on
-// an attached client, from a shell outside tuios the way a person does, and
+// an attached client, from a shell outside dartuios the way a person does, and
 // holds:
 //
 //   - the panes are still drawn: both shells' prompts are on screen, and the
@@ -62,7 +62,7 @@ func TestLiveAppearanceKeepsTheScreen(t *testing.T) {
 				{"new", "home", "--detach"},
 				{"new-window", "second", "-s", "home", "--no-focus"},
 			} {
-				if o, err := tuiosCLI(t, base, args...); err != nil {
+				if o, err := dartuiosCLI(t, base, args...); err != nil {
 					t.Fatalf("%v: %v\n%s", args, err, o)
 				}
 			}
@@ -98,10 +98,10 @@ func TestLiveAppearanceKeepsTheScreen(t *testing.T) {
 	}
 }
 
-// setLive runs `tuios set-config path value` against the daemon under base.
+// setLive runs `dartuios set-config path value` against the daemon under base.
 func setLive(t *testing.T, base, path, value string) {
 	t.Helper()
-	if o, err := tuiosCLI(t, base, "set-config", path, value); err != nil {
+	if o, err := dartuiosCLI(t, base, "set-config", path, value); err != nil {
 		t.Fatalf("set-config %s %s: %v\n%s", path, value, err, o)
 	}
 }

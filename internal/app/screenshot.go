@@ -10,12 +10,12 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/capture"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/capture"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/shot"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // Capture mode and the post-capture preview.
@@ -405,7 +405,7 @@ func (m *OS) shotPalette() *shot.Palette {
 // liveHostPalette overlays what the terminal has said since the startup probe:
 // the answers Bubble Tea brought in, and the colours of the scheme it switched
 // to. See host_colors.go. A capture taken after a switch to dark is drawn on
-// the dark ground the screen is on, not the light one tuios started on.
+// the dark ground the screen is on, not the light one dartuios started on.
 func (m *OS) liveHostPalette(p *shot.Palette) *shot.Palette {
 	h := &m.host
 	if h.gen == 0 || p == nil {
@@ -669,7 +669,7 @@ func (m *OS) screenshotPreviewWanted() bool {
 // screenshotIsLocal reports whether this process is on the user's own machine,
 // which is the only condition under which it may run a clipboard helper.
 //
-// A tuios ssh client and a browser tab both run this code on the server. The
+// A dartuios ssh client and a browser tab both run this code on the server. The
 // helper there would write the operator's clipboard, not the user's, which is
 // the trap the PR #133 review caught. So the answer is no unless this is a
 // local attach.

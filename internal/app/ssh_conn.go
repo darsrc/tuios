@@ -4,7 +4,7 @@ package app
 
 import "charm.land/ssh"
 
-// SSHConn is the SSH session a `tuios ssh` client is served over. It is its
+// SSHConn is the SSH session a `dartuios ssh` client is served over. It is its
 // own name so the browser build, which has no SSH server, can leave the SSH
 // library out of its download. See ssh_conn_js.go.
 type SSHConn = ssh.Session

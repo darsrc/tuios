@@ -11,23 +11,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/debuglog"
-	"github.com/Gaurav-Gosain/tuios/internal/pool"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/debuglog"
+	"github.com/darsrc/tuios/internal/pool"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
-// debugInternal reports whether TUIOS_DEBUG_INTERNAL=1 is set, read once on
+// debugInternal reports whether DARTUIOS_DEBUG_INTERNAL=1 is set, read once on
 // first use. The switch is set at startup, before any window exists, and
 // every call site below checks it before building its arguments: a
 // time.Now().Format, a string(input) and a hex rendering were being made on
 // every keystroke and every terminal response for a log line that was then
 // thrown away.
 var debugInternal = sync.OnceValue(func() bool {
-	return os.Getenv("TUIOS_DEBUG_INTERNAL") == "1"
+	return os.Getenv("DARTUIOS_DEBUG_INTERNAL") == "1"
 })
 
-// debugLogf appends one formatted line to /tmp/tuios-debug.log when
-// TUIOS_DEBUG_INTERNAL=1, and is a no-op otherwise. One helper instead of a
+// debugLogf appends one formatted line to /tmp/dartuios-debug.log when
+// DARTUIOS_DEBUG_INTERNAL=1, and is a no-op otherwise. One helper instead of a
 // getenv+open at every call site, and one file instead of several.
 func debugLogf(format string, v ...any) {
 	if !debugInternal() {

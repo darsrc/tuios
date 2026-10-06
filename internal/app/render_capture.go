@@ -6,9 +6,9 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Capture mode's drawing: a hint strip along the top, a highlight around the
@@ -16,7 +16,7 @@ import (
 //
 // All three are cells. There is no graphics tier here at all, deliberately: a
 // selection has to be visible on a plain xterm or the mode is unusable there,
-// and the marquee is the same shapes the rest of tuios draws its chrome from,
+// and the marquee is the same shapes the rest of dartuios draws its chrome from,
 // so a riced glyph set carries into it.
 //
 // The rectangles the hover highlight draws are recorded here as they are
@@ -178,11 +178,12 @@ func (m *OS) captureOutline(pal overlay.Palette, x, y, w, h int, chip string) []
 	if w < 1 || h < 1 {
 		return nil
 	}
-	// The same resolver every window border goes through: it honours the
-	// glyph set, the border style and ascii-only mode, so a riced session's
-	// marquee is drawn in its own strokes rather than in a set spelled out
-	// here.
-	g := m.Settings.GetBorderForStyle()
+	// The same resolver every window border goes through, in its focused weight:
+	// the marquee is the active selection, and the active outline takes the
+	// heavy line. It honours the glyph set, the border style and ascii-only
+	// mode, so a riced session's marquee is drawn in its own strokes rather
+	// than in a set spelled out here.
+	g := m.Settings.GetFocusedBorderForStyle()
 	ink := lipgloss.NewStyle().Foreground(pal.AccentBright).Bold(true)
 	z := captureMarqueeZ
 

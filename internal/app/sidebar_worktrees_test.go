@@ -4,14 +4,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // worktreeRailOS is a rail attached to a plain session, beside two
-// repositories' worktree sessions: "tuios" with two branches and "docs" with
+// repositories' worktree sessions: "dartuios" with two branches and "docs" with
 // one. It is the shape the grouping exists for, and the plain session is the
 // control: nothing about it may change.
 func worktreeRailOS(t *testing.T, w, h int) (*OS, sessiontree.Tree) {
@@ -33,22 +33,22 @@ func worktreeRailOS(t *testing.T, w, h int) (*OS, sessiontree.Tree) {
 }
 
 // worktreeTree is the listing the rail is built from. gone marks the second
-// tuios worktree's directory as removed.
+// dartuios worktree's directory as removed.
 func worktreeTree(gone bool) sessiontree.Tree {
 	return sessiontree.Build([]sessiontree.SessionInput{
 		{Name: "main", Attached: true, IsCurrent: true, CurrentWorkspace: 1, Windows: []sessiontree.WindowInput{
 			{ID: "aaaaaaaa1111", Title: "nvim", Focused: true, Workspace: 1},
 		}},
 		{
-			Name:     "tuios-feat-one",
-			Worktree: &sessiontree.WorktreeRef{Repo: "tuios", Branch: "feat/one"},
+			Name:     "dartuios-feat-one",
+			Worktree: &sessiontree.WorktreeRef{Repo: "dartuios", Branch: "feat/one"},
 			Windows: []sessiontree.WindowInput{
 				{ID: "bbbbbbbb2222", Title: "claude", AgentState: "working", Harness: "claude-code", Workspace: 1},
 			},
 		},
 		{
-			Name:     "tuios-feat-two",
-			Worktree: &sessiontree.WorktreeRef{Repo: "tuios", Branch: "feat/two", Gone: gone},
+			Name:     "dartuios-feat-two",
+			Worktree: &sessiontree.WorktreeRef{Repo: "dartuios", Branch: "feat/two", Gone: gone},
 			Windows: []sessiontree.WindowInput{
 				{ID: "cccccccc3333", Title: "claude", AgentState: "errored", Harness: "claude-code", Workspace: 1},
 			},
@@ -85,13 +85,13 @@ func railRowLine(t *testing.T, m *OS, lines []string, kind sidebarRowKind, id st
 func TestRailWorktreeGroupHasNoSessionMenu(t *testing.T) {
 	m, tree := worktreeRailOS(t, 120, 30)
 	lines := railPlain(t, m, tree)
-	_, hit := railRowLine(t, m, lines, sidebarRowRepo, "tuios")
+	_, hit := railRowLine(t, m, lines, sidebarRowRepo, "dartuios")
 
 	m.openSidebarContextMenu(hit, hit.X0, hit.Y0)
 	if m.ContextMenu == nil {
 		t.Fatal("the right-click on a group header opened nothing")
 	}
-	if m.ContextMenu.SessionID == "tuios" {
+	if m.ContextMenu.SessionID == "dartuios" {
 		t.Errorf("the menu is about a session named %q, which does not exist: a repository is not a session", m.ContextMenu.SessionID)
 	}
 	for _, item := range m.ContextMenu.Items {
@@ -105,21 +105,21 @@ func TestRailWorktreeGroupHasNoSessionMenu(t *testing.T) {
 // and not runtime state: it is written to the sidebar state file and read back.
 func TestRailWorktreeFoldSurvivesARestart(t *testing.T) {
 	m, _ := worktreeRailOS(t, 120, 30)
-	m.SidebarToggleRepoCollapsed("tuios")
+	m.SidebarToggleRepoCollapsed("dartuios")
 
 	next := newNarrowOS(t, 120, 30)
 	next.loadSidebarState()
-	if !next.SidebarRepoCollapsed("tuios") {
+	if !next.SidebarRepoCollapsed("dartuios") {
 		t.Error("a folded group came back open after a restart")
 	}
 	if next.SidebarRepoCollapsed("docs") {
 		t.Error("a group nobody folded came back folded")
 	}
 
-	m.SidebarToggleRepoCollapsed("tuios")
+	m.SidebarToggleRepoCollapsed("dartuios")
 	again := newNarrowOS(t, 120, 30)
 	again.loadSidebarState()
-	if again.SidebarRepoCollapsed("tuios") {
+	if again.SidebarRepoCollapsed("dartuios") {
 		t.Error("a group opened again came back folded")
 	}
 }
@@ -132,13 +132,13 @@ func TestRailSignatureFollowsTheWorktreeGroups(t *testing.T) {
 	m, _ := worktreeRailOS(t, 120, 30)
 
 	before := m.sidebarSignature()
-	m.SidebarToggleRepoCollapsed("tuios")
+	m.SidebarToggleRepoCollapsed("dartuios")
 	if after := m.sidebarSignature(); after == before {
 		t.Error("folding a group left the rail's signature unchanged, so the frame would be served from the cache")
 	}
 
 	m.SessionWorktree = &session.WorktreeInfo{}
-	m.SessionWorktree.Repo, m.SessionWorktree.Branch = "tuios", "feat/one"
+	m.SessionWorktree.Repo, m.SessionWorktree.Branch = "dartuios", "feat/one"
 	withRecord := m.sidebarSignature()
 	m.SessionWorktree.Branch = "feat/two"
 	if m.sidebarSignature() == withRecord {

@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/tape"
 )
 
 // A TUI client attached to a session on another machine.
@@ -74,13 +74,13 @@ type HostHandshakeError struct {
 
 func (e *HostHandshakeError) Error() string {
 	if _, ok := errors.AsType[*ProtocolMismatchError](e.Err); ok {
-		return fmt.Sprintf("tuios on %s speaks a different attach protocol. Upgrade tuios on %s or on this machine. %v",
+		return fmt.Sprintf("dartuios on %s speaks a different attach protocol. Upgrade dartuios on %s or on this machine. %v",
 			e.Host, e.Host, e.Err)
 	}
 	if isConnectionGone(e.Err) {
-		return fmt.Sprintf("tuios on %s closed the connection before it answered. Its daemon may have stopped. Run 'tuios hosts' to see the link.", e.Host)
+		return fmt.Sprintf("dartuios on %s closed the connection before it answered. Its daemon may have stopped. Run 'dartuios hosts' to see the link.", e.Host)
 	}
-	return fmt.Sprintf("tuios on %s did not accept this client. %v", e.Host, e.Err)
+	return fmt.Sprintf("dartuios on %s did not accept this client. %v", e.Host, e.Err)
 }
 
 func (e *HostHandshakeError) Unwrap() error { return e.Err }

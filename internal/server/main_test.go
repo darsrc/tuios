@@ -5,12 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // TestMain isolates the whole test binary from the developer's own XDG
 // directories, so the SSH session tests never read the developer's real
-// ~/.config/tuios (whose keybinds and startup options would change what the
+// ~/.config/dartuios (whose keybinds and startup options would change what the
 // driven sessions do) and never write state into the real home.
 func TestMain(m *testing.M) { os.Exit(testutil.RunIsolated(m, pinStartupConfig)) }
 
@@ -21,7 +21,7 @@ func TestMain(m *testing.M) { os.Exit(testutil.RunIsolated(m, pinStartupConfig))
 // by accident; in a bare environment (CI) the defaults are false and the test
 // would drive nothing.
 func pinStartupConfig(dir string) {
-	cfgDir := filepath.Join(dir, "tuios")
+	cfgDir := filepath.Join(dir, "dartuios")
 	if err := os.MkdirAll(cfgDir, 0o755); err != nil {
 		panic(err)
 	}

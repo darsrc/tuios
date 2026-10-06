@@ -32,10 +32,10 @@ func reviewFan(t *testing.T, base, repo, name string) string {
 // session and its worktree, changing nothing in it.
 func reviewFanAt(t *testing.T, base, repo, name string) (string, string) {
 	t.Helper()
-	if out, err := tuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
 		t.Fatalf("start the daemon: %v: %s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "fan", "2", "--agent", "claude", "--repo", repo, "--name", "try/"+name, "Do the thing."); err != nil {
+	if out, err := dartuiosCLI(t, base, "fan", "2", "--agent", "claude", "--repo", repo, "--name", "try/"+name, "Do the thing."); err != nil {
 		t.Fatalf("fan: %v: %s", err, out)
 	}
 	second := "repo-try-" + name + "-2"
@@ -132,7 +132,7 @@ func TestReviewOverlayNotesSendCompareAndKeep(t *testing.T) {
 	sendKeys(t, term, "S")
 	deadline := time.Now().Add(30 * time.Second)
 	for {
-		pane, _ := tuiosCLI(t, base, "capture-pane", "-s", session)
+		pane, _ := dartuiosCLI(t, base, "capture-pane", "-s", session)
 		if strings.Contains(pane, "Review notes on your changes (vs main), from the person:") &&
 			strings.Contains(pane, "say why three") && strings.Contains(pane, "add a test") {
 			break
@@ -143,7 +143,7 @@ func TestReviewOverlayNotesSendCompareAndKeep(t *testing.T) {
 		time.Sleep(500 * time.Millisecond)
 	}
 	for {
-		out, err := tuiosCLI(t, base, "queue", "ls", "-s", session)
+		out, err := dartuiosCLI(t, base, "queue", "ls", "-s", session)
 		if err == nil && strings.Contains(out, "Nothing is queued") {
 			break
 		}
@@ -182,7 +182,7 @@ func TestReviewOverlayNotesSendCompareAndKeep(t *testing.T) {
 	waitScreen(t, term, "keep never answered", "Kept "+session+".")
 	deadline = time.Now().Add(30 * time.Second)
 	for {
-		out, _ := tuiosCLI(t, base, "ls")
+		out, _ := dartuiosCLI(t, base, "ls")
 		if !strings.Contains(out, other+" ") && !strings.Contains(out, other+"\n") && strings.Contains(out, session) {
 			break
 		}
@@ -260,7 +260,7 @@ func TestReviewFrameAndStatusLine(t *testing.T) {
 	}
 	saveArtifact(t, term, dir, "review")
 
-	if out, err := tuiosCLI(t, base, "new-window", "extra", "-s", session, "--no-focus"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "extra", "-s", session, "--no-focus"); err != nil {
 		t.Fatalf("open a window from another client: %v\n%s", err, out)
 	}
 	watchAbsent := func(where string) {
@@ -277,7 +277,7 @@ func TestReviewFrameAndStatusLine(t *testing.T) {
 
 	sendKeys(t, term, "w")
 	waitScreen(t, term, "the compare view never opened", "Compare", "esc back")
-	if out, err := tuiosCLI(t, base, "new-window", "extra-2", "-s", session, "--no-focus"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "extra-2", "-s", session, "--no-focus"); err != nil {
 		t.Fatalf("open a window from another client: %v\n%s", err, out)
 	}
 	watchAbsent("compare view")
@@ -301,10 +301,10 @@ func TestFanSurvivesADaemonRestart(t *testing.T) {
 	session := reviewFan(t, base, repo, "rs")
 	dir := artifactDir(t)
 
-	if out, err := tuiosCLI(t, base, "kill-server"); err != nil {
+	if out, err := dartuiosCLI(t, base, "kill-server"); err != nil {
 		t.Fatalf("kill-server: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "new", "after", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "after", "--detach"); err != nil {
 		t.Fatalf("start the daemon again: %v\n%s", err, out)
 	}
 	var rows []map[string]any
@@ -356,7 +356,7 @@ func TestReviewWrappedNoteIsOneStop(t *testing.T) {
 	base, repo := fanFixture(t)
 	session := reviewFan(t, base, repo, "wn")
 	dir := artifactDir(t)
-	if out, err := tuiosCLI(t, base, "review", "note", "-s", session, "README:1",
+	if out, err := dartuiosCLI(t, base, "review", "note", "-s", session, "README:1",
 		"firstword of a long note that wraps onto more rows than one in this narrow column so the cursor takes it whole lastword"); err != nil {
 		t.Fatalf("review note: %v: %s", err, out)
 	}

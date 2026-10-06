@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-// ServeProxy is the remote end of a link: what `tuios stdio-proxy` runs.
+// ServeProxy is the remote end of a link: what `dartuios stdio-proxy` runs.
 //
 // It writes the preamble, then reads frames from in and writes frames to out.
 // Every stream the hub opens gets its own connection to the local daemon
@@ -25,7 +25,7 @@ func ServeProxy(in io.Reader, out io.Writer, dial func() (net.Conn, error)) erro
 }
 
 // ServeProxyFor is ServeProxy with a dial that is told what the hub said about
-// each stream when it opened it. tuios stdio-proxy uses it to dial the
+// each stream when it opened it. dartuios stdio-proxy uses it to dial the
 // link-human socket for a stream the hub vouched for. See StreamOpen.
 func ServeProxyFor(in io.Reader, out io.Writer, dial func(StreamOpen) (net.Conn, error)) error {
 	if _, err := io.WriteString(out, LinkPreamble+"\n"); err != nil {
@@ -134,9 +134,9 @@ func readPreamble(br *bufio.Reader) (preambleNote, error) {
 }
 
 // ErrNoPreamble reports a link whose remote end never identified itself. The
-// usual causes are tuios missing on the remote machine and an ssh command that
+// usual causes are dartuios missing on the remote machine and an ssh command that
 // reached a shell instead of the proxy.
-var ErrNoPreamble = errors.New("federation: the remote end did not answer as a tuios link")
+var ErrNoPreamble = errors.New("federation: the remote end did not answer as a dartuios link")
 
 func trimCR(s string) string {
 	for len(s) > 0 && (s[len(s)-1] == '\n' || s[len(s)-1] == '\r') {

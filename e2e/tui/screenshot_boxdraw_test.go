@@ -26,7 +26,7 @@ func inkDistance(c, bg color.Color) int {
 }
 
 // TestScreenshotDrawsAStraightBorderWithoutNotches renders a column of
-// U+2502 through `tuios screenshot` and reads the PNG back. A straight line
+// U+2502 through `dartuios screenshot` and reads the PNG back. A straight line
 // has to be one even stroke. It used to be drawn as two half-cell arms that
 // met in the middle of each cell, each anti-aliased at its own end, so where
 // the middle fell between two pixels the stroke lost about a fifth of its ink
@@ -50,16 +50,16 @@ func TestScreenshotDrawsAStraightBorderWithoutNotches(t *testing.T) {
 	const session = "e2e-box"
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", session, "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", session, "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "send-keys", "-s", session, "-l",
+	if out, err := dartuiosCLI(t, base, "send-keys", "-s", session, "-l",
 		"clear; for i in 1 2 3 4 5 6; do printf '\\342\\224\\202\\n'; done\r"); err != nil {
 		t.Fatalf("print the column: %v\n%s", err, out)
 	}
 	deadline := time.Now().Add(shellTimeout)
 	for {
-		pane, _ := tuiosCLI(t, base, "capture-pane", "-s", session)
+		pane, _ := dartuiosCLI(t, base, "capture-pane", "-s", session)
 		if strings.Count(pane, "│") >= 6 {
 			break
 		}
@@ -70,9 +70,9 @@ func TestScreenshotDrawsAStraightBorderWithoutNotches(t *testing.T) {
 	}
 
 	out := filepath.Join(artifactDir(t), "border-column.png")
-	if cliOut, err := tuiosCLI(t, base, "screenshot", "-s", session, "--format", "png",
+	if cliOut, err := dartuiosCLI(t, base, "screenshot", "-s", session, "--format", "png",
 		"--frame", "none", "--theme", "catppuccin_mocha", "--out", out, "--no-copy"); err != nil {
-		t.Fatalf("tuios screenshot: %v\n%s", err, cliOut)
+		t.Fatalf("dartuios screenshot: %v\n%s", err, cliOut)
 	}
 	data, err := os.ReadFile(out)
 	if err != nil {
@@ -130,7 +130,7 @@ func TestScreenshotDrawsAStraightBorderWithoutNotches(t *testing.T) {
 }
 
 // TestScreenshotDrawsAHorizontalRuleWithoutNubs renders a run of U+2500
-// through `tuios screenshot` and reads the PNG back. A straight rule has to be
+// through `dartuios screenshot` and reads the PNG back. A straight rule has to be
 // the same in every column: each pixel row across it one even colour, and no
 // ink past its end. Each cell used to overdraw half a pixel into its
 // neighbours to close the seam between them, and where two cells overlapped
@@ -157,17 +157,17 @@ func TestScreenshotDrawsAHorizontalRuleWithoutNubs(t *testing.T) {
 	const session = "e2e-rule"
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", session, "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", session, "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
 	rule := strings.Repeat(`\342\224\200`, 6)
-	if out, err := tuiosCLI(t, base, "send-keys", "-s", session, "-l",
+	if out, err := dartuiosCLI(t, base, "send-keys", "-s", session, "-l",
 		"clear; printf '"+rule+`\n'`+"\r"); err != nil {
 		t.Fatalf("print the rule: %v\n%s", err, out)
 	}
 	deadline := time.Now().Add(shellTimeout)
 	for {
-		pane, _ := tuiosCLI(t, base, "capture-pane", "-s", session)
+		pane, _ := dartuiosCLI(t, base, "capture-pane", "-s", session)
 		if strings.Contains(pane, strings.Repeat("─", 6)) {
 			break
 		}
@@ -178,9 +178,9 @@ func TestScreenshotDrawsAHorizontalRuleWithoutNubs(t *testing.T) {
 	}
 
 	out := filepath.Join(artifactDir(t), "rule.png")
-	if cliOut, err := tuiosCLI(t, base, "screenshot", "-s", session, "--format", "png",
+	if cliOut, err := dartuiosCLI(t, base, "screenshot", "-s", session, "--format", "png",
 		"--frame", "none", "--theme", "catppuccin_mocha", "--out", out, "--no-copy"); err != nil {
-		t.Fatalf("tuios screenshot: %v\n%s", err, cliOut)
+		t.Fatalf("dartuios screenshot: %v\n%s", err, cliOut)
 	}
 	data, err := os.ReadFile(out)
 	if err != nil {

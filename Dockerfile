@@ -1,4 +1,4 @@
-FROM golang:1.26 AS tuios-build
+FROM golang:1.26 AS dartuios-build
 
 WORKDIR /go/src/app
 COPY . .
@@ -8,13 +8,13 @@ COPY . .
 # at. They are built in one stage because they share a module and a download.
 #
 # VERSION and COMMIT are passed by docker-publish.yml from the tag, so the
-# image's `tuios --version` names its release instead of "dev".
+# image's `dartuios --version` names its release instead of "dev".
 ARG VERSION=dev
 ARG COMMIT=none
 RUN go mod download &&\
   LDFLAGS="-s -w -X main.version=${VERSION} -X main.commit=${COMMIT} -X main.builtBy=docker" &&\
-  CGO_ENABLED=0 go build -trimpath -ldflags "$LDFLAGS" -o /go/bin/tuios ./cmd/tuios &&\
-  CGO_ENABLED=0 go build -trimpath -ldflags "$LDFLAGS" -o /go/bin/tuios-web ./cmd/tuios-web
+  CGO_ENABLED=0 go build -trimpath -ldflags "$LDFLAGS" -o /go/bin/dartuios ./cmd/dartuios &&\
+  CGO_ENABLED=0 go build -trimpath -ldflags "$LDFLAGS" -o /go/bin/dartuios-web ./cmd/dartuios-web
 
 # RUN go vet -v
 # RUN go test -v
@@ -23,17 +23,17 @@ RUN go mod download &&\
 FROM gcr.io/distroless/static-debian11:nonroot
 
 ENV TERM=xterm-256color
-COPY --from=tuios-build /go/bin/tuios /
-COPY --from=tuios-build /go/bin/tuios-web /
-ENTRYPOINT ["/tuios"]
+COPY --from=dartuios-build /go/bin/dartuios /
+COPY --from=dartuios-build /go/bin/dartuios-web /
+ENTRYPOINT ["/dartuios"]
 
 # The web terminal is run by naming it, rather than by being the default:
 #
-#   docker run --rm -p 7681:7681 --entrypoint /tuios-web <image> \
+#   docker run --rm -p 7681:7681 --entrypoint /dartuios-web <image> \
 #     --host 0.0.0.0 --auto-tls
 #
 # Neither the host nor --insecure is baked in, and that is the whole point of
-# leaving it to the command line. tuios-web serves a shell, it has no
+# leaving it to the command line. dartuios-web serves a shell, it has no
 # authentication of its own, and it refuses a non-loopback bind in clear text
 # on purpose. An image that arrived already listening on 0.0.0.0 would turn
 # that refusal into a default, and anyone who ran it to see what it did would

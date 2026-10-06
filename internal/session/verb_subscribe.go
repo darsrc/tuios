@@ -649,7 +649,7 @@ func (d *Daemon) waitAgentStateSelect(sel *Selector, until string, every bool, d
 		select {
 		case <-deadline:
 			verr := agentStateTimeout(until)
-			verr.Hint.Command = "tuios list-agents --select '" + sel.String() + "'"
+			verr.Hint.Command = "dartuios list-agents --select '" + sel.String() + "'"
 			verr.Hint.Detail = "No pane the selector matches reached the named state before the timeout. list-agents with the same selector shows what it matches and where each pane is now."
 			if every {
 				verr.Hint.Detail = "Not every pane the selector matches reached the named state before the timeout. list-agents with the same selector shows which have not."
@@ -832,7 +832,7 @@ func (d *Daemon) waitAgentMessage(sessionName, window string, thread uint64, dea
 		case <-deadline:
 			return nil, hintedVerbError(ErrVerbTimeout, "timed out waiting for an agent message", &VerbHint{
 				Param:   "timeout",
-				Command: "tuios read-agent-messages",
+				Command: "dartuios read-agent-messages",
 				Detail:  "Nothing was sent before the timeout. Read the ring to see what is already there, or raise timeout (milliseconds).",
 			})
 		case <-d.ctx.Done():

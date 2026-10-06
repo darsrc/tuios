@@ -128,8 +128,8 @@ type buttonLayoutCase struct {
 }
 
 var buttonLayoutCases = []buttonLayoutCase{
-	{"pill-left", "pill", "left", false, " ✕ □ - "},
-	{"pill-right", "pill", "right", false, " - □ ✕ "},
+	{"pill-left", "pill", "left", false, "▏ ✕ □ - ▕"},
+	{"pill-right", "pill", "right", false, "▏ - □ ✕ ▕"},
 	{"dots-left", "dots", "left", false, " ● ● ● "},
 	{"dots-right", "dots", "right", false, " ● ● ● "},
 	{"pill-left-ascii", "pill", "left", true, "[ X O - ]"},

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // heldApproval is an approval item the Inbox is holding for an answer.
@@ -202,7 +202,7 @@ func TestInboxShowsTheWholePrompt(t *testing.T) {
 	m := inboxOS(t, zeroSettle())
 	held := heldApproval("1", "r1", session.ApprovalOnce, session.ApprovalAlways, session.ApprovalDeny)
 	tail := "&& echo the-end-of-the-command"
-	held.Summary = "approve Bash: go test ./internal/session/ ./internal/app/ ./cmd/tuios/ -run Approval -count=1 " + tail
+	held.Summary = "approve Bash: go test ./internal/session/ ./internal/app/ ./cmd/dartuios/ -run Approval -count=1 " + tail
 	held.AlwaysScope = []string{"Bash(go test:*) in .claude/settings.local.json"}
 	m.applyInboxSnapshot(InboxSnapshotMsg{Items: []session.AttentionItem{held}})
 	m.OpenInbox("")

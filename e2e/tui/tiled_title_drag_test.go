@@ -28,12 +28,12 @@ func cornerAt(s tuitest.Screen, col, row int) bool {
 	return col >= 0 && col < len(line) && strings.ContainsRune(cornerGlyphs, line[col])
 }
 
-// dumpFrame writes the current frame under TUIOS_E2E_FRAMES when that is set,
+// dumpFrame writes the current frame under DARTUIOS_E2E_FRAMES when that is set,
 // so a run can leave the pictures behind for a human to look at. Off by
 // default: the suite asserts on the frame itself.
 func dumpFrame(t *testing.T, term *tuitest.Terminal, name string) {
 	t.Helper()
-	dir := os.Getenv("TUIOS_E2E_FRAMES")
+	dir := os.Getenv("DARTUIOS_E2E_FRAMES")
 	if dir == "" {
 		return
 	}

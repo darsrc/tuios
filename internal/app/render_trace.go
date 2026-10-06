@@ -9,17 +9,17 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/debuglog"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/debuglog"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The render trace is a diagnostic for panes that go blank when focus moves to
-// another window. It is off unless TUIOS_RENDER_TRACE names it, and the check
+// another window. It is off unless DARTUIOS_RENDER_TRACE names it, and the check
 // is a single package-level bool read on the hot path, resolved once at
 // startup, so a normal run pays one predictable branch per window per frame and
 // no syscall.
 //
-// Set TUIOS_RENDER_TRACE to 1, true, on, or yes to write to the default path,
+// Set DARTUIOS_RENDER_TRACE to 1, true, on, or yes to write to the default path,
 // or to an explicit file path to choose where it lands.
 var (
 	renderTraceEnabled bool
@@ -31,7 +31,7 @@ var (
 )
 
 func init() {
-	v := strings.TrimSpace(os.Getenv("TUIOS_RENDER_TRACE"))
+	v := strings.TrimSpace(os.Getenv("DARTUIOS_RENDER_TRACE"))
 	if v == "" || v == "0" || strings.EqualFold(v, "false") || strings.EqualFold(v, "off") {
 		return
 	}
@@ -55,7 +55,7 @@ func init() {
 	renderTraceT0 = time.Now()
 	renderTraceEnabled = true
 	terminal.AnnounceTrace = traceAnnounce
-	fmt.Fprintf(fh, "\n=== tuios render trace started %s pid=%d ===\n",
+	fmt.Fprintf(fh, "\n=== dartuios render trace started %s pid=%d ===\n",
 		renderTraceT0.Format(time.RFC3339), os.Getpid())
 }
 
@@ -63,9 +63,9 @@ func init() {
 // environment defines one, and falls back to the temp directory. The pid keeps
 // a daemon and its attached clients in separate files.
 func defaultRenderTracePath() string {
-	name := fmt.Sprintf("tuios-render-trace.%d.log", os.Getpid())
+	name := fmt.Sprintf("dartuios-render-trace.%d.log", os.Getpid())
 	if dir := os.Getenv("XDG_STATE_HOME"); dir != "" {
-		return filepath.Join(dir, "tuios", name)
+		return filepath.Join(dir, "dartuios", name)
 	}
 	return filepath.Join(os.TempDir(), name)
 }

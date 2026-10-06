@@ -32,7 +32,7 @@ import (
 // argv is exec'd directly, never a shell line.
 //
 // With protocol, the agent runs headless over ACP or the Codex app-server
-// protocol, under `tuios agent-proto` as the pane's process, which shows it as
+// protocol, under `dartuios agent-proto` as the pane's process, which shows it as
 // a transcript and reports its state (agent_protocol.go). The pane is ready on
 // that report alone, and the first prompt is typed into it the same way.
 
@@ -64,7 +64,7 @@ func (d *Daemon) verbStartAgent(cs *connState, params json.RawMessage) (any, *ve
 			return nil, verr
 		}
 	}
-	// What the new pane may do through tuios, decided before anything is
+	// What the new pane may do through dartuios, decided before anything is
 	// made. See pane_grants.go.
 	grants, verr := d.launchGrants(cs, p.Grants)
 	if verr != nil {

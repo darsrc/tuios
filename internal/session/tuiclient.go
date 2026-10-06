@@ -38,7 +38,7 @@ type SessionEndedHandler func(sessionName, reason string)
 // It is not called for an app-initiated Close.
 type DisconnectHandler func(err error)
 
-// TUIClient is used by the TUIOS TUI to communicate with the daemon.
+// TUIClient is used by the dartuios TUI to communicate with the daemon.
 // It handles PTY I/O and state synchronization.
 type TUIClient struct {
 	// Served and AllowNested are sent with every attach. Set them before the
@@ -130,7 +130,7 @@ type TUIClient struct {
 	// pendingStateSync and pendingSessionResize hold the newest broadcast of
 	// each kind that arrived while nothing was registered to take it, so the
 	// registration can be handed what it missed. The read loop starts before
-	// the handlers exist (cmd/tuios attaches, starts reading, builds the
+	// the handlers exist (cmd/dartuios attaches, starts reading, builds the
 	// program and only then registers), and a broadcast landing in that window
 	// would otherwise be lost. Both messages carry a whole answer
 	// rather than a delta, so keeping only the newest is exact. Guarded by
@@ -319,7 +319,7 @@ func (c *TUIClient) handshake(version string, width, height int, caps *ClientCap
 	// up to the moment they do not: the wire version only moves when a message
 	// changes shape, and most drift is a behaviour change on one side of it. It
 	// happens routinely: the daemon outlives an upgrade by design, and a
-	// tuios-web installed separately can be months behind. Unrecorded, it is
+	// dartuios-web installed separately can be months behind. Unrecorded, it is
 	// invisible, and a fix that has been installed appears not to work.
 	//
 	// Recorded rather than refused: the two builds can talk, and refusing would
@@ -476,7 +476,7 @@ func (e *SwitchRollback) Error() string {
 	if e.State != nil {
 		return fmt.Sprintf("switch to %q failed: %v; still on %q", e.Target, e.Err, e.Prev)
 	}
-	return fmt.Sprintf("switch to %q failed: %v; could not return to %q either (%v). Reattach with 'tuios attach %s'",
+	return fmt.Sprintf("switch to %q failed: %v; could not return to %q either (%v). Reattach with 'dartuios attach %s'",
 		e.Target, e.Err, e.Prev, e.Recovery, e.Prev)
 }
 
@@ -619,7 +619,7 @@ func (c *TUIClient) attachWhileReading(name string, createNew bool, width, heigh
 }
 
 // CreatePTY creates a new PTY in the session. windowID, if non-empty, is the
-// client-side window UUID exported to the shell as TUIOS_WINDOW_ID.
+// client-side window UUID exported to the shell as DARTUIOS_WINDOW_ID.
 func (c *TUIClient) CreatePTY(title, windowID string, width, height int) (string, error) {
 	msg, err := NewMessage(MsgCreatePTY, &CreatePTYPayload{
 		Title:    title,
@@ -1028,7 +1028,7 @@ func (c *TUIClient) NotifyTerminalSize(width, height int) error {
 // SendIntent asks the daemon to perform a session mutation on this client's
 // behalf. It is the keyboard's route to the same operations the CLI reaches over
 // the verb protocol: commandType and args are the verb vocabulary, so a
-// keystroke and a `tuios run-command` do not merely agree, they are the same
+// keystroke and a `dartuios run-command` do not merely agree, they are the same
 // call.
 //
 // It does not wait for a result. The mutation's effect arrives as a state push
@@ -1729,7 +1729,7 @@ func (c *TUIClient) TryRefreshSessionList() {
 }
 
 // CreateDetachedSession asks the daemon for a headless session with an initial
-// window, the same request `tuios new` makes over a control connection. The
+// window, the same request `dartuios new` makes over a control connection. The
 // daemon answers with the refreshed listing, which is applied to the cache so
 // the new session is in the rail before the next poll rather than after it.
 func (c *TUIClient) CreateDetachedSession(name string, width, height int) error {

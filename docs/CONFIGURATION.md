@@ -1,12 +1,14 @@
 # Configuration
 
-The configuration reference lives on the docs site: https://tuios.dev/docs/configuration
+The configuration reference lives on the docs site: https://dartuios.dev/docs/configuration
 
 It covers the whole `config.toml`: the `[appearance]` table and its `sidebar`, `scrollbar`, dock, and window-button options, `[notifications.agent]`, `[notifications.mail]` (see [AGENT_STATE.md](AGENT_STATE.md#the-inbox)), all 23 `[keybindings]` sections, `[daemon]`, `[startup]`, `[tape]`, `[screenshot]`, `[hooks]`, and `[debug]`, along with what hot-reloads and what needs a restart.
 
-`[notifications.mail]` has `enabled`, `notify`, `dock`, `sound` and `between_agents`. Each key except `between_agents` follows the same key in `[notifications.agent]` while it is unset, so a config without the table alerts as before. `between_agents` (default `false`) also alerts on a message from one agent to another. Sound mode, cooldown, cue files and quiet hours always come from `[notifications.agent]`. `tuios set-config notifications.mail.KEY ""` clears a key, and `tuios get-config` then prints `(follows notifications.agent.KEY)`.
+The default look is the DAR language. `appearance.border_style` defaults to `dar` (a light frame at rest that goes heavy where something is focused), `appearance.scrollbar.style` defaults to `thin` (a hairline thumb over the pane's last content column, no full-height track), and the rail draws half-block marks. The working-agent pulse rides `appearance.motion` (default `full`; `none` and `basic` turn it off). `dartuios list-options appearance.` lists every value with its accepted set.
 
-`tuios list-options` describes every settable path with its type, default, and accepted values, straight from the registry the validator uses. The in-app settings page (`Ctrl+B ,`) edits and persists the same options, and its rows are derived from that same registry: an option an agent can set is an option a person can reach, and a test fails the build if one is not.
+`[notifications.mail]` has `enabled`, `notify`, `dock`, `sound` and `between_agents`. Each key except `between_agents` follows the same key in `[notifications.agent]` while it is unset, so a config without the table alerts as before. `between_agents` (default `false`) also alerts on a message from one agent to another. Sound mode, cooldown, cue files and quiet hours always come from `[notifications.agent]`. `dartuios set-config notifications.mail.KEY ""` clears a key, and `dartuios get-config` then prints `(follows notifications.agent.KEY)`.
+
+`dartuios list-options` describes every settable path with its type, default, and accepted values, straight from the registry the validator uses. The in-app settings page (`Ctrl+B ,`) edits and persists the same options, and its rows are derived from that same registry: an option an agent can set is an option a person can reach, and a test fails the build if one is not.
 
 `[hints]` sets what hints mode (`Ctrl+B F`) labels. See [HINTS.md](HINTS.md).
 
@@ -54,7 +56,7 @@ surface (it does not fall back to `background`), and the validator warns about
 it, as it does about `theme` with no theme set.
 
 **What is kept.** Only cells with no background of their own are painted. A
-background a program chose for a cell always wins, and so do the marks tuios
+background a program chose for a cell always wins, and so do the marks dartuios
 paints over a pane (the selection, search matches, the copy mode cursor) and
 every colour the chrome sets itself: a border's ink stays its focus colour, the
 title bar's buttons keep theirs, the dock's pills and the rail's highlighted
@@ -66,11 +68,11 @@ surface colour.
 **Programs that ask.** A program can ask the terminal for its background with
 OSC 11 and its default text colour with OSC 10, and some pick a dark or light
 palette from the answer. While the pane background paints a colour, a pane's
-OSC 11 is answered with that colour and OSC 10 with the text colour tuios gives
+OSC 11 is answered with that colour and OSC 10 with the text colour dartuios gives
 default text there, so the program sees what it is drawn on. A program that set
 its own colours with OSC 10 or 11 gets its own back. With a theme on and the
 pane background off, the answers are the theme's colours. With no theme and the
-pane background off, the answers are the host terminal's own: tuios asks the
+pane background off, the answers are the host terminal's own: dartuios asks the
 terminal it runs in for its background, its text colour and its sixteen ANSI
 colours when it starts or attaches, and tells panes those, so a program on a
 light terminal picks its light palette. OSC 4 queries for the sixteen are
@@ -85,8 +87,8 @@ terminal the rail, the dock and the unfocused pane borders use the light
 chrome ramp a light theme gets, measured against the terminal's own colour.
 
 **Following light and dark.** A local client turns on mode 2031, and a terminal
-that supports it (ghostty, kitty, contour and others) then tells tuios when the
-system appearance switches between light and dark. tuios asks for the colours
+that supports it (ghostty, kitty, contour and others) then tells dartuios when the
+system appearance switches between light and dark. dartuios asks for the colours
 again, tells panes, and redraws the chrome for the new background. The light
 and dark verdict has hysteresis: a dark verdict turns light only above an 8-bit
 luminance of 140, and a light one turns dark only below 110, so a mid grey
@@ -103,7 +105,7 @@ All six hot-reload and are on the **Backgrounds** tab of the settings page
 (`Ctrl+B ,`, then `]`): an All surfaces row and one row per surface, each a
 colour row that opens the same picker as the border colours, with `off` and
 `theme` beside the grid and `x` to clear a surface back to following All
-surfaces. `tuios set-config appearance.dock_background <value>` sets one from a
+surfaces. `dartuios set-config appearance.dock_background <value>` sets one from a
 script. They reach every client of the session, SSH and browser ones included,
 since they draw the same frame. A screenshot of one pane is drawn on the pane's
 painted colour, and a screen or region capture carries every painted surface
@@ -131,14 +133,14 @@ right  = ["notifications", "copy-help", "cpu", "ram", "clock", "session-controls
 format = "15:04"
 
 [dock.custom.branch]
-command  = "~/.config/tuios/dock/git-branch.sh"
+command  = "~/.config/dartuios/dock/git-branch.sh"
 refresh  = "event:after-focus-change"
-on-click = "tuios new-window log -- git log --oneline -20"
+on-click = "dartuios new-window log -- git log --oneline -20"
 ```
 
 The lists above are the default: omit the whole table and the bar is unchanged.
 A custom component's first line of stdout becomes its cell, it is hidden when
-the command fails, and `tuios list-dock-components` says which and why.
+the command fails, and `dartuios list-dock-components` says which and why.
 
 `examples/dock/README.md` is the full contract and five working recipes.
 
@@ -155,7 +157,7 @@ hold_seconds = 120
 ```
 
 `enabled` names the harnesses, by id or alias: `claude-code` (or `claude`),
-`opencode`, `kilo` and `qwen` have a decision channel tuios can answer through. Other
+`opencode`, `kilo` and `qwen` have a decision channel dartuios can answer through. Other
 names are accepted and hold nothing. Even for these, only a call the Inbox can
 show whole on one line is held, such as a short shell command or a file read;
 an edit, an MCP tool or a long command is answered in the pane.
@@ -164,17 +166,17 @@ asks in its pane after all: 120 when unset, kept between 10 and 300.
 
 The daemon reads the table when it starts and again when the file changes; a
 change applies to the next prompt. Like `[dock]` and `[hosts]`, it is not in
-`list-options` and `tuios set-config` cannot change it. Turning it on gives no
+`list-options` and `dartuios set-config` cannot change it. Turning it on gives no
 program the power to answer: only you, at an attached client, can. It also
 needs version 2 of the integration:
-run `tuios integration install claude-code` (or `opencode`, `kilo`, `qwen`)
+run `dartuios integration install claude-code` (or `opencode`, `kilo`, `qwen`)
 again after upgrading. [AGENT_STATE.md](AGENT_STATE.md#approvals-from-the-inbox) says how
 a prompt is held, answered and handed back.
 
 ## Harnesses that report to herdr
 
 Crush reports its state natively to herdr, another multiplexer, when it finds
-herdr's environment in its pane. tuios accepts the same reports on a socket of
+herdr's environment in its pane. dartuios accepts the same reports on a socket of
 its own, `<daemon socket>.herdr`, and `herdr_protocol` in `[agents]` says which
 panes are told about it:
 
@@ -183,14 +185,14 @@ panes are told about it:
 herdr_protocol = "agents"   # agents (default), always, off
 ```
 
-`agents` tells a pane that starts such a harness directly, as `tuios
+`agents` tells a pane that starts such a harness directly, as `dartuios
 new-window NAME crush`, `start-agent crush` or `fan --agent crush` do. `always` tells
 every pane, so a Crush started from a shell prompt reports too. `off` tells
 none. A pane that is told gets `HERDR_ENV=1`, `HERDR_SOCKET_PATH` naming
-tuios's socket and `HERDR_PANE_ID` naming the pane, so anything that checks
+dartuios's socket and `HERDR_PANE_ID` naming the pane, so anything that checks
 `HERDR_ENV` reads it as a herdr pane: herdr itself refuses to start inside one
 unless its `experimental.allow_nested` setting is on, and herdr's own hook scripts report to
-tuios from there. That is why `always` is not the default. An unknown value
+dartuios from there. That is why `always` is not the default. An unknown value
 reads as `agents`, with a warning. The daemon reads it when it starts and again
 when the file changes; a change applies to the next pane.
 [AGENT_STATE.md](AGENT_STATE.md#herdrs-pane-state-protocol) says what is
@@ -201,8 +203,8 @@ accepted.
 These tables configure the agent review, triage, reply and approval work,
 which is built. Every value has a default, so a file without them behaves as
 the defaults say. Like `[agents.approvals]`, they are
-file-plane config: not in `list-options`, and `tuios set-config` cannot change
-them, so a pane cannot switch a risk rule off through tuios.
+file-plane config: not in `list-options`, and `dartuios set-config` cannot change
+them, so a pane cannot switch a risk rule off through dartuios.
 
 ```toml
 [agents.approvals]
@@ -250,12 +252,12 @@ max = 8
   pane, and in the Inbox; `inbox` only in the Inbox; `off` only in
   `agent-log`), `away` how long you must have been away for the dock to show
   it, and `test_patterns` which commands count as a test run. The daemon
-  reads `test_patterns` for `tuios agent-log --recap` and the
+  reads `test_patterns` for `dartuios agent-log --recap` and the
   `agent-activity` verb, and picks up a change when the file is saved; the
   client reads `mode` and `away` when it loads the config. The recap is
   built: see [The away recap](AGENT_STATE.md#the-away-recap).
 - `[agents.queue]` bounds the messages waiting to be typed to one agent when
-  it comes to rest (`tuios queue`, `queue-prompt`): `max`, 8 by default, at
+  it comes to rest (`dartuios queue`, `queue-prompt`): `max`, 8 by default, at
   most 64. A message queued past it is refused with `queue_full`. The daemon
   reads it at start and again when the file changes; a queue already longer
   keeps what it holds. The queue is built: see
@@ -273,7 +275,7 @@ takes two rows or more, and never a row that needs you, a finished turn not
 yet seen, a working agent, the pane you are in, or one with messages queued.
 
 The agent row in `[appearance.sidebar.agent_row]` has three tokens for what
-tuios feeds itself: `now` (what a working agent is doing, drawn only while it
+dartuios feeds itself: `now` (what a working agent is doing, drawn only while it
 works), `context` (`ctx 84%` in the warning ink, drawn only at 80% or more)
 and `prompt` (the first line of the last prompt, not shipped on the row). The
 shipped `tokens` list is now `["session", "need", "harness", "name",
@@ -283,9 +285,9 @@ own order and gains nothing. The `meta` token no longer draws the fed keys
 you want with its own token. See
 [What the second line says](AGENT_STATE.md#what-the-second-line-says).
 
-The `$name` tokens can place the metadata keys tuios now feeds: `$model`,
+The `$name` tokens can place the metadata keys dartuios now feeds: `$model`,
 `$context`, `$cost` and `$plan`.
-They come from Claude Code's status line once `tuios integration install
+They come from Claude Code's status line once `dartuios integration install
 claude-code --statusline` is installed, from the opencode and Kilo plugin, and
 from protocol panes, and a key the harness never states draws nothing (see
 [Agent metadata](AGENT_STATE.md#what-feeds-it)). No option is needed to turn
@@ -293,13 +295,13 @@ the feeds on, and there is nothing to configure for them.
 
 ## What a pane may do
 
-Every pane holds grants that say what a process in it may do through tuios:
+Every pane holds grants that say what a process in it may do through dartuios:
 `read` (its own session and fan group), `write` (type into its own session,
 into panes that hold nothing it does not), `fan` (write in its fan group and
 start agents), `respond` (answer prompts without you, and type into a pane
 waiting on one) and `admin` (everything else, as before grants). A pane started
-with `--grants` (`tuios start-agent`, `fan`, `new-window`) or given grants
-with `tuios set-pane-grants` holds those. Every other pane holds the default
+with `--grants` (`dartuios start-agent`, `fan`, `new-window`) or given grants
+with `dartuios set-pane-grants` holds those. Every other pane holds the default
 this table sets:
 
 ```toml
@@ -319,7 +321,7 @@ prompts for you.
 
 The daemon reads the table when it starts and again when the file changes; a
 change reaches every pane on the default at its next call. Like
-`[agents.approvals]`, it is not in `list-options` and `tuios set-config` cannot
+`[agents.approvals]`, it is not in `list-options` and `dartuios set-config` cannot
 change it, so no pane can loosen it.
 [AGENT_STATE.md](AGENT_STATE.md#what-a-pane-may-do) has the whole model.
 
@@ -348,7 +350,7 @@ allow = ["list", "mail"]
 | `list` | Read: sessions, windows, captures, screenshots, agent state, the Inbox, prompts, waits and the event stream. |
 | `mail` | Send and read agent mail, and use the stash. |
 | `open` | Start processes: sessions, windows, worktrees, fans, `start-agent`, clones of a repository by its URL, and panes this machine runs for it. |
-| `write` | Change what is here: type into panes, `run` a line at a prompt, close and move windows, set options, layouts and names, report agent state, and attach. Also read a worktree's work out with `bundle-worktree` (`tuios worktree pull`), since a machine that may type into a shell here can read those files already. |
+| `write` | Change what is here: type into panes, `run` a line at a prompt, close and move windows, set options, layouts and names, report agent state, and attach. Also read a worktree's work out with `bundle-worktree` (`dartuios worktree pull`), since a machine that may type into a shell here can read those files already. |
 | `respond` | Answer for the person: prompts, held approvals, `ask-human` questions, dismissing Inbox items, and passing on held mail. |
 
 With no table, a machine may `list`, `mail`, `open` and `write`, which is what
@@ -373,14 +375,14 @@ for itself, its host name up to the first dot, unless the ssh key it logs in
 with pins one:
 
 ```
-command="tuios stdio-proxy --as laptop",restrict ssh-ed25519 AAAA...
+command="dartuios stdio-proxy --as laptop",restrict ssh-ed25519 AAAA...
 ```
 
 Only a pinned name is a boundary: a key that may run any command can run a
 shell, and can claim any name. A table with a policy and no `addr` is not
-dialled and not listed by `tuios hosts`, and `[hosts."*"]` never is.
+dialled and not listed by `dartuios hosts`, and `[hosts."*"]` never is.
 
 The daemon follows the file, and a change applies to the next call on every
-link, including links already open. `tuios hosts add` on a known name keeps
+link, including links already open. `dartuios hosts add` on a known name keeps
 these fields. [protocol.md](protocol.md#what-a-linked-machine-may-do-here) has
 the verb by verb table.

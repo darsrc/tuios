@@ -8,9 +8,9 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The message block that lives in the dock's right-hand end.
@@ -287,7 +287,7 @@ func (m *OS) renderNotificationBlock(renderWidth, avail int) (notifBlock, bool) 
 	// left edge now that there is no fill to open.
 	lead := inked.Render(notifCap(s.msg.Type, &m.Settings))
 	mark := inked.Render(" " + notifGlyph(s.msg.Type, &m.Settings))
-	if glyph, fg := agentMark(s.msg.AgentState, false, ground); glyph != "" {
+	if glyph, fg := agentMark(s.msg.AgentState, false, ground, m.filamentFrame); glyph != "" {
 		// A message about an agent wears that state's mark in that state's
 		// colour, the same one the rail and the title bar draw, so the dock
 		// does not say "needs you" in a shape used nowhere else.

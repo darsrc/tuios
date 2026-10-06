@@ -3,7 +3,7 @@ package app
 import (
 	"image/color"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/overlay"
 )
 
 // quitMenuInnerWidth is the preferred inner width of the quit menu panel.
@@ -15,7 +15,7 @@ const quitMenuInnerWidth = 38
 // list overlay.
 func (m *OS) renderQuitMenu() (string, overlay.Geometry, []overlayRowHit) {
 	items := m.QuitMenuItems
-	title := "Quit TUIOS"
+	title := "Quit dartuios"
 	if m.IsDaemonSession && m.SessionName != "" {
 		title = "Session: " + printableTitle(m.SessionName)
 	}

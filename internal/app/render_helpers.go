@@ -6,21 +6,21 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	uv "github.com/charmbracelet/ultraviolet"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // agentStateIndicator returns the one-cell glyph that marks a pane's agent state
 // in its window title, or the empty string for none/unset. The glyphs are
 // deliberately distinct shapes rather than the same shape in different colors, so
-// the state reads at a glance and survives a monochrome capture: a filled circle
-// working, a triangle needs-input, a hollow circle idle, a filled square done,
-// and a cross errored.
+// the state reads at a glance and survives a monochrome capture: a filled diamond
+// working, a question awaiting input, a hollow circle idle, a check done, and a
+// cross errored.
 //
 // ASCII-only terminals get a parallel set that keeps the same five states
 // apart in one cell. Every surface that shows agent state goes through this
@@ -41,22 +41,34 @@ func agentStateIndicator(state string) string {
 // title sanitiser's list of our own marks (chromeGlyphs) is read from it and
 // cannot fall behind it.
 var agentStateMarks = map[session.AgentState]struct{ glyph, ascii string }{
-	session.AgentStateWorking:    {"●", "*"},
-	session.AgentStateNeedsInput: {"▲", "!"},
+	session.AgentStateWorking: {"◆", "*"},
+	// The question mark is needs_input's DAR mark, but it stays "!" in ASCII:
+	// unknown's ASCII is already "?", and the set must keep the states apart.
+	session.AgentStateNeedsInput: {"?", "!"},
 	session.AgentStateIdle:       {"○", "o"},
-	session.AgentStateDone:       {"■", "#"},
+	session.AgentStateDone:       {"✓", "#"},
 	session.AgentStateErrored:    {"×", "x"},
-	// An agent is there and the daemon cannot say what it is doing. It drew
 	// nothing at all before, which read as no agent, and that is the common
 	// case rather than an edge: the stall timer writes this state for any
 	// agent with no screen rules to read, which is every agent matched by
 	// name alone.
 	//
-	// A hollow square rather than a question mark: the row already names the
+	// A hollow diamond rather than a question mark: the row already names the
 	// agent, so the question is about the state and not about whether
 	// anything is there. It reads as the same family as idle's hollow circle,
 	// which is the nearest thing to what it means.
-	session.AgentStateUnknown: {"□", "?"},
+	session.AgentStateUnknown: {"◊", "?"},
+}
+
+// workingGlyph is the mark a working agent burns: the living filament when a
+// frame has been drawn, otherwise the static diamond. The diamond is the
+// pre-tick and motion-off form, so a working pane reads as working before the
+// first filament frame arrives and while motion is off.
+func workingGlyph(filament rune) string {
+	if filament != 0 {
+		return string(filament)
+	}
+	return agentStateIndicator("working")
 }
 
 // agentMark is the mark and the colour one pane's agent state wears, and every
@@ -70,8 +82,12 @@ var agentStateMarks = map[session.AgentState]struct{ glyph, ascii string }{
 // sense that matters; an unread one keeps the filled square in the success
 // colour. The two used to differ only in colour on some surfaces and in shape
 // on others.
-func agentMark(state string, doneSeen bool, pal overlay.Palette) (string, color.Color) {
-	return agentStateIndicator(sidebarGlyphState(state, doneSeen)), sidebarStateColor(state, doneSeen, pal)
+func agentMark(state string, doneSeen bool, pal overlay.Palette, filament rune) (string, color.Color) {
+	resolved := sidebarGlyphState(state, doneSeen)
+	if resolved == "working" {
+		return workingGlyph(filament), sidebarStateColor(state, doneSeen, pal)
+	}
+	return agentStateIndicator(resolved), sidebarStateColor(state, doneSeen, pal)
 }
 
 // windowMarkState is the state whose mark a pane's title bar draws: the rail's
@@ -122,13 +138,24 @@ func getNormalBorder(s *config.Settings) lipgloss.Border {
 	return getBorder(s)
 }
 
+// windowBorder is the border one window frame draws. The focused frame goes
+// one weight up, which is what says "this one" where every other frame says
+// "a window"; every unfocused frame draws the style's rest border, so a set of
+// panes reads as one quiet field with a single heavy outline in it.
+func windowBorder(s *config.Settings, focused bool) lipgloss.Border {
+	if focused {
+		return s.GetFocusedBorderForStyle()
+	}
+	return s.GetBorderForStyle()
+}
+
 // borderRowGlyphs returns the fill character and the two corners a top or a
 // bottom border row is drawn from.
-func borderRowGlyphs(isTop bool, s *config.Settings) (fill, cornerLeft, cornerRight string) {
+func borderRowGlyphs(isTop bool, border lipgloss.Border) (fill, cornerLeft, cornerRight string) {
 	if isTop {
-		return s.GetWindowBorderTop(), s.GetWindowBorderTopLeft(), s.GetWindowBorderTopRight()
+		return border.Top, border.TopLeft, border.TopRight
 	}
-	return s.GetWindowBorderBottom(), s.GetWindowBorderBottomLeft(), s.GetWindowBorderBottomRight()
+	return border.Bottom, border.BottomLeft, border.BottomRight
 }
 
 // windowTitleBadge wraps a window's name in the pill caps the title bar shows
@@ -162,11 +189,11 @@ type buttonBorderRow struct {
 // not both fit the badge is dropped rather than the pill: a name the bar cannot
 // show is still readable from the dock, while a close button nobody can press
 // is simply gone.
-func layoutBorderRow(badge, pill string, width int, col color.Color, isTop bool, s *config.Settings) buttonBorderRow {
+func layoutBorderRow(badge, pill string, width int, col color.Color, isTop bool, s *config.Settings, border lipgloss.Border) buttonBorderRow {
 	style := lipgloss.NewStyle()
 	render := style.Foreground(col).Render
 
-	fill, cornerLeft, cornerRight := borderRowGlyphs(isTop, s)
+	fill, cornerLeft, cornerRight := borderRowGlyphs(isTop, border)
 
 	pillWidth := lipgloss.Width(pill)
 	padding := width - lipgloss.Width(badge) - pillWidth
@@ -306,8 +333,8 @@ func joinTitleParts(indicator, rest string) string {
 // against 1.357 ns for reading it, and a profile of the flood benchmark put
 // 11% of the whole client's samples in it. See TestBorderBoxInnerWidthIsKnown
 // for the proof that the two answers agree.
-func (m *OS) addToBorder(content string, width int, color color.Color, window *terminal.Window, position int, isTiling bool) string {
-	top, bottom := m.windowBorderRows(width, color, window, position, isTiling)
+func (m *OS) addToBorder(content string, width int, color color.Color, window *terminal.Window, position int, isTiling, isFocused bool) string {
+	top, bottom := m.windowBorderRows(width, color, window, position, isTiling, isFocused)
 
 	lines := strings.Split(content, "\n")
 	// The box arrived with a bottom edge lipgloss drew and this one replaces,
@@ -324,9 +351,11 @@ func (m *OS) addToBorder(content string, width int, color color.Color, window *t
 //
 // It is separate from addToBorder because the fused box path (fastWindowBox)
 // needs the same two rows without a rendered box to splice them into.
-func (m *OS) windowBorderRows(width int, color color.Color, window *terminal.Window, position int, isTiling bool) (topBorder, bottomBorder string) {
+func (m *OS) windowBorderRows(width int, color color.Color, window *terminal.Window, position int, isTiling, isFocused bool) (topBorder, bottomBorder string) {
 	width = max(width, 0)
 	titlePos := m.Settings.WindowTitlePosition
+
+	border := windowBorder(&m.Settings, isFocused)
 
 	style := lipgloss.NewStyle()
 
@@ -339,8 +368,8 @@ func (m *OS) windowBorderRows(width int, color color.Color, window *terminal.Win
 	// Calculate available width for title based on position
 	var titleMaxWidth int
 	if titlePos == "top" {
-		// Title on top shares space with buttons
-		titleMaxWidth = width - buttonsWidth - 2 // -2 for some padding
+		// Keep a centered title clear of buttons on either side.
+		titleMaxWidth = width - 2*buttonsWidth - 2
 	} else {
 		titleMaxWidth = width
 	}
@@ -360,7 +389,10 @@ func (m *OS) windowBorderRows(width int, color color.Color, window *terminal.Win
 	if titlePos == "top" && windowName != "" {
 		badge = windowTitleBadge(windowName, markState, color, &m.Settings)
 	}
-	row := layoutBorderRow(badge, buttons, width, color, true, &m.Settings)
+	row := layoutBorderRow(badge, buttons, width, color, true, &m.Settings, border)
+	if badge != "" {
+		row = centeredTitleBorderRow(badge, buttons, width, color, &m.Settings, border)
+	}
 	topBorder = row.text
 	m.recordWindowButtons(window.ID, placeWindowButtons(hits, window, row.pillStart))
 
@@ -378,27 +410,63 @@ func (m *OS) windowBorderRows(width int, color color.Color, window *terminal.Win
 	}
 
 	if titlePos == "bottom" && windowName != "" {
-		bottomBorder = renderTitleBadge(windowName, markState, width, color, false, &m.Settings)
+		bottomBorder = renderTitleBadge(windowName, markState, width, color, false, &m.Settings, border)
 	} else if scrollIndicator != "" {
 		// Bottom border with scrollback position indicator on the right
 		indicatorStyle := lipgloss.NewStyle().Foreground(theme.ScrollIndicator()).Bold(true)
 		indicator := indicatorStyle.Render(scrollIndicator)
 		indicatorWidth := lipgloss.Width(indicator)
 		lineWidth := max(width-indicatorWidth, 0)
-		bottomBorder = borderStyle.Render(m.Settings.GetWindowBorderBottomLeft()+strings.Repeat(m.Settings.GetWindowBorderBottom(), lineWidth)) + indicator + borderStyle.Render(m.Settings.GetWindowBorderBottomRight())
+		bottomBorder = borderStyle.Render(border.BottomLeft+strings.Repeat(border.Bottom, lineWidth)) + indicator + borderStyle.Render(border.BottomRight)
 	} else {
-		bottomBorder = borderStyle.Render(m.Settings.GetWindowBorderBottomLeft() + strings.Repeat(m.Settings.GetWindowBorderBottom(), width) + m.Settings.GetWindowBorderBottomRight())
+		bottomBorder = borderStyle.Render(border.BottomLeft + strings.Repeat(border.Bottom, width) + border.BottomRight)
 	}
 
 	return topBorder, bottomBorder
 }
 
+func centeredTitleBorderRow(badge, pill string, width int, col color.Color, s *config.Settings, border lipgloss.Border) buttonBorderRow {
+	style := lipgloss.NewStyle().Foreground(col)
+	render := style.Render
+	fill, cornerLeft, cornerRight := borderRowGlyphs(true, border)
+	badgeWidth := lipgloss.Width(badge)
+	pillWidth := lipgloss.Width(pill)
+	titleStart := (width - badgeWidth) / 2
+	if titleStart < 0 || titleStart+badgeWidth > width {
+		return layoutBorderRow("", pill, width, col, true, s, border)
+	}
+
+	leftFill := titleStart
+	rightFill := width - titleStart - badgeWidth
+	pillStart := width - pillWidth
+	if s.WindowButtonPosition == config.WindowButtonPositionLeft {
+		pillStart = 0
+		leftFill -= pillWidth
+		if leftFill < 0 {
+			return layoutBorderRow("", pill, width, col, true, s, border)
+		}
+	} else {
+		rightFill -= pillWidth
+		if rightFill < 0 {
+			return layoutBorderRow("", pill, width, col, true, s, border)
+		}
+	}
+
+	var row string
+	if s.WindowButtonPosition == config.WindowButtonPositionLeft {
+		row = render(cornerLeft) + pill + render(strings.Repeat(fill, leftFill)) + badge + render(strings.Repeat(fill, rightFill)) + render(cornerRight)
+	} else {
+		row = render(cornerLeft) + render(strings.Repeat(fill, leftFill)) + badge + render(strings.Repeat(fill, rightFill)) + pill + render(cornerRight)
+	}
+	return buttonBorderRow{text: row, pillStart: 1 + pillStart}
+}
+
 // renderTitleBadge renders a border with a centered title badge.
-func renderTitleBadge(windowName, agentState string, width int, color color.Color, isTop bool, s *config.Settings) string {
+func renderTitleBadge(windowName, agentState string, width int, color color.Color, isTop bool, s *config.Settings, border lipgloss.Border) string {
 	style := lipgloss.NewStyle()
 	borderStyle := style.Foreground(color)
 
-	borderChar, cornerLeft, cornerRight := borderRowGlyphs(isTop, s)
+	borderChar, cornerLeft, cornerRight := borderRowGlyphs(isTop, border)
 
 	if windowName == "" {
 		return borderStyle.Render(cornerLeft + strings.Repeat(borderChar, width) + cornerRight)

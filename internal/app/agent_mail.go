@@ -9,10 +9,10 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sound"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sound"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The agent mailbox on the client. The daemon owns the ring (see
@@ -113,7 +113,7 @@ type AgentMailState struct {
 	// opened it, typed into it or sent it. Such a reply is sent without the
 	// attach nonce, so the daemon stores it as claimed_human, not as the
 	// person's answer. Without this, an agent in a pane could drive this
-	// client's own reply line with send-keys and have tuios sign its answer
+	// client's own reply line with send-keys and have dartuios sign its answer
 	// as the person. It is cleared when the reply line closes.
 	DraftAutomated bool
 	// Error is the last failure, drawn in the panel until the next action.
@@ -773,7 +773,7 @@ func (m *OS) agentMailReplyTarget() (inbox string, replyTo uint64, ok bool) {
 // thisMachineName is the name this client signs a reply with when the ring
 // is on another machine.
 func thisMachineName() string {
-	if h := os.Getenv("TUIOS_HOST"); h != "" {
+	if h := os.Getenv("DARTUIOS_HOST"); h != "" {
 		return h
 	}
 	h, err := os.Hostname()
@@ -936,7 +936,7 @@ func (m *OS) AgentMailSendReply() tea.Cmd {
 		return nil
 	}
 	if !m.IsDaemonSession || m.DaemonClient == nil {
-		st.Error = "Mail needs the daemon. Start a session with: tuios new"
+		st.Error = "Mail needs the daemon. Start a session with: dartuios new"
 		return nil
 	}
 	name := m.DaemonClient.SessionName()

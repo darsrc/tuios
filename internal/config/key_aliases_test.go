@@ -6,7 +6,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // Issue #201: a key spelled with a modifier alias in config.toml has to match
@@ -50,7 +50,7 @@ func TestCanonicalKey(t *testing.T) {
 		"m":                 "m",
 		"é":                 "é",
 		"Enter":             "enter",
-		// Not a chord tuios can read: left alone for the validator to name.
+		// Not a chord dartuios can read: left alone for the validator to name.
 		"foo+x": "foo+x",
 		"ctrl+": "ctrl+",
 	}
@@ -133,7 +133,7 @@ func TestAliasBindingsMatchInEveryTable(t *testing.T) {
 	})
 }
 
-// TestExplainReadsEveryAliasTheSame is `tuios keybinds explain`: opt+f12,
+// TestExplainReadsEveryAliasTheSame is `dartuios keybinds explain`: opt+f12,
 // option+f12 and alt+f12 are one key, and all three show the leader.
 //
 // Negative control: make lookupForm lowercase only, as it did, and alt+f12
@@ -161,7 +161,7 @@ func TestExplainReadsEveryAliasTheSame(t *testing.T) {
 	}
 }
 
-// TestFreeKeyTakesAnAliasSpelling is `tuios keybinds free`: freeing alt+f9
+// TestFreeKeyTakesAnAliasSpelling is `dartuios keybinds free`: freeing alt+f9
 // takes the binding the config spells option+f9.
 func TestFreeKeyTakesAnAliasSpelling(t *testing.T) {
 	restore := config.ForceMacOSHost(true)
@@ -178,7 +178,7 @@ func TestFreeKeyTakesAnAliasSpelling(t *testing.T) {
 	}
 }
 
-// TestDoctorNamesTheLeaderSpellingAndBadKeys is `tuios keybinds doctor`.
+// TestDoctorNamesTheLeaderSpellingAndBadKeys is `dartuios keybinds doctor`.
 func TestDoctorNamesTheLeaderSpellingAndBadKeys(t *testing.T) {
 	t.Run("alias", func(t *testing.T) {
 		restore := config.ForceMacOSHost(true)
@@ -195,7 +195,7 @@ func TestDoctorNamesTheLeaderSpellingAndBadKeys(t *testing.T) {
 	})
 	t.Run("linux does not read opt", func(t *testing.T) {
 		// opt+ is valid only on macOS. The doctor and explain must not say
-		// tuios reads it as alt+f12 while also listing it as unreadable.
+		// dartuios reads it as alt+f12 while also listing it as unreadable.
 		restore := config.ForceMacOSHost(false)
 		defer restore()
 		cfg := config.DefaultConfig()

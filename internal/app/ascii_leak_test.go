@@ -7,9 +7,9 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // withASCII puts the session in ASCII-only mode for the test.
@@ -65,7 +65,7 @@ func TestWindowControlsPillIsASCIISafe(t *testing.T) {
 
 			win := &terminal.Window{ID: "w", CustomName: "pane", X: 0, Y: 0, Width: 40, Height: 12, Workspace: 1}
 			m := &OS{Settings: config.Global}
-			border := m.addToBorder(strings.Repeat(" ", 40), 38, lipgloss.Color("#ffffff"), win, 1, false)
+			border := m.addToBorder(strings.Repeat(" ", 40), 38, lipgloss.Color("#ffffff"), win, 1, false, false)
 			for _, r := range ansi.Strip(border) {
 				if r > 127 {
 					t.Fatalf("the window controls pill drew %q in ASCII mode: %q", r, ansi.Strip(border))

@@ -4,14 +4,14 @@ import (
 	"image/color"
 	"sync"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
 	"github.com/charmbracelet/x/exp/charmtone"
+	"github.com/darsrc/tuios/internal/overlay"
 	tint "github.com/lrstanley/bubbletint/v2"
 )
 
 // The contrast math lives in the overlay package, which owns the palette these
 // ratios are measured on and is meant to stand on its own. These are the names
-// the rest of tuios already calls it by.
+// the rest of dartuios already calls it by.
 const (
 	// ContrastFloor is the ratio a chrome label has to clear against the
 	// ground it is drawn on.
@@ -83,8 +83,8 @@ func RailRuleOn(bg color.Color) color.Color {
 // background: near-white on a dark or mid accent, near-black on a light one.
 func ContrastText(bg color.Color) color.Color { return overlay.ContrastText(bg) }
 
-// UIPalette is the chrome color set for TUIOS floating overlays. It is an alias
-// for overlay.Palette so the overlay package stays free of any tuios
+// UIPalette is the chrome color set for dartuios floating overlays. It is an alias
+// for overlay.Palette so the overlay package stays free of any dartuios
 // dependency and could be published on its own.
 type UIPalette = overlay.Palette
 

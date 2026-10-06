@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/overlay"
 )
 
 // The agent row's tokens and how each is drawn, from [appearance.sidebar.agent_row].
@@ -41,7 +41,7 @@ import (
 // The table is decoded as generic TOML and read here rather than into a typed
 // struct, because a typed decode refuses the whole config file on one wrong
 // type, and a rail that draws in the wrong colour is a smaller failure than a
-// tuios that starts with every setting at its default. A value this reader
+// dartuios that starts with every setting at its default. A value this reader
 // does not understand is dropped and named in Problems, which the validator
 // prints, and the rest of the table stands.
 
@@ -50,7 +50,7 @@ import (
 // Beside these, "$key" names one key of the pane's agent metadata (see
 // SidebarMetaTokenKey).
 //
-// now, prompt and context read the metadata tuios feeds itself, with a rule
+// now, prompt and context read the metadata dartuios feeds itself, with a rule
 // of their own on top of the raw value: now draws only while the agent works,
 // prompt is the first line of the last prompt given to it, and context draws
 // "ctx 84%" only once the context is SidebarContextWarnAt percent full or
@@ -75,7 +75,7 @@ var SidebarAgentRowDefaultTokens = []string{"session", "need", "harness", "name"
 // out.
 const SidebarContextWarnAt = 80
 
-// SidebarFeedMetaKeys are the metadata keys tuios feeds from hooks, the
+// SidebarFeedMetaKeys are the metadata keys dartuios feeds from hooks, the
 // status line and protocol panes. The meta token leaves them out: each has a
 // token of its own (now, prompt, context, or $model, $cost and $plan), so the
 // model and the cost are not on every row unless a person places them.

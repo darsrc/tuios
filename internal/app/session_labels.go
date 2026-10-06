@@ -5,7 +5,7 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // adoptSessionLabels copies the daemon-owned labels off a state push. They are
@@ -54,7 +54,7 @@ func (m *OS) SessionLabel(name string) string {
 
 // sessionTitle is the one name a session is shown by in every view: the rail's
 // title for it (sessiontree.BuildSession), which is its display name, else the
-// directory of its focused pane when tuios made the name up, else the name.
+// directory of its focused pane when dartuios made the name up, else the name.
 // The rail said "demo" while the Inbox, the peek, the dock's alerts, the
 // palette and the close dialog said "session-0" for the same session.
 //
@@ -73,7 +73,7 @@ func (m *OS) sessionTitle(name string) string {
 // sessionPlace is where a session is, as the rail shows it: the directory label
 // for its focused pane and the git branch there, both from the daemon's listing
 // and both empty until the listing has said. The directory is offered only for
-// a name tuios generated, since "session-3" says nothing and a name a person
+// a name dartuios generated, since "session-3" says nothing and a name a person
 // chose says more than a directory. The branch follows either.
 func (m *OS) sessionPlace(name string) (dir, branch string) {
 	if m.DaemonClient == nil {

@@ -10,20 +10,20 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/worktree"
 )
 
 // Every test here works on a repository testutil.GitRepo made under the test's
-// own temporary directory, with tuios's worktree directory pointed at another.
+// own temporary directory, with dartuios's worktree directory pointed at another.
 // Nothing here touches any other repository.
 
 // worktreeFixture is a daemon, its socket, and a throwaway repository, with
-// tuios's worktree directory redirected under the test.
+// dartuios's worktree directory redirected under the test.
 func worktreeFixture(t *testing.T) (*Daemon, string, string) {
 	t.Helper()
 	repo := testutil.GitRepo(t)
-	t.Setenv("TUIOS_WORKTREE_DIR", filepath.Join(t.TempDir(), "worktrees"))
+	t.Setenv("DARTUIOS_WORKTREE_DIR", filepath.Join(t.TempDir(), "worktrees"))
 	d, sp := startTestDaemon(t)
 	return d, sp, repo
 }
@@ -252,7 +252,7 @@ func TestFanRefusesAnAgentThatIsNotInstalledAndABadCount(t *testing.T) {
 
 func TestFanBranchesSkipNamesThatExist(t *testing.T) {
 	repo := testutil.GitRepo(t)
-	t.Setenv("TUIOS_WORKTREE_DIR", filepath.Join(t.TempDir(), "worktrees"))
+	t.Setenv("DARTUIOS_WORKTREE_DIR", filepath.Join(t.TempDir(), "worktrees"))
 	testutil.Git(t, repo, "branch", "try")
 	testutil.Git(t, repo, "branch", "try-3")
 	got := fanBranches(repo, "try", 3)

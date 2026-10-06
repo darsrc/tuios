@@ -3,8 +3,8 @@ package session
 import (
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // agentStateForProgress maps an OSC 9;4 progress report onto an agent state.

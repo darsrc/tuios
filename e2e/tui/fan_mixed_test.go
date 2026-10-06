@@ -21,7 +21,7 @@ import (
 // as not installed and the fan call fails.
 func TestFanMixesAgentsFromTheCallersPathAndStartAgentWaits(t *testing.T) {
 	base, repo := fanFixture(t)
-	if out, err := tuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
 		t.Fatalf("start the daemon: %v: %s", err, out)
 	}
 
@@ -35,7 +35,7 @@ func TestFanMixesAgentsFromTheCallersPathAndStartAgentWaits(t *testing.T) {
 	}
 	callerPath := "PATH=" + toolBin + string(os.PathListSeparator) + os.Getenv("PATH")
 
-	out, err := tuiosCLIEnv(t, base, []string{callerPath, "FAN_MARK=from-the-shell"}, "fan",
+	out, err := dartuiosCLIEnv(t, base, []string{callerPath, "FAN_MARK=from-the-shell"}, "fan",
 		"--agent", "claude,mytool --flag", "--env", "FAN_MARK", "--repo", repo, "--name", "mix",
 		"--prompt", "Claude task.", "--prompt", "Tool task.")
 	if err != nil {
@@ -49,7 +49,7 @@ func TestFanMixesAgentsFromTheCallersPathAndStartAgentWaits(t *testing.T) {
 		t.Helper()
 		deadline := time.Now().Add(30 * time.Second)
 		for {
-			pane, _ := tuiosCLI(t, base, "capture-pane", "-s", session)
+			pane, _ := dartuiosCLI(t, base, "capture-pane", "-s", session)
 			if strings.Contains(pane, want) {
 				return
 			}
@@ -69,16 +69,16 @@ func TestFanMixesAgentsFromTheCallersPathAndStartAgentWaits(t *testing.T) {
 			t.Fatalf("the prompt was typed at a program that showed nothing: %v", r)
 		}
 	}
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "repo-mix-2", "idle"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "repo-mix-2", "idle"); err != nil {
 		t.Fatalf("report idle for mytool: %v: %s", err, out)
 	}
 	waitPane("repo-mix-2", "GOT: Tool task.")
 
-	out, err = tuiosCLI(t, base, "start-agent", "-s", "plain", "claude", "--name", "reviewer", "--ready-timeout", "30000")
+	out, err = dartuiosCLI(t, base, "start-agent", "-s", "plain", "claude", "--name", "reviewer", "--ready-timeout", "30000")
 	if err != nil || !strings.Contains(out, "reviewer") || !strings.Contains(out, "is ready") {
 		t.Fatalf("start-agent did not report a ready reviewer: %v\n%s", err, out)
 	}
-	listed, err := tuiosCLI(t, base, "list-agents", "--select", "name:reviewer")
+	listed, err := dartuiosCLI(t, base, "list-agents", "--select", "name:reviewer")
 	if err != nil || !strings.Contains(listed, "reviewer") {
 		t.Fatalf("the started agent is not addressable by its name: %v\n%s", err, listed)
 	}

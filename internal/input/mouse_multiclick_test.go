@@ -7,7 +7,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/app"
 )
 
 // A triple-click arrives as a double-click plus a third press, so copying on
@@ -83,9 +83,9 @@ func TestASlowTripleClickStillResolvesToTheLine(t *testing.T) {
 	// than slept through: sleeping two thirds of the window and then requiring
 	// the press to land inside the remaining third is a race against whatever
 	// else the machine is doing, and this test would lose it by reporting that
-	// tuios mishandled a slow triple-click when all that happened is that the
+	// dartuios mishandled a slow triple-click when all that happened is that the
 	// test was descheduled. Backdating asserts the same thing, and the interval
-	// tuios reads is then the one the test asked for.
+	// dartuios reads is then the one the test asked for.
 	win.LastClickTime = time.Now().Add(-multiClickInterval * 2 / 3)
 
 	pressAt(o, 6, 0)

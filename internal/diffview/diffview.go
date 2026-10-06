@@ -9,7 +9,7 @@
 // changed line is paired with the line it replaced for the split layout. No
 // code is copied from Crush, whose licence (FSL-1.1-MIT) is not yet MIT for
 // any version of that view. What differs here: the colours come from the
-// active tuios theme rather than a fixed style, the lines of one side of a
+// active dartuios theme rather than a fixed style, the lines of one side of a
 // hunk are tokenised together so a comment or string that spans lines keeps
 // its colour, and the part of a line that changed is marked.
 //
@@ -58,7 +58,7 @@ const (
 	Attr
 	// Heading is a heading in prose markup.
 	Heading
-	// Meta is text tuios adds to a line, such as the mark for a missing
+	// Meta is text dartuios adds to a line, such as the mark for a missing
 	// newline at the end of a file.
 	Meta
 	// NumClasses is how many classes there are.

@@ -49,7 +49,7 @@ func TestRestoredPaneComesBackInItsDirectory(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if out, err := tuiosCLI(t, base, "new", session, "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", session, "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
 	if !paneInDir(t, base, session, "cd '"+dir+"' && ", want) {
@@ -59,11 +59,11 @@ func TestRestoredPaneComesBackInItsDirectory(t *testing.T) {
 	savePane(t, base, session, filepath.Join(artifacts, "before-restart.txt"))
 
 	// kill-server saves every session while its shells are still alive.
-	if out, err := tuiosCLI(t, base, "kill-server"); err != nil {
+	if out, err := dartuiosCLI(t, base, "kill-server"); err != nil {
 		t.Fatalf("kill-server: %v\n%s", err, out)
 	}
 	// Starting any session starts a daemon, and a daemon restores on start.
-	if out, err := tuiosCLI(t, base, "new", "e2e-restore-cwd-trigger", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-restore-cwd-trigger", "--detach"); err != nil {
 		t.Fatalf("start a fresh daemon: %v\n%s", err, out)
 	}
 	if info := waitForSessionInfo(t, base, session); !info.Restored {
@@ -84,13 +84,13 @@ func TestRestoredPaneComesBackInItsDirectory(t *testing.T) {
 func paneInDir(t *testing.T, base, session, prefix, dir string) bool {
 	t.Helper()
 	cmd := prefix + `if [ "$(pwd -P)" = '` + dir + `' ]; then printf 'CWD-%s\n' SAME; else printf 'CWD-%s\n' ELSEWHERE; fi` + "\r"
-	if out, err := tuiosCLI(t, base, "send-keys", "-s", session, "-l", cmd); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-keys", "-s", session, "-l", cmd); err != nil {
 		t.Fatalf("ask the shell where it is: %v\n%s", err, out)
 	}
 	var pane string
 	deadline := time.Now().Add(shellTimeout)
 	for {
-		pane, _ = tuiosCLI(t, base, "capture-pane", "-s", session)
+		pane, _ = dartuiosCLI(t, base, "capture-pane", "-s", session)
 		for _, line := range strings.Split(pane, "\n") {
 			switch strings.TrimSpace(line) {
 			case "CWD-SAME":
@@ -110,7 +110,7 @@ func paneInDir(t *testing.T, base, session, prefix, dir string) bool {
 // savePane writes the session's pane text to path.
 func savePane(t *testing.T, base, session, path string) {
 	t.Helper()
-	pane, err := tuiosCLI(t, base, "capture-pane", "-s", session)
+	pane, err := dartuiosCLI(t, base, "capture-pane", "-s", session)
 	if err != nil {
 		t.Logf("capture the pane for %s: %v", path, err)
 		return

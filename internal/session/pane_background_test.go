@@ -3,9 +3,9 @@ package session
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/capture"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/capture"
+	"github.com/darsrc/tuios/internal/shot"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // The daemon's screenshot verb draws a pane on the ground the session's

@@ -24,7 +24,7 @@ func sessionWithInheritCwd(t *testing.T, v bool) (*Session, string) {
 
 // cwdOfWindow reads a window's live shell directory, waiting for the shell to
 // exist. A shell that never reports one skips the test rather than failing it:
-// ProcessCwd is platform-specific and this test is about the choice tuios
+// ProcessCwd is platform-specific and this test is about the choice dartuios
 // makes, not about whether this OS can answer.
 func cwdOfWindow(t *testing.T, sess *Session, windowID string) string {
 	t.Helper()

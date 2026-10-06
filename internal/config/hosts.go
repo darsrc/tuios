@@ -15,8 +15,8 @@ package config
 // [dock.custom] do: it is a map of named tables, not a scalar with a settable
 // value, so there is no single path the set-option verb could write.
 //
-// It is not edited by hand any more, though it still can be. `tuios hosts add`,
-// `tuios hosts remove` and the Hosts section of the settings page write it, and
+// It is not edited by hand any more, though it still can be. `dartuios hosts add`,
+// `dartuios hosts remove` and the Hosts section of the settings page write it, and
 // the daemon follows the file, so a change takes effect with no restart. See
 // hosts_edit.go for the write and internal/session's daemon_hosts.go for the
 // reload.
@@ -36,7 +36,7 @@ type HostConfig struct {
 	// called unreachable. Zero uses the built-in default. It is also handed to
 	// ssh, so a machine that is powered off is reported rather than waited on.
 	ConnectTimeout int `toml:"connect_timeout,omitempty"`
-	// Command is the tuios binary on the far side. Empty means the link finds
+	// Command is the dartuios binary on the far side. Empty means the link finds
 	// one itself: on the PATH, at the known install paths, or through the
 	// login shell. Set it to run a given binary instead; nothing is then
 	// looked for.

@@ -114,7 +114,7 @@ func TestOldAnimationSwitchMigrates(t *testing.T) {
 			killDaemon(t, base)
 			useShippedLooks(base)
 			writeConfig(t, base, fmt.Sprintf("[startup]\ntiled = true\n[appearance]\nanimations_enabled = %v\n", on))
-			if out, err := tuiosCLI(t, base, "new", "e2e-migrate", "--detach"); err != nil {
+			if out, err := dartuiosCLI(t, base, "new", "e2e-migrate", "--detach"); err != nil {
 				t.Fatalf("create session: %v\n%s", err, out)
 			}
 			env := []string{"TERM=xterm-256color", "COLORTERM=truecolor"}

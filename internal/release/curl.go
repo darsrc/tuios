@@ -18,13 +18,13 @@ import (
 
 // The release requests go through curl rather than net/http. net/http and
 // crypto/tls were 2.7 MB of the binary, and this was the only code that made
-// an HTTPS request. curl is on every machine tuios installs on (the
+// an HTTPS request. curl is on every machine dartuios installs on (the
 // installer runs through it), and it honours HTTPS_PROXY, NO_PROXY and the
 // system certificate store as net/http did.
 //
 // Ways this can differ from the net/http client, and what covers each:
 //   - No curl. The error says so and names the releases page, so the update
-//     can still be done by hand. `tuios update` is the only thing affected.
+//     can still be done by hand. `dartuios update` is the only thing affected.
 //   - The token in the process list. It goes in a config on stdin, never in
 //     an argument, so another user's ps cannot read it.
 //   - The token sent to the host a download redirects to. curl sends a
@@ -71,9 +71,9 @@ func (e *TransportError) Temporary() bool { return false }
 func curlGet(ctx context.Context, url, accept, token string) (*response, error) {
 	curl, err := exec.LookPath("curl")
 	if err != nil {
-		return nil, errors.New("tuios update downloads with curl, which is not on PATH; install curl, or download the release from https://github.com/" + Repo + "/releases")
+		return nil, errors.New("dartuios update downloads with curl, which is not on PATH; install curl, or download the release from https://github.com/" + Repo + "/releases")
 	}
-	headers, err := os.CreateTemp("", "tuios-update-headers-*")
+	headers, err := os.CreateTemp("", "dartuios-update-headers-*")
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func curlConfig(url, accept, token, headerPath string) string {
 	}
 	line("url", url)
 	line("header", "Accept: "+accept)
-	line("user-agent", "tuios-update")
+	line("user-agent", "dartuios-update")
 	if token != "" {
 		line("header", "Authorization: Bearer "+token)
 	}

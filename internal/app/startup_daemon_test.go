@@ -6,8 +6,8 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // These tests cover the path the [startup] settings are actually used on: a
@@ -29,7 +29,7 @@ const (
 )
 
 // startupRig is a real daemon, a session the daemon built with its own initial
-// window, a client OS attached to it the way cmd/tuios attaches, and a second
+// window, a client OS attached to it the way cmd/dartuios attaches, and a second
 // connection that watches what the daemon ends up holding.
 type startupRig struct {
 	t    *testing.T

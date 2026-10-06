@@ -16,7 +16,7 @@ func (m *OS) EditScrollbackInEditor() tea.Cmd {
 		return nil
 	}
 
-	tmpFile, err := os.CreateTemp("", "tuios-scrollback-*.txt")
+	tmpFile, err := os.CreateTemp("", "dartuios-scrollback-*.txt")
 	if err != nil {
 		m.ShowNotification("Failed to create temp file: "+err.Error(), "error", 0)
 		return nil

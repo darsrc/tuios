@@ -3,7 +3,7 @@ package vt_test
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // TestMargins_OutOfRangeDoesNotPanic covers a crash that took the daemon down,

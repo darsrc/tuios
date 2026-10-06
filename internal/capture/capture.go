@@ -4,7 +4,7 @@
 // names and writes the file.
 //
 // It sits outside internal/shot on purpose. shot is a leaf: it knows cells,
-// colours and geometry and nothing about tuios. This package knows tuios and
+// colours and geometry and nothing about dartuios. This package knows dartuios and
 // nothing about rasterisation, so the daemon and the client can both ask for
 // the same picture without either of them re-deriving a default.
 package capture
@@ -19,9 +19,9 @@ import (
 
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/shot"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Settings is one resolved screenshot request: the config section with any
@@ -99,7 +99,7 @@ func orDefault(v, def string) string {
 	return v
 }
 
-// XTermNotice is the one line a render carries when no theme is set. tuios can
+// XTermNotice is the one line a render carries when no theme is set. dartuios can
 // never read the host terminal's palette, so basic and indexed colours in an
 // unthemed session are a guess; this says which guess, once, instead of
 // letting the picture pass for the host's own colours.
@@ -126,7 +126,7 @@ func Palette(themeID string) (p *shot.Palette, warn string) {
 
 // WithPaneBackground returns the palette a capture of one pane is drawn in
 // when appearance.pane_background paints a ground behind it, so the picture
-// shows the pane as tuios draws it.
+// shows the pane as dartuios draws it.
 //
 // A capture already draws a cell with no background of its own in the
 // palette's background, since it has no terminal behind it to show through.
@@ -290,9 +290,9 @@ func FileName(label string, format shot.Format, now time.Time) string {
 	stamp := now.Format("2006-01-02-150405")
 	label = cleanLabel(label)
 	if label == "" {
-		return "tuios-" + stamp + "." + format.Ext()
+		return "dartuios-" + stamp + "." + format.Ext()
 	}
-	return "tuios-" + label + "-" + stamp + "." + format.Ext()
+	return "dartuios-" + label + "-" + stamp + "." + format.Ext()
 }
 
 // cleanLabel reduces a window title to a short filename-safe slug.

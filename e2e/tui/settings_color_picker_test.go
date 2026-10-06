@@ -24,13 +24,11 @@ import (
 // frames mid-transition with no corner on screen at all, which is a "not yet"
 // rather than a failure.
 func screenBorderInk(s tuitest.Screen) (tuitest.Color, bool) {
-	_, rows := s.Size()
-	for row := range rows {
-		if col := strings.Index(s.Line(row), "╭"); col >= 0 {
-			return s.Cell(col, row).Fg, true
-		}
+	row, col, ok := findPaneTopCornerCell(s)
+	if !ok {
+		return tuitest.Color{}, false
 	}
-	return tuitest.Color{}, false
+	return s.Cell(col, row).Fg, true
 }
 
 // borderInk is screenBorderInk for the test goroutine, where a missing corner

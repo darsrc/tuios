@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Keybind manager layout. Preferred sizes; a smaller screen gets a fitted
@@ -246,9 +246,9 @@ func (m *OS) keybindTabSubtitle() string {
 		return "Keys used twice. ctrl+d removes the bindings that never run."
 	case KeybindTabGuests:
 		if len(rep.GuestClashes) == 0 {
-			return "No program needs a key that tuios uses"
+			return "No program needs a key that dartuios uses"
 		}
-		return "Keys tuios uses that a program also wants"
+		return "Keys dartuios uses that a program also wants"
 	}
 	return ""
 }
@@ -260,7 +260,7 @@ func (m *OS) keybindEmptyMessage() string {
 	case KeybindTabConflicts:
 		return "No conflicts. Each key does one thing."
 	case KeybindTabGuests:
-		return "No program needs a key that tuios uses."
+		return "No program needs a key that dartuios uses."
 	}
 	if m.KeybindQuery() != "" {
 		return "No binding matches that filter"
@@ -393,7 +393,7 @@ func (m *OS) keybindConflictRow(i int, selected bool, pal overlay.Palette, width
 		overlay.Style(bg).Foreground(overlay.Structure(bg)).Render(scope)
 }
 
-// keybindGuestRow is one key tuios withholds that a curated program wants.
+// keybindGuestRow is one key dartuios withholds that a curated program wants.
 func (m *OS) keybindGuestRow(i int, selected bool, pal overlay.Palette, width int) string {
 	all := m.KeybindReport().GuestClashes
 	if i < 0 || i >= len(all) {
@@ -467,7 +467,7 @@ func (m *OS) keybindDetail(selected int) string {
 		if c.Running {
 			lead = "From the program list, and " + rep.Pane.Command + " runs in this pane now. "
 		}
-		return lead + "tuios takes " + c.Key + " (" + c.TuiosDesc + "), so " +
+		return lead + "dartuios takes " + c.Key + " (" + c.DartuiosDesc + "), so " +
 			c.Program + " never sees it. " + c.Program + " wants it for " + c.ProgramUse + ". " + c.Note
 	}
 
@@ -510,7 +510,7 @@ func scopeShortName(id string) string {
 	return id
 }
 
-// keybindRecordBody draws the recorder: what was pressed, what tuios does with
+// keybindRecordBody draws the recorder: what was pressed, what dartuios does with
 // it, what a terminal can and cannot tell apart, and who else wants it.
 func (m *OS) keybindRecordBody(pal overlay.Palette, width, visible int, chrome keybindChrome) []string {
 	bg := pal.Surface
@@ -536,14 +536,14 @@ func (m *OS) keybindRecordBody(pal overlay.Palette, width, visible int, chrome k
 		add(overlay.Style(bg).Render(" "))
 		add(overlay.Style(bg).Foreground(overlay.Readable(pal.Accent, bg)).Bold(true).
 			Render("  Press any key. It will be recorded, not run."))
-		armed := "  tuios records 1 key. The next key works as normal."
+		armed := "  dartuios records 1 key. The next key works as normal."
 		if bindAction != "" {
-			armed = "  tuios will ask to bind it to " + bindAction + "."
+			armed = "  dartuios will ask to bind it to " + bindAction + "."
 		}
 		add(head.Render(armed))
 	case key == "":
 		add(overlay.Style(bg).Render(" "))
-		add(head.Render("  Press ctrl+r to record a key and see what tuios already does with it."))
+		add(head.Render("  Press ctrl+r to record a key and see what dartuios already does with it."))
 		add(head.Render("  To bind one, pick an action on the Bindings tab and press ctrl+r there."))
 	default:
 		add(overlay.Style(bg).Render(" "))
@@ -557,7 +557,7 @@ func (m *OS) keybindRecordBody(pal overlay.Palette, width, visible int, chrome k
 			add(overlay.Style(bg).Foreground(overlay.Readable(pal.Accent, bg)).
 				Render("  " + overlay.EnterKey() + " bind it to " + bindAction + "   esc  leave it alone"))
 		case !fate.Free:
-			// The offer only appears for a key tuios actually holds. Printing it
+			// The offer only appears for a key dartuios actually holds. Printing it
 			// for a free key would invite a gesture that does nothing and read
 			// as though the key had been taken.
 			add(overlay.Style(bg).Foreground(overlay.Readable(pal.Accent, bg)).
@@ -566,9 +566,9 @@ func (m *OS) keybindRecordBody(pal overlay.Palette, width, visible int, chrome k
 	}
 
 	if key != "" && !m.KeybindArmed() {
-		section("in tuios")
+		section("in dartuios")
 		if len(fate.Acts) == 0 {
-			add(body.Render("  " + glyphs.ok + " tuios does not use this key in any scope"))
+			add(body.Render("  " + glyphs.ok + " dartuios does not use this key in any scope"))
 		}
 		for _, a := range fate.Acts {
 			mark := glyphs.ok
@@ -585,7 +585,7 @@ func (m *OS) keybindRecordBody(pal overlay.Palette, width, visible int, chrome k
 			add(overlay.Style(bg).Foreground(overlay.ReadableAt(pal.Warning, bg, overlay.MarkFloor)).
 				Render("  "+glyphs.clash+" ") +
 				label.Render(overlay.Fill("pane", keybindScopeColumn, bg)) +
-				body.Render(overlay.Truncate("taken by tuios: "+fate.SwallowReason, max(width-keybindScopeColumn-4, 8))))
+				body.Render(overlay.Truncate("taken by dartuios: "+fate.SwallowReason, max(width-keybindScopeColumn-4, 8))))
 		} else {
 			add(body.Render("  "+glyphs.ok+" ") +
 				label.Render(overlay.Fill("pane", keybindScopeColumn, bg)) +
@@ -645,9 +645,9 @@ func (m *OS) keybindRecordBody(pal overlay.Palette, width, visible int, chrome k
 func keybindFateHeadline(fate config.KeyFate) string {
 	switch {
 	case fate.Free:
-		return "free: tuios does not use it, so the pane gets it"
+		return "free: dartuios does not use it, so the pane gets it"
 	case len(fate.Acts) == 0 && fate.SwallowedInTerminal:
-		return "tuios takes it before the pane sees it"
+		return "dartuios takes it before the pane sees it"
 	case len(fate.Acts) == 1:
 		return "bound in 1 scope"
 	default:

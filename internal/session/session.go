@@ -24,15 +24,15 @@ import (
 	"github.com/charmbracelet/x/ansi"
 	"github.com/google/uuid"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/guestenv"
-	"github.com/Gaurav-Gosain/tuios/internal/ptyspawn"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/guestenv"
+	"github.com/darsrc/tuios/internal/ptyspawn"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
-// debugEnabled returns true if debug logging is enabled via TUIOS_DEBUG_INTERNAL env var
+// debugEnabled returns true if debug logging is enabled via DARTUIOS_DEBUG_INTERNAL env var
 func debugEnabled() bool {
-	return os.Getenv("TUIOS_DEBUG_INTERNAL") == "1"
+	return os.Getenv("DARTUIOS_DEBUG_INTERNAL") == "1"
 }
 
 // debugLog logs a message only if debug mode is enabled
@@ -100,7 +100,7 @@ type WindowState struct {
 	// A session holding one of these is what a global session is. There is no
 	// second kind of session and no flag that says so: the field is on the
 	// window because the machine is a property of the process, not of the
-	// session it is grouped under, and that is what lets `tuios ls`, the verbs,
+	// session it is grouped under, and that is what lets `dartuios ls`, the verbs,
 	// the mailbox and hooks keep working on such a session with no special
 	// case. The zero value is a window on this machine, which is what every
 	// older client and every older state file reads as.
@@ -238,7 +238,7 @@ type WindowState struct {
 	// the pid costs nothing to collect: it is a field on the PTY, not a read.
 	//
 	// The client process always runs on the pane machine, in every deployment
-	// tuios has, including `tuios ssh` and `tuios-web` (see app/link_open.go), so
+	// dartuios has, including `dartuios ssh` and `dartuios-web` (see app/link_open.go), so
 	// a pid from the daemon names a process the client can read.
 	//
 	// json:"-" keeps it off disk. Resurrection state is JSON and outlives the
@@ -250,7 +250,7 @@ type WindowState struct {
 	// The poll is the authority: it corrects the stamp and clears it when the
 	// shell goes.
 	ShellPID int `json:"-"`
-	// Grants is what the pane's process may do through tuios, by grant name,
+	// Grants is what the pane's process may do through dartuios, by grant name,
 	// when it was given grants of its own: at start (start-agent, fan and
 	// new-window take grants) or later with set-pane-grants. Nil means it
 	// holds the default of [agents.permissions]; ["none"] means it holds
@@ -282,7 +282,7 @@ type SessionState struct {
 	Name string `json:"name"`
 	// DisplayName is an optional user-facing label. Name stays the identity: it
 	// keys the session map, names the resurrection file, is exported as
-	// TUIOS_SESSION into every pane, and is what every verb's session parameter
+	// DARTUIOS_SESSION into every pane, and is what every verb's session parameter
 	// resolves against. Renaming for display must not disturb any of that, which
 	// is why the label is a field of its own rather than a write to Name.
 	//
@@ -354,14 +354,14 @@ type SessionState struct {
 	// WorkspaceNames maps a workspace number to its optional label. The number
 	// stays the workspace's identity and its fallback label: everything that
 	// addresses a workspace (the window's Workspace field, WorkspaceFocus,
-	// WorkspaceTrees, the verbs, TUIOS_WORKSPACE) keeps using the number, and a
+	// WorkspaceTrees, the verbs, DARTUIOS_WORKSPACE) keeps using the number, and a
 	// workspace with no entry here is unnamed and renders as its number, exactly
 	// as every workspace did before this existed. Naming one is a daemon-owned
 	// change so it survives a reattach and every attached client sees it.
 	WorkspaceNames map[int]string `json:"workspace_names,omitempty"`
 	// WorkspaceOrder is the order the workspaces are shown in, and only that.
 	// The number stays the identity, so the window's Workspace field,
-	// WorkspaceFocus, WorkspaceTrees, the verbs and TUIOS_WORKSPACE all keep
+	// WorkspaceFocus, WorkspaceTrees, the verbs and DARTUIOS_WORKSPACE all keep
 	// addressing by number and none of them moves when this does. It sits beside
 	// the names because it is the same kind of thing: a presentation choice the
 	// daemon owns so it survives a reattach and every attached client sees the
@@ -443,7 +443,7 @@ type SessionState struct {
 	NumWorkspaces int `json:"num_workspaces,omitempty"`
 	// ResurrectionVersion tags the on-disk state schema. It is stamped by
 	// SaveSessionForResurrection (not by clients) and checked on load so that
-	// state written by a newer, incompatible tuios is archived rather than
+	// state written by a newer, incompatible dartuios is archived rather than
 	// misinterpreted. Absent (0) means pre-versioning state, which is a
 	// structural subset of the current schema and loads fine.
 	ResurrectionVersion int `json:"resurrection_version,omitempty"`
@@ -665,7 +665,7 @@ type PTY struct {
 	host string
 	pty  paneIO
 	cmd  *exec.Cmd
-	// rawLog appends every byte the process writes, when TUIOS_PTY_LOG asks
+	// rawLog appends every byte the process writes, when DARTUIOS_PTY_LOG asks
 	// for it, and is nil otherwise. See pty_log.go.
 	rawLog *ptyLogger
 	ctx    context.Context
@@ -714,7 +714,7 @@ type PTY struct {
 	subscribers   map[string]*ptySubscriber
 	subscribersMu sync.RWMutex
 
-	// debug mirrors TUIOS_DEBUG_INTERNAL, read once when the PTY is built.
+	// debug mirrors DARTUIOS_DEBUG_INTERNAL, read once when the PTY is built.
 	// broadcast runs per chunk per subscriber, and a debugLog there costs an
 	// os.Getenv (which takes the process-wide environment lock) plus a boxed
 	// argument slice on every call, whether or not the flag is set. The env var
@@ -894,7 +894,7 @@ func (p *PTY) takeAgentProgress() (vt.ProgressState, bool) {
 	return vt.ProgressState(v - 1), true
 }
 
-// Session represents a persistent TUIOS session.
+// Session represents a persistent dartuios session.
 // The daemon manages PTYs and stores state; the client runs the TUI.
 type Session struct {
 	// Identity
@@ -1087,7 +1087,7 @@ type Session struct {
 	onRemotePane func(windowID string, p *remotePane)
 }
 
-// SetGraphicsCapabilities records the graphics protocols tuios can forward to
+// SetGraphicsCapabilities records the graphics protocols dartuios can forward to
 // the attached client's host terminal. It is called on every attach, so the
 // most recent client wins; PTYs already running keep the environment they were
 // started with.
@@ -1112,14 +1112,14 @@ type SessionConfig struct {
 	Shell     string
 	// SocketPath is the daemon socket a shell spawned in this session reports to.
 	// The manager stamps it from the daemon's own socket when a session is
-	// created, so it is exported into every pane's environment as TUIOS_SOCKET.
+	// created, so it is exported into every pane's environment as DARTUIOS_SOCKET.
 	SocketPath string
 	// ScrollbackLines is the history depth every pane in this session keeps.
 	// The manager stamps it from the daemon's config; zero means the
 	// emulator's default.
 	ScrollbackLines int
 	// HostName is the name of the machine the session runs on, exported into
-	// every pane as TUIOS_HOST. The manager stamps it from the daemon's own
+	// every pane as DARTUIOS_HOST. The manager stamps it from the daemon's own
 	// hostname. Empty leaves the variable unset.
 	HostName string
 	// InheritCwd starts a new window in the focused pane's working directory
@@ -1135,11 +1135,11 @@ type SessionConfig struct {
 	// See Manager.HerdrEnv.
 	HerdrEnv func(windowID string, command []string) []string
 	// PaneToken returns the token a pane with the given window id is started
-	// with, exported as TUIOS_PANE_TOKEN. The manager stamps it with its own.
+	// with, exported as DARTUIOS_PANE_TOKEN. The manager stamps it with its own.
 	// Nil, or an empty answer, leaves the variable unset. See pane_token.go.
 	PaneToken func(windowID string) string
 	// grants is the manager's pane grant table. Every local pane is entered
-	// in it before its process starts, and TUIOS_PANE_GRANTS is read from
+	// in it before its process starts, and DARTUIOS_PANE_GRANTS is read from
 	// it. Nil for a session made outside a manager, whose panes hold the
 	// default. See pane_grants.go.
 	grants *paneGrantTable
@@ -1329,7 +1329,7 @@ func (s *Session) forgetBroadcast() {
 }
 
 // CreatePTY creates a new PTY in this session. windowID, if non-empty, is the
-// client-side window UUID exported to the shell as TUIOS_WINDOW_ID. onExit, if
+// client-side window UUID exported to the shell as DARTUIOS_WINDOW_ID. onExit, if
 // non-nil, is invoked with the PTY ID when the process exits; it is set before
 // the monitor goroutine starts so it is always visible to monitorExit.
 func (s *Session) CreatePTY(windowID string, width, height int, onExit func(ptyID string)) (*PTY, error) {
@@ -1338,7 +1338,7 @@ func (s *Session) CreatePTY(windowID string, width, height int, onExit func(ptyI
 
 // RestorePTY creates a fresh PTY for a resurrected window. It behaves like
 // CreatePTY but starts the shell in cwd (when that directory still exists) and
-// marks the shell as restored: the shell's environment carries TUIOS_RESTORED=1
+// marks the shell as restored: the shell's environment carries DARTUIOS_RESTORED=1
 // and a one-line banner is written to the terminal so the user can see the
 // process is a freshly respawned shell, not the original long-lived one.
 func (s *Session) RestorePTY(windowID string, width, height int, cwd string, onExit func(ptyID string)) (*PTY, error) {
@@ -1355,7 +1355,7 @@ func (s *Session) restorePTYWithGrants(windowID string, width, height int, cwd s
 // the shell. It is deliberately not persisted: a restored window respawns as a
 // shell, because silently rerunning a program the user ran once is not what
 // restoration promises. extraEnv, KEY=VALUE pairs, goes on top of the daemon's
-// environment and under the TUIOS_ variables; see buildEnvWith. It is not
+// environment and under the DARTUIOS_ variables; see buildEnvWith. It is not
 // persisted either, and a window on another machine ignores it.
 //
 // stdout, when non-nil, is the process's standard output instead of the PTY:
@@ -1364,7 +1364,7 @@ func (s *Session) restorePTYWithGrants(windowID string, width, height int, cwd s
 // local process. extraFiles are inherited as fd 3 and up, again only by a
 // local process.
 //
-// grants is what the pane may do through tuios, nil for the default. A local
+// grants is what the pane may do through dartuios, nil for the default. A local
 // pane is entered in the grant table before its process starts and leaves it
 // when the process exits, so the process is never placed in a pane the table
 // does not know. See pane_grants.go.
@@ -1441,7 +1441,7 @@ func (s *Session) createPTY(windowID string, width, height int, cwd string, comm
 				cmd = exec.Command(shell)
 			}
 			cmd.Env = s.buildEnvFor(windowID, restored, extraEnv, command)
-			// The pane's terminal, so a tuios client can tell whether it runs
+			// The pane's terminal, so a dartuios client can tell whether it runs
 			// on it or only inherited the pane's variables. See
 			// nested_attach.go.
 			if tty != "" {
@@ -1694,7 +1694,7 @@ func (s *Session) GetState() *SessionState {
 //
 // It is applied to every snapshot that leaves the session, both the ones a
 // verb reads and the ones pushed to clients, and that is the point. It used to
-// run in GetState alone, so `tuios list-windows` reported a pane's directory
+// run in GetState alone, so `dartuios list-windows` reported a pane's directory
 // and the client drawing that same pane was never told it. Local panes hid it:
 // a shell that announces over OSC 7 reaches the client through its own
 // emulator, so only a pane whose shell says nothing went without, and the
@@ -2449,9 +2449,9 @@ func (s *Session) buildEnvWith(windowID string, restored bool, extra []string) [
 // buildEnvFor is buildEnv with a caller's own variables, for a pane that runs
 // command (nil for the user's shell). The caller's variables replace the
 // daemon's variables of the same name, and every variable set below them,
-// TERM and the TUIOS_ contract, is set after them and wins. The caller's
+// TERM and the DARTUIOS_ contract, is set after them and wins. The caller's
 // variables are checked before they get here (callerEnv), which refuses a
-// TUIOS_ name outright. command decides what a harness started directly is
+// DARTUIOS_ name outright. command decides what a harness started directly is
 // told beyond that: see guestenv.TermProgramFor.
 func (s *Session) buildEnvFor(windowID string, restored bool, extra, command []string) []string {
 	// The daemon's environment, less TMUX and TMUX_PANE. A daemon started from
@@ -2488,41 +2488,41 @@ func (s *Session) buildEnvFor(windowID string, restored bool, extra, command []s
 	kitty, sixel := s.GraphicsCapabilities()
 	env = append(env, "TERM_PROGRAM="+guestenv.TermProgramFor(command, kitty, sixel))
 	env = append(env, "TERM_PROGRAM_VERSION=0.1.0")
-	env = append(env, "TUIOS_SESSION="+s.Name)
-	// TUIOS_HOST names the machine this pane runs on. A pane is always local
+	env = append(env, "DARTUIOS_SESSION="+s.Name)
+	// DARTUIOS_HOST names the machine this pane runs on. A pane is always local
 	// to the daemon that made it, so this is the daemon's own hostname, on
 	// every machine: a program that wants to know where it is reads it, and a
 	// program that sends mail to another machine signs with it.
 	if s.config != nil && s.config.HostName != "" {
-		env = append(env, "TUIOS_HOST="+s.config.HostName)
+		env = append(env, "DARTUIOS_HOST="+s.config.HostName)
 	}
 	if windowID != "" {
-		env = append(env, "TUIOS_WINDOW_ID="+windowID)
-		// TUIOS_PANE_ID is an alias a state-reporting shim guards on, mirroring
+		env = append(env, "DARTUIOS_WINDOW_ID="+windowID)
+		// DARTUIOS_PANE_ID is an alias a state-reporting shim guards on, mirroring
 		// the pane-id contract other multiplexers' agent integrations use.
-		env = append(env, "TUIOS_PANE_ID="+windowID)
-		// TUIOS_PANE_TOKEN proves the pane id to restrict-connection where
+		env = append(env, "DARTUIOS_PANE_ID="+windowID)
+		// DARTUIOS_PANE_TOKEN proves the pane id to restrict-connection where
 		// the kernel cannot name the caller's pane. See pane_token.go.
 		if s.config != nil && s.config.PaneToken != nil {
 			if tok := s.config.PaneToken(windowID); tok != "" {
-				env = append(env, "TUIOS_PANE_TOKEN="+tok)
+				env = append(env, "DARTUIOS_PANE_TOKEN="+tok)
 			}
 		}
-		// TUIOS_PANE_GRANTS says what the pane may do through tuios as it
+		// DARTUIOS_PANE_GRANTS says what the pane may do through dartuios as it
 		// starts. pane-grants gives the current answer. See pane_grants.go.
 		if s.config != nil && s.config.grants != nil {
-			env = append(env, "TUIOS_PANE_GRANTS="+s.config.grants.envValue(windowID))
+			env = append(env, "DARTUIOS_PANE_GRANTS="+s.config.grants.envValue(windowID))
 		}
 	}
-	// TUIOS_ENV marks a process as running under tuios, and TUIOS_SOCKET tells a
+	// DARTUIOS_ENV marks a process as running under dartuios, and DARTUIOS_SOCKET tells a
 	// shim which daemon socket to report to. Together with the pane id above they
 	// are the whole contract the agent-state shim needs; a shim finds nothing to
 	// report to when they are unset and no-ops.
-	env = append(env, "TUIOS_ENV=1")
+	env = append(env, "DARTUIOS_ENV=1")
 	if s.config != nil && s.config.SocketPath != "" {
-		env = append(env, "TUIOS_SOCKET="+s.config.SocketPath)
+		env = append(env, "DARTUIOS_SOCKET="+s.config.SocketPath)
 	}
-	// A harness that reports to herdr (Crush) finds tuios's herdr protocol
+	// A harness that reports to herdr (Crush) finds dartuios's herdr protocol
 	// socket here, when this pane starts one. See herdr_compat.go.
 	if s.config != nil && s.config.HerdrEnv != nil {
 		env = append(env, s.config.HerdrEnv(windowID, command)...)
@@ -2530,7 +2530,7 @@ func (s *Session) buildEnvFor(windowID string, restored bool, extra, command []s
 	// Mark restored shells so the user's shell rc (and scripts) can react, and
 	// so the restore is observable without relying on the visual banner.
 	if restored {
-		env = append(env, "TUIOS_RESTORED=1")
+		env = append(env, "DARTUIOS_RESTORED=1")
 	}
 
 	return env
@@ -2540,7 +2540,7 @@ func (s *Session) buildEnvFor(windowID string, restored bool, extra, command []s
 // terminal emulator. cwd, when set, is included so the user sees where the
 // fresh shell was spawned.
 func restoredBanner(cwd string) string {
-	msg := "-- tuios: session restored, fresh shell"
+	msg := "-- dartuios: session restored, fresh shell"
 	if cwd != "" {
 		msg += " in " + cwd
 	}
@@ -2855,6 +2855,10 @@ func (p *PTY) UpdatePixelDimensions(cellWidth, cellHeight int) error {
 // being heard one width narrower than the daemon did, and a line that wrapped
 // differently is in the scrollback for good.
 func (p *PTY) Resize(width, height int) error {
+	if width <= 0 || height <= 0 {
+		return fmt.Errorf("invalid PTY size %dx%d: width and height must be positive", width, height)
+	}
+
 	// A resize to the size the pane is already at is nothing, and has to cost
 	// nothing. It is not a rare case: every client of a session announces every
 	// pane's size for itself, so a second client attaching, or a client
@@ -2868,8 +2872,8 @@ func (p *PTY) Resize(width, height int) error {
 	// of lost scrollback when the guest's own idea of where the cursor is does
 	// not survive it.
 	//
-	// Zero is not a size and is left to the layers below to reject; it must not
-	// be recorded as the pane's own.
+	// Zero is not a size and is rejected above before it can be recorded as the
+	// pane's own or sent to the guest.
 	//
 	// The size is recorded, queued for the emulator and applied to the real PTY
 	// under one lock, because every client of a session announces sizes on
@@ -2891,7 +2895,7 @@ func (p *PTY) Resize(width, height int) error {
 		return nil
 	}
 	// A size change is rare and is the one thing a shell repaints its prompt
-	// for, so it is worth a line in `tuios logs`: a pane that gains blank lines
+	// for, so it is worth a line in `dartuios logs`: a pane that gains blank lines
 	// on a focus move is answered by whether this line appears with it.
 	LogBasic("PTY %s resized %dx%d -> %dx%d", shortID(p.ID), oldW, oldH, width, height)
 
@@ -3927,12 +3931,12 @@ func (p *PTY) readOutput() {
 			data := make([]byte, n)
 			copy(data, buf[:n])
 
-			// The raw stream, when TUIOS_PTY_LOG asks for it. Taken here,
+			// The raw stream, when DARTUIOS_PTY_LOG asks for it. Taken here,
 			// before anything reads or reorders it, so what lands in the file
 			// is what the program wrote.
 			p.rawLog.Write(data)
 
-			// A tuios client whose output lands in this pane announces
+			// A dartuios client whose output lands in this pane announces
 			// itself with a probe. See nest_probe.go.
 			p.scanNestProbes(data)
 

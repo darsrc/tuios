@@ -7,7 +7,7 @@ import (
 )
 
 // TestKeybindTileThenNewWindows drives the owner's EXACT reported sequence
-// through a real attached client: `tuios new`, then the keystrokes t, n, n, n.
+// through a real attached client: `dartuios new`, then the keystrokes t, n, n, n.
 // `t` toggles tiling on (interactive keybinding), and each `n` creates a window
 // (interactive keybinding). The result must be a clean, non-overlapping tiled
 // split, not a stack of windows at one coordinate.

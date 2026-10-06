@@ -1,4 +1,4 @@
-// plugindriver loads a plugin tuios installed for a harness and stands in for
+// plugindriver loads a plugin dartuios installed for a harness and stands in for
 // that harness's plugin API: it registers the plugin the way the harness
 // does, then reads one JSON event per line from stdin and hands it to the
 // plugin's handler for that event, the way the harness would.
@@ -48,7 +48,7 @@ if (harness === "pi" || harness === "omp") {
   });
   dispatch = async (line) => handlers.get(line.type)?.(line.event ?? {}, {});
 } else if (harness === "opencode") {
-  const hooks = await mod.TuiosAgentState({ client: {} });
+  const hooks = await mod.DartuiosAgentState({ client: {} });
   dispatch = async (line) => hooks.event?.({ event: line.event });
 } else {
   throw new Error("no driver for " + harness);

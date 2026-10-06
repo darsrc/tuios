@@ -37,10 +37,10 @@ func TestAWindowNameWinsOverAnIdPrefix(t *testing.T) {
 	const sess = "target"
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", sess, "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", sess, "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
-	out, err := tuiosCLI(t, base, "new-window", "other", "-s", sess, "--no-focus", "--print-id")
+	out, err := dartuiosCLI(t, base, "new-window", "other", "-s", sess, "--no-focus", "--print-id")
 	if err != nil {
 		t.Fatalf("open the second pane: %v\n%s", err, out)
 	}
@@ -52,7 +52,7 @@ func TestAWindowNameWinsOverAnIdPrefix(t *testing.T) {
 	if n, err := strconv.Atoi(name); err == nil && n < 2 {
 		t.Skipf("the id prefix %q reads as a window index, so it cannot test the name rule", name)
 	}
-	if out, err := tuiosCLI(t, base, "set-window", "-s", sess, "--name", name); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-window", "-s", sess, "--name", name); err != nil {
 		t.Fatalf("name the first pane %q: %v\n%s", name, err, out)
 	}
 
@@ -63,7 +63,7 @@ func TestAWindowNameWinsOverAnIdPrefix(t *testing.T) {
 	}
 	listWindows := func(label string) []window {
 		t.Helper()
-		out, err := tuiosCLI(t, base, "list-windows", "-s", sess, "--json")
+		out, err := dartuiosCLI(t, base, "list-windows", "-s", sess, "--json")
 		if err != nil {
 			t.Fatalf("list-windows: %v\n%s", err, out)
 		}
@@ -95,7 +95,7 @@ func TestAWindowNameWinsOverAnIdPrefix(t *testing.T) {
 		t.Fatalf("setup: %q should name the first pane and be an id prefix of the other pane only: %+v", name, before)
 	}
 
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", sess, "-w", name, "working", "--harness", "claude-code"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", sess, "-w", name, "working", "--harness", "claude-code"); err != nil {
 		t.Fatalf("set-agent-state -w %s: %v\n%s", name, err, out)
 	}
 	after := listWindows("after-name")
@@ -107,10 +107,10 @@ func TestAWindowNameWinsOverAnIdPrefix(t *testing.T) {
 	}
 
 	// The prefix still reaches the other pane once no name is in the way.
-	if out, err := tuiosCLI(t, base, "set-window", "-s", sess, "-w", name, "--name", "first"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-window", "-s", sess, "-w", name, "--name", "first"); err != nil {
 		t.Fatalf("rename the first pane: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", sess, "-w", name, "idle", "--harness", "claude-code"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", sess, "-w", name, "idle", "--harness", "claude-code"); err != nil {
 		t.Fatalf("set-agent-state -w %s by id prefix: %v\n%s", name, err, out)
 	}
 	last := listWindows("after-prefix")

@@ -23,9 +23,9 @@ import (
 // needs them, in a third combining mark. The first mark is the image row and
 // the second is the column; a cell with no marks continues the run to its left.
 //
-// tuios has to rewrite that id. The image the host holds is not the image the
+// dartuios has to rewrite that id. The image the host holds is not the image the
 // guest transmitted: guests pick ids independently and two panes would collide,
-// so every image is re-registered under an id tuios allocates. The cells still
+// so every image is re-registered under an id dartuios allocates. The cells still
 // name the guest's id, and a cell naming an id the host has never heard of
 // draws nothing. Translating the colour is the whole of the work, and it is why
 // this lives in the emulator rather than in the passthrough: the cells are text
@@ -125,7 +125,7 @@ func kittyPlaceholderHighByte(content string) (int, bool) {
 }
 
 // kittyPlaceholderFg is the foreground a cell must carry to name id, for ids
-// that fit in the 24 bits a colour has. tuios allocates host ids from one
+// that fit in the 24 bits a colour has. dartuios allocates host ids from one
 // upward, so this is every id it hands out.
 func kittyPlaceholderFg(id uint32) color.Color {
 	return color.RGBA{

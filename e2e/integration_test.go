@@ -38,7 +38,7 @@ func TestSessionIntegrationEndToEnd(t *testing.T) {
 		cmd.Stdin = strings.NewReader(stdin)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
-			t.Fatalf("tuios %s: %v\n%s", strings.Join(args, " "), err, out)
+			t.Fatalf("dartuios %s: %v\n%s", strings.Join(args, " "), err, out)
 		}
 		return string(out)
 	}
@@ -74,7 +74,7 @@ func TestSessionIntegrationEndToEnd(t *testing.T) {
 
 	// What qwen runs on SessionStart, with the pane's environment.
 	payload := `{"hook_event_name":"SessionStart","session_id":"qw-e2e","source":"startup"}`
-	explain := run(payload, withHome("TUIOS_PANE_ID="+win, "TUIOS_SESSION=work"), "agent-hook", "qwen", "--integration", "1", "--explain")
+	explain := run(payload, withHome("DARTUIOS_PANE_ID="+win, "DARTUIOS_SESSION=work"), "agent-hook", "qwen", "--integration", "1", "--explain")
 	if !strings.Contains(explain, `"applied":true`) {
 		t.Fatalf("agent-hook --explain: %s", explain)
 	}

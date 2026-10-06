@@ -14,7 +14,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/risk"
+	"github.com/darsrc/tuios/internal/risk"
 )
 
 // The Inbox: one daemon-owned queue of everything waiting for the person.
@@ -709,7 +709,7 @@ func (a *attentionStore) openResume(it AttentionItem) {
 
 // heldPromptSummary is the summary of the item that says an agent the daemon
 // started is not ready for its first prompt.
-const heldPromptSummary = "waiting at a screen tuios does not recognise: look at the pane and answer it"
+const heldPromptSummary = "waiting at a screen dartuios does not recognise: look at the pane and answer it"
 
 // openHeldPrompt opens a question item for a pane the daemon started an agent
 // in, which has not been ready for its first prompt for a while (see

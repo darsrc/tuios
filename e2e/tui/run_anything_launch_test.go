@@ -37,7 +37,7 @@ func writeProbe(t *testing.T) string {
 
 // launcherTitle is the header the launcher overlay renders. It is a different
 // overlay from the command palette, which is the point: a program is a thing
-// you start, not a verb tuios performs.
+// you start, not a verb dartuios performs.
 const launcherTitle = "Run a program"
 
 // altSpace is the launcher's direct binding.
@@ -189,7 +189,7 @@ func TestRunAnythingExecsDaemonPane(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-run", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-run", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 	term := startIn(t, base, startOpts{

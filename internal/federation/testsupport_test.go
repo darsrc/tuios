@@ -176,7 +176,7 @@ func (s *silentTransport) Diagnostic() string { return "" }
 func testOptions(dial Dialer) Options {
 	return Options{
 		Dial:            dial,
-		ClientName:      "tuios-test",
+		ClientName:      "dartuios-test",
 		ClientVersion:   "0.0.0-test",
 		VerbProtocol:    1,
 		MinVerbProtocol: 1,

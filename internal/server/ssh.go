@@ -1,4 +1,4 @@
-// Package server provides SSH server functionality for TUIOS.
+// Package server provides SSH server functionality for dartuios.
 package server
 
 import (
@@ -21,11 +21,11 @@ import (
 	"charm.land/wish/v2/logging"
 	"github.com/charmbracelet/colorprofile"
 
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/served"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/served"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // SSHServerConfig holds configuration for the SSH server.
@@ -37,11 +37,11 @@ type SSHServerConfig struct {
 	Ephemeral      bool   // If true, don't use daemon (old behavior)
 	Version        string // For daemon handshake
 	// AuthorizedKeysPath names the file of public keys allowed to connect.
-	// Empty searches ~/.config/tuios/authorized_keys, then
+	// Empty searches ~/.config/dartuios/authorized_keys, then
 	// ~/.ssh/authorized_keys. See auth.go.
 	AuthorizedKeysPath string
 	// ShowKeys turns the key display overlay on in every served session. It is
-	// the --show-keys flag `tuios ssh` registers with the rest of the interface
+	// the --show-keys flag `dartuios ssh` registers with the rest of the interface
 	// flags.
 	ShowKeys bool
 	// NoAuth accepts every connection without checking who it is. It is the
@@ -68,12 +68,12 @@ var applyAppearanceOnce sync.Once
 func StartSSHServer(ctx context.Context, cfg *SSHServerConfig) error {
 	// Who may connect, decided before anything listens. A bind that cannot be
 	// served safely is refused here rather than started and warned about: this
-	// is the same order cmd/tuios-web uses for TLS, and it is the only order
+	// is the same order cmd/dartuios-web uses for TLS, and it is the only order
 	// that cannot leave an open port behind while the operator reads the
 	// warning. It runs before anything in this process is written, so a
 	// refused bind leaves no trace of itself behind.
 	//
-	// The check lives here and not only in cmd/tuios because this function is
+	// The check lives here and not only in cmd/dartuios because this function is
 	// the entry point every caller uses, including the tests. A gate that only
 	// the command line enforces is a gate the next caller forgets.
 	authPlan, err := PlanSSHAuth(cfg.Host, cfg.AuthorizedKeysPath, cfg.NoAuth)
@@ -132,7 +132,7 @@ func StartSSHServer(ctx context.Context, cfg *SSHServerConfig) error {
 		if err != nil {
 			return fmt.Errorf("failed to get user home directory: %w", err)
 		}
-		hostKeyPath = filepath.Join(homeDir, ".ssh", "tuios_host_key")
+		hostKeyPath = filepath.Join(homeDir, ".ssh", "dartuios_host_key")
 	}
 
 	// If using daemon mode, ensure daemon is running.
@@ -142,7 +142,7 @@ func StartSSHServer(ctx context.Context, cfg *SSHServerConfig) error {
 	// without them would stop running those commands rather than run them twice.
 	if !cfg.Ephemeral {
 		// The [daemon] section, the hosts and the hooks, mapped the same way
-		// `tuios daemon` maps them, so a daemon this server starts gets the
+		// `dartuios daemon` maps them, so a daemon this server starts gets the
 		// agent detection settings and the hosts, not only the hooks.
 		daemonCfg := session.DaemonConfigFromUser(userConfig)
 		if err := session.EnsureDaemonRunningWith(cfg.Version, daemonCfg); err != nil {
@@ -157,7 +157,7 @@ func StartSSHServer(ctx context.Context, cfg *SSHServerConfig) error {
 		wish.WithHostKeyPath(hostKeyPath),
 		wish.WithMiddleware(
 			// Bubble Tea middleware for interactive sessions
-			tuiosSessionMiddleware(),
+			dartuiosSessionMiddleware(),
 			// Logging middleware for connection tracking
 			logging.Middleware(),
 			// Outermost backstop: contain any panic in a single session's
@@ -255,7 +255,7 @@ func (s *serialWriter) Write(p []byte) (int, error) {
 	return s.w.Write(p)
 }
 
-// tuiosSessionMiddleware runs the TUIOS bubbletea program for each SSH
+// dartuiosSessionMiddleware runs the dartuios bubbletea program for each SSH
 // session. It replaces wish's stock bubbletea.Middleware for two reasons:
 //
 //  1. The program's text output and the graphics passthrough output must be
@@ -266,12 +266,12 @@ func (s *serialWriter) Write(p []byte) (int, error) {
 //  2. Cleanup must run after Program.Run returns, not concurrently on
 //     Context().Done(), otherwise closing the windows races the final render
 //     frames.
-func tuiosSessionMiddleware() wish.Middleware {
+func dartuiosSessionMiddleware() wish.Middleware {
 	return func(next ssh.Handler) ssh.Handler {
 		return func(sess ssh.Session) {
 			_, windowChanges, active := sess.Pty()
 			if !active {
-				// No PTY requested, this shouldn't happen for TUIOS
+				// No PTY requested, this shouldn't happen for dartuios
 				wish.Fatalln(sess, "No terminal. Run ssh with -t to request one.")
 				return
 			}
@@ -332,7 +332,7 @@ func tuiosSessionMiddleware() wish.Middleware {
 	}
 }
 
-// buildSessionModel creates a TUIOS instance for an SSH session. graphicsOut
+// buildSessionModel creates a dartuios instance for an SSH session. graphicsOut
 // is the serialized session writer that kitty/sixel APC sequences are routed
 // through; it must be the same writer the bubbletea program renders to.
 func buildSessionModel(sshSession ssh.Session, graphicsOut io.Writer) (*app.OS, error) {
@@ -427,7 +427,7 @@ func determineSessionName(sshSession ssh.Session, cfg *SSHServerConfig) string {
 
 	// Priority 2: SSH username (if not generic)
 	user := sshSession.User()
-	if user != "" && user != "tuios" && user != "root" && user != "anonymous" {
+	if user != "" && user != "dartuios" && user != "root" && user != "anonymous" {
 		return user
 	}
 
@@ -462,7 +462,7 @@ func isLoopbackAddr(addr net.Addr) bool {
 // DefaultSSHSessionName is the session a connection that named none gets when
 // this machine's sessions cannot answer for it.
 //
-// It is the same answer tuios-web gives with "web", and for the same reason:
+// It is the same answer dartuios-web gives with "web", and for the same reason:
 // what a server hands an unnamed connection has to be a decision rather than
 // whatever the listing happened to return first.
 const DefaultSSHSessionName = "ssh-session"

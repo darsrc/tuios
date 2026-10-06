@@ -1,10 +1,10 @@
 package app
 
 import (
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
-// What a browser tab cannot do, and what tuios says about it.
+// What a browser tab cannot do, and what dartuios says about it.
 //
 // Everything in [appearance] renders as cells and reaches xterm.js intact, so
 // the whole of it applies over the web. Two of the [notifications.agent] sinks
@@ -16,10 +16,10 @@ import (
 //     1337, and none for 9, so the bytes are parsed and discarded. There is no
 //     Notification API bridge in its frontend to route them to either.
 //   - sound in "audio" mode shells out to paplay/aplay/afplay (internal/sound),
-//     which plays on the machine running tuios-web. That is the right machine
+//     which plays on the machine running dartuios-web. That is the right machine
 //     for a local attach and the wrong one for a phone across the room.
 //
-// Neither is worth silently rewriting the user's config over, so tuios reports
+// Neither is worth silently rewriting the user's config over, so dartuios reports
 // them through the config-warning channel that already exists for settings that
 // will not do what they say, and skips the OSC 9 write that has nowhere to go.
 // The sinks that do work are left alone: the dock message is drawn in the frame,
@@ -45,7 +45,7 @@ func browserAlertWarnings(cfg *config.UserConfig) []string {
 	}
 	if policy.PlaysAudio() {
 		out = append(out, "[notifications.agent] sound: the sound plays on the machine that runs "+
-			"tuios-web, not in the browser. Set sound_mode = \"bell\" to flash the terminal instead.")
+			"dartuios-web, not in the browser. Set sound_mode = \"bell\" to flash the terminal instead.")
 	}
 	return out
 }
@@ -73,7 +73,7 @@ func sshAlertWarnings(cfg *config.UserConfig) []string {
 //
 // A component is UI: it is composed in the client, so it runs wherever the
 // client runs. For a local session that is the user's machine, which is what
-// everyone expects. For tuios-web the client is the server process, and for an
+// everyone expects. For dartuios-web the client is the server process, and for an
 // SSH session it is the SSH host, so a component reading the git branch reports
 // the server's checkout and one reading the battery reports the server's
 // battery, which servers do not have.

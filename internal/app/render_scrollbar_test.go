@@ -7,8 +7,8 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // fillScrollback pushes enough lines through the emulator that the pane has a
@@ -194,7 +194,7 @@ func TestScrollbarLayerAgreesWithWindowNeedsScrollbar(t *testing.T) {
 	}
 }
 
-// opentui's Slider rounds the thumb over the remaining travel; tuios truncated,
+// opentui's Slider rounds the thumb over the remaining travel; dartuios truncated,
 // which biases every position toward the live tail. A pane one line off its
 // oldest is scrolled back as far as the eye can tell, and it drew the thumb a
 // whole row shy of the top of the track. Both ends are asserted on the frame,

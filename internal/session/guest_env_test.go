@@ -8,7 +8,7 @@ import (
 // spawned by the daemon has to be told what the attached client's terminal can
 // actually display. The daemon's own environment says nothing useful: it is
 // detached from any terminal, so every window used to advertise TERM_PROGRAM=
-// TUIOS and tools like chafa fell back to block art even under kitty.
+// dartuios and tools like chafa fell back to block art even under kitty.
 
 // TestAttachRecordsClientGraphicsCapabilities covers the plumbing end to end:
 // the capabilities a client detects at startup must survive the hello/attach
@@ -38,7 +38,7 @@ func TestAttachRecordsClientGraphicsCapabilities(t *testing.T) {
 
 	kitty, sixel := sess.GraphicsCapabilities()
 	if !kitty {
-		t.Error("attach did not record the client's kitty graphics support; guest shells would advertise TERM_PROGRAM=TUIOS and fall back to block art")
+		t.Error("attach did not record the client's kitty graphics support; guest shells would advertise TERM_PROGRAM=dartuios and fall back to block art")
 	}
 	if sixel {
 		t.Error("attach recorded sixel support the client never claimed")
@@ -50,7 +50,7 @@ func TestAttachRecordsClientGraphicsCapabilities(t *testing.T) {
 }
 
 // TestPaneEnvDropsHostTmux covers a daemon started from inside tmux. Its panes
-// are tuios panes, and a pane that inherits TMUX and TMUX_PANE reads as a tmux
+// are dartuios panes, and a pane that inherits TMUX and TMUX_PANE reads as a tmux
 // pane: Codex then wraps its notifications for tmux, and an agent that splits
 // panes through tmux reaches the outer one.
 func TestPaneEnvDropsHostTmux(t *testing.T) {

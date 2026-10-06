@@ -7,8 +7,8 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/scrollback"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/scrollback"
 )
 
 // Bounds on the vim-style count prefix in the scrollback browser. maxVimCount

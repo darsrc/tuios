@@ -6,10 +6,10 @@
 # subprocess every few seconds to be right.
 #
 #   [dock.custom.branch]
-#   command = "~/.config/tuios/dock/git-branch.sh"
+#   command = "~/.config/dartuios/dock/git-branch.sh"
 #   refresh = "event:after-focus-change,after-attach"
 #
-# Asking tuios where the focused pane is means the cell follows the pane you are
+# Asking dartuios where the focused pane is means the cell follows the pane you are
 # looking at rather than wherever the client happened to start. Without jq, or
 # without a daemon, it falls back to its own directory, which is still right for
 # a session started inside the repo.
@@ -17,7 +17,7 @@ set -eu
 
 dir=""
 if command -v jq >/dev/null 2>&1; then
-	dir=$(tuios list-windows --json 2>/dev/null |
+	dir=$(dartuios list-windows --json 2>/dev/null |
 		jq -r '.windows[] | select(.focused) | .cwd // empty' 2>/dev/null) || dir=""
 fi
 [ -n "$dir" ] || dir=$PWD

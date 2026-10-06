@@ -8,4 +8,4 @@
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >   Type your message or @path/to/file                                       │
 ╰──────────────────────────────────────────────────────────────────────────────╯
-~/dev/tuios (main*)           no sandbox (see /docs)            gemini-2.5-pro (98% context left)
+~/dev/dartuios (main*)           no sandbox (see /docs)            gemini-2.5-pro (98% context left)

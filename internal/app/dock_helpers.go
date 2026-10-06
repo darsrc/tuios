@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // DockItem represents a single item in the dock
@@ -628,7 +628,7 @@ func (m *OS) buildDockLeftText() (modeLabel, trail, tape string, width int, mode
 	trail = fmt.Sprintf(" %d:%d ", m.CurrentWorkspace, m.GetWorkspaceWindowCount(m.CurrentWorkspace))
 
 	// Passive project-tape badge: when the focused window is inside a directory
-	// carrying a .tuios.tape, a small status marker rides in the dock. It is
+	// carrying a .dartuios.tape, a small status marker rides in the dock. It is
 	// informational only; it opens no dialog and runs nothing.
 	if badge := m.tapeDockBadge(); badge != "" {
 		tape = badge + " "

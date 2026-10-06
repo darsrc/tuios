@@ -29,7 +29,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 type diffCase struct {
@@ -200,7 +200,7 @@ func TestDifferential_AgainstTmux(t *testing.T) {
 		{"restore origin mode with the cursor", 10, 6, "\x1b[2;5r\x1b[?6h\x1b7\x1b[?6l\x1b8\x1b[1;1HX"},
 	}
 
-	sock := "tuios-diff-" + t.Name()
+	sock := "dartuios-diff-" + t.Name()
 	dir := t.TempDir()
 	t.Cleanup(func() { _ = exec.Command(tmux, "-L", sock, "kill-server").Run() })
 	_ = exec.Command(tmux, "-L", sock, "kill-server").Run()
@@ -224,7 +224,7 @@ func TestDifferential_AgainstTmux(t *testing.T) {
 				return
 			}
 			diffs++
-			t.Errorf("tuios and tmux disagree\ninput %q\n--- tuios ---\n%s\n--- tmux ---\n%s\n--- end ---",
+			t.Errorf("dartuios and tmux disagree\ninput %q\n--- dartuios ---\n%s\n--- tmux ---\n%s\n--- end ---",
 				tc.in, boxed(got), boxed(want))
 		})
 	}

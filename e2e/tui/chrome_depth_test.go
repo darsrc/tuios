@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	"github.com/Gaurav-Gosain/tuitest"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/shot"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The chrome at each colour depth a terminal can have. The depth is what the
@@ -19,7 +19,7 @@ import (
 // (Apple Terminal, mosh, tmux without Tc), and COLORTERM=truecolor is 24-bit.
 //
 // Each run saves the frame as text, as styled text and as a PNG drawn by
-// tuios's own renderer (internal/shot) from the cells the terminal received,
+// dartuios's own renderer (internal/shot) from the cells the terminal received,
 // with the palette a terminal of that kind would paint the sixteen slots with.
 
 // chromeDepth is one terminal the chrome is drawn for.
@@ -202,7 +202,7 @@ func TestChromeAtEveryColourDepth(t *testing.T) {
 					writeConfig(t, base, "[appearance]\ntheme = \""+look.theme+"\"\n")
 				}
 				for _, name := range []string{"e2e-depth", "e2e-other"} {
-					if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+					if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 						t.Fatalf("create session %s: %v\n%s", name, err, out)
 					}
 				}
@@ -326,8 +326,8 @@ func check16(t *testing.T, term *tuitest.Terminal, s tuitest.Screen, p palettePa
 	t.Helper()
 	checkNoNavy(t, term, s)
 	corners := map[[2]int]string{
-		{p.left, p.titleRow - 1}:      "╭",
-		{p.right - 1, p.titleRow - 1}: "╮",
+		{p.left, p.titleRow - 1}:      "◜",
+		{p.right - 1, p.titleRow - 1}: "◝",
 		{p.left, p.selRow}:            "│",
 		{p.right - 1, p.selRow}:       "│",
 	}

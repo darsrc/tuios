@@ -21,7 +21,7 @@ type PaneFacts struct {
 	// disambiguated form, which is the strongest statement a guest ever makes
 	// about what it wants from the keyboard.
 	GuestKittyFlags int `json:"guest_kitty_flags"`
-	// HostDisambiguates is whether the host terminal granted tuios key
+	// HostDisambiguates is whether the host terminal granted dartuios key
 	// disambiguation. It decides whether the ambiguous pairs are separable
 	// here.
 	HostDisambiguates bool `json:"host_disambiguates"`
@@ -66,7 +66,7 @@ func (f PaneFacts) Observations() []Observation {
 	if f.GuestKittyFlags != 0 {
 		out = append(out, Observation{
 			What:     "Guest keyboard",
-			Detail:   "the program in this pane uses the kitty keyboard protocol. It asked for keys tuios must not take",
+			Detail:   "the program in this pane uses the kitty keyboard protocol. It asked for keys dartuios must not take",
 			Evidence: EvidenceObserved,
 		})
 	}
@@ -86,8 +86,8 @@ func (f PaneFacts) Observations() []Observation {
 	return out
 }
 
-// Collision is two tuios actions competing for one key inside one scope. It is
-// the certain tier: it is decided entirely by tuios's own lookup order, so it
+// Collision is two dartuios actions competing for one key inside one scope. It is
+// the certain tier: it is decided entirely by dartuios's own lookup order, so it
 // is not a guess about anything.
 type Collision struct {
 	Scope     string `json:"scope"`
@@ -184,14 +184,14 @@ func (r *KeybindRegistry) Collisions() []Collision {
 	return out
 }
 
-// KeyFate is what tuios does with one key, everywhere it could do something.
+// KeyFate is what dartuios does with one key, everywhere it could do something.
 // It is what the recorder answers with, and it is deliberately the whole
 // picture rather than the first match: a key can be a window-mode action and a
 // prefix action and be swallowed in terminal mode all at once, and knowing only
 // one of those is how a user ends up rebinding the wrong one.
 type KeyFate struct {
 	Key string `json:"key"`
-	// ReadAs is the spelling tuios matches the key in, when it differs from
+	// ReadAs is the spelling dartuios matches the key in, when it differs from
 	// Key by more than case: opt+f12 is read as alt+f12.
 	ReadAs string `json:"read_as,omitempty"`
 	// Acts is every scope the key does something in.
@@ -204,11 +204,11 @@ type KeyFate struct {
 	Ambiguity string `json:"ambiguity,omitempty"`
 	// GuestWants is every curated program that binds this key.
 	GuestWants []GuestClash `json:"guest_wants,omitempty"`
-	// Free is true when nothing in tuios claims the key in any scope.
+	// Free is true when nothing in dartuios claims the key in any scope.
 	Free bool `json:"free"`
 }
 
-// Fate returns everything tuios knows about one key.
+// Fate returns everything dartuios knows about one key.
 func (r *KeybindRegistry) Fate(key string, facts PaneFacts) KeyFate {
 	want := lookupForm(key)
 	fate := KeyFate{Key: key, ReadAs: readAs(key)}
@@ -233,7 +233,7 @@ func (r *KeybindRegistry) Fate(key string, facts PaneFacts) KeyFate {
 
 	fate.Ambiguity = AmbiguityVerdict(want, facts.HostDisambiguates)
 
-	// Only the curated table is consulted here, and only for a key tuios keeps
+	// Only the curated table is consulted here, and only for a key dartuios keeps
 	// from the pane: a key that is forwarded costs the guest nothing whoever
 	// else binds it.
 	if fate.SwallowedInTerminal {
@@ -244,13 +244,13 @@ func (r *KeybindRegistry) Fate(key string, facts PaneFacts) KeyFate {
 				continue
 			}
 			fate.GuestWants = append(fate.GuestWants, GuestClash{
-				Key:         key,
-				TuiosAction: fate.SwallowReason,
-				Program:     p.Name,
-				ProgramUse:  use,
-				Note:        p.Note,
-				Evidence:    EvidenceReference,
-				Running:     p.Name == live.Name,
+				Key:            key,
+				DartuiosAction: fate.SwallowReason,
+				Program:        p.Name,
+				ProgramUse:     use,
+				Note:           p.Note,
+				Evidence:       EvidenceReference,
+				Running:        p.Name == live.Name,
 			})
 		}
 		sort.SliceStable(fate.GuestWants, func(i, j int) bool {
@@ -265,15 +265,15 @@ func (r *KeybindRegistry) Fate(key string, facts PaneFacts) KeyFate {
 	return fate
 }
 
-// KeybindReport is the whole analysis as data. The overlay and `tuios keybinds
+// KeybindReport is the whole analysis as data. The overlay and `dartuios keybinds
 // doctor --json` render the same value, so what an agent reads and what a human
 // sees cannot drift apart.
 type KeybindReport struct {
 	Leader string `json:"leader"`
-	// LeaderReadAs is the spelling tuios matches the leader in, when it
+	// LeaderReadAs is the spelling dartuios matches the leader in, when it
 	// differs from Leader by more than case.
 	LeaderReadAs string `json:"leader_read_as,omitempty"`
-	// KeyProblems are the keys in config.toml that tuios cannot read.
+	// KeyProblems are the keys in config.toml that dartuios cannot read.
 	KeyProblems []KeyProblem `json:"key_problems"`
 	// EvidenceNote is the report explaining its own tiers. It ships inside the
 	// payload because a consumer that only ever sees the JSON has nowhere else
@@ -286,7 +286,7 @@ type KeybindReport struct {
 	Swallowed    []Swallow           `json:"terminal_mode_swallowed"`
 	GuestClashes []GuestClash        `json:"guest_clashes"`
 	Ambiguous    []AmbiguousBinding  `json:"ambiguous_bindings"`
-	// Yielded are new default bindings tuios left off because the key was
+	// Yielded are new default bindings dartuios left off because the key was
 	// already bound to another action in the same table.
 	Yielded []YieldedDefault `json:"yielded_defaults,omitempty"`
 }
@@ -311,7 +311,7 @@ func (r *KeybindRegistry) Report(facts PaneFacts) KeybindReport {
 	rep := KeybindReport{
 		Leader: leader,
 		EvidenceNote: map[Evidence]string{
-			EvidenceCertain:   "Derived from tuios's own keybind registry and dispatch order. If this is wrong, tuios has a bug.",
+			EvidenceCertain:   "Derived from dartuios's own keybind registry and dispatch order. If this is wrong, dartuios has a bug.",
 			EvidenceObserved:  "Read from the pane when this report was built. True then, and possibly stale now.",
 			EvidenceReference: "A fixed list of what these programs bind by default. Nothing was detected. If you rebound the program, this entry is wrong for you.",
 		},
@@ -357,7 +357,7 @@ func (r *KeybindRegistry) Report(facts PaneFacts) KeybindReport {
 func (rep KeybindReport) Summary() string {
 	var parts []string
 	if n := len(rep.KeyProblems); n > 0 {
-		parts = append(parts, plural(n, "key tuios cannot read", "keys tuios cannot read"))
+		parts = append(parts, plural(n, "key dartuios cannot read", "keys dartuios cannot read"))
 	}
 	if n := len(rep.Collisions); n > 0 {
 		parts = append(parts, plural(n, "key claimed twice", "keys claimed twice"))
@@ -401,7 +401,7 @@ func itoa(n int) string {
 // readAs returns the canonical spelling of key when it differs from what the
 // user wrote by more than case, and "" when it does not. A key the validator
 // rejects on this platform gets "" too: opt+f12 on Linux is not read as
-// anything, and the doctor lists it as a key tuios cannot read.
+// anything, and the doctor lists it as a key dartuios cannot read.
 func readAs(key string) string {
 	trimmed := strings.TrimSpace(key)
 	if ok, _ := (&KeyNormalizer{isMacOS: macOSHost}).ValidateKey(trimmed); !ok {
@@ -414,7 +414,7 @@ func readAs(key string) string {
 	return canonical
 }
 
-// KeyProblem is one key in config.toml that tuios cannot read, so it never
+// KeyProblem is one key in config.toml that dartuios cannot read, so it never
 // matches a key press.
 type KeyProblem struct {
 	// Section is the config table, or "keybindings" for the leader.

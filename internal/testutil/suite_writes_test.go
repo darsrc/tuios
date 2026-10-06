@@ -10,19 +10,19 @@ import (
 
 // childMarker stops the recursion. The child runs this package too, and
 // without the marker it would launch a suite of its own, and so on.
-const childMarker = "TUIOS_ISOLATION_CHILD"
+const childMarker = "DARTUIOS_ISOLATION_CHILD"
 
 // TestTheSuiteWritesNothingOutsideItsOwnTree is the guard this change exists to
 // leave behind.
 //
 // It gives the whole suite a home of its own, seeded to look like a developer
-// who has used tuios, runs it, and checksums the tree afterwards. A package
+// who has used dartuios, runs it, and checksums the tree afterwards. A package
 // that reaches a real path writes into that seeded tree instead, and the
 // checksums say so.
 //
 // The tree is private, which is the point. The obvious cheaper design, having
 // each test binary diff the developer's actual directories, was tried first and
-// does not work: on a machine with tuios running, the live daemon rewrites its
+// does not work: on a machine with dartuios running, the live daemon rewrites its
 // own session state while the tests run, and the check reports the daemon's
 // writes as the suite's. A guard that fails for reasons the suite did not cause
 // gets switched off, and then it guards nothing.
@@ -81,17 +81,17 @@ func checksum(dirs []string) (map[string]string, error) {
 	return sums, nil
 }
 
-// seedUsedHome fills the tree with the files a developer who has run tuios
+// seedUsedHome fills the tree with the files a developer who has run dartuios
 // would have, so a write shows up as a changed checksum and not only as a new
 // path. An empty tree would miss a test that overwrites a real file with the
 // same shape, which is exactly what the sidebar state leak did.
 func seedUsedHome(t *testing.T, home string) {
 	t.Helper()
 	files := map[string]string{
-		"state/tuios/sidebar.json":   `{"width":28,"accent_colors":{"real-window":"#ff8800"}}`,
-		"config/tuios/config.toml":   "[appearance]\ntheme = \"catppuccin-mocha\"\n",
-		"data/tuios/tape-trust.toml": "\n",
-		"cache/tuios/marker":         "\n",
+		"state/dartuios/sidebar.json":   `{"width":28,"accent_colors":{"real-window":"#ff8800"}}`,
+		"config/dartuios/config.toml":   "[appearance]\ntheme = \"catppuccin-mocha\"\n",
+		"data/dartuios/tape-trust.toml": "\n",
+		"cache/dartuios/marker":         "\n",
 	}
 	for rel, body := range files {
 		path := filepath.Join(home, filepath.FromSlash(rel))

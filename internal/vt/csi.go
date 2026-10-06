@@ -8,16 +8,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/debuglog"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/debuglog"
 )
 
-// debugInternal reports whether TUIOS_DEBUG_INTERNAL=1 is set, read once on
+// debugInternal reports whether DARTUIOS_DEBUG_INTERNAL=1 is set, read once on
 // first use. The switch is set at startup, before any emulator exists. It was
 // read with os.Getenv on every CSI t, and again for each line the XTWINOPS
 // handler went to log, for a log that is off in every normal run.
 var debugInternal = sync.OnceValue(func() bool {
-	return os.Getenv("TUIOS_DEBUG_INTERNAL") == "1"
+	return os.Getenv("DARTUIOS_DEBUG_INTERNAL") == "1"
 })
 
 func (e *Emulator) handleCsi(cmd ansi.Cmd, params ansi.Params) {

@@ -8,8 +8,8 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// This file is the only place in the suite that runs tuios the way it ships.
-// Every other test sets TUIOS_NO_DAEMON=1 in startIn, because the assertions
+// This file is the only place in the suite that runs dartuios the way it ships.
+// Every other test sets DARTUIOS_NO_DAEMON=1 in startIn, because the assertions
 // there are about the standalone TUI, and pins the looks from before v0.8.0
 // (see pinPreV080Looks). Here nothing is set: no config file, no daemon, no
 // state directory, which is the first run of a new install.
@@ -19,31 +19,31 @@ import (
 // not depend on the one under test.
 const windowDot = "●"
 
-// TestAFirstRunIsDaemonBackedAndTiledWithDotsOnTheLeft drives a bare "tuios"
+// TestAFirstRunIsDaemonBackedAndTiledWithDotsOnTheLeft drives a bare "dartuios"
 // against an empty home and asserts the four shipped defaults at once. They are
 // one test because they are one experience: what somebody sees the first time
-// they run tuios.
+// they run dartuios.
 func TestAFirstRunIsDaemonBackedAndTiledWithDotsOnTheLeft(t *testing.T) {
 	term, base := start(t, startOpts{cols: 120, rows: 40, daemonDefault: true, shippedLooks: true})
 	killDaemon(t, base)
 
-	// Daemon-backed. A bare "tuios" started one and attached to it, so the
+	// Daemon-backed. A bare "dartuios" started one and attached to it, so the
 	// control socket answers and names the session this client is in.
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
 		return countWindows(s) >= 0
 	}, bootTimeout); err != nil {
-		t.Fatalf("a bare tuios never reached a session: %v\n%s", err, term.Snapshot())
+		t.Fatalf("a bare dartuios never reached a session: %v\n%s", err, term.Snapshot())
 	}
-	out, err := tuiosCLI(t, base, "ls")
+	out, err := dartuiosCLI(t, base, "ls")
 	if err != nil {
-		t.Fatalf("no daemon answered a bare tuios: %v\n%s", err, out)
+		t.Fatalf("no daemon answered a bare dartuios: %v\n%s", err, out)
 	}
-	t.Logf("tuios ls:\n%s", out)
+	t.Logf("dartuios ls:\n%s", out)
 
 	// The first run lands on the welcome screen with no window, because
 	// startup.open_default_window is still off. Two windows, so tiling has
 	// something to divide.
-	waitWindowCount(t, term, 0, "the session a bare tuios opened")
+	waitWindowCount(t, term, 0, "the session a bare dartuios opened")
 	newWindow(t, term)
 	newWindow(t, term)
 	waitWindowCount(t, term, 2, "after two 'n' presses")
@@ -130,7 +130,7 @@ func TestTheDockChipTracksTiling(t *testing.T) {
 
 	// It ships tiled, so the chip is there before anything is pressed.
 	if !settledTiling(t, term) {
-		t.Fatalf("the dock chip does not report the tiled session tuios ships\n%s", term.Snapshot())
+		t.Fatalf("the dock chip does not report the tiled session dartuios ships\n%s", term.Snapshot())
 	}
 	disableTiling(t, term)
 	if settledTiling(t, term) {

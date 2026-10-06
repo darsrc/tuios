@@ -7,7 +7,7 @@ import "sync/atomic"
 // with none pushed every helper draws what it always drew.
 //
 // It is pushed rather than pulled for the same reason SetASCII is: this package
-// depends on nothing inside tuios so that it can be lifted out, and the registry
+// depends on nothing inside dartuios so that it can be lifted out, and the registry
 // that resolves a named set lives above it. An empty field means "keep the
 // built-in", so a set that renames two glyphs is two fields rather than a full
 // table.
@@ -18,6 +18,10 @@ type Chrome struct {
 	ArrowRight string // the same, pointing on
 	Rule       string // a panel's solid divider
 	DashRule   string // a dialog's lighter divider
+	AnchorTL   string // a panel's top-left corner
+	AnchorTR   string // its top-right
+	AnchorBL   string // its bottom-left
+	AnchorBR   string // its bottom-right
 }
 
 // chrome holds the pushed set. A pointer so the zero state is "nothing pushed"

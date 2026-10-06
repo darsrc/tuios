@@ -47,7 +47,7 @@ func TestEmptySavedSessionDoesNotResurrect(t *testing.T) {
 }
 
 // TestOnDemandResurrectRefusesAnEmptySession covers the same refusal on the
-// 'tuios resurrect <name>' path, which loads the state itself.
+// 'dartuios resurrect <name>' path, which loads the state itself.
 func TestOnDemandResurrectRefusesAnEmptySession(t *testing.T) {
 	tmpDir := t.TempDir()
 	defer useResurrectionDir(tmpDir)()

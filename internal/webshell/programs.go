@@ -24,13 +24,13 @@ func cmdNeofetch(t *TTY, _ []string) int {
 	cols, _ := t.Size()
 	palette := []string{"\x1b[38;5;213m", "\x1b[38;5;177m", "\x1b[38;5;141m", "\x1b[38;5;105m", "\x1b[38;5;69m", "\x1b[38;5;39m"}
 	info := []string{
-		bold + "guest" + reset + "@" + bold + "tuios" + reset,
+		bold + "guest" + reset + "@" + bold + "dartuios" + reset,
 		dim + "───────────" + reset,
 		cyan + "OS" + reset + "      your browser",
 		cyan + "Kernel" + reset + "  WebAssembly",
 		cyan + "Uptime" + reset + "  " + time.Since(started).Round(time.Second).String(),
 		cyan + "Shell" + reset + "   webshell",
-		cyan + "WM" + reset + "      tuios",
+		cyan + "WM" + reset + "      dartuios",
 	}
 	wide := cols >= 64
 	for i := 0; i < max(len(logo), len(info)); i++ {
@@ -116,7 +116,7 @@ type fakeProc struct {
 
 func cmdTop(t *TTY, _ []string) int {
 	procs := []fakeProc{
-		{1, "init", 0.1, 0.2}, {42, "tuios", 3.5, 2.1}, {101, "webshell", 0.4, 0.3},
+		{1, "init", 0.1, 0.2}, {42, "dartuios", 3.5, 2.1}, {101, "webshell", 0.4, 0.3},
 		{137, "top", 1.2, 0.2}, {256, "gopls", 8.0, 6.3}, {512, "node", 12.0, 9.8},
 		{777, "cargo", 25.0, 4.4}, {1024, "postgres", 2.0, 5.1}, {2048, "redis", 0.7, 1.0},
 		{4096, "nginx", 0.3, 0.6}, {8192, "agent", 6.0, 3.3},
@@ -338,7 +338,7 @@ func cmdGo(s *shell, args []string, _ string) int {
 	case "test":
 		if bang {
 			s.t.Print("--- FAIL: TestGreet (0.00s)\r\n")
-			s.t.Print(`    greet_test.go:7: greet = "hello, tuios!"` + "\r\n")
+			s.t.Print(`    greet_test.go:7: greet = "hello, dartuios!"` + "\r\n")
 			s.t.Print(red + "FAIL" + reset + "\r\n")
 			s.t.Print("FAIL\texample.com/hello\t0.004s\r\n")
 			s.t.Print(dim + "(the change in greet.go broke the test. git diff shows it, git restore greet.go undoes it)" + reset + "\r\n")

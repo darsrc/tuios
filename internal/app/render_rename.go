@@ -2,8 +2,8 @@ package app
 
 import (
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // renameDialogWidth is the micro-dialog's preferred inner width: a name and a
@@ -61,10 +61,11 @@ func (m *OS) renderRenameDialog() (string, overlay.Geometry, int, int, bool) {
 		overlay.Cursor(" ", pal.Canvas, pal.Fg)
 
 	content, geo := overlay.Dialog{
-		Title: m.RenameDialogTitle(),
-		Width: inner,
-		Body:  body,
-		Hints: renameHints(),
+		Title:   m.RenameDialogTitle(),
+		Width:   inner,
+		Body:    body,
+		Hints:   renameHints(),
+		ShownAt: m.dialogShownAt,
 	}.Render(pal)
 
 	x, y := m.centerOrigin(geo.Width, geo.Height)

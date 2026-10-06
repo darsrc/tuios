@@ -29,7 +29,7 @@ func twoSessionClientIn(t *testing.T, flags ...string) *tuitest.Terminal {
 	killDaemon(t, base)
 
 	for _, name := range []string{"alpha", "bravo"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create %s: %v: %s", name, err, out)
 		}
 	}

@@ -12,8 +12,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/harness"
 	"github.com/google/uuid"
 )
 
@@ -49,16 +49,16 @@ func (d *Daemon) resolveVerbSession(name string) (*Session, *verbError) {
 	if name == "" {
 		return nil, hintedVerbError(ErrVerbSessionNotFound, "no sessions exist", &VerbHint{
 			Param:   "session",
-			Command: "tuios new --detach",
-			Detail:  "The daemon is running but holds no sessions. Create one, or restore a saved one with 'tuios resurrect'.",
+			Command: "dartuios new --detach",
+			Detail:  "The daemon is running but holds no sessions. Create one, or restore a saved one with 'dartuios resurrect'.",
 		})
 	}
 	return nil, hintedVerbError(ErrVerbSessionNotFound, "session "+name+" not found", &VerbHint{
 		Param:      "session",
-		Command:    "tuios ls",
+		Command:    "dartuios ls",
 		DidYouMean: closestMatch(name, available),
 		Available:  available,
-		Detail:     "the name matches no live session. A session that was killed is gone. One that was never started may still have saved state ('tuios resurrect').",
+		Detail:     "the name matches no live session. A session that was killed is gone. One that was never started may still have saved state ('dartuios resurrect').",
 	})
 }
 
@@ -72,11 +72,11 @@ func mapResolveErr(err error, sess *Session) *verbError {
 	// to attach a client, not fix a parameter.
 	if _, ok := errors.AsType[errNeedsClient](err); ok {
 		hint := &VerbHint{
-			Command: "tuios attach",
+			Command: "dartuios attach",
 			Detail:  "This command changes what is drawn on screen, so it only runs with a client attached. Attach to the session, then retry.",
 		}
 		if sess != nil {
-			hint.Command = "tuios attach " + sess.Name
+			hint.Command = "dartuios attach " + sess.Name
 		}
 		return hintedVerbError(ErrVerbNeedsClient, msg, hint)
 	}
@@ -85,7 +85,7 @@ func mapResolveErr(err error, sess *Session) *verbError {
 	case strings.Contains(msg, "no windows"):
 		return hintedVerbError(ErrVerbNoWindows, msg, &VerbHint{
 			Verb:    "new-window",
-			Command: "tuios run-command NewWindow",
+			Command: "dartuios run-command NewWindow",
 			Detail:  "The session exists but holds no windows. Create one before addressing a window.",
 		})
 	case strings.Contains(msg, "has no PTY"), strings.Contains(msg, "is gone"):
@@ -97,7 +97,7 @@ func mapResolveErr(err error, sess *Session) *verbError {
 		hint := &VerbHint{
 			Param:   "window",
 			Verb:    "list-windows",
-			Command: "tuios list-windows --json",
+			Command: "dartuios list-windows --json",
 			Detail:  "the window target matched no window. A window is addressable by its id, a unique id prefix, the index list-windows prints, or its exact name.",
 		}
 		if strings.Contains(msg, "ambiguous window") {
@@ -177,7 +177,7 @@ func (d *Daemon) verbListWindows(_ *connState, params json.RawMessage) (any, *ve
 	return data, nil
 }
 
-// verbGetWindow describes one window. It is what tuios get-window calls, so
+// verbGetWindow describes one window. It is what dartuios get-window calls, so
 // the command is a read like list-windows rather than a message of the client
 // protocol, which only admin may send. It answers the way the client
 // protocol's GetWindow did: an attached client describes the window, with its
@@ -447,7 +447,7 @@ func (d *Daemon) verbPopup(_ *connState, params json.RawMessage) (any, *verbErro
 		return nil, hintedVerbError(ErrVerbNeedsClient,
 			"a popup is drawn on a screen, so it needs an attached client",
 			&VerbHint{
-				Command: "tuios attach " + sess.Name,
+				Command: "dartuios attach " + sess.Name,
 				Detail:  "the daemon has no viewport, so it cannot place a popup nobody is displaying. Attach a client and retry.",
 			})
 	}
@@ -493,7 +493,7 @@ func (d *Daemon) verbPopup(_ *connState, params json.RawMessage) (any, *verbErro
 		code, exited := d.waitPopupExit(sess, win, time.Duration(p.Timeout)*time.Millisecond)
 		if !exited {
 			return nil, hintedVerbError(ErrVerbTimeout, "the popup was still open when the wait ended", &VerbHint{
-				Command: "tuios wait-for window-exit -w " + win.ID,
+				Command: "dartuios wait-for window-exit -w " + win.ID,
 				Detail:  "The popup is still on the screen and its command still runs. Wait for it with the command shown, or raise timeout.",
 			})
 		}
@@ -542,7 +542,7 @@ func newWindowErr(err error, sess *Session, ws int) *verbError {
 		}
 		return newVerbError(ErrVerbHostUnreachable, msg)
 	}
-	if msg := err.Error(); strings.Contains(msg, "tuios on ") || strings.Contains(msg, "host ") {
+	if msg := err.Error(); strings.Contains(msg, "dartuios on ") || strings.Contains(msg, "host ") {
 		return newVerbError(ErrVerbInternal, msg)
 	}
 	if strings.Contains(err.Error(), "out of range") {
@@ -632,7 +632,7 @@ func (d *Daemon) verbSendKeys(cs *connState, params json.RawMessage) (any, *verb
 			fmt.Sprintf("PREFIX goes to the window manager, which acts on the focused window, not on window %q", p.Window),
 			&VerbHint{
 				Param:   "window",
-				Command: "tuios focus-window " + p.Window,
+				Command: "dartuios focus-window " + p.Window,
 				Detail:  "Leave out the window to send window-manager keys, after focus-window if they should act on a particular window. Keys for a program in a window take no PREFIX.",
 			})
 	}
@@ -702,7 +702,7 @@ func sendKeysParseError(err error, sess *Session, target string) *verbError {
 	hint := &VerbHint{
 		Param:    "keys",
 		Accepted: KeyNames(),
-		Command:  "tuios send-keys --help",
+		Command:  "dartuios send-keys --help",
 		Detail:   "A key is one of the names listed, a single character, or either of those after ctrl+, alt+ or shift+. Keys are split on spaces and commas; text to type goes through send-text.",
 	}
 	if unknown, ok := errors.AsType[errUnknownKey](err); ok {
@@ -755,7 +755,7 @@ func (d *Daemon) verbSendText(cs *connState, params json.RawMessage) (any, *verb
 func ptyWriteError(err error) *verbError {
 	if errors.Is(err, errPaneReconnecting) {
 		return hintedVerbError(ErrVerbHostUnreachable, err.Error(), &VerbHint{
-			Command: "tuios list-windows",
+			Command: "dartuios list-windows",
 			Detail:  "Nothing was typed. The window's process is still running on the other machine; host_link and host_link_until in list-windows say until when it waits for the link.",
 		})
 	}
@@ -867,13 +867,13 @@ func (d *Daemon) verbKillSession(_ *connState, params json.RawMessage) (any, *ve
 	if p.Session == "" {
 		return nil, hintedVerbError(ErrVerbInvalidParams,
 			"session is required (kill-session never guesses which session to destroy)",
-			&VerbHint{Param: "session", Command: "tuios ls", Available: d.sessionNames()})
+			&VerbHint{Param: "session", Command: "dartuios ls", Available: d.sessionNames()})
 	}
 	if err := d.manager.DeleteSession(p.Session); err != nil {
 		available := d.sessionNames()
 		return nil, hintedVerbError(ErrVerbSessionNotFound, err.Error(), &VerbHint{
 			Param:      "session",
-			Command:    "tuios ls",
+			Command:    "dartuios ls",
 			DidYouMean: closestMatch(p.Session, available),
 			Available:  available,
 		})
@@ -1360,7 +1360,7 @@ func (d *Daemon) verbExplainAgentDetect(_ *connState, params json.RawMessage) (a
 		// Not an error: a pane with no live process is the ordinary case, and
 		// saying so is the answer.
 		out["reason"] = "No foreground process can be read for this pane."
-		out["verdict"] = "This pane runs no process that tuios can read."
+		out["verdict"] = "This pane runs no process that dartuios can read."
 		out["evidence"] = evidence
 		return out, nil
 	}
@@ -1416,7 +1416,7 @@ func (d *Daemon) verbExplainAgentDetect(_ *connState, params json.RawMessage) (a
 		what := "The process " + processLabel(det.proc) + " matched " + describeRule(det)
 		if len(det.via) > 0 {
 			out["verdict"] = "This pane runs " + name + " behind " + strings.Join(det.via, ", ") + "."
-			evidence = append(evidence, "The foreground process "+label+" is a wrapper, so tuios read the processes behind it.")
+			evidence = append(evidence, "The foreground process "+label+" is a wrapper, so dartuios read the processes behind it.")
 		} else {
 			out["verdict"] = "This pane runs " + name + "."
 		}
@@ -1527,7 +1527,7 @@ func (d *Daemon) verbExplainAgentScreen(_ *connState, params json.RawMessage) (a
 	}
 
 	// The tail is read whether or not a harness was resolved. Writing the first
-	// rule for a harness tuios does not know yet means looking at a pane nothing
+	// rule for a harness dartuios does not know yet means looking at a pane nothing
 	// has claimed, so refusing to dump it there would withhold the diagnostic
 	// from the case it is most needed in.
 	// The pane title is read here, in the same look as the tail, so the

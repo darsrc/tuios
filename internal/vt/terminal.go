@@ -6,7 +6,7 @@ import (
 	uv "github.com/charmbracelet/ultraviolet"
 )
 
-// Terminal is the emulator surface the rest of tuios consumes. It exists so
+// Terminal is the emulator surface the rest of dartuios consumes. It exists so
 // the implementation can be swapped at build time (see New): the pure-Go
 // Emulator is the default, a libghostty-vt backed implementation is available
 // behind the ghostty build tag. Exactly one implementation is compiled into a
@@ -113,7 +113,7 @@ type Terminal interface {
 	SetReportColors(fg, bg color.Color)
 	// SetReportPalette sets what an OSC 4 query for one of the sixteen ANSI
 	// slots is answered with while neither the guest nor a theme has set that
-	// slot: the host terminal's own colour, when tuios knows it. A nil entry
+	// slot: the host terminal's own colour, when dartuios knows it. A nil entry
 	// keeps the default answer. Like SetReportColors it changes only the
 	// answer; the slot is still drawn by the host.
 	SetReportPalette(pal [16]color.Color)

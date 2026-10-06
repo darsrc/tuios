@@ -24,10 +24,10 @@ func TestTitleFromGuest(t *testing.T) {
 	for _, tc := range []struct {
 		name, payload, want string
 	}{
-		{"a lone continuation byte is dropped", "tui\xffos", "tuios"},
+		{"a lone continuation byte is dropped", "dartui\xffos", "dartuios"},
 		{"nothing but bad bytes is empty", "\xff\xfe\x80", ""},
 		{"a semicolon is kept", "foo;bar", "foo;bar"},
-		{"plain text", "tuios", "tuios"},
+		{"plain text", "dartuios", "dartuios"},
 		{"accents", "café", "café"},
 		{"wide characters", "日本語", "日本語"},
 		{"a symbol", "✳ building", "✳ building"},

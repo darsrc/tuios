@@ -11,7 +11,7 @@ import (
 // wire_bounds.go keeps a client or linked peer from overflowing the daemon's
 // stack with two message types. The same hazard runs the other way: a client
 // reads daemon frames of up to 16 MB of any type, and the daemon on the other
-// end may be another machine's (tuios attach through a host). A state sync or
+// end may be another machine's (dartuios attach through a host). A state sync or
 // an attach reply carrying a layout tree nested a few million deep, or a
 // command result whose data nests maps as deep, overflows the client's stack
 // during gob's decode, which is fatal before any check after the decode can

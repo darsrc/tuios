@@ -19,7 +19,7 @@ import (
 //
 // A cell inside an overlay that the terminal shows in its own ground, or the
 // desktop's, is a hole in the panel: two dark cells left of the Inbox title
-// was one. The frame tuios composes can be right and the terminal still show
+// was one. The frame dartuios composes can be right and the terminal still show
 // the hole, because what reaches the terminal is a stream of cursor moves and
 // writes and not the frame: that hole was tmux dropping the background under
 // a hard tab the renderer moved with. So this reads cells the way a person
@@ -53,14 +53,14 @@ import (
 // for its padding, every titled step fails on its title row; with the
 // clients leaving hard tabs on, the stream check fails.
 
-// artifactDir is where a test's frames are kept: $TUIOS_E2E_FRAMES when that
-// is set, else tuios-e2e-artifacts under the temporary directory, in a
+// artifactDir is where a test's frames are kept: $DARTUIOS_E2E_FRAMES when that
+// is set, else dartuios-e2e-artifacts under the temporary directory, in a
 // directory named for the test.
 func artifactDir(t *testing.T) string {
 	t.Helper()
-	root := os.Getenv("TUIOS_E2E_FRAMES")
+	root := os.Getenv("DARTUIOS_E2E_FRAMES")
 	if root == "" {
-		root = filepath.Join(os.TempDir(), "tuios-e2e-artifacts")
+		root = filepath.Join(os.TempDir(), "dartuios-e2e-artifacts")
 	}
 	dir := filepath.Join(root, regexp.MustCompile(`[^A-Za-z0-9_.-]+`).ReplaceAllString(t.Name(), "_"))
 	if err := os.MkdirAll(dir, 0o755); err != nil {
@@ -230,7 +230,7 @@ type groundStep struct {
 // startHookIn is startHeldHook for a window of a session.
 func startHookIn(t *testing.T, base, session, window, payload string) {
 	t.Helper()
-	cmd := exec.Command(tuiosBin, "agent-hook", "claude-code", "--session", session, "--window", window)
+	cmd := exec.Command(dartuiosBin, "agent-hook", "claude-code", "--session", session, "--window", window)
 	cmd.Dir = workDirIn(t, base)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -253,7 +253,7 @@ func groundClient(t *testing.T, cols, rows int, theme, background string, out *s
 	base := t.TempDir()
 	killDaemon(t, base)
 	useShippedLooks(base)
-	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "tuios")
+	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatal(err)
 	}
@@ -278,7 +278,7 @@ func groundClient(t *testing.T, cols, rows int, theme, background string, out *s
 		{"new", "notes", "--detach"},
 		{"set-agent-state", "-s", "notes", "done", "--harness", "gemini-cli", "-m", "CHANGELOG.md updated for 0.9"},
 	} {
-		if o, err := tuiosCLI(t, base, args...); err != nil {
+		if o, err := dartuiosCLI(t, base, args...); err != nil {
 			t.Fatalf("%v: %v\n%s", args, err, o)
 		}
 	}

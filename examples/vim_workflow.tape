@@ -1,4 +1,4 @@
-# TUIOS Vim Workflow Demo
+# dartuios Vim Workflow Demo
 # Demonstrates a realistic development workflow with vim
 
 # Disable animations for consistent playback
@@ -33,7 +33,7 @@ Enter
 Type "func main() {"
 Enter
 Tab
-Type "fmt.Println(\"Hello from TUIOS!\")"
+Type "fmt.Println(\"Hello from dartuios!\")"
 Enter
 Type "}"
 Escape

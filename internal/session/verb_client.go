@@ -12,7 +12,7 @@ import (
 )
 
 // VerbClient is a minimal client for the line-delimited JSON verb protocol. It
-// is the counterpart the tuios CLI uses to drive the daemon's control surface.
+// is the counterpart the dartuios CLI uses to drive the daemon's control surface.
 // One call is in flight at a time; it is safe for sequential use from a single
 // goroutine (the callMu guards against accidental concurrent Call).
 type VerbClient struct {
@@ -90,7 +90,7 @@ func DialVerbClientAt(socketPath, clientVersion string) (*VerbClient, error) {
 
 // presentPaneToken places this connection in the caller's pane where the
 // daemon cannot place it by pid, so a call from a pane is held to the pane's
-// grants on every platform. It sends TUIOS_PANE_ID and TUIOS_PANE_TOKEN with
+// grants on every platform. It sends DARTUIOS_PANE_ID and DARTUIOS_PANE_TOKEN with
 // pane-grants when both are set and the daemon takes them. Presenting a token
 // can only narrow what the connection may do, so a failure is ignored: the
 // daemon holds the call to what it can prove either way.
@@ -98,7 +98,7 @@ func (c *VerbClient) presentPaneToken(kernelPlaces bool, getenv func(string) str
 	if kernelPlaces || c.daemon == nil || !c.daemon.PaneGrants {
 		return
 	}
-	id, tok := getenv("TUIOS_PANE_ID"), getenv("TUIOS_PANE_TOKEN")
+	id, tok := getenv("DARTUIOS_PANE_ID"), getenv("DARTUIOS_PANE_TOKEN")
 	if id == "" || tok == "" {
 		return
 	}
@@ -132,7 +132,7 @@ func DialVerbClientThroughHost(host, clientVersion string) (*VerbClient, HostCon
 	hs, err := c.handshake(clientVersion)
 	if err != nil {
 		_ = c.Close()
-		return nil, info, fmt.Errorf("tuios on %s did not accept this client: %w", host, err)
+		return nil, info, fmt.Errorf("dartuios on %s did not accept this client: %w", host, err)
 	}
 	c.daemon = hs
 	c.host = host

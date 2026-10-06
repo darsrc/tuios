@@ -11,7 +11,7 @@ import (
 )
 
 // Fuzzing the screen tier: the classifier the daemon acts on, and the
-// explanation `tuios explain-agent-screen` prints.
+// explanation `dartuios explain-agent-screen` prints.
 //
 // There are two implementations of one decision. Classify walks the rules in
 // priority order, stops at the first match, and folds the text only when the

@@ -5,7 +5,7 @@ import (
 	"unicode/utf8"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/app"
 )
 
 // handleOpenHints is the hints action: prefix F by default.

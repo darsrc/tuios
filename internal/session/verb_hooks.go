@@ -3,11 +3,11 @@ package session
 import (
 	"encoding/json"
 
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/hooks"
 	"github.com/google/uuid"
 )
 
-// list-hooks answers the one question the oldest extension point in tuios could
+// list-hooks answers the one question the oldest extension point in dartuios could
 // not answer: "why does my hook not fire?".
 //
 // A dock component reports its exit code, when it last ran and its last error,

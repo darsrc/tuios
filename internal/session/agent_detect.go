@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // defaultAgentBinaries is the built-in set of AI-agent CLI binary names the
@@ -17,7 +17,7 @@ import (
 //
 // The list is intentionally the well-known coding-agent CLIs. Users extend it,
 // they do not have to replace it: the daemon merges these with any names from the
-// TUIOS_AGENT_BINARIES environment override and the daemon.agent_binaries config
+// DARTUIOS_AGENT_BINARIES environment override and the daemon.agent_binaries config
 // list. Matching is on the binary's base name, so a full path resolves the same.
 var defaultAgentBinaries = []string{
 	"claude",
@@ -67,7 +67,7 @@ type agentMatcher struct {
 //
 // The registry and the name list are both consulted, and neither replaces the
 // other. The registry is what a user extends without a rebuild and is what can
-// name the harness it matched; the flat name list is what TUIOS_AGENT_BINARIES
+// name the harness it matched; the flat name list is what DARTUIOS_AGENT_BINARIES
 // and daemon.agent_binaries have always fed, and those configs have to keep
 // working exactly as they did.
 func newAgentMatcher(extra []string) agentMatcher {
@@ -107,7 +107,7 @@ const (
 	// identityList is the built-in or user name list matching the process's own
 	// name. It names no harness, so no screen rules run for it.
 	identityList identityTier = "list"
-	// identityHint is a wrapper naming its agent through TUIOS_AGENT in its
+	// identityHint is a wrapper naming its agent through DARTUIOS_AGENT in its
 	// environment. It is the person who started the wrapper saying what runs
 	// in it, which is why it names a harness and runs its rules, and why it is
 	// tried only after the process itself was not recognised.
@@ -175,7 +175,7 @@ func (m agentMatcher) identifyDetail(info foregroundInfo) (detection, bool) {
 }
 
 // matchHint attributes a pane to the harness its foreground process's
-// TUIOS_AGENT names. It is the last resort, tried only when neither the
+// DARTUIOS_AGENT names. It is the last resort, tried only when neither the
 // leader nor anything behind it was recognised, so a real agent binary always
 // wins over what a wrapper says about it. The hint must name a manifest, by id
 // or by the program name the manifest detects, and a value naming nothing is
@@ -430,7 +430,7 @@ type foregroundInfo struct {
 	// prompt, or the platform cannot list a process's children. It is read
 	// lazily, so a pane whose leader is itself the agent never pays for it.
 	group func(yield func(foregroundInfo) bool)
-	// hint reads the harness the leader's TUIOS_AGENT names, "" for none. It
+	// hint reads the harness the leader's DARTUIOS_AGENT names, "" for none. It
 	// is nil for a pane at its shell prompt, and read lazily like group, so a
 	// pane whose process is recognised never reads its environment.
 	hint func() string

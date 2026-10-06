@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The save prompt's paths and messages.
@@ -77,7 +77,7 @@ func TestMultiCopySavePathMessages(t *testing.T) {
 	m, home := saveOS(t)
 
 	// A relative path is taken from the focused pane's directory, not from
-	// wherever tuios was started.
+	// wherever dartuios was started.
 	cwd := filepath.Join(home, "rack")
 	if err := os.Mkdir(cwd, 0o755); err != nil {
 		t.Fatal(err)

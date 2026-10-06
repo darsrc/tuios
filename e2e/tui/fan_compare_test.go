@@ -14,10 +14,10 @@ import (
 // other, and a diff between the two.
 func TestFanCompareVerifyAndDiff(t *testing.T) {
 	base, repo := fanFixture(t)
-	if out, err := tuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
 		t.Fatalf("start the daemon: %v: %s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "fan", "2", "--agent", "claude", "--repo", repo, "--name", "try/cmp", "Do the thing."); err != nil {
+	if out, err := dartuiosCLI(t, base, "fan", "2", "--agent", "claude", "--repo", repo, "--name", "try/cmp", "Do the thing."); err != nil {
 		t.Fatalf("fan: %v: %s", err, out)
 	}
 	var winner string
@@ -33,11 +33,11 @@ func TestFanCompareVerifyAndDiff(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	out, err := tuiosCLI(t, base, "fan", "compare", "repo-try-cmp")
+	out, err := dartuiosCLI(t, base, "fan", "compare", "repo-try-cmp")
 	if err != nil {
 		t.Fatalf("fan compare: %v: %s", err, out)
 	}
-	for _, want := range []string{"try/cmp in repo, 2 attempts against main", "repo-try-cmp-2", "1 file", "+2 -0", "0 files", "no check yet", "tuios fan keep"} {
+	for _, want := range []string{"try/cmp in repo, 2 attempts against main", "repo-try-cmp-2", "1 file", "+2 -0", "0 files", "no check yet", "dartuios fan keep"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("fan compare lacks %q:\n%s", want, out)
 		}
@@ -45,7 +45,7 @@ func TestFanCompareVerifyAndDiff(t *testing.T) {
 
 	// The check passes where done.txt is and fails where it is not, and the
 	// command exits 1 because one failed.
-	out, err = tuiosCLI(t, base, "fan", "verify", "repo-try-cmp", "--", "test", "-f", "done.txt")
+	out, err = dartuiosCLI(t, base, "fan", "verify", "repo-try-cmp", "--", "test", "-f", "done.txt")
 	if err == nil {
 		t.Fatalf("fan verify exited 0 with a failed check:\n%s", out)
 	}
@@ -54,7 +54,7 @@ func TestFanCompareVerifyAndDiff(t *testing.T) {
 			t.Errorf("fan verify lacks %q:\n%s", want, out)
 		}
 	}
-	out, err = tuiosCLI(t, base, "fan", "compare", "repo-try-cmp", "--json", "--no-changes")
+	out, err = dartuiosCLI(t, base, "fan", "compare", "repo-try-cmp", "--json", "--no-changes")
 	if err != nil {
 		t.Fatalf("fan compare --json: %v: %s", err, out)
 	}
@@ -77,7 +77,7 @@ func TestFanCompareVerifyAndDiff(t *testing.T) {
 		t.Errorf("verify states = %v", states)
 	}
 
-	out, err = tuiosCLI(t, base, "fan", "diff", "repo-try-cmp", "repo-try-cmp-2")
+	out, err = dartuiosCLI(t, base, "fan", "diff", "repo-try-cmp", "repo-try-cmp-2")
 	if err != nil {
 		t.Fatalf("fan diff: %v: %s", err, out)
 	}

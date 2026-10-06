@@ -17,7 +17,7 @@ import (
 
 // The screen assertions below are what makes this suite evidence rather than
 // decoration: every claim about the wheel and about selection is checked
-// against a real tuios binary painting a real PTY, driven by real SGR mouse
+// against a real dartuios binary painting a real PTY, driven by real SGR mouse
 // reports.
 
 // wheelAt turns the wheel n notches over a screen cell.
@@ -45,17 +45,17 @@ func dragSelect(t *testing.T, term *tuitest.Terminal, fromCol, toCol, row int) {
 //
 // Each click is a press AND a release, which is what a physical mouse does and
 // what this helper used to get wrong: it sent n presses and one trailing
-// release outside the loop. tuios finishes a selection and writes the clipboard
+// release outside the loop. dartuios finishes a selection and writes the clipboard
 // on release (internal/input.finishMouseSelection), so under the old shape a
 // triple click generated exactly one clipboard write. The two intermediate
-// releases a real triple click produces, and everything tuios does on them,
+// releases a real triple click produces, and everything dartuios does on them,
 // could not be generated at all, so no assertion could have observed them.
 // TestDoubleClickCopiesAWordAndTripleClickTheLine now asserts on the whole
 // sequence of writes rather than on whether the wanted text is somewhere in it.
 //
 // The clicks are paced by multiClickHold and multiClickGap rather than by the
 // harness's ordinary mouseGap, because for this one gesture the spacing is not
-// presentation, it is the input: tuios decides how many clicks it received by
+// presentation, it is the input: dartuios decides how many clicks it received by
 // how far apart it processed them.
 func clickAt(t *testing.T, term *tuitest.Terminal, col, row, n int) {
 	t.Helper()
@@ -182,7 +182,7 @@ func waitScrolledTo(t *testing.T, term *tuitest.Terminal, prefix, what string, w
 // settledScroll is how a test reads the place a gesture left the person, and it
 // waits for the gesture to finish before it answers.
 //
-// A wheel gesture is a run of notches and tuios draws them at its frame rate,
+// A wheel gesture is a run of notches and dartuios draws them at its frame rate,
 // so the screen trails the last notch by up to a frame. wheelAt pauses 30ms
 // after each report and a frame at the default 60fps is 17ms, which leaves no
 // margin: measured on this box the last notch reached the screen between 25ms
@@ -276,7 +276,7 @@ func TestWheelScrollShowsScrollbackWithoutAnnouncingAMode(t *testing.T) {
 }
 
 // TestWheelDownToBottomReturnsToLiveOutput drives the whole round trip: scroll
-// up, scroll back down, then type. The typing is the assertion. tuios used to
+// up, scroll back down, then type. The typing is the assertion. dartuios used to
 // leave the pane in copy mode after the wheel came back to the bottom, with the
 // scroll offset at zero so it looked like live output, and every subsequent
 // keystroke was eaten as a vim motion. Nothing the user typed reached the shell
@@ -305,7 +305,7 @@ func TestWheelDownToBottomReturnsToLiveOutput(t *testing.T) {
 
 // TestTypingWhileScrolledSnapsBackToLiveOutput covers the other half: the user
 // scrolls up, reads, and then starts typing without scrolling back. A terminal
-// with no modes jumps to the bottom and types the character. tuios used to feed
+// with no modes jumps to the bottom and types the character. dartuios used to feed
 // the keystrokes to copy mode's motions instead.
 func TestTypingWhileScrolledSnapsBackToLiveOutput(t *testing.T) {
 	term, _ := start(t, startOpts{})
@@ -330,7 +330,7 @@ func TestTypingWhileScrolledSnapsBackToLiveOutput(t *testing.T) {
 
 // TestARemoteSendKeysLeavesAScrolledPaneScrolled is the other half of the
 // bargain above. Typing ends a scrolled view because the person has stopped
-// reading. tuios send-keys goes through the same handler, and used to end it
+// reading. dartuios send-keys goes through the same handler, and used to end it
 // too, so an agent typing into the pane returned the person's view to the
 // bottom at a moment decided by another process. A remote key now goes to the
 // guest and leaves the view where the person put it; the person's own next
@@ -356,7 +356,7 @@ func TestARemoteSendKeysLeavesAScrolledPaneScrolled(t *testing.T) {
 
 	// An agent types a command and runs it, key by key, through the client.
 	for _, keys := range [][]string{{"--raw", "echo remote-$((6*7))"}, {"Enter"}} {
-		if out, err := tuiosCLI(t, base, append([]string{"send-keys"}, keys...)...); err != nil {
+		if out, err := dartuiosCLI(t, base, append([]string{"send-keys"}, keys...)...); err != nil {
 			t.Fatalf("send-keys %v: %v\n%s", keys, err, out)
 		}
 	}
@@ -388,7 +388,7 @@ func TestARemoteSendKeysLeavesAScrolledPaneScrolled(t *testing.T) {
 // mouse, and the wheel belongs to them.
 //
 // The fixture is the terminal line discipline itself. With echo on, whatever
-// tuios writes into the pane's PTY is echoed straight back, so a forwarded SGR
+// dartuios writes into the pane's PTY is echoed straight back, so a forwarded SGR
 // wheel report appears in the pane as its own text. Nothing has to be running
 // but the shell.
 func TestMouseTrackingAppKeepsItsOwnWheel(t *testing.T) {
@@ -415,10 +415,10 @@ func TestMouseTrackingAppKeepsItsOwnWheel(t *testing.T) {
 		t.Fatalf("the wheel was not forwarded to the pane that asked for the mouse: %v\n%s",
 			err, term.Snapshot())
 	}
-	// And tuios did not scroll its own scrollback underneath it: the newest
+	// And dartuios did not scroll its own scrollback underneath it: the newest
 	// line is still there.
 	if !strings.Contains(term.Screen().Text(), last) {
-		t.Fatalf("tuios scrolled a mouse-tracking pane's scrollback; %q left the screen\n%s",
+		t.Fatalf("dartuios scrolled a mouse-tracking pane's scrollback; %q left the screen\n%s",
 			last, term.Snapshot())
 	}
 	alive(t, term, "after wheeling over a mouse-tracking pane")
@@ -437,7 +437,7 @@ var sgrBareMotionReport = regexp.MustCompile(`35;\d+;\d+M`)
 // a pointer motion with no button held can be observed at all, and it exists as
 // much to pin that fact as to test the forwarding.
 //
-// cmd/tuios/run.go installs tea.WithFilter(filterMouseMotion), a whitelist that
+// cmd/dartuios/run.go installs tea.WithFilter(filterMouseMotion), a whitelist that
 // drops every motion event unless a drag, a resize, an overlay drag, the
 // scrollback browser or a mouse-tracking pane is active. In every other state
 // the model never sees motion, so hover behaviour is not merely untested here,
@@ -473,12 +473,12 @@ func TestBareMotionReachesAnEventTrackingApp(t *testing.T) {
 	alive(t, term, "after moving the pointer over an any-event tracking pane")
 }
 
-// osc52 matches a clipboard write on the wire. tuios's copy path is
+// osc52 matches a clipboard write on the wire. dartuios's copy path is
 // tea.SetClipboard, which is OSC 52, so this is what a copy looks like to the
 // terminal the user is actually sitting in front of.
 var osc52 = regexp.MustCompile(`\x1b\]52;[^;]*;([A-Za-z0-9+/=]*)(?:\x07|\x1b\\)`)
 
-// clipboardWrites decodes every OSC 52 payload tuios has written so far.
+// clipboardWrites decodes every OSC 52 payload dartuios has written so far.
 func clipboardWrites(out *lockedBuffer) []string {
 	var got []string
 	for _, m := range osc52.FindAllStringSubmatch(out.String(), -1) {
@@ -565,7 +565,7 @@ func waitClipboardSequence(t *testing.T, term *tuitest.Terminal, out *lockedBuff
 	}
 }
 
-// selectionSpan reports which columns of a row tuios is painting as selected,
+// selectionSpan reports which columns of a row dartuios is painting as selected,
 // as a half-open [start, end), and (-1, -1) when it is painting none.
 //
 // The highlight is the only thing on a row of ordinary pane output that carries
@@ -598,23 +598,23 @@ func describeSpan(start, end int) string {
 }
 
 // multiClickAttempts is how many times one multi-click gesture is re-sent when
-// tuios did not read it as a multi-click at all. Three is enough that losing
+// dartuios did not read it as a multi-click at all. Three is enough that losing
 // the race every time is not a plausible accident, and small enough that a
 // product that has genuinely stopped selecting still fails quickly.
 const multiClickAttempts = 3
 
-// selectByMultiClick clicks n times at one cell and returns once tuios has
+// selectByMultiClick clicks n times at one cell and returns once dartuios has
 // highlighted exactly the columns that many clicks should select. It reports
 // how many clipboard writes had already been made when the gesture that
 // succeeded began, which is the baseline the caller's waitClipboardSequence
 // needs.
 //
 // This exists because a test that sends three clicks is not thereby a test of
-// what tuios does with a triple click. A click joins the gesture in progress
+// what dartuios does with a triple click. A click joins the gesture in progress
 // only if it arrives within internal/input.multiClickInterval of the last one,
-// measured in tuios at the moment it processes the press. The harness cannot
-// control that: it can only put the bytes in the pty and hope tuios is not
-// busy. When it is, the third press lands outside the window, tuios reads a
+// measured in dartuios at the moment it processes the press. The harness cannot
+// control that: it can only put the bytes in the pty and hope dartuios is not
+// busy. When it is, the third press lands outside the window, dartuios reads a
 // double click followed by a single one, and everything it does afterwards is
 // correct for the input it actually received. Asserting on the clipboard
 // without checking that first conflates "the product mishandled a triple
@@ -632,7 +632,7 @@ const multiClickAttempts = 3
 // click of their own. Both of those were observed while measuring this.
 //
 // One outcome cannot be told from a lost race by looking at a single gesture: a
-// tuios that selected the word on three clicks would paint exactly what a lost
+// dartuios that selected the word on three clicks would paint exactly what a lost
 // second press paints. Repetition separates them, and that is all the retry is
 // for. A lost race is a coin flip that comes up differently on the next throw;
 // a product that selects the wrong thing does it every time and fails on the
@@ -666,7 +666,7 @@ func selectByMultiClick(t *testing.T, term *tuitest.Terminal, out *lockedBuffer,
 				"race, it is multi-click selection selecting the wrong thing\n%s",
 				n, col, row, got, attempt, n, want, term.Snapshot())
 		}
-		t.Logf("attempt %d: %d clicks at (%d,%d) selected %s rather than %s, so tuios read them "+
+		t.Logf("attempt %d: %d clicks at (%d,%d) selected %s rather than %s, so dartuios read them "+
 			"as a shorter gesture; the harness lost the race against "+
 			"internal/input.multiClickInterval, re-sending", attempt, n, col, row, got, want)
 		// Long enough that the retry's first press cannot join the gesture that
@@ -704,7 +704,7 @@ func TestDragSelectionCopiesOnRelease(t *testing.T) {
 }
 
 // TestDoubleClickCopiesAWordAndTripleClickTheLine covers the two gestures every
-// terminal has had since the nineties and tuios had neither of.
+// terminal has had since the nineties and dartuios had neither of.
 //
 // The word is a path so the assertion also pins the word-character set: a
 // double-click that stopped at every punctuation mark would select "usr" and
@@ -779,7 +779,7 @@ func TestDoubleClickCopiesAWordAndTripleClickTheLine(t *testing.T) {
 // depends on.
 //
 // A left press inside a pane sets OS.Dragging, and app.updateTerminals returns
-// early while it is set: tuios stops polling every pane's output for the
+// early while it is set: dartuios stops polling every pane's output for the
 // duration of the gesture, deliberately, so content cannot shift under the
 // pointer. The release is what clears it.
 //

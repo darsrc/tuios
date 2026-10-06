@@ -16,7 +16,7 @@ package terminal
 // coalescer's cost to a quiet pane is a different question from its cost to a
 // pane already saturating the pipe.
 //
-//	go test ./internal/terminal/ -run TestLatencyCoalescer -v   (needs TUIOS_PERF=1)
+//	go test ./internal/terminal/ -run TestLatencyCoalescer -v   (needs DARTUIOS_PERF=1)
 
 import (
 	"fmt"
@@ -25,12 +25,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/perf"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/perf"
 )
 
 const (
-	coalEnv  = "TUIOS_PERF"
+	coalEnv  = "DARTUIOS_PERF"
 	coalRuns = 300
 
 	// coalQuiet is the floor of the silence before a sample, well past any

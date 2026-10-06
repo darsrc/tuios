@@ -8,13 +8,13 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/input"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/ui"
-	"github.com/Gaurav-Gosain/tuios/internal/webshell"
-	"github.com/Gaurav-Gosain/tuios/pkg/applist"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/input"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/ui"
+	"github.com/darsrc/tuios/internal/webshell"
+	"github.com/darsrc/tuios/pkg/applist"
 )
 
 // Commands lists the names RunCommand accepts, for the README and for a test
@@ -27,7 +27,7 @@ var Commands = []string{
 // RunCommand lets the page set the scene for a step or play a step for the
 // person. It runs on the program's goroutine. An unknown command or a bad
 // argument does nothing, since the page cannot do anything useful with an
-// error. See cmd/tuios-wasm/README.md for each command.
+// error. See cmd/dartuios-wasm/README.md for each command.
 func (m *Model) RunCommand(name string, args ...string) tea.Cmd {
 	o := m.OS
 	arg := func(i int) string {

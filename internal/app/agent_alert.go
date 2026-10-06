@@ -3,11 +3,11 @@ package app
 import (
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/sound"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/sound"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // Agent alerts run on the client, not the daemon, and that is the design rather
@@ -16,7 +16,7 @@ import (
 // The daemon owns agent state and is where every transition becomes
 // authoritative, but three things live only on the client: the terminal an
 // in-band notification has to reach, the user config (the daemon reads three
-// keys at startup and the in-process daemon under `tuios ssh` reads none), and
+// keys at startup and the in-process daemon under `dartuios ssh` reads none), and
 // the dock stack whose messages are already clickable. So the client alerts on
 // the authoritative transitions it observes through the state sync, which is
 // every transition the daemon published.
@@ -163,7 +163,7 @@ func (m *OS) fireAgentAlert(w *terminal.Window, from, to string, policy config.A
 
 	// The cue plays from the client process, not the daemon, so a local attach
 	// plays it where the human sits. A served client is the exception: under
-	// `tuios ssh` this code runs on the server, the audio comes out of the
+	// `dartuios ssh` this code runs on the server, the audio comes out of the
 	// server's speakers, and the startup warning (sshAlertWarnings) already
 	// said so. Play returns before anything is spawned, so the Update
 	// goroutine this runs on is not waiting on an audio device.

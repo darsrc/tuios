@@ -97,7 +97,7 @@ func TestActivityTextIsCleaned(t *testing.T) {
 	}
 }
 
-// TestSetAgentMetaRefusesTheReservedKeys: now and prompt are written by tuios
+// TestSetAgentMetaRefusesTheReservedKeys: now and prompt are written by dartuios
 // from hook activity, never by a caller, and a caller's clear leaves them.
 func TestSetAgentMetaRefusesTheReservedKeys(t *testing.T) {
 	d, sp := startTestDaemon(t)

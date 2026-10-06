@@ -9,7 +9,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // These tests hit the stash the way it will actually be used and the way it will
@@ -23,7 +23,7 @@ import (
 func newStore(t *testing.T) (*stashStore, string) {
 	t.Helper()
 	base := t.TempDir()
-	return newStashStore(func() string { return filepath.Join(base, "tuios.sock") }), base
+	return newStashStore(func() string { return filepath.Join(base, "dartuios.sock") }), base
 }
 
 // writeBytes writes n bytes to path, with the first eight bytes set from seed so
@@ -75,7 +75,7 @@ func TestStashUnwritableRootFails(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = os.Chmod(locked, 0o700) })
 
-	s := newStashStore(func() string { return filepath.Join(locked, "tuios.sock") })
+	s := newStashStore(func() string { return filepath.Join(locked, "dartuios.sock") })
 	src := filepath.Join(base, "note.txt")
 	writeBytes(t, src, 16, 1)
 
@@ -486,7 +486,7 @@ func TestStashSweepClearsAnUncleanPredecessor(t *testing.T) {
 	t.Cleanup(useResurrectionDir(t.TempDir()))
 
 	// Residue from a daemon that never got to run its shutdown.
-	leftoverDir := filepath.Join(runtimeDir, "tuios", "stash", "gone-session")
+	leftoverDir := filepath.Join(runtimeDir, "dartuios", "stash", "gone-session")
 	if err := os.MkdirAll(leftoverDir, 0o700); err != nil {
 		t.Fatalf("mkdir: %v", err)
 	}

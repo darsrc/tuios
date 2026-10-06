@@ -28,13 +28,13 @@ var titleCases = []titleCase{
 	{"codex", "vim action_required.md", "none"},
 
 	// Gemini CLI pads its title to 80 columns and appends the folder.
-	{"gemini-cli", "✋  Action Required (tuios)                                                      ", "needs_input"},
-	{"gemini-cli", "⏲  Working… (tuios)", "working"},
-	{"gemini-cli", "✦  Refactoring the retry loop (tuios)", "working"},
+	{"gemini-cli", "✋  Action Required (dartuios)                                                      ", "needs_input"},
+	{"gemini-cli", "⏲  Working… (dartuios)", "working"},
+	{"gemini-cli", "✦  Refactoring the retry loop (dartuios)", "working"},
 	{"gemini-cli", "✦  Action required: read the migration notes", "working"},
-	{"gemini-cli", "✦  Ready to write the tests (tuios)", "working"},
-	{"gemini-cli", "◇  Ready (tuios)", "idle"},
-	{"gemini-cli", "Gemini CLI (tuios)", "none"},
+	{"gemini-cli", "✦  Ready to write the tests (dartuios)", "working"},
+	{"gemini-cli", "◇  Ready (dartuios)", "idle"},
+	{"gemini-cli", "Gemini CLI (dartuios)", "none"},
 	{"gemini-cli", "~/src/ready-player-one", "none"},
 
 	{"amp", "Plugin confirmation needed - amp - ~/src/app", "needs_input"},

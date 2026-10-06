@@ -7,10 +7,10 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The collapsed rail is three columns and it is the state the rail spends most
@@ -611,7 +611,7 @@ func (m *OS) sidebarStripTerminalCell(e sidebarTerminalEntry, peeked bool, cw in
 		lead, leadFg = m.Settings.GetRailFocusMark(), railFocusTint(m.sessionTint(e.SessionID, bg), pal)
 	}
 	return sidebarFit(sidebarStyle(bg, leadFg).Render(lead)+
-		stripStateMark(e.State, e.DoneSeen, pal, bg, lit, &m.Settings), cw, bg)
+		stripStateMark(e.State, e.DoneSeen, pal, bg, lit, &m.Settings, m.filamentFrame), cw, bg)
 }
 
 // sidebarStripAgentCell is one pane of the last group in two cells: the gutter
@@ -628,16 +628,16 @@ func (m *OS) sidebarStripAgentCell(e sidebarAgentEntry, cw int, pal overlay.Pale
 		lead, leadFg = m.Settings.GetRailFocusMark(), railFocusTint(m.agentIdentityTint(e, bg), pal)
 	}
 	return sidebarFit(sidebarStyle(bg, leadFg).Render(lead)+
-		stripStateMark(e.State, e.DoneSeen, pal, bg, lit, &m.Settings), cw, bg)
+		stripStateMark(e.State, e.DoneSeen, pal, bg, lit, &m.Settings, m.filamentFrame), cw, bg)
 }
 
 // stripStateMark is a pane's one cell on the spine: the quiet dot every list on
 // this rail rests at, or the pane's state glyph in its own colour when it has
 // something to say. One vocabulary across the lists is what lets the stack be
 // read as one object at two cells wide.
-func stripStateMark(state string, doneSeen bool, pal overlay.Palette, bg color.Color, lit bool, s *config.Settings) string {
+func stripStateMark(state string, doneSeen bool, pal overlay.Palette, bg color.Color, lit bool, s *config.Settings, filament rune) string {
 	mark, markFg := s.GetRailBullet(), stripRestingInk(lit, pal)
-	if g, fg := agentMark(state, doneSeen, pal); g != "" && s.SidebarShowGlyphs {
+	if g, fg := agentMark(state, doneSeen, pal, filament); g != "" && s.SidebarShowGlyphs {
 		mark, markFg = g, fg
 	}
 	return sidebarStyle(bg, markFg).Render(mark)

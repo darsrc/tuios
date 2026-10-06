@@ -1,6 +1,6 @@
 # Glyph Sets
 
-A theme decides what colour TUIOS's chrome is. A glyph set decides what shape it
+A theme decides what colour dartuios's chrome is. A glyph set decides what shape it
 is: which corner the border turns, what the window controls are pictures of,
 what a rule and a separator are drawn with, which mark the session rail wears on
 the row you are on.
@@ -32,7 +32,7 @@ glyphs = "heavy"
 At runtime, with no restart:
 
 ```bash
-tuios set-config appearance.glyphs heavy
+dartuios set-config appearance.glyphs heavy
 ```
 
 In the settings page (`,` in window mode), the **Glyph set** row sits directly
@@ -45,17 +45,18 @@ and which of them are not being drawn.
 To see what is available and what each one draws:
 
 ```bash
-tuios list-glyphs
-tuios list-glyphs heavy
+dartuios list-glyphs
+dartuios list-glyphs heavy
 ```
 
 ## The Built-in Sets
 
 | Id | What it is |
 |---|---|
-| `default` | What TUIOS ships: rounded frame, Nerd Font powerline caps, `✕` and `□` controls |
+| `default` | What dartuios ships: rounded frame, Nerd Font powerline caps, `✕` and `□` controls |
 | `unicode` | Box drawing and geometric shapes for the frame, controls and marks, with no Nerd Font private-use glyphs among them, for a good font that is not a patched one. The dock icons below are not roles and are unaffected |
 | `heavy` | One stroke weight heavier throughout, border and junctions included |
+| `dar` | The DAR language as a set: a light box-drawing border, a heavy one for the focused frame, the anchored panel corners (◜ ◝ ◟ ◞), and the half-block rail hover mark. This is the shape the default look draws |
 | `ascii` | Nothing outside 7-bit ASCII |
 
 They are also the sets to `inherit` from when writing your own.
@@ -82,8 +83,8 @@ rest, so "square corners, everything else as usual" is four lines.
 
 ## Writing a Set
 
-Write `<id>.json` into `~/.config/tuios/glyphs/` (the exact path is printed by
-`tuios list-glyphs`). Give it `inherits` to start from a built-in:
+Write `<id>.json` into `~/.config/dartuios/glyphs/` (the exact path is printed by
+`dartuios list-glyphs`). Give it `inherits` to start from a built-in:
 
 ```json
 {
@@ -102,15 +103,15 @@ Write `<id>.json` into `~/.config/tuios/glyphs/` (the exact path is printed by
 
 Every field is optional. An absent `id` is taken from the filename, and an
 absent role keeps whatever the inherited set says, falling through in the end to
-the glyph TUIOS ships. Inheritance is followed up to eight levels and a loop
+the glyph dartuios ships. Inheritance is followed up to eight levels and a loop
 stops rather than hangs.
 
 The directory is re-read whenever a set is looked up, so a file you have just
 written is selectable immediately:
 
 ```bash
-tuios set-config appearance.glyphs mine
-tuios list-glyphs mine
+dartuios set-config appearance.glyphs mine
+dartuios list-glyphs mine
 ```
 
 A file that does not parse is skipped rather than applied, and `list-glyphs`
@@ -118,7 +119,7 @@ reports it under `problems` with the reason.
 
 ## Roles
 
-`tuios list-glyphs` prints the full list. In groups:
+`dartuios list-glyphs` prints the full list. In groups:
 
 - **Window controls:** `close`, `maximize`, `minimize`, `dot` (the traffic-light
   disc), `pill_left`, `pill_right`
@@ -154,7 +155,7 @@ Most roles must be exactly one cell, and a glyph that misses is dropped back to
 the default with a line in `problems` saying so:
 
 ```bash
-tuios list-glyphs mine --json | jq -r '.problems[]?'
+dartuios list-glyphs mine --json | jq -r '.problems[]?'
 ```
 
 ```
@@ -165,7 +166,7 @@ The reason is the window controls. Their press rectangles are fixed offsets from
 the border's trailing corner, measured against buttons of exactly three and four
 cells, so a two-cell emoji in `close` would not look bold: it would move every
 cell after it and put the button under a different column than the one the
-pointer is tested against. You name the one-cell mark and TUIOS owns the
+pointer is tested against. You name the one-cell mark and dartuios owns the
 padding.
 
 `separator`, `ellipsis`, `collapse` and `expand` take any width: each is drawn
@@ -174,14 +175,14 @@ must be one cell.
 
 ## What the Terminal Can Draw
 
-When the config names no glyph set and `--ascii-only` is not given, tuios reads
+When the config names no glyph set and `--ascii-only` is not given, dartuios reads
 the client's environment when it starts and picks the glyphs the terminal can
 draw:
 
 - **A locale that is not UTF-8.** The first of `LC_ALL`, `LC_CTYPE` and `LANG`
   that is set decides. A value that does not name UTF-8 (`C`, `POSIX`,
   `en_US.ISO-8859-1`) means the terminal decodes bytes in another encoding,
-  so tuios runs as if `--ascii-only` were given. None of the three set at all
+  so dartuios runs as if `--ascii-only` were given. None of the three set at all
   is not read as the C locale: a fresh container and a macOS terminal with
   locale variables turned off both draw UTF-8 fine.
 - **`TERM=linux`, the Linux console.** Its font has box drawing and no Nerd
@@ -189,12 +190,12 @@ draw:
   and context menu icons take their ASCII forms.
 
 A glyph set in the config (`appearance.glyphs`, any value but the default) or
-`--ascii-only` always wins. `tuios list-glyphs` prints what the terminal it
+`--ascii-only` always wins. `dartuios list-glyphs` prints what the terminal it
 runs in would pick and why, and the client logs its choice with `--debug`.
 
 The choice is made by each local client from the terminal it runs in, so two
-clients on one session can draw different glyphs. Clients served by `tuios ssh`
-and `tuios-web` are not detected this way: the server's environment says
+clients on one session can draw different glyphs. Clients served by `dartuios ssh`
+and `dartuios-web` are not detected this way: the server's environment says
 nothing about the remote terminal.
 
 ## ASCII Mode
@@ -205,7 +206,7 @@ set away, so a set keeps every role it happened to spell in ASCII and gives up
 only the ones it did not. A set that is ASCII throughout, like the built-in
 `ascii`, loses nothing.
 
-`tuios list-glyphs <id>` reports `ascii: true` for a set that can be drawn
+`dartuios list-glyphs <id>` reports `ascii: true` for a set that can be drawn
 anywhere.
 
 ## Limitations

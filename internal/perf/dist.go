@@ -1,4 +1,4 @@
-// Package perf holds the shared measurement vocabulary for tuios's latency
+// Package perf holds the shared measurement vocabulary for dartuios's latency
 // work: a sample set and the quantiles worth reading off it.
 //
 // It is a non-test package so both modules can use it. The e2e module sits

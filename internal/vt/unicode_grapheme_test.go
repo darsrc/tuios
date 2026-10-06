@@ -23,7 +23,7 @@ import (
 
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // uaxCase is one line of GraphemeBreakTest.txt: the input string and the

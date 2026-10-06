@@ -1,6 +1,6 @@
 name: Binary size
 
-# Builds the tuios binary the way the release does (CGO_ENABLED=0, -trimpath,
+# Builds the dartuios binary the way the release does (CGO_ENABLED=0, -trimpath,
 # -ldflags "-s -w") for linux/amd64 and darwin/arm64, prints its size, and
 # fails when it grows past the budget in scripts/binary-size.sh. docs/perf.md,
 # "Binary size budget", says how the budget was set and how to raise it.

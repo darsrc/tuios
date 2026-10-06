@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/integration"
-	"github.com/Gaurav-Gosain/tuios/internal/risk"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/integration"
+	"github.com/darsrc/tuios/internal/risk"
 )
 
 // enableRiskyApprovals turns approvals on for claude-code with the shipped

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/tape"
 )
 
 // daemonOwnedCommands are the commands the daemon executes itself whether or not
@@ -68,7 +68,7 @@ func resolveCommandName(name string) (string, bool) {
 // unknownCommandMessage says what a caller can do about a name that is not a
 // command.
 func unknownCommandMessage(name string) string {
-	return fmt.Sprintf("unknown command %q. Run 'tuios run-command --list' for the command names", name)
+	return fmt.Sprintf("unknown command %q. Run 'dartuios run-command --list' for the command names", name)
 }
 
 // handleExecuteCommand routes a tape command to the TUI client attached to the session.

@@ -40,7 +40,7 @@ func railBand(s tuitest.Screen) (first, last int) {
 // filling its pane while the sidebar reserves columns at a screen edge. The
 // image the host is told to draw has to end inside the pane. The host draws a
 // kitty placement over the composed frame, so a placement that reaches into the
-// rail's columns paints over the sidebar even though every cell tuios composed
+// rail's columns paints over the sidebar even though every cell dartuios composed
 // was correct.
 //
 // Both edges are covered, and both orders: the rail already up when the image
@@ -71,7 +71,7 @@ func TestKittyImageStaysOutOfTheRail(t *testing.T) {
 			stream := &hostStream{}
 			term := startIn(t, base, startOpts{
 				cols: 120, rows: 40,
-				env: []string{"TUIOS_KITTY_GRAPHICS=1", "TUIOS_SIXEL_GRAPHICS=0"},
+				env: []string{"DARTUIOS_KITTY_GRAPHICS=1", "DARTUIOS_SIXEL_GRAPHICS=0"},
 				out: stream,
 			})
 			waitBoot(t, term)
@@ -99,7 +99,7 @@ func TestKittyImageStaysOutOfTheRail(t *testing.T) {
 
 			// A guest that renders at exactly the pane it was told it has, the
 			// way terminal-browser does. The e2e host reports no pixel size, so
-			// tuios falls back to 9x20 per cell.
+			// dartuios falls back to 9x20 per cell.
 			frame := kittyFrameFile(t, t.TempDir(), cols*9, rows*20)
 			stream.mark("frame")
 			typeLine(t, term, "cat "+frame)
@@ -112,7 +112,7 @@ func TestKittyImageStaysOutOfTheRail(t *testing.T) {
 				time.Sleep(2 * time.Second)
 			}
 
-			if dump := os.Getenv("TUIOS_KITTY_CAPTURE"); dump != "" {
+			if dump := os.Getenv("DARTUIOS_KITTY_CAPTURE"); dump != "" {
 				_ = os.WriteFile(fmt.Sprintf("%s.%s", dump, tc.name), stream.bytes(), 0o644)
 			}
 
@@ -157,27 +157,30 @@ func runeIndex(line []rune, want string) int {
 
 // windowCorner finds a pane box corner on screen. The top-left one is the handle
 // a drag has to grab; the top-right one is the only one still visible when the
-// pane has been shoved under a left-hand rail.
-func windowCorner(t *testing.T, term *tuitest.Terminal, corner string) (col, row int) {
+// pane has been shoved under a left-hand rail. It accepts a set of corner
+// runes so it works across border styles.
+func windowCorner(t *testing.T, term *tuitest.Terminal, corners []rune) (col, row int) {
 	t.Helper()
 	for r, line := range strings.Split(term.Screen().Text(), "\n") {
-		if i := runeIndex([]rune(line), corner); i >= 0 {
-			return i, r
+		for _, c := range corners {
+			if i := runeIndex([]rune(line), string(c)); i >= 0 {
+				return i, r
+			}
 		}
 	}
-	t.Fatalf("no pane box corner %q on screen\n%s", corner, term.Snapshot())
+	t.Fatalf("no pane box corner on screen\n%s", term.Snapshot())
 	return 0, 0
 }
 
 func windowTopLeft(t *testing.T, term *tuitest.Terminal) (col, row int) {
 	t.Helper()
-	return windowCorner(t, term, "\u256d")
+	return windowCorner(t, term, paneTopCorners)
 }
 
 // TestKittyImageStaysOutOfTheRailWhenPaneOverlapsIt is the same contract for a
 // floating pane. A floating pane is deliberately allowed to hang past the
 // content region (ClampWindowsToView only keeps a strip of it reachable), so
-// its guest is told a width that runs under the rail. Every cell tuios composes
+// its guest is told a width that runs under the rail. Every cell dartuios composes
 // for such a pane still stops at the rail, because the rail is drawn over the
 // panes. The image has to stop there too.
 //
@@ -194,7 +197,7 @@ func TestKittyImageStaysOutOfTheRailWhenPaneOverlapsIt(t *testing.T) {
 			stream := &hostStream{}
 			term := startIn(t, base, startOpts{
 				cols: 120, rows: 40,
-				env: []string{"TUIOS_KITTY_GRAPHICS=1", "TUIOS_SIXEL_GRAPHICS=0"},
+				env: []string{"DARTUIOS_KITTY_GRAPHICS=1", "DARTUIOS_SIXEL_GRAPHICS=0"},
 				out: stream,
 			})
 			waitBoot(t, term)
@@ -311,7 +314,7 @@ func TestKittyImageStaysOutOfTheDock(t *testing.T) {
 	stream := &hostStream{}
 	term := startIn(t, base, startOpts{
 		cols: 120, rows: 40,
-		env: []string{"TUIOS_KITTY_GRAPHICS=1", "TUIOS_SIXEL_GRAPHICS=0"},
+		env: []string{"DARTUIOS_KITTY_GRAPHICS=1", "DARTUIOS_SIXEL_GRAPHICS=0"},
 		out: stream,
 	})
 	waitBoot(t, term)
@@ -372,7 +375,7 @@ func lastPlacementSrcX(t *testing.T, stream []byte) int {
 }
 
 // paintedFrame is the composed frame with the host's placement rectangle drawn
-// over it, which is what the user actually sees: tuios composes every cell,
+// over it, which is what the user actually sees: dartuios composes every cell,
 // then the host paints the image on top. The image itself is not in the cell
 // grid, so this is the only way to see the two layers together.
 func paintedFrame(s tuitest.Screen, col, row, cols, rows int) string {
@@ -402,7 +405,7 @@ func TestKittyImageStopsAtAShortPaneBottom(t *testing.T) {
 	stream := &hostStream{}
 	term := startIn(t, base, startOpts{
 		cols: 120, rows: 40,
-		env: []string{"TUIOS_KITTY_GRAPHICS=1", "TUIOS_SIXEL_GRAPHICS=0"},
+		env: []string{"DARTUIOS_KITTY_GRAPHICS=1", "DARTUIOS_SIXEL_GRAPHICS=0"},
 		out: stream,
 	})
 	waitBoot(t, term)
@@ -427,7 +430,7 @@ func TestKittyImageStopsAtAShortPaneBottom(t *testing.T) {
 
 	got := lastPlacement(t, stream.bytes())
 	drawnRows := lastPlacementRows(t, stream.bytes())
-	_, bottomRow := windowCorner(t, term, "╰")
+	_, bottomRow := windowCorner(t, term, paneBottomCorners)
 	t.Logf("pane=%dx%d placement rows %d..%d (col=%d row=%d r=%d c=%d) pane bottom rule at row %d\nas the host paints it:\n%s",
 		cols, rows, got.row, got.row+drawnRows-1, got.col, got.row, drawnRows, got.cols,
 		bottomRow, paintedFrame(term.Screen(), got.col, got.row, got.cols, drawnRows))

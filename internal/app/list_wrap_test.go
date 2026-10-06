@@ -3,8 +3,8 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // wrapCase is one list: how to put rows in it, how to move it, and where its

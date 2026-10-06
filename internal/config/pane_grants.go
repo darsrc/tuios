@@ -6,14 +6,14 @@ import (
 	"strings"
 )
 
-// What a process in a pane may do through tuios.
+// What a process in a pane may do through dartuios.
 //
 //	[agents.permissions]
 //	mode = "strict"                    # open (the default) or strict
 //	grants = ["read", "write", "fan"]  # what a pane holds under strict
 //
 // Every pane holds a set of grants. A pane started with grants of its own
-// (tuios start-agent --grants, fan --grants, new-window --grants, or
+// (dartuios start-agent --grants, fan --grants, new-window --grants, or
 // set-pane-grants afterwards) holds those. A pane started with none holds the
 // default, which is the mode's: admin under open, which is everything a pane
 // could do before grants existed, and the grants list under strict.

@@ -17,12 +17,12 @@ import (
 // ink and one in ANSI red. With the palette open each has to come back quieter
 // than it was, in the way the depth can draw it:
 //
-//   - truecolor and 256: a colour tuios can read channels off (the truecolor
+//   - truecolor and 256: a colour dartuios can read channels off (the truecolor
 //     and cube inks, and under a theme the ANSI slot, which the theme defines)
 //     moves toward its ground: darker on the dark terminal, lighter under the
 //     light theme, whose scrim pulls toward its light surface. At 256 the new
 //     colour is written as another index, measured on the xterm table.
-//   - an ANSI slot with no theme is the user's own colour, which tuios cannot
+//   - an ANSI slot with no theme is the user's own colour, which dartuios cannot
 //     blend, and it goes faint instead.
 //   - 16 colours: every word goes faint and keeps its colour.
 //
@@ -45,7 +45,7 @@ import (
 //     back to their undimmed cells, and fails if they never are.
 //
 // Every read is saved under artifactDir as text, styled text and a PNG drawn
-// by tuios's own renderer.
+// by dartuios's own renderer.
 func TestModalDimsTheScreenBehind(t *testing.T) {
 	for _, look := range chromeLooks {
 		for _, d := range chromeDepths {
@@ -72,7 +72,7 @@ func modalDimRun(t *testing.T, themeName string, d chromeDepth) {
 		cfg += "[appearance]\ntheme = \"" + themeName + "\"\n"
 	}
 	writeConfig(t, base, cfg)
-	if out, err := tuiosCLI(t, base, "new", "e2e-dim", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-dim", "--detach"); err != nil {
 		t.Fatalf("create session: %v\n%s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-dim"}, shippedLooks: true, env: d.env})
@@ -117,7 +117,7 @@ func modalDimRun(t *testing.T, themeName string, d chromeDepth) {
 
 	// The same open palette with the dim off: the words come back as they
 	// were, and not one palette cell moves.
-	if out, err := tuiosCLI(t, base, "set-config", "appearance.modal_dim", "0"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-config", "appearance.modal_dim", "0"); err != nil {
 		t.Fatalf("set modal_dim 0: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -143,7 +143,7 @@ func modalDimRun(t *testing.T, themeName string, d chromeDepth) {
 	}
 
 	// Back on, and closed: the screen is as it was before the palette.
-	if out, err := tuiosCLI(t, base, "set-config", "appearance.modal_dim", "30"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-config", "appearance.modal_dim", "30"); err != nil {
 		t.Fatalf("set modal_dim 30: %v\n%s", err, out)
 	}
 	closePalette(t, term, "after the dim checks")
@@ -162,11 +162,12 @@ func modalDimRun(t *testing.T, themeName string, d chromeDepth) {
 
 // paletteBottom is the palette's last row. findPalette reads it off the
 // panel's ground, which a 16-colour panel does not paint, so there the frame's
-// bottom corner is what says where the panel ends.
+// bottom corner is what says where the panel ends. The palette is an anchored
+// dialog, whose bottom-left corner is ◟.
 func paletteBottom(s tuitest.Screen, p palettePanel) int {
 	_, rows := s.Size()
 	for y := p.selRow; y < rows; y++ {
-		if s.Cell(p.left, y).Content == "╰" {
+		if s.Cell(p.left, y).Content == "◟" {
 			return y
 		}
 	}

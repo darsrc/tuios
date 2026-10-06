@@ -15,7 +15,7 @@ const (
 	ScopeCurrent = "current"
 )
 
-// ProjectHeader is the declarative header of a .tuios.tape. It is a small set of
+// ProjectHeader is the declarative header of a .dartuios.tape. It is a small set of
 // directives that may appear only in a leading block, before any action command:
 //
 //	Session "name"      target session name (default: project directory basename)

@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // releaseToPane runs a key release through the real input coordinator against
@@ -62,7 +62,7 @@ func TestForwardKeyReleaseToPane(t *testing.T) {
 		{"letter", pushEventTypes, app.TerminalMode, false, tea.KeyReleaseMsg{Code: 'a', Text: "a"}, "\x1b[97;1:3u"},
 		{"letter, daemon", pushEventTypes, app.TerminalMode, true, tea.KeyReleaseMsg{Code: 'a', Text: "a"}, "\x1b[97;1:3u"},
 		{"ctrl+letter", pushEventTypes, app.TerminalMode, false, tea.KeyReleaseMsg{Code: 'a', Mod: tea.ModCtrl}, "\x1b[97;5:3u"},
-		// tuios kept the leader's press, so the pane never saw b go down and
+		// dartuios kept the leader's press, so the pane never saw b go down and
 		// must not see it come up.
 		{"leader", pushEventTypes, app.TerminalMode, false, tea.KeyReleaseMsg{Code: 'b', Mod: tea.ModCtrl}, ""},
 		// A modifier is a key of its own only to a pane that asked for every

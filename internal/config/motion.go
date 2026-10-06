@@ -5,7 +5,7 @@ import "time"
 // Motion levels. appearance.motion takes one of these, and it replaced the
 // on/off appearance.animations_enabled.
 //
-// Two levels of motion rather than one switch, because the motion tuios has is
+// Two levels of motion rather than one switch, because the motion dartuios has is
 // of two kinds. A window sliding to its tile says where the window went, and
 // that is information. A panel fading in or a working agent's row shimmering
 // says nothing a static frame does not, and some people find it distracting.
@@ -52,7 +52,7 @@ func (s *Settings) MotionAllows(level string) bool {
 func (s *Settings) AnimationsOn() bool { return motionRank(s.Motion) > 0 }
 
 // SetAnimationsOn is the on/off switch over the levels: off is none, and on is
-// full, the level tuios ships with. A caller that wants basic sets Motion.
+// full, the level dartuios ships with. A caller that wants basic sets Motion.
 func (s *Settings) SetAnimationsOn(on bool) {
 	if on {
 		s.Motion = MotionFull

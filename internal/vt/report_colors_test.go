@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // A program asks the terminal what its background is with OSC 11, and its
-// default text colour with OSC 10. With a pane background painted, tuios tells
+// default text colour with OSC 10. With a pane background painted, dartuios tells
 // the emulator the painted pair through SetReportColors, and the answer has to
 // be that pair, on whichever backend this binary was built with. These run
 // under the pure Go emulator by default and under libghostty-vt with -tags
@@ -121,7 +121,7 @@ func TestReportColorsAnswerOSC10And11(t *testing.T) {
 }
 
 // An OSC 4 query for one of the sixteen is answered with the host terminal's
-// own colour for the slot when tuios knows it (SetReportPalette), on either
+// own colour for the slot when dartuios knows it (SetReportPalette), on either
 // backend. The E2E test of host colours runs the pure emulator in the daemon
 // only, so the libghostty-vt backend is held to it here.
 //

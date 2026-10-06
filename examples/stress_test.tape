@@ -1,4 +1,4 @@
-# TUIOS Stress Test
+# dartuios Stress Test
 # Tests rapid window creation, switching, and management
 
 # Disable animations for consistent playback

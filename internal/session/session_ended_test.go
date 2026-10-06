@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// This file covers the contract that makes 'tuios attach' exit when its session
+// This file covers the contract that makes 'dartuios attach' exit when its session
 // is killed: the daemon must tell every attached client that the session is
 // gone, and the client must surface that exactly once.
 //

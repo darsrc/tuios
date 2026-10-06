@@ -21,7 +21,7 @@ const emojiDataPath = "testdata/unicode/emoji-data.txt"
 
 // emojiSourceAllowed lists the non-test files whose string literals may hold
 // emoji code points, each with the reason. Every entry is data that describes
-// another program's output or input, not text tuios shows as its own. A new
+// another program's output or input, not text dartuios shows as its own. A new
 // entry is a decision somebody makes in review, which is the point.
 var emojiSourceAllowed = map[string]string{
 	// Detection code that matches the option cursors other agents draw.
@@ -43,7 +43,7 @@ var emojiSourceRoots = []string{"internal", "cmd"}
 
 // loadEmojiRunes reads the code points emoji-data.txt gives any emoji
 // property. ASCII is left out: '#', '*' and the digits are Emoji=Yes only as
-// keycap bases, and they are plain text everywhere tuios uses them.
+// keycap bases, and they are plain text everywhere dartuios uses them.
 func loadEmojiRunes(t *testing.T) map[rune]string {
 	t.Helper()
 	f, err := os.Open(emojiDataPath)
@@ -103,7 +103,7 @@ func loadEmojiRunes(t *testing.T) map[rune]string {
 //
 // Terminals draw these as colour pictures when they fall back to an emoji
 // font, often two cells wide in a one-cell slot, and the maintainer's rule is
-// no emoji anywhere in tuios's UI or code. Harness manifests are TOML and are
+// no emoji anywhere in dartuios's UI or code. Harness manifests are TOML and are
 // not read here; Go files that hold other programs' glyphs as data are listed
 // in emojiSourceAllowed.
 func TestNoEmojiInSourceStrings(t *testing.T) {

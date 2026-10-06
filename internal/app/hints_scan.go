@@ -4,7 +4,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/hints"
+	"github.com/darsrc/tuios/internal/hints"
 )
 
 // findMatches runs the matcher over the copied view and labels what it

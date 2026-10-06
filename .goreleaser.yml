@@ -1,4 +1,4 @@
-# GoReleaser configuration for TUIOS
+# GoReleaser configuration for dartuios
 # Documentation: https://goreleaser.com
 
 version: 2
@@ -11,9 +11,9 @@ before:
     # - go test ./...
 
 builds:
-  - id: tuios
-    main: ./cmd/tuios
-    binary: tuios
+  - id: dartuios
+    main: ./cmd/dartuios
+    binary: dartuios
     env:
       - CGO_ENABLED=0
     goos:
@@ -50,9 +50,9 @@ builds:
     flags:
       - -trimpath
 
-  - id: tuios-web
-    main: ./cmd/tuios-web
-    binary: tuios-web
+  - id: dartuios-web
+    main: ./cmd/dartuios-web
+    binary: dartuios-web
     env:
       - CGO_ENABLED=0
     goos:
@@ -94,9 +94,9 @@ builds:
   # One build per target because cgo needs a per-target compiler; zig is the
   # cross C compiler for all of them. Pure-Go builds above stay the default
   # and keep go install working with no toolchain.
-  - id: tuios-ghostty-linux-amd64
-    main: ./cmd/tuios
-    binary: tuios
+  - id: dartuios-ghostty-linux-amd64
+    main: ./cmd/dartuios
+    binary: dartuios
     tags:
       - ghostty
     env:
@@ -116,9 +116,9 @@ builds:
     flags:
       - -trimpath
 
-  - id: tuios-ghostty-linux-arm64
-    main: ./cmd/tuios
-    binary: tuios
+  - id: dartuios-ghostty-linux-arm64
+    main: ./cmd/dartuios
+    binary: dartuios
     tags:
       - ghostty
     env:
@@ -138,9 +138,9 @@ builds:
     flags:
       - -trimpath
 
-  - id: tuios-ghostty-windows-amd64
-    main: ./cmd/tuios
-    binary: tuios
+  - id: dartuios-ghostty-windows-amd64
+    main: ./cmd/dartuios
+    binary: dartuios
     tags:
       - ghostty
     env:
@@ -165,9 +165,9 @@ builds:
   # One build per target because cgo needs a per-target compiler; zig is the
   # cross C compiler for all of them. Pure-Go builds above stay the default
   # and keep go install working with no toolchain.
-  - id: tuios-ghostty-windows-arm64
-    main: ./cmd/tuios
-    binary: tuios
+  - id: dartuios-ghostty-windows-arm64
+    main: ./cmd/dartuios
+    binary: dartuios
     tags:
       - ghostty
     env:
@@ -188,7 +188,7 @@ builds:
       - -trimpath
 
 archives:
-  - id: tuios-archive
+  - id: dartuios-archive
     name_template: >-
       {{ .ProjectName }}_
       {{- .Version }}_
@@ -198,12 +198,12 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     ids:
-      - tuios
+      - dartuios
     files:
       - README.md
       - LICENSE*
 
-  - id: tuios-web-archive
+  - id: dartuios-web-archive
     name_template: >-
       {{ .ProjectName }}-web_
       {{- .Version }}_
@@ -213,12 +213,12 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     ids:
-      - tuios-web
+      - dartuios-web
     files:
       - README.md
       - LICENSE*
 
-  - id: tuios-ghostty-archive
+  - id: dartuios-ghostty-archive
     name_template: >-
       {{ .ProjectName }}-ghostty_
       {{- .Version }}_
@@ -226,10 +226,10 @@ archives:
       {{- if eq .Arch "amd64" }}x86_64
       {{- else }}{{ .Arch }}{{ end }}
     ids:
-      - tuios-ghostty-linux-amd64
-      - tuios-ghostty-linux-arm64
-      - tuios-ghostty-windows-amd64
-      - tuios-ghostty-windows-arm64
+      - dartuios-ghostty-linux-amd64
+      - dartuios-ghostty-linux-arm64
+      - dartuios-ghostty-windows-amd64
+      - dartuios-ghostty-windows-arm64
     files:
       - README.md
       - LICENSE*
@@ -272,8 +272,8 @@ changelog:
 
 release:
   github:
-    owner: Gaurav-Gosain
-    name: tuios
+    owner: darsrc
+    name: dartuios
   draft: false
   prerelease: auto
   mode: replace
@@ -282,27 +282,27 @@ release:
   footer: |
     ---
 
-    **Full Changelog**: https://github.com/Gaurav-Gosain/tuios/compare/{{ .PreviousTag }}...{{ .Tag }}
+    **Full Changelog**: https://github.com/darsrc/tuios/compare/{{ .PreviousTag }}...{{ .Tag }}
 
 # AUR (Arch User Repository)
 aurs:
-  - name: tuios-bin
+  - name: dartuios-bin
     ids:
-      - tuios-archive
-    homepage: https://github.com/Gaurav-Gosain/tuios
+      - dartuios-archive
+    homepage: https://github.com/darsrc/tuios
     description: "Terminal UI Operating System - A terminal-based window manager with tmux-style keybindings"
     maintainers:
       - "Gaurav Gosain <itsgauravgosain@gmail.com>"
     license: MIT
     private_key: "{{ .Env.AUR_SSH_KEY }}"
-    git_url: "ssh://aur@aur.archlinux.org/tuios-bin.git"
+    git_url: "ssh://aur@aur.archlinux.org/dartuios-bin.git"
     provides:
-      - tuios
+      - dartuios
     conflicts:
-      - tuios
+      - dartuios
     package: |
       # bin
-      install -Dm755 "./tuios" "${pkgdir}/usr/bin/tuios"
+      install -Dm755 "./dartuios" "${pkgdir}/usr/bin/dartuios"
 
       # license
       install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
@@ -310,23 +310,23 @@ aurs:
       # documentation
       install -Dm644 "./README.md" "${pkgdir}/usr/share/doc/${pkgname}/README.md"
 
-  - name: tuios-web-bin
+  - name: dartuios-web-bin
     ids:
-      - tuios-web-archive
-    homepage: https://github.com/Gaurav-Gosain/tuios
-    description: "Web terminal server for TUIOS - Serves TUIOS through the browser"
+      - dartuios-web-archive
+    homepage: https://github.com/darsrc/tuios
+    description: "Web terminal server for dartuios - Serves dartuios through the browser"
     maintainers:
       - "Gaurav Gosain <itsgauravgosain@gmail.com>"
     license: MIT
     private_key: "{{ .Env.AUR_SSH_KEY }}"
-    git_url: "ssh://aur@aur.archlinux.org/tuios-web-bin.git"
+    git_url: "ssh://aur@aur.archlinux.org/dartuios-web-bin.git"
     provides:
-      - tuios-web
+      - dartuios-web
     conflicts:
-      - tuios-web
+      - dartuios-web
     package: |
       # bin
-      install -Dm755 "./tuios-web" "${pkgdir}/usr/bin/tuios-web"
+      install -Dm755 "./dartuios-web" "${pkgdir}/usr/bin/dartuios-web"
 
       # license
       install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
@@ -336,14 +336,14 @@ aurs:
 
 # Homebrew tap (using casks for pre-compiled binaries)
 homebrew_casks:
-  - name: tuios
+  - name: dartuios
     ids:
-      - tuios-archive
+      - dartuios-archive
     repository:
-      owner: Gaurav-Gosain
+      owner: darsrc
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    homepage: https://github.com/Gaurav-Gosain/tuios
+    homepage: https://github.com/darsrc/tuios
     description: "Terminal UI Operating System - A terminal-based window manager with tmux-style keybindings"
     commit_author:
       name: goreleaserbot
@@ -355,18 +355,18 @@ homebrew_casks:
       post:
         install: |
           if OS.mac?
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/tuios"]
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/dartuios"]
           end
 
-  - name: tuios-web
+  - name: dartuios-web
     ids:
-      - tuios-web-archive
+      - dartuios-web-archive
     repository:
-      owner: Gaurav-Gosain
+      owner: darsrc
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    homepage: https://github.com/Gaurav-Gosain/tuios
-    description: "Web terminal server for TUIOS - Serves TUIOS through the browser"
+    homepage: https://github.com/darsrc/tuios
+    description: "Web terminal server for dartuios - Serves dartuios through the browser"
     commit_author:
       name: goreleaserbot
       email: bot@goreleaser.com
@@ -375,16 +375,16 @@ homebrew_casks:
       post:
         install: |
           if OS.mac?
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/tuios-web"]
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/dartuios-web"]
           end
 
 # Docker images (optional - uncomment if you want automated Docker builds)
 # dockers:
 #   - image_templates:
-#       - "ghcr.io/gaurav-gosain/tuios:{{ .Tag }}"
-#       - "ghcr.io/gaurav-gosain/tuios:v{{ .Major }}"
-#       - "ghcr.io/gaurav-gosain/tuios:v{{ .Major }}.{{ .Minor }}"
-#       - "ghcr.io/gaurav-gosain/tuios:latest"
+#       - "ghcr.io/gaurav-gosain/dartuios:{{ .Tag }}"
+#       - "ghcr.io/gaurav-gosain/dartuios:v{{ .Major }}"
+#       - "ghcr.io/gaurav-gosain/dartuios:v{{ .Major }}.{{ .Minor }}"
+#       - "ghcr.io/gaurav-gosain/dartuios:latest"
 #     dockerfile: Dockerfile
 #     build_flag_templates:
 #       - "--pull"
@@ -397,4 +397,4 @@ homebrew_casks:
 # announce:
 #   twitter:
 #     enabled: true
-#     message_template: "TUIOS {{ .Tag }} is out! Check it out at {{ .ReleaseURL }}"
+#     message_template: "dartuios {{ .Tag }} is out! Check it out at {{ .ReleaseURL }}"

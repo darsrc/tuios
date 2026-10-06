@@ -1,7 +1,7 @@
 #!/bin/sh
 # Records assets/demo.gif for the README.
 #
-#   assets/record-demo.sh          # uses the tuios first on $PATH
+#   assets/record-demo.sh          # uses the dartuios first on $PATH
 #
 # The preparation has to happen out here rather than inside the tape. vhs
 # applies a tape's Env from the very first frame, so its shell starts with
@@ -15,16 +15,16 @@
 #   recording made against the real one attaches to the daemon the person
 #   recording is working in, films their panes, and leaves its own behind.
 #
-#   A config directory of symlinks to the real one, with tuios replaced by a
+#   A config directory of symlinks to the real one, with dartuios replaced by a
 #   copy. The session then looks like the machine it was recorded on - the same
 #   shell, prompt and fastfetch - while the theme applied at the end of the
-#   tape, which tuios persists, lands in the copy instead of the real config.
+#   tape, which dartuios persists, lands in the copy instead of the real config.
 set -eu
 
-root=/tmp/tuios-demo
+root=/tmp/dartuios-demo
 here=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 
-command -v tuios >/dev/null 2>&1 || { echo "record-demo.sh: no tuios on PATH" >&2; exit 1; }
+command -v dartuios >/dev/null 2>&1 || { echo "record-demo.sh: no dartuios on PATH" >&2; exit 1; }
 command -v vhs >/dev/null 2>&1 || { echo "record-demo.sh: no vhs on PATH" >&2; exit 1; }
 
 XDG_RUNTIME_DIR=$root/run
@@ -40,15 +40,15 @@ export XDG_RUNTIME_DIR XDG_STATE_HOME XDG_DATA_HOME XDG_CACHE_HOME XDG_CONFIG_HO
 # through the scratch runtime directory, so it can only ever reach this demo's
 # own daemon and never the one the recorder is working in.
 mkdir -p "$root/run"
-tuios kill-server >/dev/null 2>&1 || true
+dartuios kill-server >/dev/null 2>&1 || true
 sleep 1
 
 rm -rf "$root"
 mkdir -p "$root/run" "$root/state" "$root/data" "$root/cache" "$root/work" "$root/config"
 
 ln -sfn "$HOME"/.config/* "$root/config/"
-rm -f "$root/config/tuios"
-cp -r "$HOME/.config/tuios" "$root/config/tuios"
+rm -f "$root/config/dartuios"
+cp -r "$HOME/.config/dartuios" "$root/config/dartuios"
 
 cd "$here"
 vhs "$@" demo.tape

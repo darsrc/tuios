@@ -9,7 +9,7 @@ import (
 	"unicode"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // clockFormatSample renders a layout against a fixed time, so a warning can say
@@ -134,7 +134,7 @@ func ValidateConfig(cfg *UserConfig) *ValidationResult {
 		result.Warnings = append(result.Warnings, ValidationError{
 			Field: "keybindings",
 			Key:   key,
-			Message: fmt.Sprintf("%s runs %s. These never run: %s. Run `tuios keybinds unbind <action> %s` to take the key off one of them.",
+			Message: fmt.Sprintf("%s runs %s. These never run: %s. Run `dartuios keybinds unbind <action> %s` to take the key off one of them.",
 				key, actions[0], strings.Join(actions[1:], ", "), key),
 		})
 	}
@@ -153,7 +153,7 @@ func ValidateConfig(cfg *UserConfig) *ValidationResult {
 			result.Warnings = append(result.Warnings, ValidationError{
 				Field:   section,
 				Key:     action,
-				Message: fmt.Sprintf("Essential action '%s' has no keybinding, so TUIOS may be difficult to use", action),
+				Message: fmt.Sprintf("Essential action '%s' has no keybinding, so dartuios may be difficult to use", action),
 			})
 		}
 	}
@@ -441,7 +441,7 @@ func validateGlyphSet(cfg *UserConfig, result *ValidationResult) {
 // validateDimUnfocused warns when the dim is asked for and cannot do its whole
 // job.
 //
-// With no theme set, tuios emits colour indices and the host terminal decides
+// With no theme set, dartuios emits colour indices and the host terminal decides
 // what they look like, so a cell drawn in the terminal's own default has no RGB
 // here to carry anywhere. Those cells are left alone rather than guessed at,
 // which on a plain shell prompt is most of them, so the setting looks broken
@@ -454,7 +454,7 @@ func validateDimUnfocused(cfg *UserConfig, result *ValidationResult) {
 		Field: "appearance",
 		Key:   "dim_unfocused",
 		Message: "no theme is set, so a cell drawn in the terminal's own default colour has no colour " +
-			"tuios knows and is left undimmed; only cells a program coloured itself are quieted",
+			"dartuios knows and is left undimmed; only cells a program coloured itself are quieted",
 	})
 }
 
@@ -633,7 +633,7 @@ func hasKeybinding(cfg *UserConfig, sectionName, action string) bool {
 
 // defaultKeybindingPairs is every action-and-key pair the shipped defaults
 // bind, keyed "<action>\x00<key>" with the key lowercased. It is what tells an
-// advisory that a binding is tuios's own rather than the user's.
+// advisory that a binding is dartuios's own rather than the user's.
 func defaultKeybindingPairs() map[string]bool {
 	kb := DefaultConfig().Keybindings
 	out := map[string]bool{}

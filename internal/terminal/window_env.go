@@ -7,8 +7,8 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/guestenv"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/guestenv"
 )
 
 // Graphics capabilities of the host terminal, set by the app once passthrough
@@ -22,7 +22,7 @@ var (
 	kittyAnimationHost bool
 )
 
-// SetGraphicsCapabilities records which graphics protocols tuios can forward to
+// SetGraphicsCapabilities records which graphics protocols dartuios can forward to
 // the host terminal. Windows created afterwards advertise a matching terminal
 // identity to their shell (see guestenv.TermProgram) and are told whether
 // frame edits get through (see guestenv.KittyAnimationVar).
@@ -34,7 +34,7 @@ func SetGraphicsCapabilities(kitty, sixel, animation bool) {
 	kittyAnimationHost = animation
 }
 
-// guestKittyAnimation returns the TUIOS_KITTY_ANIMATION value for a newly
+// guestKittyAnimation returns the DARTUIOS_KITTY_ANIMATION value for a newly
 // spawned shell.
 func guestKittyAnimation() string {
 	graphicsMu.RLock()
@@ -51,7 +51,7 @@ func guestTermProgram(command []string) string {
 }
 
 // guestBaseEnv is the environment a standalone pane starts from: this
-// process's, without the variables of a tmux that tuios itself runs inside,
+// process's, without the variables of a tmux that dartuios itself runs inside,
 // so the pane does not read as a tmux pane. See
 // guestenv.WithoutHostMultiplexer.
 func guestBaseEnv() []string {

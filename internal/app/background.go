@@ -9,15 +9,15 @@ import (
 	"charm.land/lipgloss/v2"
 	uv "github.com/charmbracelet/ultraviolet"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The backgrounds: appearance.background and one option per surface.
 //
 // A cell left on the default background carries no colour, and that is
-// deliberate: the host terminal draws its own background through it, so tuios
+// deliberate: the host terminal draws its own background through it, so dartuios
 // looks like the terminal it runs in. The options paint a ground there
 // instead, either the theme's background or a colour of the user's, one
 // surface at a time:
@@ -52,7 +52,7 @@ import (
 // cleared to before the layers land.
 //
 // A cell with a background of its own keeps it: a program's colours, every
-// mark tuios paints over a pane (the selection, search matches, the copy mode
+// mark dartuios paints over a pane (the selection, search matches, the copy mode
 // cursor), a border's accent, a dock pill. Only the empty ground changes. Text
 // left in the default colour on a painted cell takes the theme's foreground,
 // lifted to read on a colour of the user's, so it stays legible; text that
@@ -177,7 +177,7 @@ func (m *OS) frameGrounds() frameGrounds {
 // designed as: leaving the foreground to the host would put a light terminal's
 // dark text on a dark theme's ground. A colour literal paints that colour; the
 // foreground is the theme's lifted until it reads on it when a theme is set,
-// and the host's own when none is, since tuios does not know the host's
+// and the host's own when none is, since dartuios does not know the host's
 // palette and choosing a stranger's is worse than trusting the user's pick.
 func resolveGround(setting, themeID string) ground {
 	var g ground
@@ -341,7 +341,7 @@ func desktopBlank(g ground) uv.Cell {
 // A program that asks the terminal what its background is (OSC 11), or its
 // default text colour (OSC 10), is asking what it is drawn on. With a pane
 // background painted, the honest answer is the painted ground and the ink
-// tuios gives default text there, so a program that picks a light or a dark
+// dartuios gives default text there, so a program that picks a light or a dark
 // palette from the answer picks the one that reads. With no theme, the host
 // terminal's own colours answer whatever the paint does not: see
 // paneReportNow in host_colors.go.

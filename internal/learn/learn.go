@@ -1,12 +1,12 @@
-// Package learn runs tuios as the guided tour at tuios.dev/learn. It
+// Package learn runs dartuios as the guided tour at dartuios.dev/learn. It
 // wraps the real app model, reports what the person did as a stream of
 // events a lesson can check steps against, and takes commands from the page
 // that set the scene for a step.
 //
 // It is plain Go with no build tags, so the whole contract is tested natively
-// against a real app.OS with the fake shell in its panes. cmd/tuios-wasm only
+// against a real app.OS with the fake shell in its panes. cmd/dartuios-wasm only
 // carries it across to JavaScript. The contract is documented in
-// cmd/tuios-wasm/README.md.
+// cmd/dartuios-wasm/README.md.
 package learn
 
 import (
@@ -14,11 +14,11 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/webshell"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/webshell"
 )
 
-// Event types. See cmd/tuios-wasm/README.md for each one's data.
+// Event types. See cmd/dartuios-wasm/README.md for each one's data.
 const (
 	EventReady          = "ready"
 	EventKey            = "key"
@@ -119,7 +119,7 @@ func New(o *app.OS, emit func(Event), send func(tea.Msg)) *Model {
 }
 
 // fromGuest routes what the fake shell reports. Agent reports and tape
-// requests are for tuios, and go to the program as messages, which is the
+// requests are for dartuios, and go to the program as messages, which is the
 // same in-process path set-agent-state takes for a local pane. Everything
 // else is for the page.
 func (m *Model) fromGuest(e webshell.Event) {

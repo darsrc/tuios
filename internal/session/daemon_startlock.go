@@ -9,7 +9,7 @@ import (
 // ErrDaemonStarting reports that another process holds the start lock, so it is
 // mid-way through binding the socket. The caller has nothing to fix: waiting for
 // the socket is the whole remedy.
-var ErrDaemonStarting = errors.New("another TUIOS daemon is starting")
+var ErrDaemonStarting = errors.New("another dartuios daemon is starting")
 
 // startLockPath returns the lock file guarding the startup of the daemon on
 // socketPath. It sits beside the socket and is never removed: a lock is an
@@ -31,7 +31,7 @@ func startLockPath(socketPath string) string {
 // exactly like the crashed daemon that recovery is for: the second starter would
 // unlink a live daemon's socket and bind its own, leaving the first serving an
 // inode nothing can reach and its sessions unreachable with it. Two clients
-// racing 'tuios attach' is the ordinary way to produce that interleaving.
+// racing 'dartuios attach' is the ordinary way to produce that interleaving.
 //
 // The returned file must stay open for the daemon's life; closing it releases
 // the lock.

@@ -15,7 +15,7 @@ import (
 )
 
 // freePort reserves a port by binding and immediately releasing it. There is a
-// race between release and tuios binding it, but the window is tiny and a
+// race between release and dartuios binding it, but the window is tiny and a
 // collision fails loudly at startup rather than silently.
 func freePort(t *testing.T) int {
 	t.Helper()
@@ -34,7 +34,7 @@ func freePort(t *testing.T) int {
 // which begins "goroutine profile: total 123".
 var goroutineCountRe = regexp.MustCompile(`goroutine profile: total (\d+)`)
 
-// pprofGoroutines asks the running tuios for its live goroutine count.
+// pprofGoroutines asks the running dartuios for its live goroutine count.
 func pprofGoroutines(addr string) (int, error) {
 	body, err := httpGet(fmt.Sprintf("http://%s/debug/pprof/goroutine?debug=1", addr))
 	if err != nil {
@@ -50,7 +50,7 @@ func pprofGoroutines(addr string) (int, error) {
 // heapInUseRe pulls the in-use bytes out of the debug=1 heap profile trailer.
 var heapInUseRe = regexp.MustCompile(`# HeapInuse = (\d+)`)
 
-// pprofHeapInUse asks the running tuios for its in-use heap in bytes.
+// pprofHeapInUse asks the running dartuios for its in-use heap in bytes.
 func pprofHeapInUse(addr string) (uint64, error) {
 	body, err := httpGet(fmt.Sprintf("http://%s/debug/pprof/heap?debug=1", addr))
 	if err != nil {
@@ -78,7 +78,7 @@ func httpGet(url string) (string, error) {
 }
 
 // TestSoakMixedActivity runs sustained mixed activity for a bounded period and
-// asserts tuios neither crashes, hangs, nor grows without bound.
+// asserts dartuios neither crashes, hangs, nor grows without bound.
 //
 // The three failure modes are checked separately because they look different:
 //
@@ -163,7 +163,7 @@ func TestSoakMixedActivity(t *testing.T) {
 		// Resize.
 		sz := sizes[cycle%len(sizes)]
 		if err := term.Resize(sz[0], sz[1]); err != nil {
-			t.Fatalf("cycle %d: resize to %dx%d failed (tuios likely died): %v\n%s",
+			t.Fatalf("cycle %d: resize to %dx%d failed (dartuios likely died): %v\n%s",
 				cycle, sz[0], sz[1], err, term.Snapshot())
 		}
 		// Create and close a window, so window lifecycle churns too.

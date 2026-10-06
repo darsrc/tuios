@@ -6,7 +6,7 @@ import (
 )
 
 // The report this file exists for: a local client attached to a daemon session
-// and a second client (tuios-web, in the report) attached beside it, a split
+// and a second client (dartuios-web, in the report) attached beside it, a split
 // open, and a plain pane switch (alt+n) resizes the panes. Nobody touched a
 // window boundary.
 //
@@ -18,10 +18,10 @@ import (
 // shared PTYs between the two answers. The web client is exactly the second
 // process with its own configuration in force.
 //
-// This test is the report's own sequence across two real tuios processes with
+// This test is the report's own sequence across two real dartuios processes with
 // genuinely different config files. The web frontend itself cannot be driven
-// by this harness; a second tuios process with its own XDG_CONFIG_HOME is the
-// faithful stand-in, because tuios-web runs this same client code against the
+// by this harness; a second dartuios process with its own XDG_CONFIG_HOME is the
+// faithful stand-in, because dartuios-web runs this same client code against the
 // same daemon socket.
 //
 // NEGATIVE CONTROL: measured against a binary built from the unfixed tree
@@ -41,7 +41,7 @@ func TestGeometryConfigDisagreementDoesNotMovePanes(t *testing.T) {
 	// nothing propagates the file between the two.
 	writeConfig(t, base, "[appearance]\nshared_borders = true\n")
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "geometry", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "geometry", "--detach"); err != nil {
 		t.Fatalf("create session: %v: %s", err, out)
 	}
 

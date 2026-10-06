@@ -8,7 +8,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/integration"
+	"github.com/darsrc/tuios/internal/integration"
 )
 
 // The transcript: what the pane shows of the conversation.
@@ -355,7 +355,7 @@ func clipLines(s string, n int) string {
 // or empty when the Inbox may not answer it and only the pane can.
 //
 // The person answers from this line alone, so it has to be the whole request,
-// the rule `tuios agent-hook` follows (internal/integration/approval.go): a
+// the rule `dartuios agent-hook` follows (internal/integration/approval.go): a
 // call with a diff, output, a terminal or anything else the line cannot show is
 // answered in the pane. The title is the whole call only when every string the
 // call's input holds appears in it, except a description, which says what the

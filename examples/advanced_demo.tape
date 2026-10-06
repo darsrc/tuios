@@ -1,4 +1,4 @@
-# TUIOS Advanced Demo Script
+# dartuios Advanced Demo Script
 # Demonstrates advanced features: mouse interactions, loops, variables, and assertions
 
 # Disable animations for consistent playback

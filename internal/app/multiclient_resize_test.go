@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // A second client of a different size joining a session is the one route where
@@ -16,7 +16,7 @@ import (
 // only thing that can tell it so is the session-resize broadcast.
 //
 // These run on the rehydration rig: a real daemon, real client connections, and
-// a real OS attached through the same entry points cmd/tuios uses.
+// a real OS attached through the same entry points cmd/dartuios uses.
 
 // joinerSize is the second client's viewport: narrower and shorter than the
 // rig's, so the effective size is unambiguously the joiner's.
@@ -28,7 +28,7 @@ const (
 )
 
 // watchSessionResize routes the client's session-resize notifications into the
-// OS event channel, which is what cmd/tuios and cmd/tuios-web both do.
+// OS event channel, which is what cmd/dartuios and cmd/dartuios-web both do.
 func (r *rig) watchSessionResize() {
 	r.t.Helper()
 	r.client.OnSessionResize(func(width, height, clientCount int, reserve session.LayoutReserve) {

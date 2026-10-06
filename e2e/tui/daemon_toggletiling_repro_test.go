@@ -24,7 +24,7 @@ func TestDaemonToggleTilingReproFlow(t *testing.T) {
 
 	// Three windows created ONLY through the daemon verb path, tiling off.
 	for i := 1; i <= 3; i++ {
-		out, err := tuiosCLI(t, base, "run-command", "--session", "rs2", "NewWindow")
+		out, err := dartuiosCLI(t, base, "run-command", "--session", "rs2", "NewWindow")
 		if err != nil {
 			t.Fatalf("run-command NewWindow #%d failed: %v\n%s", i, err, out)
 		}
@@ -32,7 +32,7 @@ func TestDaemonToggleTilingReproFlow(t *testing.T) {
 	}
 
 	// Enable tiling the way the user did in the bug report: the daemon verb.
-	out, err := tuiosCLI(t, base, "run-command", "--session", "rs2", "ToggleTiling")
+	out, err := dartuiosCLI(t, base, "run-command", "--session", "rs2", "ToggleTiling")
 	if err != nil {
 		t.Fatalf("run-command ToggleTiling failed: %v\n%s", err, out)
 	}

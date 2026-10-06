@@ -10,11 +10,11 @@ import (
 
 // Native system clipboard fallback.
 //
-// TUIOS normally reaches the clipboard through OSC 52, which asks the user's
+// dartuios normally reaches the clipboard through OSC 52, which asks the user's
 // terminal to carry the text. Terminals built on VTE (GNOME Terminal, Ptyxis)
 // never implement it, so copy and paste silently fail there. When this process
 // can reach a native clipboard tool (wl-clipboard on Wayland, xclip or xsel on
-// X11, pbcopy/pbpaste on macOS), tuios talks to the system clipboard directly
+// X11, pbcopy/pbpaste on macOS), dartuios talks to the system clipboard directly
 // instead, and OSC 52 stays the path for a client whose clipboard lives
 // somewhere else.
 //

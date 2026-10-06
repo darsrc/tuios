@@ -2,7 +2,7 @@ package app
 
 // What a window on top of an image leaves of it.
 //
-// A kitty image is not drawn by tuios. The host terminal paints it over the
+// A kitty image is not drawn by dartuios. The host terminal paints it over the
 // finished frame, so a pane drawn on top of it does not cover it the way a pane
 // covers text: the cells are composited and the image is not. Until now the
 // answer was to hide any image a higher window touched at all, which is correct

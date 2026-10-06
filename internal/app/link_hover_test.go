@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // linkTestOS builds one pane at the origin, writes body into it, and returns the
@@ -81,7 +81,7 @@ func TestLinkHoverFindsAMarkedRun(t *testing.T) {
 //
 // A pane in terminal mode whose program asked for mouse reporting owns the
 // pointer: the click handler forwards to it, so underlining a link there would
-// promise an action tuios is not going to take. The suppression has to be the
+// promise an action dartuios is not going to take. The suppression has to be the
 // same three-part test the click path applies, or the two disagree about who
 // owns the same cell.
 //
@@ -96,7 +96,7 @@ func TestLinkHoverYieldsToAMouseTrackingGuest(t *testing.T) {
 		t.Fatal("no link under the pointer before the guest asked for the mouse")
 	}
 
-	// The guest turns on mouse reporting (DECSET 1000) and tuios is in terminal
+	// The guest turns on mouse reporting (DECSET 1000) and dartuios is in terminal
 	// mode with that pane focused: all three parts of the test hold.
 	win.WriteOutput([]byte("\x1b[?1000h"))
 	m.Mode = TerminalMode
@@ -107,7 +107,7 @@ func TestLinkHoverYieldsToAMouseTrackingGuest(t *testing.T) {
 		t.Error("the pointer picked up a link over a pane whose program is tracking the mouse")
 	}
 
-	// Window management mode is tuios's own, so the pane does not own the
+	// Window management mode is dartuios's own, so the pane does not own the
 	// pointer there even with reporting on.
 	m.Mode = WindowManagementMode
 	if !m.LinkHoverAt(sx, sy) {
@@ -144,7 +144,7 @@ func TestUnfocusedPaneLeavesTheFastPathToUnderline(t *testing.T) {
 // offer the truncated address, and hovering the second half found no link at
 // all, which is what `cat README.md` looks like on any URL longer than the pane.
 func TestLinkHoverFollowsASoftWrap(t *testing.T) {
-	const url = "https://img.shields.io/github/commit-activity/w/Gaurav-Gosain/tuios"
+	const url = "https://img.shields.io/github/commit-activity/w/darsrc/tuios"
 	// Fill the row up to the URL so the break lands inside it.
 	const lead = "src="
 	_, win := linkTestOS(t, lead+url)

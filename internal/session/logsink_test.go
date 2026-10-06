@@ -29,7 +29,7 @@ func readLog(t *testing.T, path string) string {
 }
 
 // TestStdlibLogReachesRing is item 1's claim: a plain log.Printf, with no call
-// site change at all, becomes an entry `tuios logs` can read.
+// site change at all, becomes an entry `dartuios logs` can read.
 func TestStdlibLogReachesRing(t *testing.T) {
 	restoreStdlibLogger(t)
 	ClearLogBuffer()
@@ -151,7 +151,7 @@ func TestFileSinkSilentWithoutADaemon(t *testing.T) {
 
 	LogError("this must not open a file")
 
-	if _, err := os.Stat(filepath.Join(dir, "tuios", "daemon.log")); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(dir, "dartuios", "daemon.log")); !os.IsNotExist(err) {
 		t.Fatalf("a process that never installed the sink wrote a log file (err %v)", err)
 	}
 }

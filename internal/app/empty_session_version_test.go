@@ -3,12 +3,12 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // TestAPushFromAnEmptyAttachKeepsADaemonCreatedWindow is the window a script
-// opened with tuios new-window vanishing from a session a client had just
+// opened with dartuios new-window vanishing from a session a client had just
 // attached to while it was empty.
 //
 // A client echoes the daemon state version it last saw on every push, and the

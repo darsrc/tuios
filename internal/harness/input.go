@@ -12,7 +12,7 @@ import (
 // It is data rather than code because it differs by harness and changes by
 // release, and a user whose harness submits on a different key should be able
 // to say so in a file. Every field has a default that is right for a TUI in raw
-// mode, so a manifest that says nothing gets the behaviour tuios had before
+// mode, so a manifest that says nothing gets the behaviour dartuios had before
 // this block existed.
 //
 // Source says where the values came from, in words, so a reader can tell a

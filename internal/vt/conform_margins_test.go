@@ -293,7 +293,7 @@ func TestConform_MarginsSurviveAResize(t *testing.T) {
 //
 // A real resize resets DECSTBM, on both backends and in every terminal that
 // implements it, and that is correct. A resize that changes no dimension is not
-// a real resize and must keep the margins. This matters because tuios
+// a real resize and must keep the margins. This matters because dartuios
 // announces a pane's size from every client attached to it, so a second
 // client attaching, or any client re-announcing after a layout that moved
 // nothing, arrives as a resize to the size already set. Resetting the margins

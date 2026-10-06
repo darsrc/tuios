@@ -51,7 +51,7 @@ func TestRailMarksAForeignAgentWhenTheDockDoes(t *testing.T) {
 	killDaemon(t, base)
 	useShippedLooks(base)
 	for _, name := range append([]string{"e2e-home"}, names...) {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create session %s: %v\n%s", name, err, out)
 		}
 	}
@@ -65,7 +65,7 @@ func TestRailMarksAForeignAgentWhenTheDockDoes(t *testing.T) {
 
 	for _, name := range names {
 		time.Sleep(time.Second)
-		if out, err := tuiosCLI(t, base, "set-agent-state", "-s", name, "needs_input",
+		if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", name, "needs_input",
 			"--kind", "question", "--harness", "claude-code", "-m", "which branch?"); err != nil {
 			t.Fatalf("set-agent-state in %s: %v\n%s", name, err, out)
 		}

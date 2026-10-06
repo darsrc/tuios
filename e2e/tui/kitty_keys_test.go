@@ -67,7 +67,7 @@ func TestKittyAltChordSwitchesPaneFromTerminalMode(t *testing.T) {
 	}
 }
 
-// TestHoldKeyBorrowsWindowMode is report 2 end to end: hold the key and tuios is
+// TestHoldKeyBorrowsWindowMode is report 2 end to end: hold the key and dartuios is
 // in window mode, act while holding, let go and the pane has the keyboard back.
 func TestHoldKeyBorrowsWindowMode(t *testing.T) {
 	base := t.TempDir()
@@ -129,7 +129,7 @@ func TestHoldKeyBorrowsWindowMode(t *testing.T) {
 
 // TestHoldKeyIsInertWhenUnbound is the default. Nothing is bound to a held key,
 // so the same sequences must change nothing: a terminal that reports modifier
-// keys must not put an unconfigured tuios into a mode the user did not ask for.
+// keys must not put an unconfigured dartuios into a mode the user did not ask for.
 func TestHoldKeyIsInertWhenUnbound(t *testing.T) {
 	base := t.TempDir()
 	term := startIn(t, base, startOpts{cols: 120, rows: 40})
@@ -150,7 +150,7 @@ func TestHoldKeyIsInertWhenUnbound(t *testing.T) {
 	runInShell(t, term, "echo still-$((4+5))", "still-9", shellTimeout)
 }
 
-// TestKeyboardEnhancementsAreRequested pins the negotiation itself. tuios has to
+// TestKeyboardEnhancementsAreRequested pins the negotiation itself. dartuios has to
 // ask the host for alternate-key reporting, which is what carries the key behind
 // a composed or non-US-layout character; nothing else can turn one back into the
 // chord the user struck.
@@ -176,13 +176,13 @@ func TestKeyboardEnhancementsAreRequested(t *testing.T) {
 }
 
 const (
-	// kittyWindowModeFlags is the host request while tuios reads keys itself.
+	// kittyWindowModeFlags is the host request while dartuios reads keys itself.
 	kittyWindowModeFlags = "\x1b[=29;1u"
 	// kittyPaneFlags is the host request while a pane has the keyboard.
 	kittyPaneFlags = "\x1b[=5;1u"
 )
 
-// waitForRequest waits until tuios has written want to its terminal at or after
+// waitForRequest waits until dartuios has written want to its terminal at or after
 // byte offset from.
 func waitForRequest(t *testing.T, term *tuitest.Terminal, out *syncBuffer, from int, want string) {
 	t.Helper()
@@ -193,10 +193,10 @@ func waitForRequest(t *testing.T, term *tuitest.Terminal, out *syncBuffer, from 
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
-	t.Fatalf("tuios never asked the terminal for %q\n%s", want, term.Snapshot())
+	t.Fatalf("dartuios never asked the terminal for %q\n%s", want, term.Snapshot())
 }
 
-// syncBuffer collects the raw bytes tuios writes to its terminal. The harness
+// syncBuffer collects the raw bytes dartuios writes to its terminal. The harness
 // mirrors the PTY into it from its own goroutine, so it needs a lock.
 type syncBuffer struct {
 	mu  sync.Mutex

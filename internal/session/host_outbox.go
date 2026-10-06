@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/federation"
 )
 
 // Mail to a machine whose link is down.
@@ -247,7 +247,7 @@ func (o *hostOutbox) enqueue(host, sessionName, to string, params json.RawMessag
 	if waiting >= outboxMaxPerHost || len(o.entries) >= outboxMaxTotal {
 		o.mu.Unlock()
 		return outboxEntry{}, waiting, hintedVerbError(ErrVerbRateLimited, strconv.Itoa(waiting)+" messages already wait for "+host+", which is the cap", &VerbHint{
-			Command: "tuios hosts",
+			Command: "dartuios hosts",
 			Detail:  "Nothing was queued. A machine whose link is down holds at most 64 messages here, 256 for every machine. Wait for the link, or dismiss the outbox item in the Inbox to discard what waits.",
 		})
 	}

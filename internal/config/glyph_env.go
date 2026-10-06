@@ -3,10 +3,10 @@ package config
 import (
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
-// GlyphEnv is what the terminal tuios draws on can show, as far as its
+// GlyphEnv is what the terminal dartuios draws on can show, as far as its
 // environment says. It picks the glyphs when nobody chose them: a wrong glyph
 // is worse than a plain one, and a terminal that cannot draw box drawing or a
 // Nerd Font icon shows a box or a question mark in its place.
@@ -23,7 +23,7 @@ const (
 	GlyphEnvUnicode
 	// GlyphEnvASCII is a locale that is not UTF-8. The terminal decodes bytes
 	// in some other encoding, so anything past 7-bit ASCII comes out as
-	// garbage: tuios runs as if --ascii-only were given.
+	// garbage: dartuios runs as if --ascii-only were given.
 	GlyphEnvASCII
 )
 

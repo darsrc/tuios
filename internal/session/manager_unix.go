@@ -10,7 +10,7 @@ import (
 )
 
 // GetSocketPath returns the path to the daemon socket. It refuses when
-// TUIOS_SOCKET names a different socket that no daemon listens on; see
+// DARTUIOS_SOCKET names a different socket that no daemon listens on; see
 // socket_env.go.
 func GetSocketPath() (string, error) {
 	path, err := defaultSocketPath()
@@ -28,20 +28,20 @@ func defaultSocketPath() (string, error) {
 	// Use XDG_RUNTIME_DIR if available (preferred for sockets)
 	runtimeDir := os.Getenv("XDG_RUNTIME_DIR")
 	if runtimeDir != "" {
-		socketDir := filepath.Join(runtimeDir, "tuios")
+		socketDir := filepath.Join(runtimeDir, "dartuios")
 		if err := ensureSocketDir(socketDir); err != nil {
 			return "", err
 		}
-		return filepath.Join(socketDir, "tuios.sock"), nil
+		return filepath.Join(socketDir, "dartuios.sock"), nil
 	}
 
-	// Fallback to /tmp/tuios-$UID/
+	// Fallback to /tmp/dartuios-$UID/
 	uid := os.Getuid()
-	socketDir := filepath.Join("/tmp", fmt.Sprintf("tuios-%d", uid))
+	socketDir := filepath.Join("/tmp", fmt.Sprintf("dartuios-%d", uid))
 	if err := ensureSocketDir(socketDir); err != nil {
 		return "", err
 	}
-	return filepath.Join(socketDir, "tuios.sock"), nil
+	return filepath.Join(socketDir, "dartuios.sock"), nil
 }
 
 // GetPidFilePath returns the path to the daemon PID file.
@@ -56,7 +56,7 @@ func GetPidFilePath() (string, error) {
 // ensureSocketDir creates the directory the daemon's socket and pid file live
 // in, or checks the one that is there. Whoever controls this directory can put
 // their own socket in place of the daemon's and read what every client sends,
-// and without XDG_RUNTIME_DIR its name, /tmp/tuios-<uid>, is one any local
+// and without XDG_RUNTIME_DIR its name, /tmp/dartuios-<uid>, is one any local
 // user can create first. So an existing directory must be a real directory
 // (not a link), owned by this user, and closed to everyone else. One this user
 // owns that is open is closed rather than refused.

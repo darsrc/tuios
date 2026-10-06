@@ -5,15 +5,15 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/agentproto"
+	"github.com/darsrc/tuios/internal/agentproto"
 )
 
 // Protocol panes: an agent start-agent runs headless, over ACP or the Codex
-// app-server protocol, with `tuios agent-proto` as the pane's process.
+// app-server protocol, with `dartuios agent-proto` as the pane's process.
 //
 // The daemon's part is small, because the pane program does the talking (see
 // internal/agentproto). start-agent --protocol runs this daemon's own binary as
-// `tuios agent-proto --protocol P --harness H -- <agent argv>` in place of the
+// `dartuios agent-proto --protocol P --harness H -- <agent argv>` in place of the
 // agent, and remembers the window as a protocol pane. The pane program reports
 // the agent's state for its own pane with set-agent-state, as a hook does, and
 // holds a permission for the Inbox with request-approval.
@@ -53,7 +53,7 @@ func (d *Daemon) paneProtocol(windowID string) string {
 	return ""
 }
 
-// agentProtoExecutable is the binary that runs `tuios agent-proto`: this
+// agentProtoExecutable is the binary that runs `dartuios agent-proto`: this
 // daemon's own, so the pane program always matches the daemon it reports to.
 func (d *Daemon) agentProtoExecutable() (string, error) {
 	if d.agentProtoExe != nil {
@@ -62,10 +62,10 @@ func (d *Daemon) agentProtoExecutable() (string, error) {
 	return os.Executable()
 }
 
-// checkProtocol refuses a protocol tuios does not speak.
+// checkProtocol refuses a protocol dartuios does not speak.
 func checkProtocol(protocol string) *verbError {
 	if agentproto.CheckProtocol(protocol) != nil {
-		return invalidParam("protocol", "protocol: "+echoName(protocol)+" is not a protocol tuios speaks", agentproto.Protocols...)
+		return invalidParam("protocol", "protocol: "+echoName(protocol)+" is not a protocol dartuios speaks", agentproto.Protocols...)
 	}
 	return nil
 }
@@ -90,7 +90,7 @@ func (d *Daemon) protocolArgv(protocol, harness string, agentArgv []string) ([]s
 	}
 	exe, err := d.agentProtoExecutable()
 	if err != nil {
-		return nil, hintedVerbError(ErrVerbInternal, "could not find the tuios binary to run the protocol pane: "+err.Error(), nil)
+		return nil, hintedVerbError(ErrVerbInternal, "could not find the dartuios binary to run the protocol pane: "+err.Error(), nil)
 	}
 	argv := agentArgv
 	out := []string{exe, "agent-proto", "--protocol", protocol}

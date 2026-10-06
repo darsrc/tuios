@@ -8,13 +8,13 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/input"
-	"github.com/Gaurav-Gosain/tuios/internal/ptyspawn"
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
-	"github.com/Gaurav-Gosain/tuios/internal/webshell"
 	"github.com/charmbracelet/x/xpty"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/input"
+	"github.com/darsrc/tuios/internal/ptyspawn"
+	"github.com/darsrc/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/webshell"
 )
 
 func TestMain(m *testing.M) {
@@ -49,7 +49,7 @@ func newTour(t *testing.T) *tour {
 		Settings:        &seed,
 		Width:           120,
 		Height:          40,
-		Caps:            &app.HostCapabilities{TrueColor: true, TerminalName: "tuios-wasm"},
+		Caps:            &app.HostCapabilities{TrueColor: true, TerminalName: "dartuios-wasm"},
 	})
 	tr := &tour{t: t, msgs: make(chan tea.Msg, 64)}
 	tr.m = New(o, func(e Event) {
@@ -296,7 +296,7 @@ func TestCommandsListMatchesRunCommand(t *testing.T) {
 			t.Errorf("Commands lists %q but RunCommand has no case for it", name)
 		}
 	}
-	readme, err := os.ReadFile("../../cmd/tuios-wasm/README.md")
+	readme, err := os.ReadFile("../../cmd/dartuios-wasm/README.md")
 	if err != nil {
 		t.Fatal(err)
 	}

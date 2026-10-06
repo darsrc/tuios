@@ -34,7 +34,7 @@ sleep 600
 func TestInboxPeekAnswersAnApproval(t *testing.T) {
 	term, base := attachClientBase(t)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-ask", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-ask", "--detach"); err != nil {
 		t.Fatalf("create the agent's session: %v\n%s", err, out)
 	}
 	script := filepath.Join(base, "agent.sh")
@@ -42,11 +42,11 @@ func TestInboxPeekAnswersAnApproval(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := filepath.Join(base, "got")
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ask", "sh "+script+" "+got+"\n"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ask", "sh "+script+" "+got+"\n"); err != nil {
 		t.Fatalf("start the agent: %v\n%s", err, out)
 	}
 	waitForCapture(t, base, nil, []string{"-s", "e2e-ask"}, "Do you want to proceed?")
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-ask", "needs_input",
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-ask", "needs_input",
 		"--kind", "approval", "--harness", "claude-code", "-m", "Bash: rm -rf build"); err != nil {
 		t.Fatalf("set-agent-state: %v\n%s", err, out)
 	}

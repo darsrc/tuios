@@ -3,7 +3,7 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // The routing these tests pin is the one thing in the link feature that is a
@@ -47,9 +47,9 @@ func TestLinkFilePathAcceptsOnlyLocalFiles(t *testing.T) {
 // TestRemoteClientCopiesRatherThanOpens is the footgun this feature was most
 // likely to ship with.
 //
-// Under `tuios ssh` and `tuios-web` the client process runs on the server. A
+// Under `dartuios ssh` and `dartuios-web` the client process runs on the server. A
 // browser opened from there opens on the server's console, in front of nobody,
-// and the person who clicked sees nothing happen. tuios has no way to run
+// and the person who clicked sees nothing happen. dartuios has no way to run
 // anything on the viewer's machine, so the honest action is the one that does
 // reach it: OSC 52, which rides the same stream the frame does.
 //

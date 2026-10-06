@@ -136,7 +136,7 @@ func (e *Emulator) SendMouse(m Mouse) {
 //
 // The pixel is the cell centre, matching the cell->pixel convention a terminal
 // app uses itself when it has only a cell report to work from. Sub-cell
-// precision is not available: the mouse position tuios receives from its own host
+// precision is not available: the mouse position dartuios receives from its own host
 // is already quantised to cells, so a cell centre is the most accurate pixel it
 // can report.
 func (e *Emulator) encodeMouseReport(enc ansi.Mode, b byte, cellX, cellY int, isRelease bool) string {

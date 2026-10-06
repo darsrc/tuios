@@ -12,10 +12,10 @@ import (
 // Environment variables the launcher sets for the shim's log.
 const (
 	// EnvLog is the log file path. Empty means DefaultLogPath.
-	EnvLog = "TUIOS_TMUX_SHIM_LOG"
+	EnvLog = "DARTUIOS_TMUX_SHIM_LOG"
 	// EnvLogAll, set to 1, records every call and not only the ones the shim
 	// could not fully answer.
-	EnvLogAll = "TUIOS_TMUX_SHIM_LOG_ALL"
+	EnvLogAll = "DARTUIOS_TMUX_SHIM_LOG_ALL"
 )
 
 // logCap is the size past which the log is moved to <path>.1 and started
@@ -57,12 +57,12 @@ type Logger struct {
 	All bool
 }
 
-// DefaultLogPath is $XDG_STATE_HOME/tuios/tmux-shim.log.
+// DefaultLogPath is $XDG_STATE_HOME/dartuios/tmux-shim.log.
 func DefaultLogPath() string {
 	if dir := os.Getenv("XDG_STATE_HOME"); dir != "" {
-		return filepath.Join(dir, "tuios", "tmux-shim.log")
+		return filepath.Join(dir, "dartuios", "tmux-shim.log")
 	}
-	return filepath.Join(xdg.StateHome, "tuios", "tmux-shim.log")
+	return filepath.Join(xdg.StateHome, "dartuios", "tmux-shim.log")
 }
 
 // LoggerFromEnv builds the logger the environment asks for.

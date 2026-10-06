@@ -2,13 +2,13 @@ package app
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // A routed command's way into a client that is not the local attach client.
 //
 // The local attach path holds the tea.Program and can Send straight into it
-// (cmd/tuios/session_commands.go). The SSH server and tuios-web hold the model
+// (cmd/dartuios/session_commands.go). The SSH server and dartuios-web hold the model
 // but hand the program to a per-connection goroutine, so they push through a
 // channel the way every other cross-goroutine source in this package does.
 //

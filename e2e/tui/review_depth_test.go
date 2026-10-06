@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
 	"github.com/Gaurav-Gosain/tuitest"
+	"github.com/darsrc/tuios/internal/shot"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // The review overlay's diff at each colour depth a terminal can have, on a
@@ -30,7 +30,7 @@ import (
 //     underlined, and the cursor is reverse video on the gutter only, so the
 //     code keeps its colours and its marks under it.
 //
-// Each frame is saved as text, as styled text and as a PNG drawn by tuios's
+// Each frame is saved as text, as styled text and as a PNG drawn by dartuios's
 // own renderer (internal/shot), with the palette a terminal of that kind
 // paints the sixteen slots with.
 

@@ -2,7 +2,7 @@
 # Dock component: battery charge and whether it is going up or down.
 #
 #   [dock.custom.battery]
-#   command = "~/.config/tuios/dock/battery.sh"
+#   command = "~/.config/dartuios/dock/battery.sh"
 #   refresh = "60s"
 #
 # A minute is the right cadence: the number moves about one point every few

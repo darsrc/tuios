@@ -7,7 +7,7 @@ import (
 )
 
 // Keyboard input for the pane's prompt line. The pane's terminal is in raw
-// mode with bracketed paste on, so a prompt typed by tuios (ask-agent,
+// mode with bracketed paste on, so a prompt typed by dartuios (ask-agent,
 // start-agent's first prompt, send-text) arrives as one paste followed by a
 // carriage return, and a person's keys arrive one by one.
 

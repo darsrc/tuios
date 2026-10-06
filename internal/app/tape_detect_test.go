@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/tape/trust"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/tape/trust"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // newDetectOS builds an OS in the given autorun mode with a trust store backed
@@ -34,7 +34,7 @@ func newDetectOS(t *testing.T, mode string) (*OS, *trust.Store) {
 	return m, store
 }
 
-// tapeDir creates a temp directory containing a .tuios.tape and returns the dir.
+// tapeDir creates a temp directory containing a .dartuios.tape and returns the dir.
 func tapeDir(t *testing.T, content string) string {
 	t.Helper()
 	dir := t.TempDir()
@@ -76,7 +76,7 @@ func TestDetectionIneligibleTape(t *testing.T) {
 }
 
 // TestLocalCwdPathParsing covers the OSC 7 payload parsing, including the remote
-// host rejection that keeps tuios from scanning files it cannot read.
+// host rejection that keeps dartuios from scanning files it cannot read.
 func TestLocalCwdPathParsing(t *testing.T) {
 	cases := []struct {
 		raw     string

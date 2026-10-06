@@ -7,14 +7,14 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // A routed set-config has to reach the file, not just the running session.
 //
 // This was general, not a screenshot bug. The settings panel was the only
 // writer of config.toml in the whole app, so every value set through
-// `tuios set-config` applied live, read back correctly from `get-config`, and
+// `dartuios set-config` applied live, read back correctly from `get-config`, and
 // was gone on the next start, in every section. The screenshot font was only
 // the one that made somebody notice.
 
@@ -82,7 +82,7 @@ func drainCommand(t *testing.T, cmd tea.Cmd) {
 //
 // This was general, not a screenshot bug. The settings panel was the only
 // writer of config.toml in the whole app, so every value set through
-// `tuios set-config` applied live, read back correctly from `get-config`, and
+// `dartuios set-config` applied live, read back correctly from `get-config`, and
 // was gone on the next start, in every section. The screenshot font was only
 // the one that made somebody notice.
 

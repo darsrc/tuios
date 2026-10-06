@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/ui"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/ui"
 )
 
 // openAnimHarness is a tiling client attached to a daemon, the arrangement the

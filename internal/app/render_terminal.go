@@ -7,17 +7,17 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/pool"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/pool"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The marks a pane paints over its own output: the selection, the search
 // matches, the match under the cursor, and the copy mode cursor block.
 //
 // These were four fixed hex literals. They are the one part of a pane's
-// colours tuios chooses rather than the program running in it, so they were
+// colours dartuios chooses rather than the program running in it, so they were
 // also the one part a person could not fix by changing their theme, and the
 // selection in particular was a violet nothing else on screen used. They are
 // settings now; see config.SelectionConfig.

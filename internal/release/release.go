@@ -1,4 +1,4 @@
-// Package release finds published tuios releases and turns one into a verified
+// Package release finds published dartuios releases and turns one into a verified
 // binary on disk.
 //
 // It exists as its own package for one reason: the lookup has to be faked in
@@ -13,7 +13,7 @@
 // questions, and the second one is the one that has to be answered first.
 //
 // The GitHub client lives in github.go, which the browser build leaves out: a
-// browser tab never updates tuios, and net/http is a large part of a download.
+// browser tab never updates dartuios, and net/http is a large part of a download.
 package release
 
 import (
@@ -24,7 +24,7 @@ import (
 )
 
 // Repo is the repository releases are published to.
-const Repo = "Gaurav-Gosain/tuios"
+const Repo = "darsrc/tuios"
 
 // Release is one published release, reduced to what an update needs.
 type Release struct {

@@ -8,7 +8,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// setupAltScreenLeftTile boots tuios with shared borders, puts an idle
+// setupAltScreenLeftTile boots dartuios with shared borders, puts an idle
 // alt-screen application whose first row is blank into the first window, adds a
 // second window, and tiles them. The alt-screen pane ends up as the leftmost
 // tile at x=0 and unfocused, which is every precondition the clip bug needed.

@@ -1,4 +1,4 @@
-// Browser tests for tuios-web, run against real servers on real viewports.
+// Browser tests for dartuios-web, run against real servers on real viewports.
 //
 // The browser is the system chromium, so nothing is downloaded. Everything
 // here asserts what reached the wire or what the terminal buffer says, and
@@ -10,7 +10,7 @@
 // buffer cannot be read back without preserveDrawingBuffer.
 //
 // One server per suite, because each suite needs a different config file. The
-// touch tests want tuios as it ships, the config tests want a file full of
+// touch tests want dartuios as it ships, the config tests want a file full of
 // values that are deliberately not the defaults, and the appearance tests want
 // a theme. Sharing a server would also mean sharing a daemon and the session
 // inside it, so whichever suite attached first would size the session for the
@@ -21,10 +21,10 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-const CHROMIUM = process.env.TUIOS_CHROMIUM ?? '/usr/bin/chromium';
-export const PORT = process.env.TUIOS_TEST_PORT ?? '7791';
+const CHROMIUM = process.env.DARTUIOS_CHROMIUM ?? '/usr/bin/chromium';
+export const PORT = process.env.DARTUIOS_TEST_PORT ?? '7791';
 export const BASE_URL = `http://127.0.0.1:${PORT}`;
-// The config server sits two ports up: tuios-web also opens PORT+1 for
+// The config server sits two ports up: dartuios-web also opens PORT+1 for
 // WebTransport over UDP, so consecutive ports would collide.
 export const CONFIG_PORT = String(Number(PORT) + 2);
 export const CONFIG_BASE_URL = `http://127.0.0.1:${CONFIG_PORT}`;
@@ -38,14 +38,14 @@ export const MULTI_BASE_URL = `http://127.0.0.1:${MULTI_PORT}`;
 export const APPEARANCE_PORT = String(Number(PORT) + 6);
 export const APPEARANCE_BASE_URL = `http://127.0.0.1:${APPEARANCE_PORT}`;
 
-// A throwaway XDG tree per server per run. tuios-web reads the user's config
+// A throwaway XDG tree per server per run. dartuios-web reads the user's config
 // and writes session state, and a test must not touch either.
 //
 // XDG_RUNTIME_DIR is the one that decides which daemon this talks to
-// (GetSocketPath joins it with tuios/tuios.sock), so leaving it out attached
+// (GetSocketPath joins it with dartuios/dartuios.sock), so leaving it out attached
 // every run to the developer's live session: whatever their real windows held
 // was what the tests read back, and whatever the tests typed stayed there.
-// TUIOS_SOCKET does not select a daemon: it is exported into a pane to report
+// DARTUIOS_SOCKET does not select a daemon: it is exported into a pane to report
 // the daemon that runs it, and a command only checks that it names a live
 // one. It never isolated anything. It is also what keeps the two servers here apart: same
 // binary, same machine, different socket.
@@ -56,7 +56,7 @@ export const APPEARANCE_BASE_URL = `http://127.0.0.1:${APPEARANCE_PORT}`;
 // processes it spawns, and a second mkdtemp there would hand the teardown a
 // directory the servers never used.
 function isolatedTree(envKey) {
-  const home = process.env[envKey] ?? mkdtempSync(join(tmpdir(), 'tuios-ct-'));
+  const home = process.env[envKey] ?? mkdtempSync(join(tmpdir(), 'dartuios-ct-'));
   process.env[envKey] = home;
   const env = {
     XDG_CONFIG_HOME: join(home, 'config'),
@@ -69,13 +69,13 @@ function isolatedTree(envKey) {
   return { home, env };
 }
 
-const touch = isolatedTree('TUIOS_CT_HOME');
-const cfg = isolatedTree('TUIOS_CT_CONFIG_HOME');
-const multi = isolatedTree('TUIOS_CT_MULTI_HOME');
-const appearance = isolatedTree('TUIOS_CT_APPEARANCE_HOME');
+const touch = isolatedTree('DARTUIOS_CT_HOME');
+const cfg = isolatedTree('DARTUIOS_CT_CONFIG_HOME');
+const multi = isolatedTree('DARTUIOS_CT_MULTI_HOME');
+const appearance = isolatedTree('DARTUIOS_CT_APPEARANCE_HOME');
 
 // The config the second server is served with. Written before it starts,
-// because tuios-web reads the file once, at startup, for the whole process.
+// because dartuios-web reads the file once, at startup, for the whole process.
 //
 // Every value here is deliberately not a default, so a served session showing
 // a default is showing that the file never reached it. They are also all
@@ -100,8 +100,8 @@ open_default_window = true
 leader_key = "ctrl+a"
 `;
 
-mkdirSync(join(cfg.env.XDG_CONFIG_HOME, 'tuios'), { recursive: true });
-writeFileSync(join(cfg.env.XDG_CONFIG_HOME, 'tuios', 'config.toml'), SEEDED_CONFIG);
+mkdirSync(join(cfg.env.XDG_CONFIG_HOME, 'dartuios'), { recursive: true });
+writeFileSync(join(cfg.env.XDG_CONFIG_HOME, 'dartuios', 'config.toml'), SEEDED_CONFIG);
 
 // The config the fourth server is served with: a theme and nothing else.
 //
@@ -122,8 +122,8 @@ show_clock = false
 open_default_window = true
 `;
 
-mkdirSync(join(appearance.env.XDG_CONFIG_HOME, 'tuios'), { recursive: true });
-writeFileSync(join(appearance.env.XDG_CONFIG_HOME, 'tuios', 'config.toml'), SEEDED_THEME_CONFIG);
+mkdirSync(join(appearance.env.XDG_CONFIG_HOME, 'dartuios'), { recursive: true });
+writeFileSync(join(appearance.env.XDG_CONFIG_HOME, 'dartuios', 'config.toml'), SEEDED_THEME_CONFIG);
 
 // All four, for the teardown: each server autostarts its own daemon.
 export const ISOLATED_HOMES = [touch.home, cfg.home, multi.home, appearance.home];
@@ -143,7 +143,7 @@ const chromium = {
 // the HTML, so a server left over from an earlier build serves the old bar
 // while the source on disk says otherwise, and nothing reports it.
 const server = (port, url, env) => ({
-  command: `go run ./cmd/tuios-web --host 127.0.0.1 --port ${port}`,
+  command: `go run ./cmd/dartuios-web --host 127.0.0.1 --port ${port}`,
   cwd: '..',
   url,
   env,
@@ -170,7 +170,7 @@ export default defineConfig({
         hasTouch: true,
         isMobile: true,
         viewport: { width: 390, height: 844 },
-        // A real phone's, because tuios-web reads the handshake's user agent to
+        // A real phone's, because dartuios-web reads the handshake's user agent to
         // decide whether the pointer is a finger. Headless Chromium's own says
         // X11 and Linux, so without this the server would size its hit targets
         // for a mouse while the test drives it with one.

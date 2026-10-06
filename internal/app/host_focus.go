@@ -12,7 +12,7 @@ import (
 // daemon, which keeps one per attached client (session.sessionHostFocus).
 //
 // Until the terminal says anything the focus is unknown, and unknown is read as
-// looking. A terminal without focus events therefore behaves exactly as tuios
+// looking. A terminal without focus events therefore behaves exactly as dartuios
 // did before the signal existed: every rule that asks "is the person looking"
 // answers yes, as it always did.
 

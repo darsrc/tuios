@@ -9,10 +9,10 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// pillLeft is the left Powerline half-circle the showkeys overlay wraps each key
-// in. The dock status bar and window titles use it too, so a row also has to be
-// checked for not being the dock before it counts as the keycast.
-const pillLeft = ""
+// pillLeft is the left half-block the showkeys overlay wraps each key in. The
+// dock status bar and window titles use it too, so a row also has to be checked
+// for not being the dock before it counts as the keycast.
+const pillLeft = "▏"
 
 // removedKeyEventsPanelSignatures are strings the deleted top-left key-events
 // diagnostic panel rendered. None may appear again: that overlay was removed and
@@ -93,7 +93,7 @@ func TestShowKeysOverlayConsolidated(t *testing.T) {
 // and still shows no top-left diagnostic panel.
 func TestShowKeysOverlayEnabledByConfig(t *testing.T) {
 	base := t.TempDir()
-	cfgDir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	cfgDir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(cfgDir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}

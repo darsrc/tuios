@@ -9,9 +9,9 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The Inbox's lifecycle beyond answering and dismissing: snoozing an item,
@@ -320,7 +320,7 @@ func (m *OS) applyInboxMarked(msg InboxMarkedMsg) {
 		var callErr *session.VerbCallError
 		if errors.As(msg.Err, &callErr) && callErr.Code == session.ErrVerbUnknownVerb {
 			m.Inbox.life.noMark = true
-			m.ShowNotification("This daemon cannot snooze or mark Inbox items. Restart it with a newer tuios: tuios kill-server", "error", m.Settings.NotificationDuration*2)
+			m.ShowNotification("This daemon cannot snooze or mark Inbox items. Restart it with a newer dartuios: dartuios kill-server", "error", m.Settings.NotificationDuration*2)
 			return
 		}
 		m.ShowNotification(inboxMarkFailWords(msg.Action)+": "+msg.Err.Error(), "error", m.Settings.NotificationDuration*2)

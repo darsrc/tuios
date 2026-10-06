@@ -23,6 +23,6 @@ var cueAssets = map[Cue][]byte{
 // cueFiles names each cue's spilled file. The name reaches a player's argv and
 // sometimes a log, so it says what it is.
 var cueFiles = map[Cue]string{
-	CueDone:      "tuios-done.wav",
-	CueAttention: "tuios-needs-input.wav",
+	CueDone:      "dartuios-done.wav",
+	CueAttention: "dartuios-needs-input.wav",
 }

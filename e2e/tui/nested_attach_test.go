@@ -14,22 +14,22 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// Issue #235: tuios run inside one of its own panes attached to the same
+// Issue #235: dartuios run inside one of its own panes attached to the same
 // session. The inner client's terminal is a pane of the session, so its size
 // is the session's size less the chrome, and the session is the minimum over
 // its clients: every resize shrank the pane, which shrank the inner client,
 // which shrank the session, until the session was 1x1. Its output also lands
 // in the pane it draws, so it redrew its own frames without end.
 //
-// These tests run tuios from a pane of the session it would attach to, by
+// These tests run dartuios from a pane of the session it would attach to, by
 // every route the daemon can see, and check that the attach is refused with a
 // message, the session keeps its size, and no nested client is left running.
 const nestSession = "e2e-nest"
 
-// sessionSize reads a session's size from 'tuios ls --json'.
+// sessionSize reads a session's size from 'dartuios ls --json'.
 func sessionSize(t *testing.T, base, name string) (int, int) {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "ls", "--json")
+	out, err := dartuiosCLI(t, base, "ls", "--json")
 	if err != nil {
 		t.Fatalf("ls --json: %v\n%s", err, out)
 	}
@@ -51,15 +51,15 @@ func sessionSize(t *testing.T, base, name string) (int, int) {
 }
 
 // nestedSetup starts a daemon session, attaches a client to it and opens a
-// shell in terminal mode, ready to type a nested tuios command into.
+// shell in terminal mode, ready to type a nested dartuios command into.
 func nestedSetup(t *testing.T) (*tuitest.Terminal, string) {
 	t.Helper()
 	base := t.TempDir()
-	if out, err := tuiosCLI(t, base, "new", nestSession, "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", nestSession, "--detach"); err != nil {
 		t.Fatalf("create session: %v: %s", err, out)
 	}
-	// daemonDefault leaves TUIOS_NO_DAEMON out of the environment, so the
-	// panes do not inherit it and a bare tuios in a pane is a daemon client,
+	// daemonDefault leaves DARTUIOS_NO_DAEMON out of the environment, so the
+	// panes do not inherit it and a bare dartuios in a pane is a daemon client,
 	// as it is for a user.
 	outer := attachIn(t, base, nestSession, startOpts{daemonDefault: true})
 	if settledWindowCount(t, outer) == 0 {
@@ -83,10 +83,10 @@ func waitSessionSize(t *testing.T, base string) (int, int) {
 	}
 }
 
-// tuiosProcessesUnder returns the pids of tuios client processes whose command
+// dartuiosProcessesUnder returns the pids of dartuios client processes whose command
 // line holds marker, other than the outer client, so a test can find the
 // nested client it started.
-func tuiosProcessesUnder(outer *tuitest.Terminal, marker string) []int {
+func dartuiosProcessesUnder(outer *tuitest.Terminal, marker string) []int {
 	entries, _ := os.ReadDir("/proc")
 	var pids []int
 	for _, e := range entries {
@@ -99,7 +99,7 @@ func tuiosProcessesUnder(outer *tuitest.Terminal, marker string) []int {
 			continue
 		}
 		args := strings.Split(strings.TrimRight(string(raw), "\x00"), "\x00")
-		if len(args) == 0 || args[0] != tuiosBin {
+		if len(args) == 0 || args[0] != dartuiosBin {
 			continue
 		}
 		if strings.Contains(strings.Join(args, " "), marker) {
@@ -151,23 +151,23 @@ func assertRefused(t *testing.T, outer *tuitest.Terminal, base, cmd, marker stri
 	if w, h := sessionSize(t, base, nestSession); w != w0 || h != h0 {
 		t.Errorf("session size changed from %dx%d to %dx%d", w0, h0, w, h)
 	}
-	if pids := tuiosProcessesUnder(outer, marker); len(pids) != 0 {
-		t.Errorf("a nested tuios client is still running: %v", pids)
+	if pids := dartuiosProcessesUnder(outer, marker); len(pids) != 0 {
+		t.Errorf("a nested dartuios client is still running: %v", pids)
 	}
 	alive(t, outer, "after the refused nested attach")
 }
 
-// TestNestedBareTuiosIsRefused is #235 as reported: a bare tuios in a pane.
-func TestNestedBareTuiosIsRefused(t *testing.T) {
+// TestNestedBareDartuiosIsRefused is #235 as reported: a bare dartuios in a pane.
+func TestNestedBareDartuiosIsRefused(t *testing.T) {
 	outer, base := nestedSetup(t)
 	// The trailing flag marks this client's command line for the process scan.
-	assertRefused(t, outer, base, tuiosBin+" --no-animations", "--no-animations")
-	// A bare tuios asked for nothing in particular, so it is told what it can
+	assertRefused(t, outer, base, dartuiosBin+" --no-animations", "--no-animations")
+	// A bare dartuios asked for nothing in particular, so it is told what it can
 	// do instead. The message wraps in the pane, so it is read with the
 	// borders and the spaces taken out.
 	flat := strings.Join(strings.Fields(strings.ReplaceAll(outer.Screen().Text(), "│", "")), "")
-	if !strings.Contains(flat, "tuiosnewNAME") || strings.Contains(flat, "Attachingto") {
-		t.Errorf("a bare tuios in a pane did not get the bare message\n%s", outer.Snapshot())
+	if !strings.Contains(flat, "dartuiosnewNAME") || strings.Contains(flat, "Attachingto") {
+		t.Errorf("a bare dartuios in a pane did not get the bare message\n%s", outer.Snapshot())
 	}
 }
 
@@ -176,8 +176,8 @@ func TestNestedBareTuiosIsRefused(t *testing.T) {
 // process and terminal alone.
 func TestNestedAttachIsRefused(t *testing.T) {
 	outer, base := nestedSetup(t)
-	cmd := "env -u TUIOS_PANE_ID -u TUIOS_WINDOW_ID -u TUIOS_SESSION -u TUIOS_PANE_TOKEN " +
-		tuiosBin + " attach " + nestSession + " --no-animations"
+	cmd := "env -u DARTUIOS_PANE_ID -u DARTUIOS_WINDOW_ID -u DARTUIOS_SESSION -u DARTUIOS_PANE_TOKEN " +
+		dartuiosBin + " attach " + nestSession + " --no-animations"
 	assertRefused(t, outer, base, cmd, "--no-animations")
 }
 
@@ -189,7 +189,7 @@ func TestNestedAttachThroughScriptIsRefused(t *testing.T) {
 		t.Skip("script is not installed")
 	}
 	outer, base := nestedSetup(t)
-	cmd := "script -qfec '" + tuiosBin + " attach " + nestSession + " --no-animations' /dev/null"
+	cmd := "script -qfec '" + dartuiosBin + " attach " + nestSession + " --no-animations' /dev/null"
 	assertRefused(t, outer, base, cmd, "--no-animations")
 }
 
@@ -212,7 +212,7 @@ func buildUnplaced(t *testing.T) string {
 func TestUnplacedNestedClientIsRefused(t *testing.T) {
 	unplaced := buildUnplaced(t)
 	outer, base := nestedSetup(t)
-	cmd := unplaced + " -- " + tuiosBin + " attach " + nestSession + " --no-animations"
+	cmd := unplaced + " -- " + dartuiosBin + " attach " + nestSession + " --no-animations"
 	assertRefused(t, outer, base, cmd, "--no-animations")
 }
 
@@ -222,12 +222,12 @@ func TestUnplacedNestedClientIsRefused(t *testing.T) {
 func TestAttachFromPaneToOtherSessionWorks(t *testing.T) {
 	outer, base := nestedSetup(t)
 	const other = "e2e-nest-other"
-	if out, err := tuiosCLI(t, base, "new", other, "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", other, "--detach"); err != nil {
 		t.Fatalf("create the other session: %v: %s", err, out)
 	}
 	w0, h0 := waitSessionSize(t, base)
 
-	if err := outer.SendKeys(tuiosBin+" attach "+other, tuitest.Enter); err != nil {
+	if err := outer.SendKeys(dartuiosBin+" attach "+other, tuitest.Enter); err != nil {
 		t.Fatalf("type the attach: %v", err)
 	}
 	// The inner client draws its own dock inside the pane, so two docks show.
@@ -242,13 +242,13 @@ func TestAttachFromPaneToOtherSessionWorks(t *testing.T) {
 	if w, h := sessionSize(t, base, nestSession); w != w0 || h != h0 {
 		t.Errorf("the outer session changed size from %dx%d to %dx%d", w0, h0, w, h)
 	}
-	if pids := tuiosProcessesUnder(outer, "attach "+other); len(pids) != 1 {
+	if pids := dartuiosProcessesUnder(outer, "attach "+other); len(pids) != 1 {
 		t.Errorf("want one inner client, found %v", pids)
 	}
 	alive(t, outer, "with a client for another session in a pane")
 }
 
-// TestForcedNestedAttachSettles is tuios attach --force from the session's own
+// TestForcedNestedAttachSettles is dartuios attach --force from the session's own
 // pane: the person asked for it, so it attaches, and the floor keeps the
 // session at 20x6 or more. The size is read until it stops changing.
 func TestForcedNestedAttachSettles(t *testing.T) {
@@ -257,11 +257,11 @@ func TestForcedNestedAttachSettles(t *testing.T) {
 		t.Fatalf("the session never reached the client's size: %dx%d", w, h)
 	}
 	const marker = "--no-animations"
-	if err := outer.SendKeys(tuiosBin+" attach --force "+nestSession+" "+marker, tuitest.Enter); err != nil {
+	if err := outer.SendKeys(dartuiosBin+" attach --force "+nestSession+" "+marker, tuitest.Enter); err != nil {
 		t.Fatalf("type the forced attach: %v", err)
 	}
 	deadline := time.Now().Add(bootTimeout)
-	for len(tuiosProcessesUnder(outer, marker)) != 1 {
+	for len(dartuiosProcessesUnder(outer, marker)) != 1 {
 		if !time.Now().Before(deadline) {
 			t.Fatalf("the forced client never started\n%s", outer.Snapshot())
 		}

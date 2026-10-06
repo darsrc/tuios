@@ -2,9 +2,9 @@ package input
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // forwardKeyReleaseToFocused passes a key release on to the focused pane when
@@ -20,7 +20,7 @@ import (
 // release struck while an overlay or window management has the keyboard is
 // dropped rather than delivered to a pane that never saw the press.
 //
-// A release goes only to the pane its press went to. The press of a key tuios
+// A release goes only to the pane its press went to. The press of a key dartuios
 // kept (the leader, a prefix command, a key an overlay took) never reached the
 // pane, so neither does its release. A modifier key's release also needs a pane
 // that asked for every key, the only mode in which a modifier is a key at all.

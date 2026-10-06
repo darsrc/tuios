@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/worktree"
 )
 
 func TestBundleWorktreeIsReadOnlyByTheConnectionThatMadeIt(t *testing.T) {

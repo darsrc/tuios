@@ -8,7 +8,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// Link hover is the first thing in tuios drawn onto pane content from a pointer
+// Link hover is the first thing in dartuios drawn onto pane content from a pointer
 // position, and the unit tests for it assert on renderTerminal's output. This
 // asserts on the host's own grid, through a real PTY, because that is the level
 // at which the recurring failure in this codebase lives: internal state and
@@ -72,7 +72,7 @@ func cellUnderlined(s tuitest.Screen, col, row int) bool {
 // TestHoveringALinkUnderlinesItOnScreen.
 //
 // Negative control, both confirmed red. A binary with the links clause removed
-// from filterMouseMotion in cmd/tuios/run.go, and one with the highlight branch
+// from filterMouseMotion in cmd/dartuios/run.go, and one with the highlight branch
 // removed from the cell loop in renderTerminal, each fail at the first WaitFor
 // with the URL on screen and no cell underlined ("the hovered link never
 // underlined itself: WaitFor timed out after 10s").

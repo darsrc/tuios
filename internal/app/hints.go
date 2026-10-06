@@ -13,10 +13,10 @@ import (
 	"unicode/utf8"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hints"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hints"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // Hints mode, after tmux-fingers and kitty's hints kitten.
@@ -376,7 +376,7 @@ func (m *OS) openHint(window *terminal.Window, match hintMatch) tea.Cmd {
 		m.CancelPendingCopy()
 		return m.openLocalPath(path, path)
 	default:
-		return m.copyHint(window, match, fmt.Sprintf("tuios opens only links and paths. Copied %d chars", hintChars(match.text)))
+		return m.copyHint(window, match, fmt.Sprintf("dartuios opens only links and paths. Copied %d chars", hintChars(match.text)))
 	}
 }
 
@@ -385,7 +385,7 @@ func (m *OS) openHint(window *terminal.Window, match hintMatch) tea.Cmd {
 // open a shell in a container or a cluster. kitten is kitty's, whose ssh
 // kitten is the common case; docker, kubectl and podman are refused whatever
 // they are doing, because their exec is the one that matters and the name is
-// all tuios can see.
+// all dartuios can see.
 var hintRemoteShells = []string{
 	"ssh", "autossh", "mosh", "mosh-client", "et", "telnet", "tsh", "kitten",
 	"docker", "kubectl", "podman",
@@ -457,7 +457,7 @@ func hintLocalPath(window *terminal.Window, text string) (string, string) {
 		return filepath.Clean(path), ""
 	}
 	// A relative path is relative to where the program that printed it
-	// runs. The folder tuios knows is the one the shell last reported, which
+	// runs. The folder dartuios knows is the one the shell last reported, which
 	// is that program's only while the shell itself has the terminal: a
 	// program in front of it may have changed folder, or be a remote shell
 	// or a container that no name list can cover.

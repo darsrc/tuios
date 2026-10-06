@@ -1,8 +1,8 @@
-// The user's tuios theme, read back out of a real browser.
+// The user's dartuios theme, read back out of a real browser.
 //
 // Two servers. The one on APPEARANCE_BASE_URL is served with a config file
 // that names a theme, and is what proves the theme travels. The one on
-// CONFIG_BASE_URL names no theme and is the control: tuios does not know what
+// CONFIG_BASE_URL names no theme and is the control: dartuios does not know what
 // an unthemed user's sixteen colours are, so it must send none and the page
 // must keep sip's own.
 //
@@ -67,12 +67,12 @@ function toHex(css) {
  * canvases.
  *
  * The write is local to xterm, which is the point: it exercises the palette
- * the browser holds rather than anything tuios chose server-side. tuios
+ * the browser holds rather than anything dartuios chose server-side. dartuios
  * resolves its own indexed colours before they leave, so a cell it painted
  * carries 24-bit colour and says nothing about the browser's sixteen.
  *
  * Read from the middle of the cell, because a full block fills it. The caller
- * polls this: tuios owns the screen and repaints whenever it likes, and a
+ * polls this: dartuios owns the screen and repaints whenever it likes, and a
  * repaint between the write and the read leaves a cell of its own.
  */
 async function cellPixel(page, { text = '', select = null, col, row, dx = 0.5, dy = 0.5 }) {
@@ -178,13 +178,13 @@ test.describe('the theme in the config file reaches the browser', () => {
 
   test('the tab carries the name of the program it is running', async ({ page }) => {
     await boot(page, APPEARANCE_BASE_URL);
-    expect(await page.title()).toBe('tuios');
+    expect(await page.title()).toBe('dartuios');
   });
 });
 
 test.describe('a server with no theme sends no colour', () => {
   test('the page keeps sip\'s palette', async ({ page }) => {
-    // The control. This server's config names no theme, so tuios leaves
+    // The control. This server's config names no theme, so dartuios leaves
     // indexed colours indexed for the far end to resolve and sends none of its
     // own. What it must not send is the xterm defaults those indices carry
     // in-process: red would arrive as #800000.
@@ -202,6 +202,6 @@ test.describe('a server with no theme sends no colour', () => {
 
   test('the tab is still named, because a name is not a colour', async ({ page }) => {
     await boot(page, CONFIG_BASE_URL);
-    expect(await page.title()).toBe('tuios');
+    expect(await page.title()).toBe('dartuios');
   });
 });

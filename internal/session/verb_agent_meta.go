@@ -40,7 +40,7 @@ func (d *Daemon) verbSetAgentMeta(_ *connState, params json.RawMessage) (any, *v
 				" lower-case letters, digits, '_' or '-', starting with a letter")
 		}
 		if slices.Contains(reservedAgentMetaKeys, k) {
-			return nil, hintedVerbError(ErrVerbInvalidParams, "metadata key "+echoName(k)+" is written by tuios from hook activity", &VerbHint{
+			return nil, hintedVerbError(ErrVerbInvalidParams, "metadata key "+echoName(k)+" is written by dartuios from hook activity", &VerbHint{
 				Param:  "tokens",
 				Detail: "now and prompt are set by the daemon from the activity a harness hook reports with set-agent-state. Nothing was set.",
 			})

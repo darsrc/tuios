@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz/vtgen"
 	uv "github.com/charmbracelet/ultraviolet"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/fuzz/vtgen"
 )
 
 // scrollbackByCells is the scrollback text the slow way: every line decoded

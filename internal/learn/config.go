@@ -1,6 +1,6 @@
 package learn
 
-import "github.com/Gaurav-Gosain/tuios/internal/config"
+import "github.com/darsrc/tuios/internal/config"
 
 // Config is the configuration the tour runs with: the shipped defaults, with
 // the looks the lessons were written against pinned in place.

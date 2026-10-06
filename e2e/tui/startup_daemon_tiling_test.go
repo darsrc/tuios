@@ -23,7 +23,7 @@ func TestStartupTilingOnADaemonBuiltSession(t *testing.T) {
 			writeConfig(t, base, fmt.Sprintf(
 				"[startup]\nopen_default_window = true\ntiled = true\nlayout = %q\n", mode))
 
-			if out, err := tuiosCLI(t, base, "new", "-d", "startup"); err != nil {
+			if out, err := dartuiosCLI(t, base, "new", "-d", "startup"); err != nil {
 				t.Fatalf("create the detached session: %v\n%s", err, out)
 			}
 			term := attachIn(t, base, "startup", startOpts{cols: 120, rows: 40})

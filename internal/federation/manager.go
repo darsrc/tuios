@@ -115,7 +115,7 @@ type HostReport struct {
 	// with one instance are one daemon, whatever each table calls it. Empty
 	// for a daemon too old to say, and while the link has not come up.
 	Instance string `json:"instance,omitempty"`
-	// Command is the tuios binary the link runs on the host: the configured
+	// Command is the dartuios binary the link runs on the host: the configured
 	// command, or the path the link found on its last dial that reached one.
 	// Empty until a dial has reached one.
 	Command string `json:"command,omitempty"`
@@ -138,7 +138,7 @@ type HostReport struct {
 	Stalls int `json:"stalls,omitempty"`
 	// Events says how the hub follows the host's agents: "live" when it holds
 	// a stream of the host's agent and Inbox events, "polling" when the host's
-	// tuios is too old to stream them and listings are fetched on demand, and
+	// dartuios is too old to stream them and listings are fetched on demand, and
 	// empty while the link is not up. The daemon fills it; the link layer
 	// knows nothing of events. EventsNote is the plain sentence that says
 	// why, when it is not live.

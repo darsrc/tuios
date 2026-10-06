@@ -13,7 +13,7 @@ import (
 // sessions resolve through the theme palette, unthemed sessions fall back to
 // the xterm-256 table.
 //
-// Why the fallback renders at all instead of refusing: tuios can never read
+// Why the fallback renders at all instead of refusing: dartuios can never read
 // the host terminal's palette, so with no theme set every choice is a guess,
 // and the docs already say only the host can settle it. Between refusing to
 // render, demanding a theme first, and guessing the way every terminal

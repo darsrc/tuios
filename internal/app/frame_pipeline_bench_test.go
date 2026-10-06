@@ -3,7 +3,7 @@ package app
 // The whole client frame, including the half of it nothing in this repo could
 // measure.
 //
-// Every benchmark in tuios stops at the composed string. That leaves the step
+// Every benchmark in dartuios stops at the composed string. That leaves the step
 // that turns the string into bytes on the wire unmeasured, and the last full
 // attribution put a quarter of the client's time there, so a quarter of the
 // cost was being optimised blind.
@@ -14,7 +14,7 @@ package app
 // ultraviolet's TerminalRenderer, which is exported, takes a plain io.Writer,
 // and needs no terminal at all. frameSink below is that delegation, reproduced
 // from cursedRenderer.flush (cursed_renderer.go:257) with the sequence it
-// performs on an alt-screen frame, which is the only kind tuios draws
+// performs on an alt-screen frame, which is the only kind dartuios draws
 // (render.go sets view.AltScreen unconditionally).
 //
 // What frameSink deliberately leaves out is the wrapper around the diff:
@@ -30,10 +30,10 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	"github.com/charmbracelet/colorprofile"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // frameSink is the diff-and-emit half of a client frame: string in, escape

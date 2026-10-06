@@ -2,19 +2,19 @@
 # Dock component: unread maildir count, pushed rather than polled.
 #
 #   [dock.custom.inbox]
-#   command = "~/.config/tuios/dock/inbox.sh"
+#   command = "~/.config/dartuios/dock/inbox.sh"
 #   refresh = "push"
 #
 # A push component stays running and each line it writes replaces the cell. It
 # is the answer to "wake me when X changes" for anything that can tell you: you
-# bring the watcher, tuios reads the pipe. No polling, and no wake at all until
+# bring the watcher, dartuios reads the pipe. No polling, and no wake at all until
 # something actually happens.
 #
 # The shape here is the shape of every push component: emit once so the cell is
 # populated straight away, then block on a watcher and emit again on each
-# change. If the process exits, tuios restarts it with backoff, and after
+# change. If the process exits, dartuios restarts it with backoff, and after
 # enough consecutive failures with no output it stops and waits for a
-# `tuios refresh-dock inbox`.
+# `dartuios refresh-dock inbox`.
 set -eu
 
 MAILDIR=${MAILDIR:-$HOME/Mail/INBOX/new}
@@ -42,7 +42,7 @@ if command -v inotifywait >/dev/null 2>&1; then
 else
 	# No watcher available: fall back to a slow loop rather than exiting, so the
 	# cell still works. If this is your situation, refresh = "60s" is the
-	# honest way to write it and lets tuios schedule it with everything else.
+	# honest way to write it and lets dartuios schedule it with everything else.
 	while sleep 60; do
 		emit
 	done

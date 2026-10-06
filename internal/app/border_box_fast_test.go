@@ -6,13 +6,13 @@ import (
 	"testing"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // withoutFastBox runs fn with the fused box path off, which is what
-// TUIOS_NO_FASTBOX does for a running client.
+// DARTUIOS_NO_FASTBOX does for a running client.
 func withoutFastBox(t *testing.T, fn func()) {
 	t.Helper()
 	fastBoxDisabled = true
@@ -187,11 +187,11 @@ func TestFastWindowBoxDeclinesATabbedBody(t *testing.T) {
 	win := newTestWindow(t, "tabbed", 40, 10)
 	m := newTestOS(win)
 	for _, body := range []string{"a\tb", "a\rb"} {
-		if _, ok := m.fastWindowBox(strings.Repeat(body, 3), win, lipgloss.Color("62"), 1, false); ok {
+		if _, ok := m.fastWindowBox(strings.Repeat(body, 3), win, lipgloss.Color("62"), 1, false, false); ok {
 			t.Errorf("a body carrying %q was accepted", body)
 		}
 	}
-	if _, ok := m.fastWindowBox("plain", win, lipgloss.Color("62"), 1, false); !ok {
+	if _, ok := m.fastWindowBox("plain", win, lipgloss.Color("62"), 1, false, false); !ok {
 		t.Error("a plain body was declined")
 	}
 }
@@ -203,8 +203,48 @@ func TestFastWindowBoxDeclinesAPaneTooSmallToHaveABody(t *testing.T) {
 	for _, sz := range [][2]int{{1, 1}, {2, 2}, {2, 10}, {10, 2}} {
 		win := &terminal.Window{ID: "tiny", Width: sz[0], Height: sz[1], Workspace: 1}
 		m := &OS{Settings: config.Global}
-		if _, ok := m.fastWindowBox("x", win, lipgloss.Color("62"), 1, false); ok {
+		if _, ok := m.fastWindowBox("x", win, lipgloss.Color("62"), 1, false, false); ok {
 			t.Errorf("a %dx%d pane was accepted", sz[0], sz[1])
 		}
+	}
+}
+
+// TestFastWindowBoxMatchesLipglossWithDARBorders runs the byte-for-byte
+// equality under the dar style, where focus is what changes the frame: the
+// unfocused pane draws the thin border and the focused one the heavy one. The
+// fused path reads the heavy side strokes straight out of the focused border
+// while the lipgloss path wraps in the same border, so this is the one case a
+// drift between the two would show, and it is the shipped default.
+func TestFastWindowBoxMatchesLipglossWithDARBorders(t *testing.T) {
+	prev := config.Global.BorderStyle
+	config.Global.BorderStyle = config.BorderStyleDAR
+	t.Cleanup(func() { config.Global.BorderStyle = prev })
+
+	win := newTestWindow(t, "dar-equal", 40, 12)
+	win.CustomName = "editor"
+	m := newTestOS(win)
+	m.Mode = TerminalMode
+	border := lipgloss.Color("62")
+
+	render := func(focused bool) string {
+		win.InvalidateCache()
+		win.MarkContentDirty()
+		return m.renderWindowBox(win, 0, focused, border)
+	}
+
+	for _, focused := range []bool{false, true} {
+		fast := render(focused)
+		var slow string
+		withoutFastBox(t, func() { slow = render(focused) })
+		if fast != slow {
+			t.Errorf("focused=%v: the fused box differs from the lipgloss one\n fast %q\n slow %q",
+				focused, ansi.Strip(fast), ansi.Strip(slow))
+		}
+	}
+
+	// The two focus states must actually differ: the focused pane carries the
+	// heavy border. If they render identically the resolver is not switching.
+	if render(false) == render(true) {
+		t.Error("the focused and unfocused dar frames are identical, the heavy border never switched")
 	}
 }

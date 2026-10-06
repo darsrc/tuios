@@ -3,13 +3,13 @@ package config
 import (
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Settings is every appearance and behaviour value a running session reads.
 //
-// It is a struct rather than a wall of package variables because one tuios
-// process is not one user. `tuios ssh` and tuios-web each run a goroutine per
+// It is a struct rather than a wall of package variables because one dartuios
+// process is not one user. `dartuios ssh` and dartuios-web each run a goroutine per
 // connection, so a package variable that the settings page writes on every
 // keypress is a setting the person on the other connection did not choose. Each
 // session holds its own copy; the settings page writes into that copy, and the
@@ -55,7 +55,7 @@ type Settings struct {
 	// runtime can recompute UseASCIIOnly without losing the flag.
 	ASCIIRequested bool
 
-	// GlyphEnv is what the terminal tuios draws on can show, read from its
+	// GlyphEnv is what the terminal dartuios draws on can show, read from its
 	// locale and TERM when the client starts. See DetectGlyphEnv.
 	GlyphEnv GlyphEnv
 
@@ -118,7 +118,7 @@ type Settings struct {
 	// mouse (hidden while the pointer is idle). Set via appearance.zen_mode.
 	ZenMode string
 
-	// Links controls what tuios treats as a link in pane content. Valid values are
+	// Links controls what dartuios treats as a link in pane content. Valid values are
 	// the Links* constants: off, marked (OSC 8 only) or all (bare URLs too). Set
 	// via appearance.links.
 	Links string
@@ -436,7 +436,7 @@ type Settings struct {
 	// "off" say so outright, for a terminal the table does not know or gets
 	// wrong.
 	//
-	// Off means the placeholder cells are dropped, which is what tuios always
+	// Off means the placeholder cells are dropped, which is what dartuios always
 	// did and which leaves the blank space the application made room for.
 	// Keeping them on a host that cannot draw them fills that space with
 	// missing-glyph boxes instead.
@@ -620,7 +620,7 @@ type Settings struct {
 	GlyphSet string
 }
 
-// DefaultSettings is tuios as it ships, before any config file, any flag and
+// DefaultSettings is dartuios as it ships, before any config file, any flag and
 // any settings page. It is the seed for Global and the value every unconfigured
 // session starts from.
 // The three answers appearance.kitty_placeholders takes.
@@ -744,9 +744,9 @@ func DefaultSettings() Settings {
 // better said once here than repeated at every one of them.
 const DefaultScrollbackLines = 10000
 
-// DefaultLeaderKey is the prefix key tuios ships with. It is a constant rather
+// DefaultLeaderKey is the prefix key dartuios ships with. It is a constant rather
 // than a read of Settings.LeaderKey because the places that fall back to it are
-// asking "what does tuios bind when nobody said otherwise", which is one answer
+// asking "what does dartuios bind when nobody said otherwise", which is one answer
 // for the whole program and not one per session.
 const DefaultLeaderKey = "ctrl+b"
 

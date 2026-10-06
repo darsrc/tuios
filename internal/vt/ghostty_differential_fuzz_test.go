@@ -25,8 +25,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz/vtgen"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/fuzz/vtgen"
 )
 
 // diffFuzzCols and diffFuzzRows size the screen for a campaign. Smaller than
@@ -429,8 +429,8 @@ func shrinkTo(s vtgen.Script, want string, replay func(vtgen.Script) divergence)
 // the sweep should become the gate.
 func diffFuzzGate(f *testing.F) {
 	f.Helper()
-	if os.Getenv("TUIOS_DIFF_FUZZ") == "" {
-		f.Skip("set TUIOS_DIFF_FUZZ=1 to run the differential fuzz targets; " +
+	if os.Getenv("DARTUIOS_DIFF_FUZZ") == "" {
+		f.Skip("set DARTUIOS_DIFF_FUZZ=1 to run the differential fuzz targets; " +
 			"they report the open divergences pinned in this file")
 	}
 }
@@ -444,7 +444,7 @@ func FuzzGhosttyDifferentialScript(f *testing.F) {
 		{},
 		{0x01},
 		{0xff, 0xff, 0xff, 0xff},
-		[]byte("tuios"),
+		[]byte("dartuios"),
 		[]byte("the quick brown fox jumps over the lazy dog"),
 		[]byte("\x00\x11\x22\x33\x44\x55\x66\x77\x88\x99\xaa\xbb"),
 	} {
@@ -505,12 +505,12 @@ func envInt(t *testing.T, name string) int {
 // than a mutating corpus, so a failure names the seed and reproduces exactly.
 //
 // It is opt-in for the reason diffFuzzGate gives: with the divergences
-// pinned below still open, every seed finds one. TUIOS_DIFF_SWEEP_SEEDS
+// pinned below still open, every seed finds one. DARTUIOS_DIFF_SWEEP_SEEDS
 // switches it on and sets how many seeds to run.
 func TestGhosttyDifferentialSweep(t *testing.T) {
-	seeds := envInt(t, "TUIOS_DIFF_SWEEP_SEEDS")
+	seeds := envInt(t, "DARTUIOS_DIFF_SWEEP_SEEDS")
 	if seeds <= 0 {
-		t.Skip("set TUIOS_DIFF_SWEEP_SEEDS=<seeds> to sweep for divergences")
+		t.Skip("set DARTUIOS_DIFF_SWEEP_SEEDS=<seeds> to sweep for divergences")
 	}
 	steps := 100
 	if testing.Short() {
@@ -543,15 +543,15 @@ func TestGhosttyDifferentialSweep(t *testing.T) {
 // bug. Triage needs the set, because fixing the first only reveals the
 // second, and because a signature seen once in a thousand seeds is a
 // different kind of problem from one seen in every seed. It is gated behind
-// TUIOS_DIFF_CENSUS because reducing every distinct finding costs minutes,
+// DARTUIOS_DIFF_CENSUS because reducing every distinct finding costs minutes,
 // which is too much for a test that runs on every build.
 func TestGhosttyDifferentialCensus(t *testing.T) {
-	seeds := envInt(t, "TUIOS_DIFF_CENSUS")
+	seeds := envInt(t, "DARTUIOS_DIFF_CENSUS")
 	if seeds <= 0 {
-		t.Skip("set TUIOS_DIFF_CENSUS=<seeds> to take a census of divergences")
+		t.Skip("set DARTUIOS_DIFF_CENSUS=<seeds> to take a census of divergences")
 	}
 	steps := 120
-	if n := envInt(t, "TUIOS_DIFF_CENSUS_STEPS"); n > 0 {
+	if n := envInt(t, "DARTUIOS_DIFF_CENSUS_STEPS"); n > 0 {
 		steps = n
 	}
 
@@ -652,7 +652,7 @@ func TestGhosttyEightBitControlsInUTF8(t *testing.T) {
 //
 // The library's own default is off, which measures each codepoint on its own:
 // a flag is two clusters of two columns and a ZWJ family is one per person.
-// That was the default tuios shipped. The host terminal tuios re-emits into
+// That was the default dartuios shipped. The host terminal dartuios re-emits into
 // clusters the same bytes into one glyph of two columns, so the line sheared
 // left from the emoji onward and the pane border moved with it. The ghostty
 // backend now sets the mode default at construction, and RIS keeps it.
@@ -780,7 +780,7 @@ func TestGhosttyDivergence_SurplusCSIParameters(t *testing.T) {
 // ECMA-48 has DEL ignored, and xterm, kitty and foot all ignore it, so the
 // library side of this is a defect rather than a choice.
 //
-// It reaches tuios directly: readline and anything that filters terminal
+// It reaches dartuios directly: readline and anything that filters terminal
 // output emit DEL, and a pane on the library backend would show a glyph for
 // each one and be one column further right than the guest believes.
 //
@@ -1040,7 +1040,7 @@ func TestGhosttyDivergence_UnderlineStyleOutOfRange(t *testing.T) {
 // over it, which put the two backends one column apart on the same bytes.
 // libghostty commit 40a40f848 makes the library ignore it too.
 //
-// tuios needs the agreement, not either behaviour on its own: a daemon and a
+// dartuios needs the agreement, not either behaviour on its own: a daemon and a
 // client can be built on different backends, and a pane that rehydrates from
 // a snapshot must land on the same screen it left. This test fails if either
 // side starts printing the control again.

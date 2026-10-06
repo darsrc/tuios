@@ -13,7 +13,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// heldHook is a tuios agent-hook run the way Claude Code runs it, for the
+// heldHook is a dartuios agent-hook run the way Claude Code runs it, for the
 // agent's pane, and what it printed.
 type heldHook struct {
 	stdout bytes.Buffer
@@ -24,7 +24,7 @@ type heldHook struct {
 // test's cleanup kills it.
 func startHeldHook(t *testing.T, base, payload string) *heldHook {
 	t.Helper()
-	cmd := exec.Command(tuiosBin, "agent-hook", "claude-code", "--session", "e2e-agent", "--window", "0")
+	cmd := exec.Command(dartuiosBin, "agent-hook", "claude-code", "--session", "e2e-agent", "--window", "0")
 	cmd.Dir = workDirIn(t, base)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -55,7 +55,7 @@ func approvalsClient(t *testing.T) (string, *tuitest.Terminal) {
 	t.Helper()
 	base := t.TempDir()
 	killDaemon(t, base)
-	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "tuios")
+	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -64,7 +64,7 @@ func approvalsClient(t *testing.T) (string, *tuitest.Terminal) {
 		t.Fatalf("write config: %v", err)
 	}
 	for _, name := range []string{"e2e-home", "e2e-agent"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create session %s: %v\n%s", name, err, out)
 		}
 	}

@@ -13,7 +13,7 @@ import (
 	"github.com/pelletier/go-toml/v2"
 )
 
-// Converting a terminal's colour scheme into a tuios theme is the most common
+// Converting a terminal's colour scheme into a dartuios theme is the most common
 // thing anyone means by "rice this to match my setup": the palette already
 // exists on disk, in kitty's conf or ghostty's config or an alacritty or
 // wezterm toml, and what was missing was the twenty lines of parsing between
@@ -42,7 +42,7 @@ const (
 // with or without the leading hash.
 var hexPattern = regexp.MustCompile(`^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$`)
 
-// Import reads a terminal colour scheme and returns it as a tuios theme.
+// Import reads a terminal colour scheme and returns it as a dartuios theme.
 //
 // The format is sniffed from the content rather than the extension, because
 // none of these formats has one it can be relied on for: kitty writes .conf,

@@ -6,9 +6,9 @@ import (
 	"unicode/utf8"
 )
 
-// Evidence says how much weight a finding carries. tuios sits between the
+// Evidence says how much weight a finding carries. dartuios sits between the
 // keyboard and someone else's program, and the three tiers are the three
-// genuinely different things it can say about that program: what tuios itself
+// genuinely different things it can say about that program: what dartuios itself
 // does (it decided it), what this pane has asserted (it was told), and what a
 // program of that name usually binds (nobody checked).
 //
@@ -18,8 +18,8 @@ import (
 type Evidence string
 
 const (
-	// EvidenceCertain is a fact about tuios's own routing, derived from the
-	// registry and the dispatch order. If it is wrong, tuios has a bug.
+	// EvidenceCertain is a fact about dartuios's own routing, derived from the
+	// registry and the dispatch order. If it is wrong, dartuios has a bug.
 	EvidenceCertain Evidence = "certain"
 	// EvidenceObserved is a fact the pane asserted at the moment it was read:
 	// the alternate screen is on, the kitty keyboard protocol was pushed with
@@ -60,7 +60,7 @@ type Swallow struct {
 // TerminalModeSwallowed returns every key that does not reach the program
 // running in the focused pane while the user is typing into it.
 //
-// This is the honest half of the guest question. tuios cannot know what the
+// This is the honest half of the guest question. dartuios cannot know what the
 // guest wants, but it knows exactly what it withholds, and that set is small
 // enough to read: the leader, the terminal_mode table, the handful of
 // navigation actions that survive into terminal mode on a reserved chord, and
@@ -102,7 +102,7 @@ func (r *KeybindRegistry) TerminalModeSwallowed() []Swallow {
 
 	// The main sections reach terminal mode only through isTerminalSafeAction,
 	// and only on a chord the shell would never want as literal input. Applying
-	// both filters here is what keeps the report from claiming tuios eats the
+	// both filters here is what keeps the report from claiming dartuios eats the
 	// plain letters window mode binds.
 	for _, name := range []string{
 		SectionWindowManagement, SectionWorkspaces, SectionLayout,
@@ -179,7 +179,7 @@ type GuestProgram struct {
 	// group, used to raise an entry from reference to "this is what is running".
 	Comms []string
 	// Keys maps a key to what the program does with it. Deliberately short: the
-	// entries earn their place by colliding with something tuios binds or by
+	// entries earn their place by colliding with something dartuios binds or by
 	// being the program's prefix, not by being complete. A complete keymap for
 	// vim would be a lie told at length.
 	Keys map[string]string
@@ -202,7 +202,7 @@ var GuestPrograms = []GuestProgram{
 		Keys: map[string]string{
 			"ctrl+b": "prefix (every tmux command starts here)",
 		},
-		Note: "tmux's default prefix is the same key as tuios's. Nested, the outer one wins and the inner multiplexer is unreachable.",
+		Note: "tmux's default prefix is the same key as dartuios's. Nested, the outer one wins and the inner multiplexer is unreachable.",
 	},
 	{
 		Name:  "GNU screen",
@@ -223,7 +223,7 @@ var GuestPrograms = []GuestProgram{
 			"ctrl+o": "session mode",
 			"ctrl+g": "lock the whole keyboard",
 		},
-		Note: "zellij claims a row of bare ctrl+letter chords rather than one prefix, so it collides with more of tuios than tmux does.",
+		Note: "zellij claims a row of bare ctrl+letter chords rather than one prefix, so it collides with more of dartuios than tmux does.",
 	},
 	{
 		Name:  "wlterm",
@@ -280,7 +280,7 @@ var GuestPrograms = []GuestProgram{
 			"ctrl+y": "yank",
 			"ctrl+t": "transpose characters",
 		},
-		Note: "Every readline program shares this set, so a tuios binding on one of these keys is felt in the shell and in every REPL launched from it.",
+		Note: "Every readline program shares this set, so a dartuios binding on one of these keys is felt in the shell and in every REPL launched from it.",
 	},
 	{
 		Name:  "fish",
@@ -320,7 +320,7 @@ var GuestPrograms = []GuestProgram{
 		Name:  "htop",
 		Comms: []string{"htop", "btop", "top"},
 		Keys:  map[string]string{},
-		Note:  "Function keys and letters rather than control chords, so it collides with tuios rarely.",
+		Note:  "Function keys and letters rather than control chords, so it collides with dartuios rarely.",
 	},
 	{
 		Name:  "yazi / ranger / mc",
@@ -366,13 +366,13 @@ func GuestProgramByComm(comm string) (GuestProgram, bool) {
 	return GuestProgram{}, false
 }
 
-// GuestClash is one key tuios withholds that a curated program is known to want.
+// GuestClash is one key dartuios withholds that a curated program is known to want.
 type GuestClash struct {
 	Key string `json:"key"`
-	// TuiosAction is what tuios does with the key instead.
-	TuiosAction string `json:"tuios_action"`
-	TuiosDesc   string `json:"tuios_description"`
-	Program     string `json:"program"`
+	// DartuiosAction is what dartuios does with the key instead.
+	DartuiosAction string `json:"dartuios_action"`
+	DartuiosDesc   string `json:"dartuios_description"`
+	Program        string `json:"program"`
 	// ProgramUse is what the program would have done with it.
 	ProgramUse string `json:"program_use"`
 	Note       string `json:"note"`
@@ -388,7 +388,7 @@ type GuestClash struct {
 
 // GuestClashes crosses the terminal-mode swallow set with the curated table.
 //
-// Only the swallow set is crossed, because a key tuios forwards costs the guest
+// Only the swallow set is crossed, because a key dartuios forwards costs the guest
 // nothing no matter who else binds it. That is what keeps the output to the
 // handful of rows that are actually about a program being broken.
 //
@@ -405,14 +405,14 @@ func (r *KeybindRegistry) GuestClashes(running string) []GuestClash {
 				continue
 			}
 			out = append(out, GuestClash{
-				Key:         s.Key,
-				TuiosAction: s.Action,
-				TuiosDesc:   s.Desc,
-				Program:     p.Name,
-				ProgramUse:  use,
-				Note:        p.Note,
-				Evidence:    EvidenceReference,
-				Running:     p.Name == live.Name,
+				Key:            s.Key,
+				DartuiosAction: s.Action,
+				DartuiosDesc:   s.Desc,
+				Program:        p.Name,
+				ProgramUse:     use,
+				Note:           p.Note,
+				Evidence:       EvidenceReference,
+				Running:        p.Name == live.Name,
 			})
 		}
 	}

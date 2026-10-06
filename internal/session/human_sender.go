@@ -64,7 +64,7 @@ func newHumanNonce() (string, error) {
 // Two more conditions come from human_origin.go. The sender itself must be
 // allowed to act as the person, so a nonce that leaked into a pane is no use
 // there. And where the kernel gave both pids, the sender must be the process
-// that attached: the tuios client sends its reply on a fresh connection, but
+// that attached: the dartuios client sends its reply on a fresh connection, but
 // from the same process that holds the attach, so a nonce copied to another
 // process does not verify. A nil sender is the daemon itself.
 func (d *Daemon) verifyHumanNonce(nonce, sessionID string, sender *connState) bool {

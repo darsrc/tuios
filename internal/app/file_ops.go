@@ -385,7 +385,7 @@ func fileOpError(err error) string {
 		return "You can not paste a folder into itself."
 	}
 	if strings.Contains(msg, "cannot copy special file") {
-		return "tuios can not copy that kind of file."
+		return "dartuios can not copy that kind of file."
 	}
 	return "That did not work. " + capitalizeFirst(msg)
 }

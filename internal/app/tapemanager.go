@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/listnav"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/listnav"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // tapeManagerVisibleRows is the number of tape files shown at once in the list.
@@ -59,7 +59,7 @@ type TapeManagerState struct {
 
 // GetTapeDirectory returns the XDG data directory for tape files
 func GetTapeDirectory() (string, error) {
-	tapeDir, err := xdg.DataFile("tuios/tapes")
+	tapeDir, err := xdg.DataFile("dartuios/tapes")
 	if err != nil {
 		return "", fmt.Errorf("failed to get tape directory: %w", err)
 	}

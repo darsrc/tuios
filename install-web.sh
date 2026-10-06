@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# tuios-web Installation Script
-# Usage: curl -fsSL https://raw.githubusercontent.com/Gaurav-Gosain/tuios/main/install-web.sh | bash
+# dartuios-web Installation Script
+# Usage: curl -fsSL https://raw.githubusercontent.com/darsrc/tuios/main/install-web.sh | bash
 
 set -e
 
@@ -13,8 +13,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # GitHub repository
-REPO="Gaurav-Gosain/tuios"
-BINARY_NAME="tuios-web"
+REPO="darsrc/tuios"
+BINARY_NAME="dartuios-web"
 
 # Print colored output
 print_info() {
@@ -143,7 +143,7 @@ verify_checksum() {
 
 # Main installation
 main() {
-    print_info "Installing tuios-web (Web Terminal Server)..."
+    print_info "Installing dartuios-web (Web Terminal Server)..."
     echo ""
 
     # Detect system
@@ -171,7 +171,7 @@ main() {
     print_success "Latest version: $VERSION"
 
     # Construct download URL
-    # Format: tuios-web_0.4.0_Linux_x86_64.tar.gz
+    # Format: dartuios-web_0.4.0_Linux_x86_64.tar.gz
     VERSION_NO_V="${VERSION#v}"  # Remove leading 'v' from version
 
     if [ "$OS" = "Darwin" ]; then

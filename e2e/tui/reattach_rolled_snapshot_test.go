@@ -122,7 +122,7 @@ func writeRolledFlood(t *testing.T, path string) int {
 
 // TestReattachKeepsSnapshotRowsWhenRingRolled is the issue #123 reproduction.
 func TestReattachKeepsSnapshotRowsWhenRingRolled(t *testing.T) {
-	// Unique enough that a stray match cannot come from tuios chrome, the
+	// Unique enough that a stray match cannot come from dartuios chrome, the
 	// shell prompt, or the command line the shell echoes back.
 	const (
 		hdrA = "HDRAAA-issue123"
@@ -137,7 +137,7 @@ func TestReattachKeepsSnapshotRowsWhenRingRolled(t *testing.T) {
 	frames := writeRolledFlood(t, fixture)
 	t.Logf("flood fixture: %d frames, %d bytes", frames, rolledFloodBytes)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-rolled", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-rolled", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 
@@ -183,7 +183,7 @@ func TestReattachKeepsSnapshotRowsWhenRingRolled(t *testing.T) {
 	waitExit(t, first, "after leader d")
 
 	if !sessionListed(t, base, "e2e-rolled") {
-		out, _ := tuiosCLI(t, base, "ls")
+		out, _ := dartuiosCLI(t, base, "ls")
 		t.Fatalf("the session did not survive the detach\nls:\n%s", out)
 	}
 

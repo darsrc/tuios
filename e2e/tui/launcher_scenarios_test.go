@@ -11,9 +11,9 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// holdScan plants the file that makes the tuios under test hold its $PATH scan
-// open (TUIOS_E2E_HOLD_SCAN in internal/app/run_anything.go). It returns the
-// environment entry to start tuios with and the release that lets the scan
+// holdScan plants the file that makes the dartuios under test hold its $PATH scan
+// open (DARTUIOS_E2E_HOLD_SCAN in internal/app/run_anything.go). It returns the
+// environment entry to start dartuios with and the release that lets the scan
 // land.
 //
 // The seam exists because these tests drive a separate process: a Go-level
@@ -28,7 +28,7 @@ func holdScan(t *testing.T) (env string, release func()) {
 	if err := os.WriteFile(hold, nil, 0o644); err != nil {
 		t.Fatalf("hold-scan file: %v", err)
 	}
-	return "TUIOS_E2E_HOLD_SCAN=" + hold, func() { _ = os.Remove(hold) }
+	return "DARTUIOS_E2E_HOLD_SCAN=" + hold, func() { _ = os.Remove(hold) }
 }
 
 // The launcher's icons are kitty placements, and a placement outlives the
@@ -37,7 +37,7 @@ func holdScan(t *testing.T) (env string, release func()) {
 // stream rather than the grid: an image is not in the grid, and a test that
 // checks a delete was written proves only that bytes were composed.
 
-// launcherFixture is one launcher run: a tuios in a hermetic root with planted
+// launcherFixture is one launcher run: a dartuios in a hermetic root with planted
 // desktop entries, and the host stream it wrote.
 type launcherFixture struct {
 	term   *tuitest.Terminal
@@ -45,7 +45,7 @@ type launcherFixture struct {
 	base   string
 }
 
-// newLauncherFixture boots tuios with n planted apps.
+// newLauncherFixture boots dartuios with n planted apps.
 func newLauncherFixture(t *testing.T, n int, extraEnv ...string) *launcherFixture {
 	t.Helper()
 	stream := &hostStream{}
@@ -149,7 +149,7 @@ func (f *launcherFixture) waitPlacements(want func([]string) bool, timeout time.
 //
 // That is driving the panel, not retrying the assertion. The assertion is
 // unchanged: an icon has to reach the host, and this still fails when none
-// ever does. It is also a workaround for tuios, not a property of it: a decode
+// ever does. It is also a workaround for dartuios, not a property of it: a decode
 // that lands on an otherwise still panel leaves the icons invisible until the
 // user moves the selection, which is a real defect and is written up with these
 // findings rather than hidden by this loop.
@@ -360,7 +360,7 @@ func TestLauncherIconsClosedDuringScan(t *testing.T) {
 	if err := os.WriteFile(hold, nil, 0o644); err != nil {
 		t.Fatalf("hold-scan file: %v", err)
 	}
-	f := newLauncherFixture(t, 20, "TUIOS_E2E_HOLD_SCAN="+hold)
+	f := newLauncherFixture(t, 20, "DARTUIOS_E2E_HOLD_SCAN="+hold)
 	for i := range 6 {
 		if err := os.WriteFile(hold, nil, 0o644); err != nil {
 			t.Fatalf("rearm hold-scan: %v", err)
@@ -499,7 +499,7 @@ func TestLauncherIconsDoNotAccumulate(t *testing.T) {
 // check: with kitty graphics off there is no icon column and no escape at all,
 // and every close path still has to leave the screen clean.
 func TestLauncherDrawsNoIconsWithoutGraphics(t *testing.T) {
-	f := newLauncherFixture(t, 20, "TUIOS_KITTY_GRAPHICS=0")
+	f := newLauncherFixture(t, 20, "DARTUIOS_KITTY_GRAPHICS=0")
 	for _, closer := range []struct {
 		name string
 		key  tuitest.Key
@@ -644,7 +644,7 @@ func TestLauncherTypesOutIntoADaemonPane(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-type", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-type", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 	term := startIn(t, base, startOpts{
@@ -756,7 +756,7 @@ func TestLauncherLeavesTheRightModeBehind(t *testing.T) {
 	}
 	waitForPaneShell(t, term)
 	// Tab entered terminal mode on the launcher's behalf, and for insertGuard
-	// after that entry tuios swallows unmodified text keys as possible mouse
+	// after that entry dartuios swallows unmodified text keys as possible mouse
 	// fragments. A fast shell can put the prompt up inside that window, so the
 	// guard is waited out; it is a fixed span from a moment already past, not
 	// a race.

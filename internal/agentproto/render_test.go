@@ -17,7 +17,7 @@ var (
 
 // TestCleanRemovesEverySequence: nothing the agent sends reaches the pane as
 // an escape sequence or a control character, so it cannot set the pane's
-// agent state (OSC 9, 777, the tuios OSC), its title, the clipboard, or move
+// agent state (OSC 9, 777, the dartuios OSC), its title, the clipboard, or move
 // the cursor over what was written.
 func TestCleanRemovesEverySequence(t *testing.T) {
 	cases := map[string]string{

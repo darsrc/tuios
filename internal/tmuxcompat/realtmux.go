@@ -9,7 +9,7 @@ import (
 
 // FindRealTmux finds the tmux a call not meant for the shim goes to: the first
 // `tmux` on pathEnv that is not the shim's own link and does not resolve to
-// self, the tuios binary.
+// self, the dartuios binary.
 func FindRealTmux(pathEnv, dir, self string) (string, error) {
 	name := "tmux"
 	if runtime.GOOS == "windows" {
@@ -37,5 +37,5 @@ func FindRealTmux(pathEnv, dir, self string) (string, error) {
 		}
 		return p, nil
 	}
-	return "", errors.New("no tmux on PATH other than the tuios shim")
+	return "", errors.New("no tmux on PATH other than the dartuios shim")
 }

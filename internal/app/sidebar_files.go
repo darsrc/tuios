@@ -10,9 +10,9 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // # The files section
@@ -630,7 +630,7 @@ func (m *OS) ToggleFileView() tea.Cmd {
 	dir := paneDir(window)
 	if dir == "" {
 		m.ShowNotification(
-			"tuios cannot read that pane's directory.",
+			"dartuios cannot read that pane's directory.",
 			"info", m.Settings.NotificationDuration)
 		return nil
 	}
@@ -778,7 +778,7 @@ func (m *OS) FileViewCd() {
 // guard matters more than the action. What is on the other end of a pane is not
 // known to be a shell: it is whatever the user last ran, and "cd /x\r" typed
 // into vim is a series of editing commands, into a REPL a syntax error, and
-// into a database client a query. So the pane has to be at a prompt, and tuios
+// into a database client a query. So the pane has to be at a prompt, and dartuios
 // has to be able to see that it is, and both are checked before anything is
 // written.
 //
@@ -811,7 +811,7 @@ func (m *OS) fileViewOriginWindow() *terminal.Window {
 }
 
 // paneBusyReason reports whether a pane is at a shell prompt, and when it is
-// not, one sentence saying why tuios will not type into it.
+// not, one sentence saying why dartuios will not type into it.
 //
 // Three tests, in order of how sure they are.
 //
@@ -819,7 +819,7 @@ func (m *OS) fileViewOriginWindow() *terminal.Window {
 // to it has taken the whole screen and is not a prompt, and the emulator knows
 // that on every platform without asking the operating system anything.
 //
-// The foreground command is the real answer. tuios already has it twice over:
+// The foreground command is the real answer. dartuios already has it twice over:
 // a local pane's own PTY reports its foreground process group, and a daemon
 // pane gets the same observation on the wire, at most one poll interval stale.
 // The wire's ForegroundCmd is empty when the foreground process is the login
@@ -836,7 +836,7 @@ func paneBusyReason(window *terminal.Window) (string, bool) {
 		return "That pane is running a full-screen program.", false
 	}
 	if runtime.GOOS == "windows" {
-		return "tuios can not see what runs in that pane on this system.", false
+		return "dartuios can not see what runs in that pane on this system.", false
 	}
 	// A local PTY's foreground command is the shell's own name at a prompt, so
 	// it is only a reason once the foreground group is not the shell's.

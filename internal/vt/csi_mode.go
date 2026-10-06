@@ -157,7 +157,7 @@ func (e *Emulator) setMode(mode ansi.Mode, setting ansi.ModeSetting) {
 		}
 	case ansi.ModeInBandResize:
 		if setting.IsSet() {
-			_, _ = io.WriteString(e.pipe, ansi.InBandResize(e.Height(), e.Width(), 0, 0))
+			_, _ = io.WriteString(e.pipe, e.inBandResizeReport())
 		}
 	}
 	if setting.IsSet() {
@@ -184,6 +184,11 @@ func (e *Emulator) setMode(mode ansi.Mode, setting ansi.ModeSetting) {
 	if mode == ansi.ModeInsertReplace {
 		e.cachedInsertMode.Store(setting.IsSet())
 	}
+}
+
+func (e *Emulator) inBandResizeReport() string {
+	cellWidth, cellHeight := e.CellSize()
+	return ansi.InBandResize(e.Height(), e.Width(), e.Height()*cellHeight, e.Width()*cellWidth)
 }
 
 // autoWrapMode reports DECAWM (?7) without touching the modes map.

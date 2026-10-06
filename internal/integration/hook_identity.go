@@ -1,7 +1,7 @@
 package integration
 
 // The session-identity maps. These harnesses have a hook surface that can name
-// the conversation running in the pane, and nothing more that tuios trusts:
+// the conversation running in the pane, and nothing more that dartuios trusts:
 // their hooks do not cover every lifecycle transition (an interrupt, a
 // cancelled approval, the end of a turn), and a state a hook reports outranks
 // every screen rule, so one missed event would hold the pane on working until
@@ -27,7 +27,7 @@ package integration
 //	              (PreToolUse is the only event; the payload says event and
 //	              session_id, and CRUSH_SESSION_ID is set)
 //	hermes        herdr assets/hermes (on_session_start and on_session_reset
-//	              carry session_id; the tuios plugin forwards them)
+//	              carry session_id; the dartuios plugin forwards them)
 //
 // Every one of them drops a subagent's event (agent_id set) and an event with
 // no session id.
@@ -58,7 +58,7 @@ func translateIdentity(id string, in Input, p fields) Decision {
 		return skip(id, event, "no hook mapping for harness "+id)
 	}
 	// Antigravity's PreInvocation payload does not always name its event, and
-	// it is the only event tuios registers for it.
+	// it is the only event dartuios registers for it.
 	if event == "" && id == Antigravity {
 		event = "PreInvocation"
 	}

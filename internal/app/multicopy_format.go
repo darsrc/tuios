@@ -7,15 +7,15 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // MultiCopyPane is one pane's share of a multi copy mode yank: where it came
 // from and exactly the lines its selection covered.
 type MultiCopyPane struct {
 	// Index is the pane's position in the session's window list, the same
-	// number `tuios list-windows --json` reports as "index".
+	// number `dartuios list-windows --json` reports as "index".
 	Index    int
 	WindowID string
 	// Title is the pane's display name as the pane reported it. It is

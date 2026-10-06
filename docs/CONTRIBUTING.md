@@ -1,16 +1,16 @@
 # Contributing
 
-The full guide (setup, PR process, code style, testing) lives on the docs site: https://tuios.dev/docs/contributing
+The full guide (setup, PR process, code style, testing) lives on the docs site: https://dartuios.dev/docs/contributing
 
 For working in this tree, [AGENTS.md](../AGENTS.md) is the orientation document: package map, build and test commands, and the testing infrastructure.
 
 The short version:
 
 ```bash
-git clone https://github.com/Gaurav-Gosain/tuios.git
-cd tuios
+git clone https://github.com/darsrc/tuios.git
+cd dartuios
 
-go build -o tuios ./cmd/tuios   # pure Go backend, needs only go (1.26+)
+go build -o dartuios ./cmd/dartuios   # pure Go backend, needs only go (1.26+)
 go test ./...
 
 # Or build and install onto your PATH, pure Go emulator by default.

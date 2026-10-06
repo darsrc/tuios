@@ -290,7 +290,7 @@ any      = ["waiting for your input"]
 # screen rules above cannot fix.
 #
 # It is a precision upgrade rather than a zero-config one. The exact join comes
-# from `tuios agent-hook claude-code` (tuios integration install claude-code),
+# from `dartuios agent-hook claude-code` (dartuios integration install claude-code),
 # which hands the daemon the transcript path Claude Code already puts in every
 # hook payload. Without the
 # hook the daemon searches this directory and believes a file only when the

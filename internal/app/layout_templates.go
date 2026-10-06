@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // LayoutTemplate is the v2 layout specification.
@@ -19,13 +19,13 @@ import (
 // workspace: window positions, BSP tree structure, per-window startup
 // commands, working directories, and tiling configuration.
 //
-// Templates are stored as JSON in ~/.config/tuios/layouts/.
+// Templates are stored as JSON in ~/.config/dartuios/layouts/.
 //
 // Integration points:
 //   - Command palette: "Save Layout", "Load Layout"
 //   - Keybinding: prefix+L l (load), prefix+L s (save)
 //   - Tape scripting: SaveLayout/LoadLayout commands
-//   - CLI: tuios layout list/delete/dir/export (no save or load, since
+//   - CLI: dartuios layout list/delete/dir/export (no save or load, since
 //     both need a running session)
 type LayoutTemplate struct {
 	// Metadata
@@ -71,7 +71,7 @@ type LayoutWindow struct {
 
 // GetTemplatesDir returns the directory path for layout template files.
 func GetTemplatesDir() string {
-	return filepath.Join(xdg.ConfigHome, "tuios", "layouts")
+	return filepath.Join(xdg.ConfigHome, "dartuios", "layouts")
 }
 
 func ensureTemplatesDir() error {

@@ -6,9 +6,9 @@ import (
 
 	"charm.land/lipgloss/v2"
 	tfx "github.com/Gaurav-Gosain/tuiffects"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Effect picker layout constants, matching the theme and glyph pickers so the
@@ -237,7 +237,7 @@ func (m *OS) effectDetailText(name string) (description, status string) {
 	if name == config.ScreensaverRandomEffect {
 		description = "A different effect runs each time."
 		if status == "" {
-			status = "tuios picks the effect."
+			status = "dartuios picks the effect."
 			if running := m.effectPreview.running; running != "" {
 				status = "The preview shows " + running + "."
 			}

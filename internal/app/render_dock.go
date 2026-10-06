@@ -2,13 +2,14 @@ package app
 
 import (
 	"image/color"
+	"strconv"
 	"strings"
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // workspacePillFg is the ink one pill state is drawn in, over the Panel step
@@ -52,7 +53,7 @@ func dockStripArrowFg(pal overlay.Palette) color.Color {
 // The label is passed in rather than derived: the tab that carries it also
 // carries the width the hit rectangle was cut to, and the two must be the same
 // string.
-func workspacePill(label string, active, dragged bool, pal overlay.Palette, s *config.Settings) string {
+func (m *OS) workspacePill(label string, workspace int, active, dragged bool, pal overlay.Palette, s *config.Settings) string {
 	// A picked-up pill comes up onto Surface, the same step the rail lifts a
 	// dragged row onto, so the gesture reads the same wherever it is made. It is
 	// a ground change and not an ink one, which leaves the accent free to go on
@@ -80,6 +81,24 @@ func workspacePill(label string, active, dragged bool, pal overlay.Palette, s *c
 	// the strip's geometry and its hit boxes do not change with the depth.
 	if overlay.IsNoColor(ground) {
 		return strings.Repeat(" ", lipgloss.Width(lc)) + pill + strings.Repeat(" ", lipgloss.Width(rc))
+	}
+	// The weight pulse: when the active workspace changes, its caps burn
+	// light -> medium -> full -> medium and settle back, so a switch is felt
+	// in the boundary's weight rather than its colour. It fires only on a
+	// change from a workspace the strip has already shown (pulseWorkspace),
+	// never on the first draw, so a single render stays deterministic. It
+	// lasts at most 200 ms; pulseUntil is the term that keeps the tick alive
+	// for that long.
+	if active {
+		now := time.Now()
+		key := strconv.Itoa(workspace)
+		if m.pulseWorkspace != "" && key != m.pulseWorkspace {
+			m.pulseUntil = now.Add(200 * time.Millisecond)
+		}
+		m.pulseWorkspace = key
+		if p := overlay.WeightPulse(m.pulseUntil.Add(-200*time.Millisecond), now); p != 0 {
+			lc, rc = string(p), string(p)
+		}
 	}
 	caps := lipgloss.NewStyle().Foreground(ground)
 	return caps.Render(lc) + pill + caps.Render(rc)
@@ -131,7 +150,7 @@ func (m *OS) renderDockWorkspaceStrip(s dockWorkspaceStrip, startX int) string {
 			b.WriteString(strings.Repeat(" ", dockWorkspacePillGap))
 			x, drawn = x+dockWorkspacePillGap, drawn+dockWorkspacePillGap
 		}
-		b.WriteString(workspacePill(t.Label, t.Active, t.Dragged, pal, &m.Settings))
+		b.WriteString(m.workspacePill(t.Label, t.Workspace, t.Active, t.Dragged, pal, &m.Settings))
 		m.dockWorkspaceHits = append(m.dockWorkspaceHits, dockWorkspaceHit{
 			X0: x, X1: x + t.Width, Y: y, Workspace: t.Workspace,
 		})
@@ -151,7 +170,7 @@ func (m *OS) renderDockWorkspaceStrip(s dockWorkspaceStrip, startX int) string {
 			b.WriteString(strings.Repeat(" ", dockWorkspacePillGap))
 			x += dockWorkspacePillGap
 		}
-		b.WriteString(workspacePill(s.Add.Label, false, false, pal, &m.Settings))
+		b.WriteString(m.workspacePill(s.Add.Label, 0, false, false, pal, &m.Settings))
 		m.dockWorkspaceHits = append(m.dockWorkspaceHits, dockWorkspaceHit{
 			X0: x, X1: x + s.Add.Width, Y: y, Workspace: 0,
 		})

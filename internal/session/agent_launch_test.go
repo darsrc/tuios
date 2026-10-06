@@ -41,8 +41,8 @@ func TestSplitAgentWords(t *testing.T) {
 
 func TestCallerEnvRefusesWhatItMayNotSet(t *testing.T) {
 	for _, env := range []map[string]string{
-		{"TUIOS_PANE_ID": "x"},
-		{"TUIOS_SOCKET": "/tmp/s"},
+		{"DARTUIOS_PANE_ID": "x"},
+		{"DARTUIOS_SOCKET": "/tmp/s"},
 		{"TMUX": "/tmp/t"},
 		{"1BAD": "x"},
 		{"A=B": "x"},
@@ -63,9 +63,9 @@ func TestCallerEnvRefusesWhatItMayNotSet(t *testing.T) {
 	}
 }
 
-// TestBuildEnvWithPutsTheCallersVariablesUnderTuios: the caller's value
-// replaces the daemon's, and cannot change what tuios sets after it.
-func TestBuildEnvWithPutsTheCallersVariablesUnderTuios(t *testing.T) {
+// TestBuildEnvWithPutsTheCallersVariablesUnderDartuios: the caller's value
+// replaces the daemon's, and cannot change what dartuios sets after it.
+func TestBuildEnvWithPutsTheCallersVariablesUnderDartuios(t *testing.T) {
 	d, _ := startTestDaemon(t)
 	sess := makeSessionWithWindow(t, d, "env")
 	t.Setenv("FAN_DAEMON_ONLY", "daemon")
@@ -83,7 +83,7 @@ func TestBuildEnvWithPutsTheCallersVariablesUnderTuios(t *testing.T) {
 		t.Errorf("FAN_DAEMON_ONLY appears %d times", count)
 	}
 	// TERM is set after the caller's, so the last one, which exec keeps, is
-	// tuios's.
+	// dartuios's.
 	last := ""
 	for _, kv := range env {
 		if strings.HasPrefix(kv, "TERM=") {
@@ -91,7 +91,7 @@ func TestBuildEnvWithPutsTheCallersVariablesUnderTuios(t *testing.T) {
 		}
 	}
 	if last == "TERM=dumb" {
-		t.Error("the caller's TERM won over the one tuios sets")
+		t.Error("the caller's TERM won over the one dartuios sets")
 	}
 }
 

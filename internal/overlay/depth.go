@@ -44,7 +44,7 @@ func (d Depth) String() string {
 // DepthOf maps a detected colour profile to the chrome depth drawn for it.
 //
 // NoTTY and Unknown map to truecolor: nothing was detected, and drawing the
-// designed chrome is what tuios did before the depth was known. ASCII maps to
+// designed chrome is what dartuios did before the depth was known. ASCII maps to
 // 16, because a terminal that asked for no colour (NO_COLOR) still shows bold
 // and reverse, and those are all the 16-colour chrome needs to keep its
 // structure.
@@ -104,7 +104,7 @@ func isNoColor(c color.Color) bool {
 func IsNoColor(c color.Color) bool { return isNoColor(c) }
 
 // terminalOwned reports whether the terminal decides what c looks like: the
-// default colour or one of the sixteen slots. tuios cannot measure such a
+// default colour or one of the sixteen slots. dartuios cannot measure such a
 // colour, because the RGB it would measure is the xterm default and not what
 // the user's palette holds.
 func terminalOwned(c color.Color) bool {
@@ -189,7 +189,7 @@ func nearest256(c color.Color) color.Color {
 
 // greyChroma is the OKLab chroma below which a colour is placed on the grey
 // ramp. charmtone's neutrals sit at 0.01 to 0.02 and the least saturated
-// accent tuios ships at 0.06, so the line falls between them.
+// accent dartuios ships at 0.06, so the line falls between them.
 const greyChroma = 0.035
 
 // nearestGrey returns the entry of the grey ramp, or black 16 or white 231 at

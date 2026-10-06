@@ -1,4 +1,4 @@
-// Package app provides the core TUIOS application logic and window management.
+// Package app provides the core dartuios application logic and window management.
 package app
 
 import (
@@ -13,17 +13,17 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/ui"
-	"github.com/Gaurav-Gosain/tuios/pkg/applist"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/ui"
+	"github.com/darsrc/tuios/pkg/applist"
 	"github.com/google/uuid"
 )
 
@@ -364,6 +364,28 @@ type OS struct {
 	// motion is the overlay fade-in, the scrim's shade and the working-row
 	// shimmer, with the clock that drives them. See motion.go.
 	motion motionState
+	// filamentFrame is the living filament a working agent burns: the rune the
+	// motion clock last drew, zero before the first frame and while motion is
+	// off, which is when the static diamond shows. See filament.go.
+	filamentFrame rune
+	// filament is the living filament's clock, started when a working agent
+	// first appears and reset when none is visible, so a new working row starts
+	// on frame 0. See ui.Filament.
+	filament ui.Filament
+	// hasWorkingAgent is the render pass's answer to "is a working row visible
+	// with motion on": it arms the filament, and it is the one term that keeps
+	// an otherwise-idle session ticking so the filament keeps moving.
+	hasWorkingAgent bool
+	// pulseUntil and pulseWorkspace are the weight pulse: which workspace's
+	// caps are mid-pulse and until when. Past pulseUntil the caps sit settled.
+	pulseUntil     time.Time
+	pulseWorkspace string
+	// dialogOpenID and dialogShownAt are the dialog weight pulse: which
+	// micro-dialog is open ("" when none) and when it opened. A change to a
+	// non-empty ID with motion on stamps the open, and the dialog's frame
+	// pulses in weight for 200 ms from there. See renderOverlays.
+	dialogOpenID  string
+	dialogShownAt time.Time
 
 	// shake is the pointer gesture that toggles the beam, when the person
 	// turned it on. Fixed size, no timer, no tick: see shake.go.
@@ -712,7 +734,7 @@ type OS struct {
 	// Keyboard enhancement support (Kitty protocol)
 	KeyboardEnhancementsEnabled bool // True when terminal supports keyboard enhancements
 	// KeyboardFlags is the flag set the host answered the enhancement query
-	// with, so tuios knows what it actually got rather than what it asked for.
+	// with, so dartuios knows what it actually got rather than what it asked for.
 	// Zero means the terminal never answered, which is not the same as a refusal.
 	KeyboardFlags int
 	// hostGrantedAllKeys is set once the host has answered with report-all-keys
@@ -720,7 +742,7 @@ type OS struct {
 	hostGrantedAllKeys bool
 	// paneKeysDown maps the code of each key press that went to a pane to that
 	// pane's window ID, so its release goes to the same pane and the release
-	// of a key tuios kept for itself goes nowhere. See NotePaneKeyDown.
+	// of a key dartuios kept for itself goes nowhere. See NotePaneKeyDown.
 	paneKeysDown map[rune]string
 	// hostKey is the last key press as the host terminal sent it. See NoteHostKey.
 	hostKey tea.KeyPressMsg
@@ -740,7 +762,7 @@ type OS struct {
 	// entrypoints that serve someone else's session; see OSOptions.
 	ConfigReadOnly bool
 	// BrowserClient says the far end is a browser tab. See browser_client.go
-	// for what that costs and what tuios says about it.
+	// for what that costs and what dartuios says about it.
 	BrowserClient bool
 	// LearnMode is the guided tour in the browser build: nothing quits, and
 	// what the demo cannot do says so. See learn_mode.go.
@@ -839,7 +861,7 @@ type OS struct {
 	PendingNotification chan NotificationMsg
 	// PendingCwdChange receives OSC 7 working-directory changes from windows'
 	// PTY goroutines. The bubbletea Update loop drains it and, for the focused
-	// window only, checks whether the new directory carries a .tuios.tape. This
+	// window only, checks whether the new directory carries a .dartuios.tape. This
 	// is the detection half of the project-tape feature; it never executes
 	// anything, it only stats, reads to hash, and surfaces a passive indicator.
 	PendingCwdChange chan CwdChangedMsg
@@ -1199,7 +1221,7 @@ type OS struct {
 	// SidebarAgentsSeen is set, and persisted, once an agent has run where
 	// this client could see it. See agentsSeen.
 	SidebarAgentsSeen bool
-	// agentIntegrationInstalled is set when a harness has tuios's hooks
+	// agentIntegrationInstalled is set when a harness has dartuios's hooks
 	// installed, read once at start off the UI goroutine. See agentsSeen.
 	agentIntegrationInstalled bool
 	// settingsAgentsOpen is the Alerts tab's agent group opened or closed by
@@ -1470,6 +1492,18 @@ type OS struct {
 	sessionUnarranged bool
 }
 
+// anyWorkingWindow reports whether any window on the active session is in the
+// working agent state — the same state the rail rows read to show the moving
+// filament. It is the on/off term for the filament's clock.
+func (m *OS) anyWorkingWindow() bool {
+	for _, w := range m.Windows {
+		if w != nil && w.AgentState == string(session.AgentStateWorking) {
+			return true
+		}
+	}
+	return false
+}
+
 // Notification represents a message shown in the dock's right-hand block.
 //
 // There is no Animation field any more. The old corner toast faded in and out,
@@ -1539,17 +1573,17 @@ func createID() string {
 
 // verboseLog controls whether INFO-level logs are formatted and recorded.
 // It is off by default so hot paths (retile traces) pay nothing in production,
-// and is enabled by setting TUIOS_DEBUG_INTERNAL=1, the same switch that gates
+// and is enabled by setting DARTUIOS_DEBUG_INTERNAL=1, the same switch that gates
 // the internal kitty/sixel passthrough trace logs. WARN and ERROR are always
 // recorded regardless of this flag.
-var verboseLog = os.Getenv("TUIOS_DEBUG_INTERNAL") == "1"
+var verboseLog = os.Getenv("DARTUIOS_DEBUG_INTERNAL") == "1"
 
 // nestedSwitchError is a switch the daemon refused because this client runs in
 // a pane of the target session. The client is back on its own session.
 type nestedSwitchError struct{ inside, target string }
 
 func (e *nestedSwitchError) Error() string {
-	return fmt.Sprintf("You are inside session %q. Switching this pane to %q would show tuios inside itself.", e.inside, e.target)
+	return fmt.Sprintf("You are inside session %q. Switching this pane to %q would show dartuios inside itself.", e.inside, e.target)
 }
 
 // SwitchToSession detaches from the current daemon session and attaches to another.

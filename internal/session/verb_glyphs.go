@@ -6,9 +6,9 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // A glyph set is the shape half of a rice and it has list-themes's problem: its
@@ -74,7 +74,7 @@ func (d *Daemon) verbListGlyphs(_ *connState, params json.RawMessage) (any, *ver
 		return nil, hintedVerbError(ErrVerbOptionNotFound, "no glyph set named "+echoName(p.Glyphs), &VerbHint{
 			Param:      "glyphs",
 			Verb:       "list-glyphs",
-			Command:    "tuios list-glyphs",
+			Command:    "dartuios list-glyphs",
 			DidYouMean: closestMatch(p.Glyphs, all),
 			Available:  all,
 			Detail: "the id is neither built in nor in " + glyphsDir +

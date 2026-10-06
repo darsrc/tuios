@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 )
 
-// The focus and hover rule every list in tuios follows: the rail, the Inbox,
+// The focus and hover rule every list in dartuios follows: the rail, the Inbox,
 // the review overlay, settings, the command palette and every picker.
 //
 //  1. Reserve the cell. Whatever a row shows when it is the cursor (a mark, a

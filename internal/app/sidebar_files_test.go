@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // fileViewTree builds a directory with a known shape: two folders and three
@@ -69,7 +69,7 @@ func (m *OS) loadFileViewNow(t *testing.T, dir string) {
 //
 // What is on the other end of a pane is not known to be a shell. "cd /x\r" typed
 // into vim is a series of editing commands and into a REPL a syntax error, so
-// the pane has to be at a prompt and tuios has to be able to see that it is.
+// the pane has to be at a prompt and dartuios has to be able to see that it is.
 //
 // Negative control, both confirmed red: with the alt-screen test removed from
 // paneBusyReason the first case passes the guard, and with the ForegroundCmd

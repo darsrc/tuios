@@ -24,11 +24,11 @@ func (m *OS) TickStats() (ticks, work, render uint64) {
 	return m.tickStats.Ticks, m.tickStats.Work, m.tickStats.Render
 }
 
-// DumpTickStats writes the tick counters to the file named by TUIOS_STATS_FILE,
+// DumpTickStats writes the tick counters to the file named by DARTUIOS_STATS_FILE,
 // if set. Called once on clean exit so the idle e2e can read cumulative work
 // and render counts from a real run without an internal probe.
 func (m *OS) DumpTickStats() {
-	path := os.Getenv("TUIOS_STATS_FILE")
+	path := os.Getenv("DARTUIOS_STATS_FILE")
 	if path == "" {
 		return
 	}

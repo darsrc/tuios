@@ -8,9 +8,9 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	uv "github.com/charmbracelet/ultraviolet"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // CommandBlock represents a single command and its output extracted from scrollback.
@@ -237,7 +237,7 @@ func endLineForBlock(d, c, b *vt.SemanticMarker, term vt.Terminal) int {
 }
 
 // lazyRegexp compiles expr the first time the returned function is called.
-// Every tuios process links this package, and only the scrollback browser uses
+// Every dartuios process links this package, and only the scrollback browser uses
 // its patterns, so compiling them at init cost every one-shot CLI command about
 // 0.1 ms and 600 allocations for nothing.
 func lazyRegexp(expr string) func() *regexp.Regexp {

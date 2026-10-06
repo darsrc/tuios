@@ -12,11 +12,11 @@ import (
 	tint "github.com/lrstanley/bubbletint/v2"
 )
 
-// GetThemesDir returns the path to the custom themes directory (~/.config/tuios/themes/).
+// GetThemesDir returns the path to the custom themes directory (~/.config/dartuios/themes/).
 // Creates the directory if it doesn't exist.
 func GetThemesDir() (string, error) {
 	// Use xdg.ConfigFile to get the path and ensure parent dirs exist
-	keepFile, err := xdg.ConfigFile("tuios/themes/.keep")
+	keepFile, err := xdg.ConfigFile("dartuios/themes/.keep")
 	if err != nil {
 		return "", fmt.Errorf("failed to get themes directory: %w", err)
 	}
@@ -72,7 +72,7 @@ func readCustomThemes(themesDir string) (loaded, problems []string, err error) {
 // replacing any theme already registered under the same id.
 //
 // The registry is built once per process behind a sync.Once, which is right for
-// the built-ins and wrong for these. A custom theme file is written while tuios
+// the built-ins and wrong for these. A custom theme file is written while dartuios
 // is running, by a person editing it or by an agent ricing on their behalf, and
 // until this existed the only way to reach a palette you had just authored was
 // to restart: selecting it reported success, logged that it did not exist, and
@@ -148,7 +148,7 @@ func LoadCustomThemeFile(path string) (*tint.Tint, error) {
 
 	// The chrome object is read from the same bytes rather than from the tint:
 	// tint.Tint is a third-party struct with sixteen slots and no room for
-	// tuios's own colours, so the two halves of a theme file are parsed
+	// dartuios's own colours, so the two halves of a theme file are parsed
 	// separately and filed under the same id.
 	registerChrome(t.ID, parseChrome(data))
 

@@ -1,9 +1,9 @@
 // Package sound plays the two short cues an agent alert can make audible.
 //
 // It shells out to an audio player the system already has rather than linking a
-// decoder and a device backend into tuios. A multiplexer that fails to start
+// decoder and a device backend into dartuios. A multiplexer that fails to start
 // because a machine has no sound card would be a poor trade for a 300 ms chime,
-// and every platform tuios runs on ships something that plays a WAV: paplay or
+// and every platform dartuios runs on ships something that plays a WAV: paplay or
 // pw-play under PipeWire and PulseAudio, aplay under bare ALSA, afplay on
 // macOS, and the Media Foundation player Windows carries.
 //
@@ -51,7 +51,7 @@ const (
 
 // DisableEnv silences the package however it is configured. It exists for the
 // cases where config is the wrong lever: a test suite, a CI job, a recording.
-const DisableEnv = "TUIOS_NO_SOUND"
+const DisableEnv = "DARTUIOS_NO_SOUND"
 
 // playTimeout bounds one player invocation. A player that hangs on a wedged
 // device must not pin the worker, and no cue is longer than half a second, so
@@ -188,7 +188,7 @@ func spill(cache map[Cue]string, c Cue) (string, error) {
 	if path, ok := cache[c]; ok && readable(path) {
 		return path, nil
 	}
-	dir, err := os.MkdirTemp("", "tuios-sound-")
+	dir, err := os.MkdirTemp("", "dartuios-sound-")
 	if err != nil {
 		return "", err
 	}

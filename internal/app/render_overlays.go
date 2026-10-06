@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 func (m *OS) renderOverlays() []*lipgloss.Layer {
@@ -37,6 +37,27 @@ func (m *OS) renderOverlays() []*lipgloss.Layer {
 	// every layer that reads it.
 	m.OverlayHits = m.OverlayHits[:0]
 	m.reconcileOverlayZOrder()
+
+	// The dialog weight pulse is stamped here, where a micro-dialog opens:
+	// renderOverlays runs every frame, and only it sees the closed-to-open
+	// turn. The stamp drives the 200 ms pulse in the frame's boundary, and
+	// pulseUntil keeps the session ticking until it settles.
+	id := ""
+	switch {
+	case m.FilePromptOpen():
+		id = "file"
+	case m.ShowSessionClose:
+		id = "sessionclose"
+	case m.Renaming():
+		id = "rename"
+	case m.ShowAccentPicker:
+		id = "accent"
+	}
+	if id != "" && id != m.dialogOpenID && m.Settings.MotionAllows(config.MotionFull) {
+		m.dialogShownAt = time.Now()
+		m.pulseUntil = m.dialogShownAt.Add(200 * time.Millisecond)
+	}
+	m.dialogOpenID = id
 
 	isRecording := m.TapeRecorder != nil && m.TapeRecorder.IsRecording()
 
@@ -90,21 +111,21 @@ func (m *OS) renderOverlays() []*lipgloss.Layer {
 	}
 
 	if len(m.GetVisibleWindows()) == 0 && m.GetContentWidth() > 0 && m.GetUsableHeight() > 0 {
-		asciiArt := `████████╗██╗   ██╗██╗ ██████╗ ███████╗
-╚══██╔══╝██║   ██║██║██╔═══██╗██╔════╝
-   ██║   ██║   ██║██║██║   ██║███████╗
-   ██║   ██║   ██║██║██║   ██║╚════██║
-   ██║   ╚██████╔╝██║╚██████╔╝███████║
-   ╚═╝    ╚═════╝ ╚═╝ ╚═════╝ ╚══════╝`
+		asciiArt := `██████╗  █████╗ ██████╗  ██████╗ ██╗   ██╗██╗ ██████╗ ██████╗
+██╔══██╗██╔══██╗██╔══██╗ ██╔══██╗██║   ██║██║██╔═══██╗██╔════╝
+██████╔╝███████║██████╔╝ ██████╔╝██║   ██║██║██║   ██║███████╗
+██╔═══╝ ██╔══██║██╔══██╗ ██╔══██╗██║   ██║██║██║   ██║╚════██║
+██║     ██║  ██║██║  ██║ ██║  ██║╚██████╔╝╚██╔╝╚██████╔╝███████║
+╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═════╝  ╚═╝  ╚═════╝ ╚══════╝`
 
 		// The splash is the first thing anyone sees, at whatever width. Its
-		// three parts have fixed widths (38 columns of block letters, a 28
+		// three parts have fixed widths (64 columns of block letters, a 28
 		// column subtitle and a 44 column hint line), and the box adds a border
-		// and two columns of padding on each side. All of it needs 74 columns,
+		// and two columns of padding on each side. All of it needs 70 columns,
 		// so on anything narrower it would run off the right edge with the
 		// border cut away. Drop to what fits instead.
 		const (
-			artCols      = 38
+			artCols      = 64
 			subtitleCols = 28
 			boxCols      = 6 // both borders, both paddings
 			boxRows      = 4 // border and padding, top and bottom
@@ -123,7 +144,7 @@ func (m *OS) renderOverlays() []*lipgloss.Layer {
 		ui := theme.UI()
 		titleText := asciiArt
 		if avail < artCols || availRows < 12 {
-			titleText = "TUIOS"
+			titleText = "dartuios"
 		}
 		title := lipgloss.NewStyle().
 			Foreground(ui.Accent).

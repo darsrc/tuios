@@ -12,15 +12,15 @@ import (
 	"sync/atomic"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/overlay"
 )
 
 // A glyph set is the other half of a rice. A theme says what colour the chrome
 // is; a set says what shape it is: which corner the border turns, what the
 // close button is a picture of, what a rule is drawn with, which mark says
 // "you are here" on the rail. Every one of those was a literal in the render
-// path, so the only rice tuios could be asked for was a recolour.
+// path, so the only rice dartuios could be asked for was a recolour.
 //
 // It is one option rather than twenty-two because twenty-two narrow options is
 // how a config file becomes unreadable, and because the glyphs are not
@@ -53,7 +53,7 @@ type BorderGlyphs struct {
 
 // GlyphSet is one named set of chrome characters. Every field is optional and
 // an empty one keeps whatever the set it inherits from says, falling through in
-// the end to the glyph tuios ships.
+// the end to the glyph dartuios ships.
 //
 // The roles are named for what they draw rather than for where they are drawn,
 // because one role is usually drawn in several places: Rule is the pane's
@@ -72,6 +72,10 @@ type GlyphSet struct {
 	ASCII bool `json:"ascii"`
 
 	Border *BorderGlyphs `json:"border,omitempty"`
+	// BorderFocused is the border weight the focused window draws. The active
+	// frame takes its weight; every other frame and every chrome surface takes
+	// Border. Empty inherits, falling through to Border's resolution.
+	BorderFocused *BorderGlyphs `json:"border_focused,omitempty"`
 
 	// The window controls. One cell each: the renderer pads them into the
 	// two-cell buttons the title bar's hit rectangles are measured
@@ -91,10 +95,19 @@ type GlyphSet struct {
 	// The rail's marks, one cell each.
 	Focus     string `json:"focus,omitempty"`     // "you are here"
 	Attention string `json:"attention,omitempty"` // "this one wants a human"
-	Bullet    string `json:"bullet,omitempty"`    // a resting row
-	Add       string `json:"add,omitempty"`       // the new-thing control
+	RailHover string `json:"rail_hover,omitempty"`
+	Bullet    string `json:"bullet,omitempty"` // a resting row
+	Add       string `json:"add,omitempty"`    // the new-thing control
 	Collapse  string `json:"collapse,omitempty"`
 	Expand    string `json:"expand,omitempty"`
+
+	// The panel's corner anchors, one cell each. A dialog and a framed panel
+	// draw from them: the corner is a separate mark from the border's, so a
+	// set can anchor a panel while the window keeps its own corners.
+	AnchorTL string `json:"anchor_tl,omitempty"`
+	AnchorTR string `json:"anchor_tr,omitempty"`
+	AnchorBL string `json:"anchor_bl,omitempty"`
+	AnchorBR string `json:"anchor_br,omitempty"`
 
 	// The rail's two tree marks, three cells each. They run in front of a row
 	// that belongs to a group above it: TreeBranch while siblings follow,
@@ -125,16 +138,17 @@ type GlyphSet struct {
 	DashRule string `json:"dash_rule,omitempty"`
 }
 
-// GlyphSetNone is the id meaning "draw what tuios ships". It is the default and
+// GlyphSetNone is the id meaning "draw what dartuios ships". It is the default and
 // it is spelled out rather than left as the empty string so that list-glyphs
 // has something to name and set-config has something to accept.
 const GlyphSetNone = "default"
+const GlyphSetDAR = "dar"
 
 // builtinGlyphSets are the sets that need no file. Each says only what it
 // changes, so the built-in glyphs stay in one place (the config package, where
 // the renderer reads them) rather than being copied here to drift.
 //
-// Four rather than a gallery. These are the shapes a set has to be able to
+// Five rather than a gallery. These are the shapes a set has to be able to
 // take, and they are here to be inherited from and to prove the mechanism on a
 // terminal with no config file, not to be a theme store. A gallery belongs in
 // the glyphs directory, where it costs nothing to carry.
@@ -152,7 +166,7 @@ var builtinGlyphSets = map[string]*GlyphSet{
 		Close: "×", Maximize: "□", Minimize: "−", Dot: "●",
 		PillLeft: "▏", PillRight: "▕",
 		Rule: "─", ArrowLeft: "‹", ArrowRight: "›",
-		Focus: "▎", Attention: "▎", Bullet: "·",
+		Focus: "█", RailHover: "▋", Attention: "▍", Bullet: "▏",
 		Add: "+", Collapse: "«", Expand: "»",
 		TreeBranch: "├─ ", TreeLast: "└─ ",
 		FoldOpen: "▾", FoldShut: "▸",
@@ -173,6 +187,59 @@ var builtinGlyphSets = map[string]*GlyphSet{
 		},
 		Rule: "━", Focus: "█", Attention: "█",
 		Bullet: "•", ScrollbarThumb: "█", ScrollbarTrack: "│",
+	},
+	// The DAR language: light lines at rest, a heavy line where something is
+	// focused, a half-block rail, and corner-anchored panels. Both borders
+	// carry their junctions because the grid a tiled window draws needs them.
+	"dar": {
+		ID: "dar", DisplayName: "DAR",
+		Border: &BorderGlyphs{
+			Top: "─", Bottom: "─", Left: "│", Right: "│",
+			TopLeft: "┌", TopRight: "┐",
+			BottomLeft: "└", BottomRight: "┘",
+			Middle: "┼", MiddleTop: "┬", MiddleBottom: "┴",
+			MiddleLeft: "├", MiddleRight: "┤",
+		},
+		BorderFocused: &BorderGlyphs{
+			Top: "━", Bottom: "━", Left: "┃", Right: "┃",
+			TopLeft: "┏", TopRight: "┓",
+			BottomLeft: "┗", BottomRight: "┛",
+			Middle: "╋", MiddleTop: "┳", MiddleBottom: "┻",
+			MiddleLeft: "┣", MiddleRight: "┫",
+		},
+		AnchorTL: "◜", AnchorTR: "◝", AnchorBL: "◟", AnchorBR: "◞",
+		RailHover: "▋",
+		// The remaining roles, named so a set is complete on its own. Each is the
+		// DAR half-block / plain-Unicode form; the one the set used to leave to the
+		// default's Nerd Font is Close (now ×, not ✕).
+		Close:          "×",
+		Maximize:       "□",
+		Minimize:       "-",
+		Dot:            "●",
+		PillLeft:       "▏",
+		PillRight:      "▕",
+		Rule:           "─",
+		Separator:      "  ",
+		ArrowLeft:      "‹",
+		ArrowRight:     "›",
+		Focus:          "█",
+		Attention:      "▍",
+		Bullet:         "▏",
+		Add:            "+",
+		Collapse:       "«",
+		Expand:         "»",
+		TreeBranch:     "├─ ",
+		TreeLast:       "└─ ",
+		FoldOpen:       "▾",
+		FoldShut:       "▸",
+		Folder:         "▸",
+		Parent:         "▴",
+		File:           "·",
+		ScrollbarThumb: "▍",
+		ScrollbarTrack: "│",
+		Ellipsis:       "…",
+		Sigil:          "›",
+		DashRule:       "╌",
 	},
 	// Nothing outside 7-bit ASCII, for a terminal or a font that cannot be
 	// trusted with more. It is what --ascii-only draws, said as a set so that a
@@ -200,12 +267,12 @@ var builtinGlyphSets = map[string]*GlyphSet{
 }
 
 // GetGlyphsDir returns the directory user glyph sets are read from
-// (~/.config/tuios/glyphs/), creating it if it is not there. It is the themes
+// (~/.config/dartuios/glyphs/), creating it if it is not there. It is the themes
 // directory's sibling, and for the same reason: a set is a file the user writes
-// and tuios reads, not a section of the config file, because it is a document
+// and dartuios reads, not a section of the config file, because it is a document
 // with a shape of its own that people copy between machines.
 func GetGlyphsDir() (string, error) {
-	keepFile, err := xdg.ConfigFile("tuios/glyphs/.keep")
+	keepFile, err := xdg.ConfigFile("dartuios/glyphs/.keep")
 	if err != nil {
 		return "", fmt.Errorf("failed to get glyphs directory: %w", err)
 	}
@@ -335,6 +402,11 @@ var glyphRoles = []glyphRole{
 	{"focus", func(g *GlyphSet) *string { return &g.Focus }, 1},
 	{"attention", func(g *GlyphSet) *string { return &g.Attention }, 1},
 	{"bullet", func(g *GlyphSet) *string { return &g.Bullet }, 1},
+	{"rail_hover", func(g *GlyphSet) *string { return &g.RailHover }, 1},
+	{"anchor_tl", func(g *GlyphSet) *string { return &g.AnchorTL }, 1},
+	{"anchor_tr", func(g *GlyphSet) *string { return &g.AnchorTR }, 1},
+	{"anchor_bl", func(g *GlyphSet) *string { return &g.AnchorBL }, 1},
+	{"anchor_br", func(g *GlyphSet) *string { return &g.AnchorBR }, 1},
 	{"add", func(g *GlyphSet) *string { return &g.Add }, 1},
 	// The tree marks run in front of a name rather than in the gutter, so they
 	// are budgeted three cells: the mark, its arm, and the space before the
@@ -382,14 +454,20 @@ func sanitizeGlyphSet(set *GlyphSet) []string {
 			*p = ""
 		}
 	}
-	if set.Border != nil {
-		for _, p := range borderFields(set.Border) {
+	checkBorder := func(b *BorderGlyphs, what string) {
+		for _, p := range borderFields(b) {
 			if *p != "" && lipgloss.Width(*p) != 1 {
 				problems = append(problems, fmt.Sprintf(
-					"glyph set %s: a border rune must be one cell, so %q keeps the default", set.ID, *p))
+					"glyph set %s: a %s rune must be one cell, so %q keeps the default", set.ID, what, *p))
 				*p = ""
 			}
 		}
+	}
+	if set.Border != nil {
+		checkBorder(set.Border, "border")
+	}
+	if set.BorderFocused != nil {
+		checkBorder(set.BorderFocused, "border_focused")
 	}
 	set.ASCII = glyphSetIsASCII(set)
 	return problems
@@ -410,6 +488,13 @@ func glyphSetIsASCII(set *GlyphSet) bool {
 	}
 	if set.Border != nil {
 		for _, p := range borderFields(set.Border) {
+			if !overlay.IsASCII(*p) {
+				return false
+			}
+		}
+	}
+	if set.BorderFocused != nil {
+		for _, p := range borderFields(set.BorderFocused) {
 			if !overlay.IsASCII(*p) {
 				return false
 			}
@@ -564,18 +649,23 @@ func mergeGlyphSet(dst, src *GlyphSet) {
 			*d = *role.field(src)
 		}
 	}
-	if src.Border == nil {
-		return
-	}
-	if dst.Border == nil {
-		dst.Border = &BorderGlyphs{}
-	}
-	dstFields, srcFields := borderFields(dst.Border), borderFields(src.Border)
-	for i := range dstFields {
-		if *dstFields[i] == "" {
-			*dstFields[i] = *srcFields[i]
+	mergeBorder := func(d, s *BorderGlyphs) *BorderGlyphs {
+		if s == nil {
+			return d
 		}
+		if d == nil {
+			d = &BorderGlyphs{}
+		}
+		dstFields, srcFields := borderFields(d), borderFields(s)
+		for i := range dstFields {
+			if *dstFields[i] == "" {
+				*dstFields[i] = *srcFields[i]
+			}
+		}
+		return d
 	}
+	dst.Border = mergeBorder(dst.Border, src.Border)
+	dst.BorderFocused = mergeBorder(dst.BorderFocused, src.BorderFocused)
 }
 
 // SetActiveGlyphs selects the set the chrome is drawn with. An unknown id
@@ -615,7 +705,7 @@ func ActiveGlyphSetID() string {
 
 // refreshActiveGlyphs re-resolves the selected set and pushes the overlay
 // family's share of it, which is the one consumer that cannot read this
-// package (it depends on nothing inside tuios so that it can be lifted out).
+// package (it depends on nothing inside dartuios so that it can be lifted out).
 func refreshActiveGlyphs() {
 	glyphMu.RLock()
 	id := activeGlyphID
@@ -629,6 +719,10 @@ func refreshActiveGlyphs() {
 		ArrowRight: resolved.ArrowRight,
 		Rule:       resolved.Rule,
 		DashRule:   resolved.DashRule,
+		AnchorTL:   resolved.AnchorTL,
+		AnchorTR:   resolved.AnchorTR,
+		AnchorBL:   resolved.AnchorBL,
+		AnchorBR:   resolved.AnchorBR,
 	})
 }
 

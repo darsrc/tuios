@@ -16,7 +16,7 @@ func probeCmd(tag string) string {
 
 // probeInk returns the colour the host terminal was given for the first cell of
 // marker, which is the only place the question can honestly be asked: what
-// tuios put on the wire, read off the terminal it wrote to.
+// dartuios put on the wire, read off the terminal it wrote to.
 func probeInk(t *testing.T, term *tuitest.Terminal, marker string) tuitest.Color {
 	t.Helper()
 	if err := term.WaitForText(marker, uiTimeout); err != nil {

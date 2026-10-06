@@ -220,8 +220,8 @@ func TestAskRefusesABlockedAgent(t *testing.T) {
 	before := pty.CaptureContent(true, false)
 
 	for _, params := range []string{
-		`"text":"echo tuios_blocked_marker"`,
-		`"text":"echo tuios_blocked_marker","force":true`,
+		`"text":"echo dartuios_blocked_marker"`,
+		`"text":"echo dartuios_blocked_marker","force":true`,
 	} {
 		resp := c.call(t, `{"id":1,"verb":"ask-agent","params":{"session":"blocked","window":"`+b+`","from":"`+a+`",`+params+`,"ready_timeout":250}}`)
 		if code := errCode(t, resp); code != ErrVerbAgentBlocked {
@@ -238,16 +238,16 @@ func TestAskRefusesABlockedAgent(t *testing.T) {
 	}
 
 	time.Sleep(300 * time.Millisecond)
-	if after := pty.CaptureContent(true, false); after != before || strings.Contains(after, "tuios_blocked_marker") {
+	if after := pty.CaptureContent(true, false); after != before || strings.Contains(after, "dartuios_blocked_marker") {
 		t.Errorf("a refused ask wrote to the pane:\nbefore %q\nafter  %q", before, after)
 	}
 
 	// allow_blocked is the caller saying it read the prompt and it takes text.
-	res := result(t, c.call(t, `{"id":2,"verb":"ask-agent","params":{"session":"blocked","window":"`+b+`","from":"`+a+`","text":"echo tuios_blocked_marker","allow_blocked":true,"settle":700,"timeout":15000}}`))
+	res := result(t, c.call(t, `{"id":2,"verb":"ask-agent","params":{"session":"blocked","window":"`+b+`","from":"`+a+`","text":"echo dartuios_blocked_marker","allow_blocked":true,"settle":700,"timeout":15000}}`))
 	if res["waited_for"] != "needs_input" {
 		t.Errorf("waited_for = %v, want needs_input", res["waited_for"])
 	}
-	if reply, _ := res["reply"].(string); !strings.Contains(reply, "tuios_blocked_marker") {
+	if reply, _ := res["reply"].(string); !strings.Contains(reply, "dartuios_blocked_marker") {
 		t.Errorf("allow_blocked did not type the question: %q", reply)
 	}
 }
@@ -350,14 +350,14 @@ func TestAskReachesARestingAgent(t *testing.T) {
 	_, a, b := twoWindowSession(t, d, "ask")
 	c := dialVerb(t, sp)
 
-	res := result(t, c.call(t, `{"id":1,"verb":"ask-agent","params":{"session":"ask","window":"`+b+`","from":"`+a+`","text":"echo tuios_ask_reply","settle":700,"timeout":15000}}`))
+	res := result(t, c.call(t, `{"id":1,"verb":"ask-agent","params":{"session":"ask","window":"`+b+`","from":"`+a+`","text":"echo dartuios_ask_reply","settle":700,"timeout":15000}}`))
 	if res["untrusted"] != true {
 		t.Error("a reply did not report itself as untrusted")
 	}
 	if res["settled_by"] != "idle" {
 		t.Errorf("settled_by = %v, want idle for a pane that reports no state", res["settled_by"])
 	}
-	if reply, _ := res["reply"].(string); !strings.Contains(reply, "tuios_ask_reply") {
+	if reply, _ := res["reply"].(string); !strings.Contains(reply, "dartuios_ask_reply") {
 		t.Errorf("reply did not carry what the pane printed: %q", reply)
 	}
 }

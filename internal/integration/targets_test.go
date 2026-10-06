@@ -47,8 +47,8 @@ func readFile(t *testing.T, path string) string {
 }
 
 // userClaudeSettings is a settings file with the user's own configuration:
-// keys tuios knows nothing about, a hook of their own on an event tuios also
-// uses, a group mixing their hook with nothing of tuios's, and the older shim.
+// keys dartuios knows nothing about, a hook of their own on an event dartuios also
+// uses, a group mixing their hook with nothing of dartuios's, and the older shim.
 const userClaudeSettings = `{
   "theme": "dark",
   "permissions": {"allow": ["Bash(go test:*)"], "deny": []},
@@ -69,7 +69,7 @@ func TestGeminiInstallUsesMilliseconds(t *testing.T) {
 	env := testEnv(t)
 	tg := mustTarget(t, "gemini")
 	writeFile(t, tg.Path(env), `{"general": {"vimMode": true}}`)
-	if _, err := tg.Install(env, "tuios"); err != nil {
+	if _, err := tg.Install(env, "dartuios"); err != nil {
 		t.Fatal(err)
 	}
 	got := readFile(t, tg.Path(env))
@@ -85,15 +85,15 @@ func TestGeminiInstallUsesMilliseconds(t *testing.T) {
 }
 
 func TestHookCommandQuotesAPathWithSpaces(t *testing.T) {
-	got := HookCommand("/Applications/My Tools/tuios", ClaudeCode, 1)
-	want := "'/Applications/My Tools/tuios' agent-hook claude-code --integration 1"
+	got := HookCommand("/Applications/My Tools/dartuios", ClaudeCode, 1)
+	want := "'/Applications/My Tools/dartuios' agent-hook claude-code --integration 1"
 	if got != want {
 		t.Fatalf("got %q, want %q", got, want)
 	}
 	if !isManagedCommand(got) {
 		t.Fatal("a quoted command does not read as managed")
 	}
-	if isManagedCommand("tuios agent-hook claude-code") {
+	if isManagedCommand("dartuios agent-hook claude-code") {
 		t.Fatal("a hand-written command without the marker read as managed")
 	}
 }
@@ -111,7 +111,7 @@ func TestInstallKeepsTheBytesOfTheUsersCommands(t *testing.T) {
 			event := tg.Events[0].Name
 			cmd := `make lint && echo ok > /tmp/x < /dev/null`
 			writeFile(t, path, `{"hooks":{"`+event+`":[{"hooks":[{"type":"command","command":"`+cmd+`"}]}],"Other<&>":[]}}`)
-			if _, err := tg.Install(env, "tuios"); err != nil {
+			if _, err := tg.Install(env, "dartuios"); err != nil {
 				t.Fatal(err)
 			}
 			for _, step := range []string{"install", "uninstall"} {
@@ -144,7 +144,7 @@ func TestInstallRefusesADanglingSymlink(t *testing.T) {
 	if err := os.Symlink(filepath.Join(t.TempDir(), "missing.json"), path); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
 	}
-	if _, err := tg.Install(env, "tuios"); err == nil {
+	if _, err := tg.Install(env, "dartuios"); err == nil {
 		t.Fatal("installed through a dangling symlink")
 	}
 	if fi, err := os.Lstat(path); err != nil || fi.Mode()&os.ModeSymlink == 0 {
@@ -155,15 +155,15 @@ func TestInstallRefusesADanglingSymlink(t *testing.T) {
 func TestInstallReplacesAnOlderVersion(t *testing.T) {
 	env := testEnv(t)
 	tg := mustTarget(t, ClaudeCode)
-	old := `{"hooks":{"Stop":[{"hooks":[{"type":"command","command":"tuios agent-hook claude-code --integration 0","timeout":5}]}],` +
-		`"Notification":[{"hooks":[{"type":"command","command":"tuios agent-hook claude-code --integration 0"},{"type":"command","command":"notify-send hi"}]}]}}`
+	old := `{"hooks":{"Stop":[{"hooks":[{"type":"command","command":"dartuios agent-hook claude-code --integration 0","timeout":5}]}],` +
+		`"Notification":[{"hooks":[{"type":"command","command":"dartuios agent-hook claude-code --integration 0"},{"type":"command","command":"notify-send hi"}]}]}}`
 	writeFile(t, tg.Path(env), old)
 
-	st := tg.Status(env, "tuios")
+	st := tg.Status(env, "dartuios")
 	if !st.Installed || st.Current || st.Version != 0 {
 		t.Fatalf("status of an old install: %+v", st)
 	}
-	if _, err := tg.Install(env, "tuios"); err != nil {
+	if _, err := tg.Install(env, "dartuios"); err != nil {
 		t.Fatal(err)
 	}
 	got := readFile(t, tg.Path(env))
@@ -173,11 +173,11 @@ func TestInstallReplacesAnOlderVersion(t *testing.T) {
 	if !strings.Contains(got, "notify-send hi") {
 		t.Fatalf("the user's hook in a shared group was lost:\n%s", got)
 	}
-	if st := tg.Status(env, "tuios"); !st.Current {
+	if st := tg.Status(env, "dartuios"); !st.Current {
 		t.Fatalf("status after upgrade: %+v", st)
 	}
 	// Pointing at another binary reads as not current.
-	if st := tg.Status(env, "/opt/tuios/bin/tuios"); st.Current {
+	if st := tg.Status(env, "/opt/dartuios/bin/dartuios"); st.Current {
 		t.Fatalf("an install for another binary read as current: %+v", st)
 	}
 }
@@ -187,7 +187,7 @@ func TestInstallRefusesAFileItCannotRead(t *testing.T) {
 	tg := mustTarget(t, ClaudeCode)
 	broken := "{ \"theme\": \"dark\", // a comment\n}"
 	writeFile(t, tg.Path(env), broken)
-	if _, err := tg.Install(env, "tuios"); err == nil {
+	if _, err := tg.Install(env, "dartuios"); err == nil {
 		t.Fatal("installed into a file it could not parse")
 	}
 	if readFile(t, tg.Path(env)) != broken {
@@ -199,31 +199,31 @@ func TestOpenCodeLeavesAFileItDidNotWrite(t *testing.T) {
 	env := testEnv(t)
 	tg := mustTarget(t, OpenCode)
 	writeFile(t, tg.Path(env), "// the user's own file\n")
-	if _, err := tg.Install(env, "tuios"); err == nil {
-		t.Fatal("overwrote a file tuios did not write")
+	if _, err := tg.Install(env, "dartuios"); err == nil {
+		t.Fatal("overwrote a file dartuios did not write")
 	}
 	if res, err := tg.Uninstall(env); err != nil || res.Changed {
-		t.Fatalf("uninstall removed a file tuios did not write: %+v %v", res, err)
+		t.Fatalf("uninstall removed a file dartuios did not write: %+v %v", res, err)
 	}
 }
 
-// TestBackupKeepsTheFileFromBeforeTuios checks a second write that changes the
+// TestBackupKeepsTheFileFromBeforeDartuios checks a second write that changes the
 // file does not overwrite the backup of the original.
-func TestBackupKeepsTheFileFromBeforeTuios(t *testing.T) {
+func TestBackupKeepsTheFileFromBeforeDartuios(t *testing.T) {
 	env := testEnv(t)
 	tg := mustTarget(t, ClaudeCode)
 	path := tg.Path(env)
 	writeFile(t, path, userClaudeSettings)
-	if _, err := tg.Install(env, "tuios"); err != nil {
+	if _, err := tg.Install(env, "dartuios"); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := tg.Uninstall(env); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := tg.Install(env, "/opt/tuios/bin/tuios"); err != nil {
+	if _, err := tg.Install(env, "/opt/dartuios/bin/dartuios"); err != nil {
 		t.Fatal(err)
 	}
 	if got := readFile(t, path+BackupSuffix); got != userClaudeSettings {
-		t.Fatalf("the backup is no longer the file from before tuios:\n%s", got)
+		t.Fatalf("the backup is no longer the file from before dartuios:\n%s", got)
 	}
 }

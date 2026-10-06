@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The Inbox's selector filter: / opens a line where a selector is typed, the

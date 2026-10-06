@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-// TUIOS_SOCKET is set in every pane to the socket of the daemon that runs it.
+// DARTUIOS_SOCKET is set in every pane to the socket of the daemon that runs it.
 // It reports; it does not select. The daemon a command reaches is chosen by
 // XDG_RUNTIME_DIR (LOCALAPPDATA on Windows), as GetSocketPath says.
 //
@@ -26,7 +26,7 @@ import (
 // nothing changes.
 
 // SocketEnv is the variable a pane is given its daemon's socket in.
-const SocketEnv = "TUIOS_SOCKET"
+const SocketEnv = "DARTUIOS_SOCKET"
 
 // SocketEnvError is the refusal checkSocketEnv returns. It is complete on its
 // own: it names the variable, both sockets and what to set instead.
@@ -34,7 +34,7 @@ type SocketEnvError struct{ msg string }
 
 func (e *SocketEnvError) Error() string { return e.msg }
 
-// socketEnvCheck caches the check for one pair of TUIOS_SOCKET and resolved
+// socketEnvCheck caches the check for one pair of DARTUIOS_SOCKET and resolved
 // path, since GetSocketPath is called often and the check may dial.
 var socketEnvCheck struct {
 	sync.Mutex
@@ -42,7 +42,7 @@ var socketEnvCheck struct {
 	err       error
 }
 
-// CheckSocketEnv reports the TUIOS_SOCKET mistake, if it is being made, for
+// CheckSocketEnv reports the DARTUIOS_SOCKET mistake, if it is being made, for
 // the socket this process would use. GetSocketPath refuses the same way, but
 // IsDaemonRunning reads that refusal as "no daemon" and a command would then
 // try to start one; a command that may start a daemon asks here first.
@@ -54,7 +54,7 @@ func CheckSocketEnv() error {
 	return checkSocketEnv(path)
 }
 
-// checkSocketEnv refuses when TUIOS_SOCKET names a socket other than path and
+// checkSocketEnv refuses when DARTUIOS_SOCKET names a socket other than path and
 // no daemon listens on it.
 func checkSocketEnv(path string) error {
 	env := os.Getenv(SocketEnv)
@@ -68,10 +68,10 @@ func checkSocketEnv(path string) error {
 	}
 	var err error
 	if !isDaemonRunningAt(env) {
-		err = &SocketEnvError{msg: fmt.Sprintf("%s is set to %s, where no daemon is listening, and this command would use the daemon at %s instead. "+
+		err = &SocketEnvError{msg: fmt.Sprintf("%s is set to\n%s,\nwhere no daemon is listening, and this command would use the daemon at %s instead. "+
 			"%s only reports the daemon a pane belongs to; it does not choose one. "+
 			"To use a separate daemon, set XDG_RUNTIME_DIR (LOCALAPPDATA on Windows) and XDG_STATE_HOME, so it keeps its own saved sessions, to directories of your own; "+
-			"its socket is then $XDG_RUNTIME_DIR/tuios/tuios.sock. Otherwise unset %s",
+			"its socket is then $XDG_RUNTIME_DIR/dartuios/dartuios.sock. Otherwise unset %s",
 			SocketEnv, env, path, SocketEnv, SocketEnv)}
 	}
 	socketEnvCheck.env, socketEnvCheck.path, socketEnvCheck.err = env, path, err

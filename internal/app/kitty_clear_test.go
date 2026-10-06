@@ -8,13 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // TestKittyClearOnED2 reproduces the youterm multi-thumbnail scrolling bug.
 // Apps like youterm transmit each thumbnail with ImageID=0 ("auto-assign").
 // Between frames, youterm writes ESC[2J to clear, then re-transmits at new
-// positions. tuios must allocate a fresh host ID per transmit (so multiple
+// positions. dartuios must allocate a fresh host ID per transmit (so multiple
 // thumbnails coexist) AND emit explicit kitty delete commands on ED 2 (so
 // stale placements from prior frames don't stack up on the host terminal).
 func TestKittyClearOnED2(t *testing.T) {

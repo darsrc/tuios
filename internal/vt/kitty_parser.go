@@ -117,7 +117,7 @@ var errKittyPadding = errors.New("misplaced base64 padding")
 // kitty answers an error unless the guest asked for silence with q=2, and only
 // when the command names its image with i= or I=, because a reply without an
 // id cannot be matched to anything. A query is the exception: it is answered
-// with or without an id, the way tuios has always answered it, because a
+// with or without an id, the way dartuios has always answered it, because a
 // probing guest waits for that reply.
 //
 // A payload shaped like a reply ("EINVAL:...") is a guest echoing one back,

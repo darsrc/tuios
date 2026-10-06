@@ -41,7 +41,7 @@ func TestReportAgreesWithTheRegistryOnEveryContestedKey(t *testing.T) {
 // broken, so the defaults could not be fixed without it failing, and it is the
 // reason four dead bindings survived as long as they did. The property is real
 // and worth keeping, so it keeps the arrangement and drops the claim that the
-// arrangement is what tuios ships. TestStockConfigOpensNoConflicts in e2e/tui now
+// arrangement is what dartuios ships. TestStockConfigOpensNoConflicts in e2e/tui now
 // owns the question of what the defaults may contain.
 func TestCrossSectionDigitClashIsReported(t *testing.T) {
 	r := registryFor(t, func(c *UserConfig) {
@@ -213,7 +213,7 @@ func TestTerminalKeysAreReportedFromTheirSection(t *testing.T) {
 	}
 }
 
-// A clash is only worth reporting for a key tuios actually withholds. vim binds
+// A clash is only worth reporting for a key dartuios actually withholds. vim binds
 // ctrl+r, but terminal mode forwards it, so there is nothing to warn about.
 func TestForwardedKeysProduceNoGuestClash(t *testing.T) {
 	r := registryFor(t, nil)

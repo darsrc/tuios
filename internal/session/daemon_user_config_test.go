@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/risk"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/risk"
 )
 
 // TestEveryDaemonKeyReachesTheDaemon walks the [daemon] section by reflection
@@ -80,7 +80,7 @@ func TestHostsAndHooksReachTheDaemon(t *testing.T) {
 }
 
 // TestDaemonConfigFromNilAsksForNothing: no file, no settings, and the
-// daemon's own defaults and TUIOS_* environment stand. The one exception is
+// daemon's own defaults and DARTUIOS_* environment stand. The one exception is
 // the approval table, whose defaults include the shipped risk rules: a daemon
 // that read no file still marks a risky call.
 //

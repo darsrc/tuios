@@ -2,11 +2,11 @@ package input
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/app"
 )
 
 // remoteKeyBypassesCopyMode reports whether the key being handled came from a
-// remote sender (tuios send-keys, or a tape run from outside) rather than
+// remote sender (dartuios send-keys, or a tape run from outside) rather than
 // from the person at this client.
 //
 // Copy mode, implicit or explicit, is that person's viewport: a scrolled view

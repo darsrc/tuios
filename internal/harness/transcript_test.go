@@ -11,10 +11,10 @@ import (
 // result carries a doubled dash rather than being normalised.
 func TestDashPath(t *testing.T) {
 	tests := []struct{ in, want string }{
-		{"/home/gaurav/dev/tuios", "-home-gaurav-dev-tuios"},
+		{"/home/gaurav/dev/dartuios", "-home-gaurav-dev-dartuios"},
 		{"/home/gaurav", "-home-gaurav"},
 		{"/home/gaurav/dev/three-dee/three-dee", "-home-gaurav-dev-three-dee-three-dee"},
-		{"/tmp/claude-1000/-home-gaurav-dev-tuios/x/work", "-tmp-claude-1000--home-gaurav-dev-tuios-x-work"},
+		{"/tmp/claude-1000/-home-gaurav-dev-dartuios/x/work", "-tmp-claude-1000--home-gaurav-dev-dartuios-x-work"},
 	}
 	for _, tc := range tests {
 		if got := DashPath(tc.in); got != tc.want {

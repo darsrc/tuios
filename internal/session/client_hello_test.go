@@ -35,7 +35,7 @@ func TestClientConnectLeavesTheConfigAlone(t *testing.T) {
 			t.Cleanup(xdg.Reload)
 			t.Setenv("XDG_CONFIG_HOME", configHome)
 			xdg.Reload()
-			configPath := filepath.Join(configHome, "tuios", "config.toml")
+			configPath := filepath.Join(configHome, "dartuios", "config.toml")
 			if tc.config != "" {
 				if err := os.MkdirAll(filepath.Dir(configPath), 0o755); err != nil {
 					t.Fatal(err)
@@ -47,7 +47,7 @@ func TestClientConnectLeavesTheConfigAlone(t *testing.T) {
 
 			// A short runtime dir: a unix socket path has a small length limit
 			// and t.TempDir on macOS is long.
-			runtimeDir, err := os.MkdirTemp("/tmp", "tuios-hello-")
+			runtimeDir, err := os.MkdirTemp("/tmp", "dartuios-hello-")
 			if err != nil {
 				t.Fatal(err)
 			}

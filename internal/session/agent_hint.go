@@ -12,11 +12,11 @@ import (
 // in the pane's process tree is the agent there, so the one who started the
 // wrapper says what it is:
 //
-//	TUIOS_AGENT=claude-code docker run -it sandbox claude
+//	DARTUIOS_AGENT=claude-code docker run -it sandbox claude
 //
 // Only the foreground process group leader's own environment is read, and only
 // this one variable of it. A value that names no manifest is ignored.
-const AgentHintEnv = "TUIOS_AGENT"
+const AgentHintEnv = "DARTUIOS_AGENT"
 
 // environVar finds name in a NUL-separated environment block, the layout of
 // /proc/<pid>/environ and of the tail of darwin's kern.procargs2. It returns
@@ -64,7 +64,7 @@ func procargsEnvVar(buf []byte, name string) (string, bool) {
 	return environVar(rest, name)
 }
 
-// agentHint returns the harness a process's TUIOS_AGENT names, trimmed and
+// agentHint returns the harness a process's DARTUIOS_AGENT names, trimmed and
 // lowercased, or "" when it names none.
 func agentHint(read func(pid int) (string, bool), pid int) string {
 	if read == nil || pid <= 1 {

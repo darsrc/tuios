@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // A pane's PTY has exactly one size. Every client attached is looking at the
@@ -20,14 +20,14 @@ import (
 // ordinary push does to the other's panes and to the shared PTYs.
 
 // peer is a second full client on the rig's session, restored and subscribed by
-// the same route cmd/tuios uses.
+// the same route cmd/dartuios uses.
 type peer struct {
 	m *OS
 	c *session.TUIClient
 }
 
 // exchange routes every state broadcast either client receives into the other
-// client's OS, which is what cmd/tuios does with StateSyncMsg, and counts them.
+// client's OS, which is what cmd/dartuios does with StateSyncMsg, and counts them.
 // A converging pair goes quiet; a pair that disagrees about the box does not.
 type exchange struct {
 	t  *testing.T

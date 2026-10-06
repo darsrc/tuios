@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // settingControl is the kind of editor a setting row uses.
@@ -769,7 +769,7 @@ func (m *OS) agentRowItem() settingItem {
 // "unlimited" for a number: the config holds an int, and a stepper walking to
 // the cap one frame at a time is not how anyone sets this.
 func (m *OS) maxFPSItem() settingItem {
-	item := enumItem("Max FPS", "Highest frame rate tuios draws at. A higher value applies at the next start.", fpsOptions,
+	item := enumItem("Max FPS", "Highest frame rate dartuios draws at. A higher value applies at the next start.", fpsOptions,
 		func() string {
 			if m.Settings.NormalFPS >= config.MaxFPSCap {
 				return "unlimited"

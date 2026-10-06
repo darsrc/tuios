@@ -9,9 +9,9 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The Hosts section of the settings page.
@@ -127,17 +127,17 @@ func hostStateSentence(status, reason, detail string) string {
 	case federation.StatusUp:
 		head = "The host answers."
 	case federation.StatusNoDaemon:
-		head = "The host is up and no tuios daemon runs on it."
+		head = "The host is up and no dartuios daemon runs on it."
 	case federation.StatusNoBinary:
-		head = "The host is up and the link cannot find tuios on it."
+		head = "The host is up and the link cannot find dartuios on it."
 	case federation.StatusUnreachable:
 		head = "The host does not answer."
 	case federation.StatusIncompatible:
-		head = "The host runs a tuios this one cannot talk to."
+		head = "The host runs a dartuios this one cannot talk to."
 	case federation.StatusConnecting:
 		head = "The link is starting."
 	case federation.StatusReconnecting:
-		head = "The link dropped and tuios is connecting again."
+		head = "The link dropped and dartuios is connecting again."
 	}
 	parts := []string{head}
 	if reason != "" && reason != head {
@@ -145,7 +145,7 @@ func hostStateSentence(status, reason, detail string) string {
 	}
 	if detail != "" {
 		// The detail comes from ssh or from the other machine. It is labelled
-		// so a reader cannot mistake it for something tuios said.
+		// so a reader cannot mistake it for something dartuios said.
 		parts = append(parts, "The link reported: "+detail)
 	}
 	return strings.Join(parts, " ")
@@ -360,7 +360,7 @@ const hostTestBudget = 20 * time.Second
 // startHostTest dials every configured host off the Update goroutine.
 //
 // It runs ssh in this process rather than reading the daemon's links, for the
-// reason `tuios hosts test` does: a link the daemon gave up on is retried a
+// reason `dartuios hosts test` does: a link the daemon gave up on is retried a
 // minute apart, so its last state is not an answer to "is it working now".
 //
 // A read-only session does not run it. That session is served to somebody else,
@@ -399,8 +399,8 @@ func hostTestCmd(hosts []federation.Host) tea.Cmd {
 	return func() tea.Msg {
 		table, _ := federation.NewTable(hosts)
 		mgr := federation.New(table, federation.Options{
-			Dial:            federation.SSHDialer(os.Getenv("TUIOS_SSH")),
-			ClientName:      "tuios-settings",
+			Dial:            federation.SSHDialer(os.Getenv("DARTUIOS_SSH")),
+			ClientName:      "dartuios-settings",
 			VerbProtocol:    session.VerbProtocolVersion,
 			MinVerbProtocol: session.MinVerbProtocolVersion,
 		})

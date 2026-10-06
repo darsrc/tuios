@@ -1,8 +1,8 @@
-// Package harness holds the registry of coding-agent CLIs tuios knows how to
+// Package harness holds the registry of coding-agent CLIs dartuios knows how to
 // recognise, as data rather than code.
 //
 // It exists so adding a harness that shipped this morning is a file a user
-// drops in a directory, not a tuios release. The registry answers one question
+// drops in a directory, not a dartuios release. The registry answers one question
 // well: which harness, if any, is this process. It deliberately does not answer
 // "what is that harness doing"; the sources that can answer that honestly are the
 // harness reporting for itself and the escape sequences it emits, and both of
@@ -60,7 +60,7 @@ func (m *Manifest) Source() (source string, replacedBundled bool) {
 // Title is the rules matched against the pane's window title, the string the
 // program sets with OSC 0 or OSC 2.
 //
-// It is a channel the agents already use and tuios parsed and threw away.
+// It is a channel the agents already use and dartuios parsed and threw away.
 // Claude Code puts a braille spinner in the title while it works and a mark
 // when it is idle; Codex writes "Action Required" there when it is blocked. A
 // title is one short string the program chose to publish about itself, which
@@ -177,7 +177,7 @@ func (r *Require) satisfied(p ProcInfo) bool {
 // confirmation window before it publishes it, so a redraw cannot flap the
 // pane. A rule here is coupled to one agent's TUI at one version,
 // and agent TUIs change in patch releases, so a rule that silently stops matching
-// degrades to no opinion without telling anyone. The signals tuios prefers (the
+// degrades to no opinion without telling anyone. The signals dartuios prefers (the
 // harness reporting for itself, and the escape sequences it emits) are
 // contractual and do not rot, which is why this is the last resort rather than
 // the foundation.

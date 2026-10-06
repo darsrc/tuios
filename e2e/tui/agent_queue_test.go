@@ -8,7 +8,7 @@ import (
 )
 
 // TestQueuedMessageIsTypedWhenTheAgentRests drives the delivery queue against
-// a real daemon and client. A pane reports a working agent, and tuios queue
+// a real daemon and client. A pane reports a working agent, and dartuios queue
 // leaves it a message: it is listed as waiting, get-agent-state counts it, and
 // nothing reaches the pane. When the pane reports idle the message is typed
 // into it, where the attached client shows it, and the queue is empty again.
@@ -19,19 +19,19 @@ func TestQueuedMessageIsTypedWhenTheAgentRests(t *testing.T) {
 	term, base := attachClientBase(t)
 	const marker = "queued-reply-7f3a"
 
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "working"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "working"); err != nil {
 		t.Fatalf("set-agent-state working: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "queue", "-s", "e2e-ctrlp", "echo", marker); err != nil {
-		t.Fatalf("tuios queue: %v\n%s", err, out)
+	if out, err := dartuiosCLI(t, base, "queue", "-s", "e2e-ctrlp", "echo", marker); err != nil {
+		t.Fatalf("dartuios queue: %v\n%s", err, out)
 	} else if !strings.Contains(out, "typed when the agent comes to rest") {
-		t.Errorf("tuios queue said %q, want it to wait for the agent", out)
+		t.Errorf("dartuios queue said %q, want it to wait for the agent", out)
 	}
-	out, err := tuiosCLI(t, base, "queue", "ls", "-s", "e2e-ctrlp")
+	out, err := dartuiosCLI(t, base, "queue", "ls", "-s", "e2e-ctrlp")
 	if err != nil || !strings.Contains(out, "waiting") || !strings.Contains(out, "echo "+marker) {
-		t.Fatalf("tuios queue ls = %q (%v), want the waiting entry", out, err)
+		t.Fatalf("dartuios queue ls = %q (%v), want the waiting entry", out, err)
 	}
-	if out, err := tuiosCLI(t, base, "get-agent-state", "-s", "e2e-ctrlp", "--json"); err != nil || !strings.Contains(strings.ReplaceAll(out, " ", ""), `"queued":1`) {
+	if out, err := dartuiosCLI(t, base, "get-agent-state", "-s", "e2e-ctrlp", "--json"); err != nil || !strings.Contains(strings.ReplaceAll(out, " ", ""), `"queued":1`) {
 		t.Errorf("get-agent-state = %q (%v), want queued 1", out, err)
 	}
 	time.Sleep(time.Second)
@@ -39,7 +39,7 @@ func TestQueuedMessageIsTypedWhenTheAgentRests(t *testing.T) {
 		t.Fatalf("the message was typed into a working agent\n%s", term.Snapshot())
 	}
 
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "idle"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "idle"); err != nil {
 		t.Fatalf("set-agent-state idle: %v\n%s", err, out)
 	}
 	if err := term.WaitForText(marker, uiTimeout); err != nil {
@@ -48,7 +48,7 @@ func TestQueuedMessageIsTypedWhenTheAgentRests(t *testing.T) {
 	saveFrame(t, term, "agent-queue-typed")
 	deadline := time.Now().Add(uiTimeout)
 	for {
-		out, err := tuiosCLI(t, base, "queue", "ls", "-s", "e2e-ctrlp")
+		out, err := dartuiosCLI(t, base, "queue", "ls", "-s", "e2e-ctrlp")
 		if err == nil && strings.Contains(out, "Nothing is queued") {
 			break
 		}
@@ -74,16 +74,16 @@ func TestNarrowRailKeepsTheAgentNameBesideAQueue(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	useShippedLooks(base)
-	if out, err := tuiosCLI(t, base, "new", "agent", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "agent", "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "agent", "working", "--harness", "claude-code"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "agent", "working", "--harness", "claude-code"); err != nil {
 		t.Fatalf("set-agent-state: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-window", "-s", "agent", "--name", "agent"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-window", "-s", "agent", "--name", "agent"); err != nil {
 		t.Fatalf("name the pane: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "queue", "-s", "agent", "also add a CHANGELOG entry"); err != nil {
+	if out, err := dartuiosCLI(t, base, "queue", "-s", "agent", "also add a CHANGELOG entry"); err != nil {
 		t.Fatalf("queue: %v\n%s", err, out)
 	}
 	term := attachIn(t, base, "agent", startOpts{cols: cols, rows: rows, shippedLooks: true})

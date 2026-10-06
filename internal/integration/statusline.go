@@ -16,8 +16,8 @@ import (
 //
 // Claude Code runs one status line command with a JSON object on stdin every
 // time the conversation changes (https://code.claude.com/docs/en/statusline).
-// tuios can own that one slot, statusLine in the same settings.json the hooks
-// live in, with a command that runs "tuios agent-statusline claude-code". It is
+// dartuios can own that one slot, statusLine in the same settings.json the hooks
+// live in, with a command that runs "dartuios agent-statusline claude-code". It is
 // opt in, through integration install --statusline, because the slot is the
 // person's: a status line they wrote is never replaced. They can keep it by
 // installing with --then and their command, which the wrapper runs with the
@@ -81,7 +81,7 @@ func (v StatusLineValues) Empty() bool { return v.Model == "" && v.Context == ""
 // ParseStatusLine reads one status line payload for harness.
 //
 // Claude Code: model.display_name, else model.id; context_window.used_percentage;
-// cost.total_cost_usd; session_id. opencode and Kilo (from tuios's own plugin):
+// cost.total_cost_usd; session_id. opencode and Kilo (from dartuios's own plugin):
 // modelID, cost, session_id.
 func ParseStatusLine(harness string, payload []byte) (StatusLineValues, error) {
 	id, ok := Canonical(harness)
@@ -148,7 +148,7 @@ func FormatCost(amount float64, currency string) string {
 	return strconv.FormatFloat(amount, 'f', 2, 64) + " " + currency
 }
 
-// StatusLineForeign reports whether TUIOS_AGENT names a harness other than
+// StatusLineForeign reports whether DARTUIOS_AGENT names a harness other than
 // harness, the same rule the hooks apply: a status line then belongs to an
 // agent nested inside the pane's own, and is not reported.
 func StatusLineForeign(harness string, getenv func(string) string) (string, bool) {
@@ -173,8 +173,8 @@ func StatusLineForeign(harness string, getenv func(string) string) (string, bool
 
 // StatusLineCommand is the command the managed statusLine entry runs. then,
 // when set, is the person's own status line command the wrapper chains to.
-func StatusLineCommand(tuios, then string) string {
-	cmd := shellWord(tuios) + " " + statusLineVerb + " " + ClaudeCode + " " + managedMarker + " " + strconv.Itoa(StatusLineVersion)
+func StatusLineCommand(dartuios, then string) string {
+	cmd := shellWord(dartuios) + " " + statusLineVerb + " " + ClaudeCode + " " + managedMarker + " " + strconv.Itoa(StatusLineVersion)
 	if then != "" {
 		cmd += " --then " + quoteWord(then)
 	}
@@ -192,7 +192,7 @@ func quoteWord(s string) string {
 	return "'" + strings.ReplaceAll(s, "'", `'\''`) + "'"
 }
 
-// managedStatusLine reads a statusLine command tuios wrote: the program it
+// managedStatusLine reads a statusLine command dartuios wrote: the program it
 // runs, the version, and the chained command. ok is false for anything else.
 func managedStatusLine(cmd string) (program string, version int, then string, ok bool) {
 	words, err := splitWords(cmd)
@@ -268,14 +268,14 @@ func splitWords(s string) ([]string, error) {
 	return words, nil
 }
 
-// SupportsStatusLine reports whether tuios can install a status line feed for
+// SupportsStatusLine reports whether dartuios can install a status line feed for
 // the harness: only Claude Code has a status line command.
 func (t *Target) SupportsStatusLine() bool { return t.ID == ClaudeCode }
 
 // StatusLineStatus is what holds the harness's status line slot.
 type StatusLineStatus struct {
 	Supported bool `json:"supported"`
-	// Installed says tuios's wrapper holds the slot.
+	// Installed says dartuios's wrapper holds the slot.
 	Installed bool `json:"installed"`
 	// Current says it runs the command status was asked about, at this
 	// build's version.
@@ -283,7 +283,7 @@ type StatusLineStatus struct {
 	Version int  `json:"version,omitempty"`
 	// Then is the person's own command the wrapper chains to.
 	Then string `json:"then,omitempty"`
-	// Foreign says a status line tuios did not write holds the slot, and
+	// Foreign says a status line dartuios did not write holds the slot, and
 	// Command is what it runs, when it is a command.
 	Foreign bool   `json:"foreign,omitempty"`
 	Command string `json:"command,omitempty"`
@@ -298,9 +298,9 @@ type StatusLineOwnedError struct {
 
 func (e *StatusLineOwnedError) Error() string {
 	if e.Command == "" {
-		return e.Path + " has a status line tuios did not write, and it is not a command tuios can chain to, so it is left alone"
+		return e.Path + " has a status line dartuios did not write, and it is not a command dartuios can chain to, so it is left alone"
 	}
-	return e.Path + " has a status line of your own, so it is left alone. To keep it and feed tuios too, install with --then and your command"
+	return e.Path + " has a status line of your own, so it is left alone. To keep it and feed dartuios too, install with --then and your command"
 }
 
 // statusLineSlot reads the statusLine entry of a settings document.
@@ -337,7 +337,7 @@ func readStatusLineSlot(root *orderedObject) statusLineSlot {
 // editStatusLine installs or removes the managed statusLine entry. It keeps
 // every other key of the settings file, and every key of the entry but its
 // command, byte for byte.
-func editStatusLine(path string, have []byte, tuios, then string, install bool) ([]byte, error) {
+func editStatusLine(path string, have []byte, dartuios, then string, install bool) ([]byte, error) {
 	root, err := parseObject(have)
 	if err != nil {
 		return nil, err
@@ -383,7 +383,7 @@ func editStatusLine(path string, have []byte, tuios, then string, install bool) 
 		}
 		return nil, &StatusLineOwnedError{Path: path, Command: cmd}
 	}
-	cmd, _ := marshalPlain(StatusLineCommand(tuios, then))
+	cmd, _ := marshalPlain(StatusLineCommand(dartuios, then))
 	slot.obj.set("command", cmd)
 	root.set("statusLine", slot.obj.compact())
 	return renderIfChanged(root, have)
@@ -400,22 +400,22 @@ func renderIfChanged(root *orderedObject, have []byte) ([]byte, error) {
 	return out, nil
 }
 
-// InstallStatusLine points the harness's status line at the tuios wrapper,
+// InstallStatusLine points the harness's status line at the dartuios wrapper,
 // chaining to then when it is set. It refuses, with a StatusLineOwnedError, a
 // slot holding a status line the person wrote, unless then is that command.
-func (t *Target) InstallStatusLine(env Env, tuios, then string) (Result, error) {
+func (t *Target) InstallStatusLine(env Env, dartuios, then string) (Result, error) {
 	res := Result{Harness: t.ID, Path: t.Path(env)}
 	if !t.SupportsStatusLine() {
-		return res, fmt.Errorf("%s has no status line command tuios can feed from. Only Claude Code does", t.Name)
+		return res, fmt.Errorf("%s has no status line command dartuios can feed from. Only Claude Code does", t.Name)
 	}
 	if st, err := os.Stat(t.ConfigDir(env)); err != nil || !st.IsDir() {
 		return res, fmt.Errorf("%w: %s. Install %s and run it once, then try again", ErrNoConfigDir, t.ConfigDir(env), t.Name)
 	}
-	return t.writeStatusLine(env, &res, tuios, then, true)
+	return t.writeStatusLine(env, &res, dartuios, then, true)
 }
 
 // UninstallStatusLine removes the wrapper, putting back the command it chained
-// to. A status line tuios did not write is left alone.
+// to. A status line dartuios did not write is left alone.
 func (t *Target) UninstallStatusLine(env Env) (Result, error) {
 	res := Result{Harness: t.ID, Path: t.Path(env)}
 	if !t.SupportsStatusLine() {
@@ -424,7 +424,7 @@ func (t *Target) UninstallStatusLine(env Env) (Result, error) {
 	return t.writeStatusLine(env, &res, "", "", false)
 }
 
-func (t *Target) writeStatusLine(env Env, res *Result, tuios, then string, install bool) (Result, error) {
+func (t *Target) writeStatusLine(env Env, res *Result, dartuios, then string, install bool) (Result, error) {
 	path := t.Path(env)
 	have, err := readOptional(path)
 	if err != nil {
@@ -433,7 +433,7 @@ func (t *Target) writeStatusLine(env Env, res *Result, tuios, then string, insta
 	if !install && have == nil {
 		return *res, nil
 	}
-	out, err := editStatusLine(path, have, tuios, then, install)
+	out, err := editStatusLine(path, have, dartuios, then, install)
 	if err != nil {
 		if _, ok := errors.AsType[*StatusLineOwnedError](err); ok {
 			return *res, err
@@ -454,9 +454,9 @@ func (t *Target) writeStatusLine(env Env, res *Result, tuios, then string, insta
 	return *res, nil
 }
 
-// StatusLineState reports what holds the status line slot. tuios is the
+// StatusLineState reports what holds the status line slot. dartuios is the
 // command a current entry runs.
-func (t *Target) StatusLineState(env Env, tuios string) StatusLineStatus {
+func (t *Target) StatusLineState(env Env, dartuios string) StatusLineStatus {
 	if !t.SupportsStatusLine() {
 		return StatusLineStatus{}
 	}
@@ -476,7 +476,7 @@ func (t *Target) StatusLineState(env Env, tuios string) StatusLineStatus {
 	if slot.isCmd {
 		if program, version, then, ok := managedStatusLine(slot.command); ok {
 			st.Installed, st.Version, st.Then = true, version, then
-			st.Current = program == tuios && version == StatusLineVersion
+			st.Current = program == dartuios && version == StatusLineVersion
 			return st
 		}
 		st.Command = slot.command

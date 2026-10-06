@@ -24,7 +24,7 @@ const (
 	paneFloor        = 30
 )
 
-// shippedRail is the rail width tuios reserves at a render width.
+// shippedRail is the rail width dartuios reserves at a render width.
 func shippedRail(cols int) int {
 	switch {
 	case cols < 40:
@@ -38,7 +38,7 @@ func shippedRail(cols int) int {
 	}
 }
 
-// startShipped starts tuios with no config file and the shipped looks, and
+// startShipped starts dartuios with no config file and the shipped looks, and
 // waits for it to be up in window-management mode.
 func startShipped(t *testing.T, cols, rows int, daemon bool) (*tuitest.Terminal, string) {
 	t.Helper()
@@ -48,7 +48,7 @@ func startShipped(t *testing.T, cols, rows int, daemon bool) (*tuitest.Terminal,
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
 		return countWindows(s) >= 0
 	}, bootTimeout); err != nil {
-		t.Fatalf("tuios never drew its dock: %v\n%s", err, term.Snapshot())
+		t.Fatalf("dartuios never drew its dock: %v\n%s", err, term.Snapshot())
 	}
 	return term, base
 }
@@ -75,7 +75,7 @@ func dockOnTop(s tuitest.Screen) bool {
 // width the breakpoints give, the panes never squeezed under the pane floor,
 // and, where the panes are wide enough for one, the title on the top border.
 func TestShippedLooks(t *testing.T) {
-	// tuios refuses to start below 40 columns, so the last size is reached by
+	// dartuios refuses to start below 40 columns, so the last size is reached by
 	// shrinking a running client, which is how a screen that small happens.
 	sizes := []struct{ cols, rows, startCols int }{
 		{120, 40, 0},

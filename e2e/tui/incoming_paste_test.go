@@ -13,7 +13,7 @@ import (
 // A bracketed-paste burst arriving from the OUTER terminal (ESC[200~ ... ESC[201~)
 // is passthrough input, not a clipboard operation. fcitx5 and other IMEs commit
 // text wrapped exactly this way, and the burst a real PTY delivers is byte for
-// byte what tuios receives here. It must reach the focused pane and must NOT
+// byte what dartuios receives here. It must reach the focused pane and must NOT
 // raise the "Pasted N characters" notification that a real clipboard paste does.
 // This is the regression from issue #113.
 //
@@ -25,9 +25,9 @@ func TestIncomingBracketedPasteReachesPaneSilently(t *testing.T) {
 	newWindow(t, term)
 	enterTerminalMode(t, term)
 
-	// The inner /bin/sh does not enable bracketed paste, so tuios forwards the
+	// The inner /bin/sh does not enable bracketed paste, so dartuios forwards the
 	// text raw and the shell echoes it at the prompt. Sending the outer markers
-	// is what a real terminal (or fcitx5) does; tuios's input parser turns them
+	// is what a real terminal (or fcitx5) does; dartuios's input parser turns them
 	// into a single paste event.
 	if err := term.Type("\x1b[200~中文\x1b[201~"); err != nil {
 		t.Fatalf("send bracketed paste burst: %v", err)
@@ -46,8 +46,8 @@ func TestIncomingBracketedPasteReachesPaneSilently(t *testing.T) {
 // osc52Responder mirrors the PTY output stream and, once armed, answers the
 // first OSC 52 clipboard read query with a fixed payload, exactly as a real
 // terminal with a populated clipboard would. This is what lets the harness
-// exercise tuios's OWN clipboard paste end to end: Ctrl+Shift+V emits the query,
-// the terminal answers, and tuios pastes the answer.
+// exercise dartuios's OWN clipboard paste end to end: Ctrl+Shift+V emits the query,
+// the terminal answers, and dartuios pastes the answer.
 type osc52Responder struct {
 	mu      sync.Mutex
 	buf     []byte
@@ -82,7 +82,7 @@ func (r *osc52Responder) arm(term *tuitest.Terminal) {
 	r.armed = true
 }
 
-// TUIOS's own clipboard paste (Ctrl+Shift+V, which reads the clipboard over
+// dartuios's own clipboard paste (Ctrl+Shift+V, which reads the clipboard over
 // OSC 52) is a genuine clipboard operation: it pastes the clipboard content AND
 // notifies. This is the other side of issue #113 and must keep working, so the
 // two paths are proven distinct: incoming terminal paste is silent, clipboard
@@ -99,7 +99,7 @@ func TestClipboardPasteStillPastesAndNotifies(t *testing.T) {
 	resp.arm(term)
 
 	// Ctrl+Shift+V in the Kitty CSI u encoding: 'v' is 118, modifier 6 is
-	// ctrl+shift. tuios reads this as a clipboard-paste request and emits the
+	// ctrl+shift. dartuios reads this as a clipboard-paste request and emits the
 	// OSC 52 query the responder answers.
 	if err := term.SendKeys(tuitest.Key("\x1b[118;6u")); err != nil {
 		t.Fatalf("send ctrl+shift+v: %v", err)

@@ -5,12 +5,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestConfigReadOnlySessionAppliesWithoutWriting pins the contract a served
 // session gets: the change takes effect for that session, and the config file
-// it was loaded from is left exactly as it was. tuios-web serves several
+// it was loaded from is left exactly as it was. dartuios-web serves several
 // clients from one process, each holding the snapshot it loaded when it
 // connected, so a save would write one client's stale view over everyone's.
 func TestConfigReadOnlySessionAppliesWithoutWriting(t *testing.T) {

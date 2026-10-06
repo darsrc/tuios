@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // A session on another machine, attached by this client.
@@ -17,8 +17,8 @@ import (
 // pane, keystroke and state push on screen is build's session drawn by this
 // client with this machine's theme, config and prefix key. Switching back to a
 // session here replaces the connection again. Nothing is nested and nothing
-// runs ssh in a pane; that path still exists as `tuios attach --host X --ssh`
-// for a machine whose tuios cannot serve this client's attach protocol.
+// runs ssh in a pane; that path still exists as `dartuios attach --host X --ssh`
+// for a machine whose dartuios cannot serve this client's attach protocol.
 //
 // The rail keeps showing this machine's sessions while the client is away:
 // they arrive in the same host listing the other machines' sessions do, and
@@ -111,7 +111,7 @@ func (d hostDial) open() (*session.TUIClient, *session.SessionState, error) {
 		if d.host == federation.LocalHostName {
 			return nil, nil, fmt.Errorf("could not attach %q on this machine: %w", name, err)
 		}
-		return nil, nil, fmt.Errorf("tuios on %s could not attach %q: %w", d.host, name, err)
+		return nil, nil, fmt.Errorf("dartuios on %s could not attach %q: %w", d.host, name, err)
 	}
 	client.StartReadLoop()
 	return client, state, nil
@@ -255,7 +255,7 @@ func hostAttachRefusal(host string, err error) string {
 		return hostErr.Message
 	}
 	if shake, ok := errors.AsType[*session.HostHandshakeError](err); ok {
-		return shake.Error() + " Run 'tuios attach --host " + host + " NAME --ssh' to open it over ssh instead."
+		return shake.Error() + " Run 'dartuios attach --host " + host + " NAME --ssh' to open it over ssh instead."
 	}
 	return err.Error()
 }

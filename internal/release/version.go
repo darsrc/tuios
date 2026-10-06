@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// Comparing two tuios versions.
+// Comparing two dartuios versions.
 //
 // Deliberately small. The tags this has to order are v0.7.0 and v0.7.1-rc1, and
 // a full semver implementation would be a dependency and a lot of rules for

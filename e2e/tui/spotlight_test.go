@@ -13,7 +13,7 @@ import (
 
 // The spotlight is a colour transform, so the only place it can honestly be
 // checked is the colour a host terminal was given. These read Cell.Fg off the
-// real screen a real tuios wrote to, at one place inside the beam and one
+// real screen a real dartuios wrote to, at one place inside the beam and one
 // outside it.
 //
 // The two places are the pane's own top and bottom border corners, not text the
@@ -21,17 +21,12 @@ import (
 // a colour of its own, while shell output scrolls and is mostly at the terminal
 // default, which made an earlier version of this read a cell that had moved.
 
-const (
-	spotlightTopCorner    = "╭"
-	spotlightBottomCorner = "╰"
-)
-
 // spotlightConfigFile writes a config.toml into an isolated XDG root and
 // returns the root.
 func spotlightConfigFile(t *testing.T, body string) string {
 	t.Helper()
 	base := t.TempDir()
-	cfgDir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	cfgDir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(cfgDir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -41,13 +36,13 @@ func spotlightConfigFile(t *testing.T, body string) string {
 	return base
 }
 
-// spotlightProbe boots tuios with the given config, prints two markers far
+// spotlightProbe boots dartuios with the given config, prints two markers far
 // apart in the pane, and returns three cells: the lower marker, which is beside
 // the cursor and so under the beam; the upper marker, which is far above it;
 // and the pane's top border.
 //
 // Both markers are text the shell printed with no colour of its own, which is
-// what most of a real screen is. tuios emits no colour for such a cell, so a
+// what most of a real screen is. dartuios emits no colour for such a cell, so a
 // pass that only touched cells already carrying one would dim the syntax
 // highlighting and leave everything else at full brightness.
 //
@@ -70,7 +65,7 @@ type spotlightMarks struct {
 }
 
 // spotlightMarkers is spotlightProbe up to the point of reading a cell: it
-// boots tuios, prints the two markers, and returns the running terminal with
+// boots dartuios, prints the two markers, and returns the running terminal with
 // the places they landed.
 func spotlightMarkers(t *testing.T, body string) (*tuitest.Terminal, spotlightMarks) {
 	t.Helper()
@@ -105,7 +100,7 @@ func findSpotlightMarks(t *testing.T, term *tuitest.Terminal) spotlightMarks {
 		// The pane's top border, which is above both markers and so further from
 		// the cursor than either. The bottom border is beside the cursor and is
 		// inside the light.
-		if strings.Contains(s.Line(row), spotlightTopCorner) && borderRow < 0 {
+		if lineHasPaneTopCorner(s.Line(row)) && borderRow < 0 {
 			borderRow = row
 		}
 	}
@@ -149,7 +144,7 @@ func TestSpotlightDimsAwayFromTheCursor(t *testing.T) {
 }
 
 // TestSpotlightDimsTextLeftAtTheTerminalDefault. Most of what is on a real
-// screen carries no colour of its own, and tuios emits none for it, so this is
+// screen carries no colour of its own, and dartuios emits none for it, so this is
 // the case a fixture full of explicit SGR hides. The first version of the pass
 // followed dim_unfocused's rule, which leaves a colourless cell alone, and so
 // dimmed the syntax highlighting and left everything else at full brightness.
@@ -210,7 +205,7 @@ func TestSpotlightTurnsTheBackgroundDownOnScreen(t *testing.T) {
 // three channels.
 //
 // It resolves an indexed colour itself because this harness runs on
-// TERM=xterm-256color with no COLORTERM, so tuios downsamples the frame and a
+// TERM=xterm-256color with no COLORTERM, so dartuios downsamples the frame and a
 // dimmed colour reaches the screen as a palette entry. Reading the number
 // through the downsample is the point: a 256-colour terminal is what a lot of
 // people are on, and the beam has to work there too.
@@ -348,7 +343,7 @@ func spotlightNoThemeBeam(dim int) string {
 // TestSpotlightDimsAThemelessScreenByTheSetting is the maintainer's report read
 // off a real screen with no theme set.
 //
-// The pane border carries a colour tuios chose and can therefore scale. It has
+// The pane border carries a colour dartuios chose and can therefore scale. It has
 // to reach the host darker with the beam on, and darker again at the higher
 // setting. The second half is the report itself: the two settings used to draw
 // the same frame.
@@ -398,7 +393,7 @@ func TestSpotlightGoesFaintOnWhatItCannotResolve(t *testing.T) {
 }
 
 // TestSpotlightKeepsAThemedScreenOffTheFaintPath is the no-regression half. A
-// theme means tuios owns the sixteen and knows the ground, so every cell is
+// theme means dartuios owns the sixteen and knows the ground, so every cell is
 // scaled and nothing falls back to SGR 2.
 func TestSpotlightKeepsAThemedScreenOffTheFaintPath(t *testing.T) {
 	_, beamFar, beamBorder := spotlightProbe(t, spotlightOn)

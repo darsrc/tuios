@@ -40,8 +40,8 @@ import (
 // An attach to any other session goes through. A pane of one session showing
 // another is the ordinary tmux-like use.
 //
-// tuios attach --force, or AllowNestedEnv, skips the check, for the person who
-// means it. A served client (tuios-web, the SSH server) is not placed by its
+// dartuios attach --force, or AllowNestedEnv, skips the check, for the person who
+// means it. A served client (dartuios-web, the SSH server) is not placed by its
 // process, because the process is the server: its size comes from the remote
 // viewer. It is placed by its probe, which the SSH server writes to the ssh
 // channel. Nothing here can see a relay that redraws the screen instead of
@@ -53,13 +53,13 @@ import (
 const ErrCodeNestedAttach = 11
 
 // AllowNestedEnv, set to 1, lets an attach through from a pane of its own
-// session, as tuios attach --force does.
-const AllowNestedEnv = "TUIOS_ALLOW_NESTED"
+// session, as dartuios attach --force does.
+const AllowNestedEnv = "DARTUIOS_ALLOW_NESTED"
 
 // PaneTTYEnv is set in every local pane to the path of the pane's terminal,
 // so the client's own check can tell the pane's terminal from one it only
 // inherited the pane's variables into.
-const PaneTTYEnv = "TUIOS_PANE_TTY"
+const PaneTTYEnv = "DARTUIOS_PANE_TTY"
 
 // NestedAttachError is the refusal of an attach that would show a session
 // inside itself.
@@ -85,20 +85,20 @@ func (e *NestedAttachError) Error() string {
 func NestedAttachMessage(inside string, unnamed bool) string {
 	if unnamed {
 		return fmt.Sprintf("You are inside session %q. "+
-			"To show another session in this pane, run 'tuios attach NAME'. "+
-			"To start a new session, run 'tuios new NAME'.", inside)
+			"To show another session in this pane, run 'dartuios attach NAME'. "+
+			"To start a new session, run 'dartuios new NAME'.", inside)
 	}
-	return fmt.Sprintf("You are inside session %q. Attaching to %q here would show tuios inside itself. "+
-		"Open a new terminal outside tuios to attach to it. "+
-		"To attach anyway, run 'tuios attach --force %s'.", inside, inside, inside)
+	return fmt.Sprintf("You are inside session %q. Attaching to %q here would show dartuios inside itself. "+
+		"Open a new terminal outside dartuios to attach to it. "+
+		"To attach anyway, run 'dartuios attach --force %s'.", inside, inside, inside)
 }
 
 // nestedChainMessage is the refusal for a chain: the caller is inside session
 // inside, which is shown inside session target.
 func nestedChainMessage(inside, target string) string {
 	return fmt.Sprintf("You are inside session %q, and %q is shown inside session %q. "+
-		"Attaching to %q here would show tuios inside itself. "+
-		"To attach anyway, run 'tuios attach --force %s'.", inside, inside, target, target, target)
+		"Attaching to %q here would show dartuios inside itself. "+
+		"To attach anyway, run 'dartuios attach --force %s'.", inside, inside, target, target, target)
 }
 
 // AsNestedAttach reports whether err is the refusal of an attach that would
@@ -123,7 +123,7 @@ func NestedAllowedByEnv() bool { return os.Getenv(AllowNestedEnv) == "1" }
 // would reach. The daemon repeats the check with the tests that still hold
 // when the environment was cleared.
 func CheckNestedAttach(target string) error {
-	inside := os.Getenv("TUIOS_SESSION")
+	inside := os.Getenv("DARTUIOS_SESSION")
 	sock := os.Getenv(SocketEnv)
 	paneTTY := os.Getenv(PaneTTYEnv)
 	if inside == "" || sock == "" || paneTTY == "" {
@@ -322,7 +322,7 @@ func (d *Daemon) paneSession(pid int) (*Session, string) {
 		}
 		cur = next
 	}
-	for _, name := range []string{"TUIOS_PANE_ID", "TUIOS_WINDOW_ID"} {
+	for _, name := range []string{"DARTUIOS_PANE_ID", "DARTUIOS_WINDOW_ID"} {
 		id, ok := readProcEnvVar(pid, name)
 		if !ok || id == "" {
 			continue
@@ -334,7 +334,7 @@ func (d *Daemon) paneSession(pid int) (*Session, string) {
 		}
 	}
 	if sock, ok := readProcEnvVar(pid, SocketEnv); ok && sock != "" && sock == d.manager.SocketPath() {
-		if name, ok := readProcEnvVar(pid, "TUIOS_SESSION"); ok && name != "" {
+		if name, ok := readProcEnvVar(pid, "DARTUIOS_SESSION"); ok && name != "" {
 			if sess := d.manager.GetSession(name); sess != nil {
 				return sess, paneOriginEnv
 			}

@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // agentMailWidth is the mail overlay's preferred inner width. Wider than the
@@ -31,8 +31,8 @@ const agentMailEmptyRows = 10
 // something appear here. It is shared with the test that pins it.
 var agentMailEmptyLines = []string{
 	"No mail.",
-	"Agents leave messages here with tuios send-agent-message.",
-	"An agent writes to you with: tuios send-agent-message -w human",
+	"Agents leave messages here with dartuios send-agent-message.",
+	"An agent writes to you with: dartuios send-agent-message -w human",
 }
 
 // agentMailLinkGlyph is the mark a row wears when a message in it arrived
@@ -71,7 +71,7 @@ func agentMailWho(th agentMailThread) string {
 func (m *OS) renderAgentMail() (string, overlay.Geometry, []overlayRowHit) {
 	if !m.IsDaemonSession || m.DaemonClient == nil {
 		return m.simpleOverlayPanel("Mail",
-			[]string{"Mail needs the daemon.", "", "Start a daemon session with: tuios new"},
+			[]string{"Mail needs the daemon.", "", "Start a daemon session with: dartuios new"},
 			[]overlay.Hint{{Key: "esc", Label: "close"}})
 	}
 	st := &m.AgentMail

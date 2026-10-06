@@ -6,7 +6,7 @@ label to copy the text. It works like tmux-fingers and the kitty hints kitten.
 ## Use it
 
 1. Press `Ctrl+B F`. The labels show and the rest of the pane goes dim.
-2. Type a label. tuios copies the text and closes hints mode.
+2. Type a label. dartuios copies the text and closes hints mode.
 
 | Keys | What it does |
 |---|---|
@@ -26,18 +26,18 @@ any other `Ctrl` and label. `g` is in the default letters, so `Ctrl+G` opens
 the label `g`. Use `esc` to close. The leader key always closes hints mode,
 also when it is `Ctrl` and a label letter.
 
-Hints mode keeps all input from the pane while the labels show. tuios drops a
+Hints mode keeps all input from the pane while the labels show. dartuios drops a
 paste, and it drops a key release and a mouse move over the pane. A mouse
 click or the mouse wheel closes hints mode first and then works as usual.
 Hints mode also closes when its pane closes, when the focus moves to a
 different pane, and when you change the workspace.
 
 `Shift` and a label types the text. A terminal that reports Caps Lock (the
-kitty keyboard protocol) lets tuios read an upper case letter from Caps Lock
+kitty keyboard protocol) lets dartuios read an upper case letter from Caps Lock
 as a plain label letter. In a terminal that does not report Caps Lock, turn
 Caps Lock off before you type a label.
 
-The copy uses the same path as a mouse copy. tuios writes the clipboard with
+The copy uses the same path as a mouse copy. dartuios writes the clipboard with
 OSC 52, and on a local client also with the system clipboard tool.
 
 You can also open hints mode from the command palette: search for `hints`.
@@ -63,39 +63,39 @@ combining marks. The other built-in patterns use only ASCII.
 
 Hints mode reads only the text on the screen. If you scroll the pane back, it
 reads the lines you scrolled to. A URL that wraps onto the next row is one
-match. tuios joins two rows only when the terminal wrapped the text. A line
+match. dartuios joins two rows only when the terminal wrapped the text. A line
 that fills the row and then ends is not joined to the next line. Both
 terminal backends record the wrap, and the record goes with the text when
 you attach again or change the workspace. On the ghostty backend, the wrap
 from the newest history row into the first screen row is not restored, so
-tuios reads that row as a line that ends. A daemon from before this change
-sends no wrap record, and tuios then reads every restored row as a line
+dartuios reads that row as a line that ends. A daemon from before this change
+sends no wrap record, and dartuios then reads every restored row as a line
 that ends.
 
 ## Open
 
 `Ctrl` and a label opens the text:
 
-- A URL opens in your browser. A remote client (`tuios ssh`, the web client)
+- A URL opens in your browser. A remote client (`dartuios ssh`, the web client)
   copies the URL. It cannot open a browser on your machine.
-- A path or a `file://` URL opens in a new pane with `$EDITOR`. tuios removes
+- A path or a `file://` URL opens in a new pane with `$EDITOR`. dartuios removes
   a `:line:col` at the end. A relative path starts in the pane's directory.
 - Other text is copied.
 
-tuios opens a file only when the file is on this machine. It copies the path
+dartuios opens a file only when the file is on this machine. It copies the path
 and tells you why in these cases:
 
 - The pane runs on another machine.
-- The session runs on another machine (`tuios attach` to a host).
-- The client is remote (`tuios ssh`, the web client).
+- The session runs on another machine (`dartuios attach` to a host).
+- The client is remote (`dartuios ssh`, the web client).
 - The pane runs `ssh`, `autossh`, `mosh`, `et`, `telnet`, `tsh`, `kitten`
   (for example `kitten ssh`), `docker`, `kubectl` or `podman`.
 - The shell reported a folder on another machine.
-- The path is relative and a program runs in front of the shell. tuios knows
+- The path is relative and a program runs in front of the shell. dartuios knows
   only the folder the shell reported, and the program can be somewhere else.
-- The path is relative and tuios does not know the pane's folder.
+- The path is relative and dartuios does not know the pane's folder.
 
-tuios never gives the text to a shell. It gives the text to the opener as one
+dartuios never gives the text to a shell. It gives the text to the opener as one
 argument. Only `http`, `https`, `mailto`, `ftp` and `ftps` URLs open.
 
 ## Settings
@@ -117,17 +117,17 @@ open = true
 dim = 60
 ```
 
-Your own patterns come before the built-in patterns. tuios warns about a
+Your own patterns come before the built-in patterns. dartuios warns about a
 pattern that does not compile when it reads the config, and hints mode skips
 that pattern.
 
 `hints.builtins`, `hints.alphabet`, `hints.open` and `hints.dim` are also on
-the settings page (Selection tab) and work with `tuios set-config`.
+the settings page (Selection tab) and work with `dartuios set-config`.
 `hints.patterns` is a list, so you set it in the file.
 
 If your config already binds `F` in `[keybindings.prefix_mode]` to a
-different action, tuios keeps your binding and gives `hints` no key.
-`tuios keybinds doctor` tells you this. To use a different key, bind the
+different action, dartuios keeps your binding and gives `hints` no key.
+`dartuios keybinds doctor` tells you this. To use a different key, bind the
 `hints` action:
 
 ```toml

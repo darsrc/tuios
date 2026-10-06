@@ -12,7 +12,7 @@ import (
 // footers that shorten rather than wrap, and empty states that say why a list
 // is empty in the middle of it.
 //
-// Every step saves the frame as text, styled text and a PNG drawn by tuios's
+// Every step saves the frame as text, styled text and a PNG drawn by dartuios's
 // own renderer (internal/shot), at 120x40 and 80x24, on a dark terminal and
 // under a light theme, and at 256 and 16 colours at 120x40.
 
@@ -110,7 +110,7 @@ func TestOverlayLayouts(t *testing.T) {
 			if run.theme != "" {
 				writeConfig(t, base, "[appearance]\ntheme = \""+run.theme+"\"\n")
 			}
-			if out, err := tuiosCLI(t, base, "new", "e2e-layout", "--detach"); err != nil {
+			if out, err := dartuiosCLI(t, base, "new", "e2e-layout", "--detach"); err != nil {
 				t.Fatalf("create session: %v\n%s", err, out)
 			}
 			term := startIn(t, base, startOpts{cols: run.cols, rows: run.rows,
@@ -352,7 +352,7 @@ func checkWhichKey(t *testing.T, term *tuitest.Terminal, wide bool) {
 var lightSlots = map[uint8]bool{2: true, 3: true, 6: true, 7: true, 10: true, 11: true, 14: true, 15: true}
 
 // checkSlotInk fails on text in a light slot drawn on a light slot's ground at
-// 16 colours. Neither colour is known to tuios there, so a chip on a light slot
+// 16 colours. Neither colour is known to dartuios there, so a chip on a light slot
 // has to take the dark ink: the PREFIX badge on slot 3 took slot 15, which a
 // light theme paints close to its own ground.
 //
@@ -398,11 +398,11 @@ func checkWhichKeyFramed(t *testing.T, term *tuitest.Terminal) {
 	title := []rune(s.Line(y))
 	x := runeCol(s.Line(y), "prefix")
 	above := []rune(s.Line(y - 1))
-	if x < 2 || x-2 >= len(above) || above[x-2] != '╭' {
+	if x < 2 || x-2 >= len(above) || above[x-2] != '◜' {
 		t.Errorf("the which-key panel has no frame at 16 colours\n%s", term.Snapshot())
 		return
 	}
-	if !strings.ContainsRune(string(above[x-2:]), '╮') {
+	if !strings.ContainsRune(string(above[x-2:]), '◝') {
 		t.Errorf("the which-key frame has no top-right corner\n%s", term.Snapshot())
 	}
 	if title[x-2] != '│' {
@@ -414,7 +414,7 @@ func checkWhichKeyFramed(t *testing.T, term *tuitest.Terminal) {
 // narrow for its footer and holds the footer to one row, shortened in the
 // documented order: modifiers first (ctrl+r is ^r), then the labels from the
 // end. The last tier, whole hints dropped for an ellipsis, needs a body
-// narrower than the keys alone, which no screen tuios draws a panel on
+// narrower than the keys alone, which no screen dartuios draws a panel on
 // reaches for this footer.
 //
 // The switcher's footer is "↵ switch   ctrl+r rename   ctrl+d delete   esc
@@ -446,7 +446,7 @@ func TestHintFootersShortenInTiers(t *testing.T) {
 		t.Run(itoa(c.cols)+"cols", func(t *testing.T) {
 			base := t.TempDir()
 			killDaemon(t, base)
-			if out, err := tuiosCLI(t, base, "new", "e2e-hints", "--detach"); err != nil {
+			if out, err := dartuiosCLI(t, base, "new", "e2e-hints", "--detach"); err != nil {
 				t.Fatalf("create session: %v\n%s", err, out)
 			}
 			term := startIn(t, base, startOpts{cols: c.cols, rows: 24, args: []string{"attach", "e2e-hints"}})

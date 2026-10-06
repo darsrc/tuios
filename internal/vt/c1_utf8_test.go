@@ -73,7 +73,7 @@ func TestATitleSplitAcrossReadsSurvives(t *testing.T) {
 }
 
 // TestTheStreamThatWasReported replays the bytes a real Claude Code session
-// wrote, captured with TUIOS_PTY_LOG while the fault was on screen.
+// wrote, captured with DARTUIOS_PTY_LOG while the fault was on screen.
 //
 // It is the whole reason that switch exists: a rendering fault in a live
 // session cannot be reasoned about from a screenshot, and a capture taken

@@ -9,7 +9,7 @@ import (
 )
 
 // Executor executes tape commands by directly manipulating the app state
-// This bridges the gap between tape commands and tuios functionality
+// This bridges the gap between tape commands and dartuios functionality
 type Executor interface {
 	// ExecuteCommand executes a single tape command
 	ExecuteCommand(cmd *Command) error

@@ -52,7 +52,7 @@ func TestHeadlessServerPanesAreNotDumb(t *testing.T) {
 
 // TestHeadlessGuestTermLeavesATrustedEnvironmentAlone keeps the default out of
 // the way of an environment that already says what it is, which is how
-// tuios-web pins its panes.
+// dartuios-web pins its panes.
 func TestHeadlessGuestTermLeavesATrustedEnvironmentAlone(t *testing.T) {
 	t.Setenv("TERM", "screen-256color")
 	t.Setenv("COLORTERM", "truecolor")
@@ -70,19 +70,19 @@ func TestHeadlessGuestTermLeavesATrustedEnvironmentAlone(t *testing.T) {
 	}
 }
 
-// TestGuestBaseEnvDropsHostTmux covers tuios started from inside tmux: a
+// TestGuestBaseEnvDropsHostTmux covers dartuios started from inside tmux: a
 // standalone pane must not inherit the variables that make it read as a tmux
 // pane.
 func TestGuestBaseEnvDropsHostTmux(t *testing.T) {
 	t.Setenv("TMUX", "/tmp/tmux-1000/default,1234,0")
 	t.Setenv("TMUX_PANE", "%3")
-	t.Setenv("TUIOS_TEST_KEEP", "1")
+	t.Setenv("DARTUIOS_TEST_KEEP", "1")
 	kept := false
 	for _, kv := range guestBaseEnv() {
 		switch {
 		case strings.HasPrefix(kv, "TMUX="), strings.HasPrefix(kv, "TMUX_PANE="):
 			t.Errorf("standalone pane environment carries %q from the enclosing tmux", kv)
-		case kv == "TUIOS_TEST_KEEP=1":
+		case kv == "DARTUIOS_TEST_KEEP=1":
 			kept = true
 		}
 	}

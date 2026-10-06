@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // accentPickerInnerWidth is the compact dialog's preferred inner width. It is
@@ -115,7 +115,7 @@ func accentSwatch(c color.Color, n int) string {
 
 // accentCursorSwatch paints the same n cells with the cursor mark centred in
 // them, in a colour picked to read against that swatch. For a palette index the
-// choice is made against the index's usual shade, which is the closest tuios
+// choice is made against the index's usual shade, which is the closest dartuios
 // can get without asking the terminal.
 func accentCursorSwatch(c color.Color, n int) string {
 	return overlay.Style(accentPaint(c)).Foreground(accentContrast(toRGBA(c))).Bold(true).
@@ -201,10 +201,11 @@ func (m *OS) renderAccentPicker() (string, overlay.Geometry, []overlayRowHit) {
 		}
 	}
 	content, geo := overlay.Dialog{
-		Title: title,
-		Width: p.Inner,
-		Body:  strings.Join(body, "\n"),
-		Hints: accentPickerHints(),
+		Title:   title,
+		Width:   p.Inner,
+		Body:    strings.Join(body, "\n"),
+		Hints:   accentPickerHints(),
+		ShownAt: m.dialogShownAt,
 	}.Render(pal)
 
 	// Everything above recorded itself in body coordinates, which is the frame

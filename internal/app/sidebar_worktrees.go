@@ -4,17 +4,17 @@ import (
 	"strconv"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // The rail's worktree groups.
 //
 // A session whose directory is a linked git worktree is drawn under a row for
 // its repository and labelled by its branch, rather than flat under its own
-// name. Five sessions called tuios-feat-one to tuios-feat-five say nothing
-// about each other in a flat list; under one "tuios" row labelled by branch
+// name. Five sessions called dartuios-feat-one to dartuios-feat-five say nothing
+// about each other in a flat list; under one "dartuios" row labelled by branch
 // they say what they are, and the repository can be folded shut when the work
 // in it is not what the user is looking at.
 //
@@ -122,8 +122,8 @@ func (m *OS) sidebarWorktreeLabel(node sessiontree.Node) (string, bool) {
 
 // sidebarRepoRow renders one repository's group header.
 //
-//	 · tuios
-//	 ● tuios              3
+//	 · dartuios
+//	 ● dartuios              3
 //	^^ ^                  ^ members, right-aligned, while the group is shut
 //	|| the roll-up of the members' states, while the group is shut
 //	|gutter: severity when something inside a shut group wants a human
@@ -153,7 +153,7 @@ func (m *OS) sidebarRepoRow(node sessiontree.Node, cw int, pal overlay.Palette, 
 	}
 	glyph := sidebarQuietDot(rowBg, pal, &m.Settings)
 	if agentStateIndicator(state) != "" {
-		glyph = sidebarGlyph(state, node.DoneSeen, rowBg, pal, &m.Settings)
+		glyph = sidebarGlyph(state, node.DoneSeen, rowBg, pal, &m.Settings, m.filamentFrame)
 	}
 
 	fg := pal.FgDim
@@ -167,6 +167,6 @@ func (m *OS) sidebarRepoRow(node sessiontree.Node, cw int, pal overlay.Palette, 
 	indent := m.sidebarRowIndent()
 	name := sidebarStyle(rowBg, fg).Bold(sidebarAttention(state)).
 		Render(overlay.Truncate(printableTitle(node.Title), sidebarNameAvailIn(cw, rightW, indent)))
-	gutter := sidebarGutter(false, state, rowBg, pal, &m.Settings)
+	gutter := sidebarGutter(false, st.Hover, state, rowBg, pal, &m.Settings)
 	return sidebarComposeGroupRow(indent, gutter, glyph, name, right, cw, rowBg)
 }

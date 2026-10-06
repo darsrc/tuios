@@ -7,14 +7,14 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/federation"
 )
 
 // Editing the [hosts] table in the file, one table at a time.
 //
 // The rest of the config is saved by marshalling the whole UserConfig back out
 // (see save.go), which is right for the settings page: every value it can write
-// is a value it already holds. It is wrong for `tuios hosts add`, because a
+// is a value it already holds. It is wrong for `dartuios hosts add`, because a
 // command that adds one machine must not rewrite the file the user hand-wrote
 // around it. So this works on the bytes: it finds the [hosts.NAME] table, and
 // replaces, appends or deletes exactly those lines. Every comment, every blank
@@ -80,7 +80,7 @@ func RemoveHostFromFile(path, name string) (bool, error) {
 }
 
 // HostsInFile reads the [hosts] table at path. It is the set a command edits,
-// read from the file rather than from a running daemon, so `tuios hosts add`
+// read from the file rather than from a running daemon, so `dartuios hosts add`
 // works with no daemon running.
 func HostsInFile(path string) (map[string]HostConfig, error) {
 	data, err := readConfigForEdit(path)
@@ -287,7 +287,7 @@ func renderHostBlock(name string, h HostConfig) string {
 		b.WriteString("repos_root = " + tomlString(h.ReposRoot) + "\n")
 	}
 	// The policy for the machine linking in is carried through a rewrite of
-	// the address, so `tuios hosts add` on a known name does not drop it.
+	// the address, so `dartuios hosts add` on a known name does not drop it.
 	if h.Allow != nil {
 		parts := make([]string, 0, len(h.Allow))
 		for _, c := range h.Allow {

@@ -13,12 +13,12 @@ visible consumer, idle CPU under ~0.5%.
   zero.
 - `go test ./internal/app/ -run TestIdleTickSkipsScans`: asserts idle ticks
   take the skip path (no scan work), read from the `tickStats` counter.
-- `TUIOS_PERF=1 go test ./internal/{terminal,input,app}/ -run TestLatency -v`:
+- `DARTUIOS_PERF=1 go test ./internal/{terminal,input,app}/ -run TestLatency -v`:
   input latency cut into hops, reported p50/p95/p99/max. See "2026-08 input
   latency" below for what each one includes and excludes.
-- `TUIOS_E2E=1 go test ./e2e/tui/ -run TestIdleCostStaysLow`: boots the real
+- `DARTUIOS_E2E=1 go test ./e2e/tui/ -run TestIdleCostStaysLow`: boots the real
   binary, opens three idle shells, idles 10s, and asserts the app writes
-  ~nothing to the wire (render count bounded). `TUIOS_STATS_FILE` makes the
+  ~nothing to the wire (render count bounded). `DARTUIOS_STATS_FILE` makes the
   process dump its tick counters on clean exit.
 - `scripts/binary-size.sh`: builds the stripped release binary for
   linux/amd64 and darwin/arm64 and fails over the budget. See "Binary size
@@ -229,7 +229,7 @@ a benchmark that omits the daemon is useful only if it admits to doing so.
 | where | what it measures | includes | excludes |
 |---|---|---|---|
 | `internal/terminal` `TestLatencyCoalescer` | pane output to render signal | the render coalescer, alone | daemon, guest, compositor, host |
-| `internal/input` `TestLatencyLocal` | a key tuios answers itself, to the frame | key routing, the action, `composeFrame` | daemon, guest, host terminal |
+| `internal/input` `TestLatencyLocal` | a key dartuios answers itself, to the frame | key routing, the action, `composeFrame` | daemon, guest, host terminal |
 | `internal/app` `TestLatencyEcho` | keystroke to the composed frame carrying its echo | socket, daemon, PTY, guest, ring, broadcast, client emulator, coalescer, compose | host terminal, bubbletea stdin decode, the diff written to the tty |
 | `internal/app` `TestLatencyDaemonRoundTrip` | keystroke to the client's own emulator | everything above except compose | the compositor |
 | `internal/app` `TestLatencyFrameEmit` | pane output to the render signal, on the rig | coalescer with a real guest in front of it | compose |
@@ -240,10 +240,10 @@ All in-process measurements run at 207x55 with n=200 (n=500 for the local ones,
 n=300 for the coalescer), so a quoted p99 is a keystroke that really happened.
 
 ```
-go test ./internal/terminal/ -run TestLatencyCoalescer -v      # needs TUIOS_PERF=1
-go test ./internal/input/    -run TestLatencyLocal      -v     # needs TUIOS_PERF=1
-go test ./internal/app/      -run TestLatency           -v     # needs TUIOS_PERF=1
-cd e2e/tui && TUIOS_E2E=1 TUIOS_PERF=1 go test -count=1 -v -run TestPerf ./...
+go test ./internal/terminal/ -run TestLatencyCoalescer -v      # needs DARTUIOS_PERF=1
+go test ./internal/input/    -run TestLatencyLocal      -v     # needs DARTUIOS_PERF=1
+go test ./internal/app/      -run TestLatency           -v     # needs DARTUIOS_PERF=1
+cd e2e/tui && DARTUIOS_E2E=1 DARTUIOS_PERF=1 go test -count=1 -v -run TestPerf ./...
 ```
 
 `internal/perf` holds the shared `Dist`, so the e2e numbers and the in-process
@@ -374,7 +374,7 @@ predicate bolted onto a latency fix.
 207x55 attributes 37.8% cumulative to `ansi.stringWidth` and its grapheme
 cluster iteration, 26.0% to `ultraviolet.StyledString.Draw`, and 34.7% to
 `renderWindowBox` as the caller. It is upstream text shaping reached through the
-ordinary path, not a tuios routine sitting on the critical section. There is no
+ordinary path, not a dartuios routine sitting on the critical section. There is no
 single change that makes a frame meaningfully cheaper, which is why the lever is
 composing fewer frames rather than faster ones. Note also that
 `BenchmarkCompositorGetCanvas` at nine windows costs 1.00 ms even when only one
@@ -518,7 +518,7 @@ no link, so it now pays the row scan and saves a compose it never counted.
 
 **The render ticker runs at the configured max_fps.** bubbletea flushes frames
 from a standing ticker for the life of the program, pending frame or not, and
-tuios set its rate to the ceiling `max_fps` is clamped to, which bubbletea caps
+dartuios set its rate to the ceiling `max_fps` is clamped to, which bubbletea caps
 at 120. Real binary, one idle shell at 207x55, 10 s, `/proc` counters:
 
 | | voluntary ctx switches / s | CPU |
@@ -528,7 +528,7 @@ at 120. Real binary, one idle shell at 207x55, 10 s, `/proc` counters:
 | after (ticker at the default 60) | **364 / 376 / 358** | **0.6 / 0.7 / 0.7%** |
 
 Attributed by building the binary at 120, 60 and 10: 590, 369 and 118 switches
-a second, 1.0%, 0.6% and 0.2%. The residual at 10 is tuios's own 10 Hz idle
+a second, 1.0%, 0.6% and 0.2%. The residual at 10 is dartuios's own 10 Hz idle
 tick plus the runtime. **This is the one change in the pass that alters a
 documented behaviour**: raising `max_fps` above the value the client started
 with now takes effect at the next start (the settings row says so). It is its
@@ -1020,7 +1020,7 @@ times the number of agent panes is what the manifest engine spends. The engine
 gained nested groups, more regions and many more bundled rules, and was measured
 with `BenchmarkClassify` (`internal/harness/classify_bench_test.go`) on a Claude
 Code working turn and idle prompt, the bundled manifest before and after,
-through the new engine (`TUIOS_BENCH_MANIFESTS` points the benchmark at an old
+through the new engine (`DARTUIOS_BENCH_MANIFESTS` points the benchmark at an old
 manifest). Five runs of 20000 iterations each, medians, Apple M3 Pro:
 
 | Screen | Old claude-code manifest | New claude-code manifest |
@@ -1113,7 +1113,7 @@ On a truecolor terminal that is two more copies of a 40 to 50 KB frame. On a
 256-colour one it downsampled the frame that the bubbletea renderer downsamples
 again per cell, from the same `colorprofile.Detect` on the same stdout. On a
 headless server it stripped every colour, which is why `internal/server` and
-`tuios-web` pinned `lipgloss.Writer.Profile` to truecolor. Both pins are gone:
+`dartuios-web` pinned `lipgloss.Writer.Profile` to truecolor. Both pins are gone:
 the only other `lipgloss.Writer` users are `lipgloss.Sprintf` calls over plain
 text, which no profile changes. `TestComposeFrameKeepsPaneColour` held a
 composed frame to its pane's colour; it was later removed, and e2e
@@ -1439,7 +1439,7 @@ scrollback building the cells it hands back.
   stat instead: 9.9 us against 165 us for the write (`-cpu 1`, 6 rounds). That
   is about 5 us of CPU a second per session, and idle daemon CPU sits at the
   resolution floor either way. It would also change what users see: the
-  "saved" column of `tuios ls` and the `LastActive` of a saved session come from
+  "saved" column of `dartuios ls` and the `LastActive` of a saved session come from
   the file's mtime, and an idle live session would show "saved 3h ago" as if
   saving had stopped. Not worth the visible change.
 
@@ -1770,7 +1770,7 @@ was the in-repo benchmark on the default config, since removed.
 | `ValidateConfigDefault` allocs/op | 5,156 | 4,274 | -17.1% |
 
 **Every CLI process does less at init** (`internal/scrollback`, `debug.go`,
-`cmd/tuios/diagnostics.go`). The scrollback browser's five regexps compiled at
+`cmd/dartuios/diagnostics.go`). The scrollback browser's five regexps compiled at
 package init in every process, and only the browser uses them; they compile on
 first use now. The daemon log buffer allocated its 1000 entries, about 40 KB, at
 init, and a one-shot command never logs to it; they are allocated by the first
@@ -1778,7 +1778,7 @@ init, and a one-shot command never logs to it; they are allocated by the first
 dials first now and diagnoses only on failure, through `explainDialError`,
 which runs the same `DiagnoseDaemon`, so the message and exit status are
 unchanged and the daemon accepts one connection per verb command instead of
-two. Measured with `GODEBUG=inittrace=1` on `tuios --version`, six alternating
+two. Measured with `GODEBUG=inittrace=1` on `dartuios --version`, six alternating
 rounds of 20 runs:
 
 | init, per process | before | after | |
@@ -1801,7 +1801,7 @@ five patterns, which would otherwise fail only on first use).
 
 ### Measured and deliberately not changed
 
-- **The spawn poll** (`startDaemonBackground`, 50 ms). A cold `tuios new
+- **The spawn poll** (`startDaemonBackground`, 50 ms). A cold `dartuios new
   --detach` spends a constant 52.5 ms waiting on it. A 2 ms poll exposed an
   attach-time size race (`TestAttachStartsTheDaemonAndBringsSessionsBack`
   failed 3 of 50 runs), so it waits for that race to be fixed on its own.
@@ -2124,7 +2124,7 @@ of the bytes), which is upstream.
 ### Binary size budget
 
 `.github/workflows/binary-size.yml` runs `scripts/binary-size.sh` on every pull
-request and push to main. It builds tuios the way the release does
+request and push to main. It builds dartuios the way the release does
 (`CGO_ENABLED=0`, `-trimpath`, `-ldflags "-s -w"`) for linux/amd64 and
 darwin/arm64 with the Go version go.mod names, prints the size, and fails when
 a binary is over its budget.

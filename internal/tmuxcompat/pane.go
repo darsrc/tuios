@@ -15,8 +15,8 @@ import (
 // tmux's respawn-pane replaces a pane's process and keeps the pane: its id,
 // its place in the layout. Claude Code relies on it: it opens each teammate's
 // pane running `cat` as a placeholder and then respawns it with the teammate's
-// command. A tuios window's process cannot be swapped from outside, so every
-// pane the shim opens runs `tuios tmux-pane`, a small holder that runs the
+// command. A dartuios window's process cannot be swapped from outside, so every
+// pane the shim opens runs `dartuios tmux-pane`, a small holder that runs the
 // pane's command as its child and, on a respawn request, ends that child and
 // starts the new command in its place. The command runs in a process group of
 // its own that holds the terminal's foreground, as a shell's job does, so
@@ -25,11 +25,11 @@ import (
 // The request arrives on a unix socket in the shim's runtime directory, which
 // is private to the user (0700). The holder takes a request only from there,
 // so only the user's own processes can respawn a pane: the same processes that
-// could type into it with the tuios CLI.
+// could type into it with the dartuios CLI.
 
 // RespawnRequest is what respawn-pane sends a pane's holder.
 type RespawnRequest struct {
-	// Window is the tuios window the request is for. The holder refuses a
+	// Window is the dartuios window the request is for. The holder refuses a
 	// request for any other, so two windows whose numbers collide cannot
 	// respawn each other.
 	Window string `json:"window"`
@@ -82,7 +82,7 @@ func RequestRespawn(dir, windowID string, req RespawnRequest) error {
 type PaneOptions struct {
 	// Dir is the shim's runtime directory.
 	Dir string
-	// Window is the tuios window the holder runs in (TUIOS_PANE_ID).
+	// Window is the dartuios window the holder runs in (DARTUIOS_PANE_ID).
 	Window string
 	// Command is the pane's command, read as tmux reads it.
 	Command []string

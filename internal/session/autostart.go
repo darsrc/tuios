@@ -14,7 +14,7 @@ var (
 	inProcessDaemonErr  error
 )
 
-// EnsureDaemonRunningWith ensures the TUIOS daemon is running. If it is not,
+// EnsureDaemonRunningWith ensures the dartuios daemon is running. If it is not,
 // it starts the daemon in-process in a background goroutine, and returns nil
 // once the daemon is ready or an error if it fails to start.
 //
@@ -25,10 +25,10 @@ var (
 // The caller passes the user's [daemon] settings. This package deliberately does not read the
 // config file (it would invert the layering, and the daemon outlives every
 // process that could own one), so the settings arrive from whoever starts it:
-// `tuios daemon` fills them in runDaemon, and a server does it here.
+// `dartuios daemon` fills them in runDaemon, and a server does it here.
 //
-// Without this, a daemon autostarted by tuios-web ran with the built-in
-// defaults while the same daemon autostarted by `tuios attach` honoured the
+// Without this, a daemon autostarted by dartuios-web ran with the built-in
+// defaults while the same daemon autostarted by `dartuios attach` honoured the
 // file, so whether agent detection was on came down to which command happened
 // to win the start race.
 //

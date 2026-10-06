@@ -76,13 +76,13 @@
     "skip": "subagent"
   },
   {
-    "name": "an event tuios does not register",
+    "name": "an event dartuios does not register",
     "payload": {"hook_event_name": "PreCompact", "session_id": "cp-1", "trigger": "auto"},
     "skip": "event not mapped"
   },
   {
-    "name": "foreign harness named by TUIOS_AGENT",
-    "env": {"TUIOS_AGENT": "aider"},
+    "name": "foreign harness named by DARTUIOS_AGENT",
+    "env": {"DARTUIOS_AGENT": "aider"},
     "payload": {"hook_event_name": "SessionStart", "session_id": "cp-1"},
     "skip": "foreign harness"
   }

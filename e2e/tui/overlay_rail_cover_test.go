@@ -32,7 +32,7 @@ func TestWhichKeySitsBesideTheRail(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	useShippedLooks(base)
-	if out, err := tuiosCLI(t, base, "new", "e2e-wk", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-wk", "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-wk"}, shippedLooks: true})
@@ -108,7 +108,7 @@ func TestATallPanelStaysUnderTheDock(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	useShippedLooks(base)
-	if out, err := tuiosCLI(t, base, "new", "e2e-tall", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-tall", "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-tall"}, shippedLooks: true})
@@ -170,7 +170,7 @@ func TestAPanelWiderThanThePanesCoversTheWholeRail(t *testing.T) {
 	killDaemon(t, base)
 	useShippedLooks(base)
 	for _, name := range []string{"e2e-home", "e2e-fan"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create session %s: %v\n%s", name, err, out)
 		}
 	}
@@ -183,7 +183,7 @@ func TestAPanelWiderThanThePanesCoversTheWholeRail(t *testing.T) {
 	windowManagementMode(t, term)
 	railX := railHeaderColumn(term.Screen())
 
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-fan", "errored",
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-fan", "errored",
 		"--harness", "claude-code", "-m", "build failed on main"); err != nil {
 		t.Fatalf("set-agent-state: %v\n%s", err, out)
 	}

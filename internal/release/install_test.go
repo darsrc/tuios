@@ -23,7 +23,7 @@ import (
 // bytes.
 func TestStageAndCommitReplaceAFileThatIsOpen(t *testing.T) {
 	dir := t.TempDir()
-	target := filepath.Join(dir, "tuios")
+	target := filepath.Join(dir, "dartuios")
 	if err := os.WriteFile(target, []byte("old build"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -70,7 +70,7 @@ func TestStageKeepsTheModeTheBinaryHad(t *testing.T) {
 		t.Skip("modes are not comparable on windows")
 	}
 	dir := t.TempDir()
-	target := filepath.Join(dir, "tuios")
+	target := filepath.Join(dir, "dartuios")
 	if err := os.WriteFile(target, []byte("old"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -100,7 +100,7 @@ func TestStageKeepsTheModeTheBinaryHad(t *testing.T) {
 // Negative control: make Discard a no-op and this fails.
 func TestDiscardLeavesNothingBehind(t *testing.T) {
 	dir := t.TempDir()
-	target := filepath.Join(dir, "tuios")
+	target := filepath.Join(dir, "dartuios")
 	if err := os.WriteFile(target, []byte("old"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -114,12 +114,12 @@ func TestDiscardLeavesNothingBehind(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(entries) != 1 || entries[0].Name() != "tuios" {
+	if len(entries) != 1 || entries[0].Name() != "dartuios" {
 		var names []string
 		for _, e := range entries {
 			names = append(names, e.Name())
 		}
-		t.Errorf("the directory holds %v after a discard, want only tuios", names)
+		t.Errorf("the directory holds %v after a discard, want only dartuios", names)
 	}
 }
 
@@ -130,7 +130,7 @@ func TestDiscardLeavesNothingBehind(t *testing.T) {
 // this deletes the freshly installed binary.
 func TestDiscardAfterCommitIsSafe(t *testing.T) {
 	dir := t.TempDir()
-	target := filepath.Join(dir, "tuios")
+	target := filepath.Join(dir, "dartuios")
 	if err := os.WriteFile(target, []byte("old"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -157,7 +157,7 @@ func TestWritableAnswersForTheDirectoryNotTheFile(t *testing.T) {
 		t.Skip("root can write to a mode 0500 directory")
 	}
 	dir := t.TempDir()
-	target := filepath.Join(dir, "tuios")
+	target := filepath.Join(dir, "dartuios")
 	if err := os.WriteFile(target, []byte("old"), 0o400); err != nil {
 		t.Fatal(err)
 	}

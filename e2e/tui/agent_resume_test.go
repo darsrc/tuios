@@ -26,7 +26,7 @@ func TestRestartOffersToResumeTheConversation(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "tuios", "harnesses")
+	dir := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "dartuios", "harnesses")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -44,27 +44,27 @@ argv = ["echo", "resumed-{session_id}"]
 		t.Fatal(err)
 	}
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-resume", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-resume", "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
 	// The agent is live when the state is saved, as a hook reports it: a
 	// restore offers a resume only for an agent that was running then.
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-resume", "working", "--harness", "echoer", "--agent-session-id", "5f1c-9a3d"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-resume", "working", "--harness", "echoer", "--agent-session-id", "5f1c-9a3d"); err != nil {
 		t.Fatalf("record the conversation: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "kill-server"); err != nil {
+	if out, err := dartuiosCLI(t, base, "kill-server"); err != nil {
 		t.Fatalf("kill-server: %v\n%s", err, out)
 	}
 
 	// Any command that starts a daemon restores on start.
-	if out, err := tuiosCLI(t, base, "new", "e2e-other", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-other", "--detach"); err != nil {
 		t.Fatalf("start a fresh daemon: %v\n%s", err, out)
 	}
 	waitForSessionInfo(t, base, "e2e-resume")
 
 	deadline := time.Now().Add(uiTimeout)
 	for {
-		out, _ := tuiosCLI(t, base, "list-attention")
+		out, _ := dartuiosCLI(t, base, "list-attention")
 		if strings.Contains(out, "Resume") && strings.Contains(out, "echo resumed-5f1c-9a3d") {
 			break
 		}
@@ -73,7 +73,7 @@ argv = ["echo", "resumed-{session_id}"]
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
-	if out, err := tuiosCLI(t, base, "resume-agent", "-s", "e2e-resume", "--dry-run"); err != nil || strings.TrimSpace(out) != "echo resumed-5f1c-9a3d" {
+	if out, err := dartuiosCLI(t, base, "resume-agent", "-s", "e2e-resume", "--dry-run"); err != nil || strings.TrimSpace(out) != "echo resumed-5f1c-9a3d" {
 		t.Fatalf("resume-agent --dry-run: %v\n%s", err, out)
 	}
 
@@ -110,7 +110,7 @@ argv = ["echo", "resumed-{session_id}"]
 	// The echo ran: its output is a line of its own, apart from the command.
 	deadline = time.Now().Add(uiTimeout)
 	for {
-		out, _ := tuiosCLI(t, base, "capture-pane", "-s", "e2e-resume")
+		out, _ := dartuiosCLI(t, base, "capture-pane", "-s", "e2e-resume")
 		ran := false
 		for _, line := range strings.Split(out, "\n") {
 			ran = ran || strings.TrimSpace(line) == "resumed-5f1c-9a3d"
@@ -127,7 +127,7 @@ argv = ["echo", "resumed-{session_id}"]
 
 	deadline = time.Now().Add(uiTimeout)
 	for {
-		out, _ := tuiosCLI(t, base, "list-attention")
+		out, _ := dartuiosCLI(t, base, "list-attention")
 		if strings.Contains(out, "Nothing is waiting for you.") {
 			break
 		}

@@ -14,7 +14,7 @@ import (
 // alone, from outside every pane, and then runs in that pane what a
 // prompt-injected agent would: type into its own session. The daemon places
 // the caller in the pane by its pid, refuses with forbidden and names the
-// grant it needed, and the pane's own tuios pane-grants says what it holds.
+// grant it needed, and the pane's own dartuios pane-grants says what it holds.
 // The same call from outside every pane, the test process, is still served.
 //
 // Negative control: with checkGrants in dispatchVerbLine cut, the pane's
@@ -22,7 +22,7 @@ import (
 func TestAPaneIsHeldToItsGrants(t *testing.T) {
 	term, base := attachClientBase(t)
 
-	out, err := tuiosCLI(t, base, "list-windows", "-s", "e2e-ctrlp", "--json")
+	out, err := dartuiosCLI(t, base, "list-windows", "-s", "e2e-ctrlp", "--json")
 	if err != nil {
 		t.Fatalf("list-windows failed: %v\n%s", err, out)
 	}
@@ -40,12 +40,12 @@ func TestAPaneIsHeldToItsGrants(t *testing.T) {
 		t.Fatalf("a pane on the default already lists grants: %v", listing.Windows[0].Grants)
 	}
 
-	if out, err := tuiosCLI(t, base, "set-pane-grants", "-s", "e2e-ctrlp", "-w", pane, "--grants", "read"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-pane-grants", "-s", "e2e-ctrlp", "-w", pane, "--grants", "read"); err != nil {
 		t.Fatalf("set-pane-grants from outside every pane failed: %v\n%s", err, out)
 	}
 
-	line := tuiosBin + " send-text -s e2e-ctrlp 'echo typed'; echo GRANT_EXIT=$?; " + tuiosBin + " pane-grants\n"
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
+	line := dartuiosBin + " send-text -s e2e-ctrlp 'echo typed'; echo GRANT_EXIT=$?; " + dartuiosBin + " pane-grants\n"
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
 		t.Fatalf("send-text from outside a pane failed: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -57,7 +57,7 @@ func TestAPaneIsHeldToItsGrants(t *testing.T) {
 	}
 	saveFrame(t, term, "pane-grants-refused")
 
-	out, err = tuiosCLI(t, base, "list-windows", "-s", "e2e-ctrlp", "--json")
+	out, err = dartuiosCLI(t, base, "list-windows", "-s", "e2e-ctrlp", "--json")
 	if err != nil {
 		t.Fatalf("list-windows failed: %v\n%s", err, out)
 	}
@@ -85,7 +85,7 @@ func TestStrictModeHoldsEveryPane(t *testing.T) {
 	if err := os.WriteFile(cfg, []byte("[agents.permissions]\nmode = \"strict\"\n"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if out, err := tuiosCLI(t, base, "new", "e2e-strict", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-strict", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-strict"}})
@@ -93,8 +93,8 @@ func TestStrictModeHoldsEveryPane(t *testing.T) {
 		t.Fatalf("client never attached: %v\n%s", err, term.Snapshot())
 	}
 
-	line := tuiosBin + " new-window -s e2e-strict sneaky; echo STRICT_EXIT=$?; " + tuiosBin + " pane-grants\n"
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-strict", line); err != nil {
+	line := dartuiosBin + " new-window -s e2e-strict sneaky; echo STRICT_EXIT=$?; " + dartuiosBin + " pane-grants\n"
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-strict", line); err != nil {
 		t.Fatalf("send-text from outside a pane failed: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -106,7 +106,7 @@ func TestStrictModeHoldsEveryPane(t *testing.T) {
 	}
 	saveFrame(t, term, "pane-grants-strict")
 
-	if out, err := tuiosCLI(t, base, "new-window", "-s", "e2e-strict", "fromoutside", "--no-focus"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "-s", "e2e-strict", "fromoutside", "--no-focus"); err != nil {
 		t.Fatalf("new-window from outside every pane failed under strict: %v\n%s", err, out)
 	}
 	alive(t, term, "after a strict pane was refused")
@@ -124,10 +124,10 @@ func TestStrictModeHoldsEveryPane(t *testing.T) {
 func TestAPaneCannotTypeIntoASiblingThatHoldsMore(t *testing.T) {
 	term, base := attachClientBase(t)
 
-	if out, err := tuiosCLI(t, base, "new-window", "-s", "e2e-ctrlp", "sibling", "--no-focus"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new-window", "-s", "e2e-ctrlp", "sibling", "--no-focus"); err != nil {
 		t.Fatalf("new-window failed: %v\n%s", err, out)
 	}
-	out, err := tuiosCLI(t, base, "list-windows", "-s", "e2e-ctrlp", "--json")
+	out, err := dartuiosCLI(t, base, "list-windows", "-s", "e2e-ctrlp", "--json")
 	if err != nil {
 		t.Fatalf("list-windows failed: %v\n%s", err, out)
 	}
@@ -152,11 +152,11 @@ func TestAPaneCannotTypeIntoASiblingThatHoldsMore(t *testing.T) {
 		t.Fatalf("could not tell the focused pane from its sibling: %s", out)
 	}
 
-	if out, err := tuiosCLI(t, base, "set-pane-grants", "-s", "e2e-ctrlp", "-w", pane, "--grants", "read,write"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-pane-grants", "-s", "e2e-ctrlp", "-w", pane, "--grants", "read,write"); err != nil {
 		t.Fatalf("set-pane-grants failed: %v\n%s", err, out)
 	}
-	line := tuiosBin + " send-text -s e2e-ctrlp -w " + sibling + " 'echo widened'; echo SIB_EXIT=$?\n"
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", "-w", pane, line); err != nil {
+	line := dartuiosBin + " send-text -s e2e-ctrlp -w " + sibling + " 'echo widened'; echo SIB_EXIT=$?\n"
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", "-w", pane, line); err != nil {
 		t.Fatalf("send-text from outside a pane failed: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool { return strings.Contains(s.Text(), "SIB_EXIT=1") }, uiTimeout); err != nil {
@@ -164,11 +164,11 @@ func TestAPaneCannotTypeIntoASiblingThatHoldsMore(t *testing.T) {
 	}
 	saveFrame(t, term, "pane-grants-sibling-refused")
 
-	if out, err := tuiosCLI(t, base, "set-pane-grants", "-s", "e2e-ctrlp", "-w", sibling, "--grants", "read"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-pane-grants", "-s", "e2e-ctrlp", "-w", sibling, "--grants", "read"); err != nil {
 		t.Fatalf("set-pane-grants on the sibling failed: %v\n%s", err, out)
 	}
-	line = tuiosBin + " send-text -s e2e-ctrlp -w " + sibling + " 'echo fine'; echo SIB_EXIT=$?\n"
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", "-w", pane, line); err != nil {
+	line = dartuiosBin + " send-text -s e2e-ctrlp -w " + sibling + " 'echo fine'; echo SIB_EXIT=$?\n"
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", "-w", pane, line); err != nil {
 		t.Fatalf("send-text from outside a pane failed: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool { return strings.Contains(s.Text(), "SIB_EXIT=0") }, uiTimeout); err != nil {
@@ -177,7 +177,7 @@ func TestAPaneCannotTypeIntoASiblingThatHoldsMore(t *testing.T) {
 	alive(t, term, "after a pane was held to its sibling's grants")
 }
 
-// TestAReadPaneRunsGetWindow: tuios get-window is a read. Under strict with
+// TestAReadPaneRunsGetWindow: dartuios get-window is a read. Under strict with
 // the read grant alone, the pane's own get-window is served.
 //
 // Negative control: with get-window sent as the client protocol's GetWindow,
@@ -192,7 +192,7 @@ func TestAReadPaneRunsGetWindow(t *testing.T) {
 	if err := os.WriteFile(cfg, []byte("[agents.permissions]\nmode = \"strict\"\ngrants = [\"read\"]\n"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if out, err := tuiosCLI(t, base, "new", "e2e-getwin", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-getwin", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-getwin"}})
@@ -200,8 +200,8 @@ func TestAReadPaneRunsGetWindow(t *testing.T) {
 		t.Fatalf("client never attached: %v\n%s", err, term.Snapshot())
 	}
 
-	line := tuiosBin + " get-window --json >/dev/null; echo GW_EXIT=$?\n"
-	if out, err := tuiosCLI(t, base, "send-text", "-s", "e2e-getwin", line); err != nil {
+	line := dartuiosBin + " get-window --json >/dev/null; echo GW_EXIT=$?\n"
+	if out, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-getwin", line); err != nil {
 		t.Fatalf("send-text from outside a pane failed: %v\n%s", err, out)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool { return strings.Contains(s.Text(), "GW_EXIT=0") }, uiTimeout); err != nil {

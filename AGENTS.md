@@ -1,23 +1,23 @@
-# AGENTS.md: Agent Guide for TUIOS
+# AGENTS.md: Agent Guide for dartuios
 
-This file is for an agent **working on the TUIOS codebase**: how it is laid out,
+This file is for an agent **working on the dartuios codebase**: how it is laid out,
 how to build it, and the conventions to follow when changing it.
 
-An agent **running inside a TUIOS pane** wants the other document. Run
-`tuios --skill` for the core that drives a running session: addressing panes,
+An agent **running inside a dartuios pane** wants the other document. Run
+`dartuios --skill` for the core that drives a running session: addressing panes,
 reading and writing them, running work and waiting on it, reporting agent
-state, and talking to other agents safely. `tuios --skill TOPIC` prints the
+state, and talking to other agents safely. `dartuios --skill TOPIC` prints the
 rest (panes and state in depth, fleets, the Inbox, mail, hosts, events, MCP,
-the tmux shim, grants, config, errors, recipes). The source is [skills/tuios/SKILL.md](skills/tuios/SKILL.md)
-and the other files in `skills/tuios/`, embedded in the binary so the printed
-copy always matches the build. `cmd/tuios` tests resolve every command the
+the tmux shim, grants, config, errors, recipes). The source is [skills/dartuios/SKILL.md](skills/dartuios/SKILL.md)
+and the other files in `skills/dartuios/`, embedded in the binary so the printed
+copy always matches the build. `cmd/dartuios` tests resolve every command the
 skill shows against the command tree.
 
 ## Project Overview
 
-TUIOS (Terminal UI Operating System) is a terminal-based window manager built in Go using the Charm stack (Bubble Tea v2, Lipgloss v2). It provides vim-like modal interface, workspace support, mouse interaction, and SSH server mode.
+dartuios (Terminal UI Operating System) is a terminal-based window manager built in Go using the Charm stack (Bubble Tea v2, Lipgloss v2). It provides vim-like modal interface, workspace support, mouse interaction, and SSH server mode.
 
-**Note:** The web terminal functionality is provided by the separate `tuios-web` binary for security isolation. See `cmd/tuios-web/` and [docs/WEB.md](docs/WEB.md) for details.
+**Note:** The web terminal functionality is provided by the separate `dartuios-web` binary for security isolation. See `cmd/dartuios-web/` and [docs/WEB.md](docs/WEB.md) for details.
 
 ## Essential Commands
 
@@ -25,16 +25,16 @@ TUIOS (Terminal UI Operating System) is a terminal-based window manager built in
 
 ```bash
 # Build from source
-go build -o tuios ./cmd/tuios
-go build -o tuios-web ./cmd/tuios-web
+go build -o dartuios ./cmd/dartuios
+go build -o dartuios-web ./cmd/dartuios-web
 
 # Run directly
-go run ./cmd/tuios
-go run ./cmd/tuios-web
+go run ./cmd/dartuios
+go run ./cmd/dartuios-web
 
 # Run with debug logging
-go run ./cmd/tuios --debug
-go run ./cmd/tuios-web --debug
+go run ./cmd/dartuios --debug
+go run ./cmd/dartuios-web --debug
 
 # Run tests
 go test ./...
@@ -61,21 +61,21 @@ go test -race ./...
 PKG_CONFIG_PATH="$PWD/.ghostty-vt/native/pkgconfig" \
   go test -tags ghostty -count=1 -short \
     ./internal/vt/ ./internal/session/ ./internal/terminal/ \
-    ./internal/app/ ./internal/input/ ./cmd/tuios/
+    ./internal/app/ ./internal/input/ ./cmd/dartuios/
 ```
 
-### Browser build (Learn tuios)
+### Browser build (Learn dartuios)
 
-`cmd/tuios-wasm` is tuios compiled to WebAssembly for the guided tour at
-tuios.dev/learn: the real app in Learn mode, with a fake shell
+`cmd/dartuios-wasm` is dartuios compiled to WebAssembly for the guided tour at
+dartuios.dev/learn: the real app in Learn mode, with a fake shell
 (`internal/webshell`) in every pane and an event stream for lessons
 (`internal/learn`). Browser-only code is behind `js` build tags or in those
 three directories, so the native build is unchanged. The page API and event
-contract are in [cmd/tuios-wasm/README.md](cmd/tuios-wasm/README.md).
+contract are in [cmd/dartuios-wasm/README.md](cmd/dartuios-wasm/README.md).
 
 ```bash
-cmd/tuios-wasm/build.sh out/                  # the files the docs site needs
-node cmd/tuios-wasm/serve.mjs out/ 8765       # try it at http://127.0.0.1:8765
+cmd/dartuios-wasm/build.sh out/                  # the files the docs site needs
+node cmd/dartuios-wasm/serve.mjs out/ 8765       # try it at http://127.0.0.1:8765
 go test ./internal/webshell/ ./internal/learn/  # native tests of the Go side
 ```
 
@@ -94,18 +94,18 @@ nix run        # Run directly
 ### Docker
 
 ```bash
-docker build -t tuios .
-docker run -it --rm tuios
+docker build -t dartuios .
+docker run -it --rm dartuios
 ```
 
 ## Code Organization
 
 ```
-tuios/
-├── cmd/tuios/              # CLI entry point (main.go with cobra commands)
-├── cmd/tuios-web/          # Web terminal server binary (separate for security)
-├── cmd/tuios-wasm/         # Browser build for the Learn tuios tour (js/wasm)
-├── cmd/tuios-fuzz/         # The property fuzzer, drawn while it runs; kept out of the shipped binary
+dartuios/
+├── cmd/dartuios/              # CLI entry point (main.go with cobra commands)
+├── cmd/dartuios-web/          # Web terminal server binary (separate for security)
+├── cmd/dartuios-wasm/         # Browser build for the Learn dartuios tour (js/wasm)
+├── cmd/dartuios-fuzz/         # The property fuzzer, drawn while it runs; kept out of the shipped binary
 ├── internal/
 │   ├── app/                # Core window manager, OS model, rendering
 │   │   ├── os.go           # Central state (OS struct), window lifecycle
@@ -141,17 +141,17 @@ tuios/
 │   ├── diffview/           # Drawing diff lines: chroma highlighting, split layout, changed words
 │   ├── capture/            # Turns a screenshot request and config into what shot renders
 │   ├── shot/               # Renders a cell grid to SVG, PNG, ANSI, HTML or text
-│   ├── release/            # Finds published releases and verifies a downloaded binary (tuios update)
+│   ├── release/            # Finds published releases and verifies a downloaded binary (dartuios update)
 │   ├── netutil/            # Small network helpers the servers share
 │   ├── harness/            # Agent harness manifests and detection
-│   ├── integration/        # Wires harness hooks, plugins and MCP entries (tuios integration)
-│   ├── mcp/                # The MCP server behind tuios mcp
+│   ├── integration/        # Wires harness hooks, plugins and MCP entries (dartuios integration)
+│   ├── mcp/                # The MCP server behind dartuios mcp
 │   ├── risk/               # Marks an approval risky by the shipped and configured rules
 │   ├── agentproto/         # Headless agents over ACP and the Codex app-server: the pane program of start-agent --protocol
-│   ├── learn/              # Learn tuios: tour model, event contract, page commands
+│   ├── learn/              # Learn dartuios: tour model, event contract, page commands
 │   ├── webshell/           # In-memory pty and fake shell for the browser build
 │   ├── hooks/              # Shell hooks on window/session/agent events
-│   ├── tmuxcompat/         # The opt-in tmux shim (tuios tmux-shim) and its pane holder; see docs/TMUX_SHIM.md
+│   ├── tmuxcompat/         # The opt-in tmux shim (dartuios tmux-shim) and its pane holder; see docs/TMUX_SHIM.md
 │   ├── scrollback/         # OSC 133 scrollback browser
 │   ├── overlay/            # Panel and dialog primitives for chrome
 │   ├── sessiontree/        # Sidebar session tree model
@@ -168,14 +168,14 @@ tuios/
 │   └── ui/                 # Animation system
 │                           # (plus cliflags, debuglog, fang, listnav, sound,
 │                           #  transcript, guestenv, perf, fuzz, testutil)
-├── pkg/                    # Embeddable facade (tuios), applist, fuzzy
+├── pkg/                    # Embeddable facade (dartuios), applist, fuzzy
 ├── docs/                   # Documentation
 │   ├── ARCHITECTURE.md     # Technical architecture diagrams
 │   ├── KEYBINDINGS.md      # Complete keybinding reference
 │   ├── CONFIGURATION.md    # Config options
 │   └── CLI_REFERENCE.md    # CLI flags and commands
 ├── examples/               # Tape script examples, and dock components under examples/dock/
-├── skills/                 # The tuios skill (skills/tuios/SKILL.md and its topics), embedded and printed by tuios --skill [topic]
+├── skills/                 # The dartuios skill (skills/dartuios/SKILL.md and its topics), embedded and printed by dartuios --skill [topic]
 ├── integrations/           # Harness integrations, such as the claude-code agent-state shim
 ├── e2e/                    # End-to-end tests; e2e/tui is its own Go module
 ├── clienttests/            # Playwright tests for the web client
@@ -186,7 +186,7 @@ tuios/
 
 ### Bubble Tea MVU Pattern
 
-TUIOS follows Model-View-Update:
+dartuios follows Model-View-Update:
 - **Model**: `app.OS` struct in `internal/app/os.go`
 - **View**: `OS.View()` in `internal/app/render.go`
 - **Update**: `OS.Update()` in `internal/app/update.go`
@@ -228,7 +228,7 @@ Tiling itself toggles on `Ctrl+B` `Space` (or bare `t` in window-management mode
 - **Cobra** (`github.com/spf13/cobra`): CLI commands
 - **xpty** (`github.com/charmbracelet/x/xpty`): Cross-platform PTY
 - **libghostty-vt** (`go.mitchellh.com/libghostty`, behind `-tags ghostty`): Alternative VT emulation backend; `scripts/install.sh ghostty` builds it (see `docs/ghostty-vt.md`)
-- **sip** (`github.com/Gaurav-Gosain/sip`): WebGL terminal serving for `tuios-web`
+- **sip** (`github.com/Gaurav-Gosain/sip`): WebGL terminal serving for `dartuios-web`
 
 > **Note:** As of December 2025, the Charm stack packages have migrated from `github.com/charmbracelet/*` to `charm.land/*` module paths.
 
@@ -248,7 +248,7 @@ Tiling itself toggles on `Ctrl+B` `Space` (or bare `t` in window-management mode
   `internal/theme`. Never write a literal: `internal/lint` rejects
   `lipgloss.Color("#...")`, constant `color.RGBA{...}`, `charmtone.*` and
   constant `ansi.BasicColor`/`IndexedColor` in `internal/app` and
-  `internal/overlay`. A deliberate exception carries `//tuios:allow-color <reason>`.
+  `internal/overlay`. A deliberate exception carries `//dartuios:allow-color <reason>`.
 - The palette is built per colour depth (`overlay.Depth`: truecolor, 256, 16).
   At 16 colours every ground is `overlay.NoColor`, so a state that a ground
   would show has to go through `pal.Row` or `pal.Mark`.
@@ -293,13 +293,13 @@ outside those kinds.
 
 ### E2E Tests
 
-The E2E suite runs a real `tuios` binary against real daemons. It is under
-`e2e/tui`, its own Go module, and skips unless `TUIOS_E2E` is set. Without
-`TUIOS_E2E_BIN` it builds the binary itself.
+The E2E suite runs a real `dartuios` binary against real daemons. It is under
+`e2e/tui`, its own Go module, and skips unless `DARTUIOS_E2E` is set. Without
+`DARTUIOS_E2E_BIN` it builds the binary itself.
 
 ```bash
-go build -o /tmp/tuios ./cmd/tuios
-cd e2e/tui && TUIOS_E2E=1 TUIOS_E2E_BIN=/tmp/tuios go test -count=1 -timeout 40m .
+go build -o /tmp/dartuios ./cmd/dartuios
+cd e2e/tui && DARTUIOS_E2E=1 DARTUIOS_E2E_BIN=/tmp/dartuios go test -count=1 -timeout 40m .
 ```
 
 A test that claims to cover a bug must fail on a build with the fix removed.
@@ -422,10 +422,10 @@ When testing UI/UX changes:
 
 ```bash
 # Validate tape syntax
-go run ./cmd/tuios tape validate examples/demo.tape
+go run ./cmd/dartuios tape validate examples/demo.tape
 
 # Run tape with visible TUI
-go run ./cmd/tuios tape play examples/demo.tape
+go run ./cmd/dartuios tape play examples/demo.tape
 ```
 
 ## Common Gotchas
@@ -443,6 +443,10 @@ go run ./cmd/tuios tape play examples/demo.tape
 - Background is transparent (nil) for TUI app compatibility. `appearance.background` and
   the per-surface background options paint default-background cells in the compositor
   (`internal/app/background.go`), never in the emulator, so the cells themselves stay nil
+
+### Default look (DAR)
+
+- The shipped chrome is the DAR language: `appearance.border_style` defaults to `dar` (a light frame at rest, heavy where focused), `appearance.scrollbar.style` defaults to `thin` (a hairline thumb over the pane's last content column), and the rail draws half-block marks. The working-agent pulse rides the existing `appearance.motion` switch — there are no new config keys for it.
 
 ### Performance Considerations
 
@@ -472,7 +476,7 @@ go run ./cmd/tuios tape play examples/demo.tape
 
 | Purpose | File |
 |---------|------|
-| Main entry point | `cmd/tuios/main.go` |
+| Main entry point | `cmd/dartuios/main.go` |
 | Central state | `internal/app/os.go` |
 | Rendering | `internal/app/render.go` |
 | Input handling | `internal/input/handler.go` |
@@ -514,8 +518,8 @@ Releases are automated via GitHub Actions with GoReleaser:
 - **Configuration**: `docs/CONFIGURATION.md`. TOML config options
 - **Contributing**: `docs/CONTRIBUTING.md`. Contribution guidelines
 - **Tape Scripting**: `docs/TAPE_SCRIPTING.md`. Automation script syntax
-- **Web Terminal**: `docs/WEB.md`. Web terminal documentation (tuios-web binary)
+- **Web Terminal**: `docs/WEB.md`. Web terminal documentation (dartuios-web binary)
 - **VT Backends**: `docs/ghostty-vt.md`. The pure Go and libghostty-vt emulators, and how to build each
 - **Rehydration**: `docs/REHYDRATION.md`. The snapshot-vs-stream contract for pane content on attach
 - **Performance**: `docs/perf.md`. Measured baselines and the "measured and not changed" ledger
-- **Sip**: https://github.com/Gaurav-Gosain/sip. The library serving Bubble Tea apps as web apps (used by `cmd/tuios-web`)
+- **Sip**: https://github.com/Gaurav-Gosain/sip. The library serving Bubble Tea apps as web apps (used by `cmd/dartuios-web`)

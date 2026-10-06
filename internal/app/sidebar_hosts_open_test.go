@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/federation"
 )
 
 // TestOpenRemoteSessionOnADownHostSaysUnavailable is #170's toast: an action

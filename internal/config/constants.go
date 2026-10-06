@@ -7,10 +7,9 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 	"github.com/lrstanley/go-nf/glyphs/fa"
-	"github.com/lrstanley/go-nf/glyphs/ple"
 )
 
 // =============================================================================
@@ -189,8 +188,8 @@ var (
 )
 
 func init() {
-	DockPillLeftChar = ple.LeftHalfCircleThick.String()
-	DockPillRightChar = ple.RightHalfCircleThick.String()
+	DockPillLeftChar = "▏"
+	DockPillRightChar = "▕"
 	DockModeIconWindow = " " + fa.WindowRestore.String() + " "
 	DockModeIconTerminal = " " + fa.Terminal.String() + " "
 	DockModeIconTiling = " " + fa.Th.String() + " "
@@ -198,8 +197,8 @@ func init() {
 	DockIconWorkspaceCount = fa.ThLarge.String()
 	DockIconLeaveRunning = fa.SignOut.String()
 	DockIconCloseSession = fa.PowerOff.String()
-	WindowPillLeft = ple.LeftHalfCircleThick.String()
-	WindowPillRight = ple.RightHalfCircleThick.String()
+	WindowPillLeft = "▏"
+	WindowPillRight = "▕"
 	NotificationGlyphError = fa.TimesCircle.String()
 	NotificationGlyphWarning = fa.ExclamationTriangle.String()
 	NotificationGlyphSuccess = fa.CheckCircle.String()
@@ -487,7 +486,7 @@ func SidebarLayoutNames() []string {
 //
 // Navigate is the default because it is the only one of the three that touches
 // nothing outside the rail: the listing moves and no key is typed into anybody's
-// program. tuios does not know that a pane is at a shell prompt until it looks,
+// program. dartuios does not know that a pane is at a shell prompt until it looks,
 // and a cd that reached vim or a REPL would be a series of edits or a syntax
 // error. A user who wants the pane to follow can say so once, here.
 const (
@@ -841,6 +840,7 @@ const (
 // page cycles them. One list so a style added here is offered, validated and
 // covered by the border tests at once.
 var BorderStyles = []string{
+	BorderStyleDAR,
 	"rounded", "normal", "thick", "double",
 	"block", "outer-half-block", "inner-half-block",
 	"ascii", "hidden", BorderStyleGlyphs,
@@ -859,10 +859,11 @@ func (s *Settings) BorderJoinsChromeRules() bool {
 	switch s.BorderStyle {
 	case "block", "outer-half-block", "inner-half-block", "hidden":
 		return false
-	case BorderStyleGlyphs:
-		// A set's border is answered for by the set. Reported as joining
-		// because a set naming no junctions still gets the rounded border's,
-		// and one that names them means them to be used.
+	case BorderStyleDAR, BorderStyleGlyphs:
+		// A set's border is answered for by the set, and the DAR frame is a
+		// stroke that carries the rule's own stroke through its junctions.
+		// A set naming no junctions still gets the rounded border's, and one
+		// that names them means them to be used.
 		return true
 	}
 	return true
@@ -878,6 +879,8 @@ func (s *Settings) GetBorderForStyle() lipgloss.Border {
 	}
 	switch s.BorderStyle {
 	case "normal":
+		return lipgloss.NormalBorder()
+	case BorderStyleDAR:
 		return lipgloss.NormalBorder()
 	case "thick":
 		return lipgloss.ThickBorder()
@@ -896,6 +899,52 @@ func (s *Settings) GetBorderForStyle() lipgloss.Border {
 	default:
 		return lipgloss.RoundedBorder()
 	}
+}
+
+// GetFocusedBorderForStyle is the border the focused frame draws, which for the
+// DAR frame is one weight up: a light line says "a window", a heavy one says
+// "this one". Every other style draws the same border focused or not, so this
+// answers GetBorderForStyle and the two never disagree.
+func (s *Settings) GetFocusedBorderForStyle() lipgloss.Border {
+	if s.UseASCIIOnly || s.BorderStyle == "ascii" {
+		return lipgloss.ASCIIBorder()
+	}
+	switch s.BorderStyle {
+	case BorderStyleDAR:
+		return lipgloss.ThickBorder()
+	case BorderStyleGlyphs:
+		return s.glyphSetBorderFocused()
+	}
+	return s.GetBorderForStyle()
+}
+
+// glyphSetBorderFocused is the focused frame's border under border_style =
+// "glyphs": the set's border_focused over its own border resolution, per rune.
+func (s *Settings) glyphSetBorderFocused() lipgloss.Border {
+	b := s.glyphSetBorder()
+	g := theme.Glyphs().BorderFocused
+	if g == nil {
+		return b
+	}
+	pick := func(dst *string, src string) {
+		if src != "" && (!s.UseASCIIOnly || overlay.IsASCII(src)) {
+			*dst = src
+		}
+	}
+	pick(&b.Top, g.Top)
+	pick(&b.Bottom, g.Bottom)
+	pick(&b.Left, g.Left)
+	pick(&b.Right, g.Right)
+	pick(&b.TopLeft, g.TopLeft)
+	pick(&b.TopRight, g.TopRight)
+	pick(&b.BottomLeft, g.BottomLeft)
+	pick(&b.BottomRight, g.BottomRight)
+	pick(&b.Middle, g.Middle)
+	pick(&b.MiddleTop, g.MiddleTop)
+	pick(&b.MiddleBottom, g.MiddleBottom)
+	pick(&b.MiddleLeft, g.MiddleLeft)
+	pick(&b.MiddleRight, g.MiddleRight)
+	return b
 }
 
 // glyphSetBorder is the border the active glyph set draws, with any rune it
@@ -943,19 +992,17 @@ func (s *Settings) glyphSetBorder() lipgloss.Border {
 	return b
 }
 
-// Per-style scrollbar glyphs. The thin style's pair is one stroke at two
-// weights: the same box-drawing vertical, light for the track and heavy for the
-// thumb, so the bar reads as a single line that thickens where the viewport is
-// rather than as two different shapes stacked in a column. Box-drawing
-// verticals are drawn cell-height, so the track is an unbroken hairline, and
-// they sit centred in the cell, which keeps the bar clear of the pane border
-// instead of thickening it. Half and eighth blocks would hug the right edge and
-// read as part of the frame.
+// Per-style scrollbar glyphs. The thin style's pair is a hairline track with a
+// half-block thumb: the box-drawing vertical draws cell-height, so the track
+// is an unbroken line sitting centred in the cell, which keeps the bar clear of
+// the pane border instead of thickening it, and the half block is the DAR
+// weight — the same stroke family as the rail's marks — that says "the
+// viewport is here" without a whole-block thumb that reads as a second frame.
 //
 // The track style fills its column instead, so its thumb is a whole block and
 // its track is the surface fill behind it rather than a glyph.
 const (
-	scrollbarThinThumb  = "┃" // U+2503 BOX DRAWINGS HEAVY VERTICAL
+	scrollbarThinThumb  = "▍" // U+258D HALF BLOCK LEFT, the DAR half-block rail weight
 	scrollbarThinTrack  = "│" // U+2502 BOX DRAWINGS LIGHT VERTICAL
 	scrollbarTrackThumb = "█"
 	scrollbarASCIIThumb = "|"

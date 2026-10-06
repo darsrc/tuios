@@ -11,10 +11,10 @@ import (
 )
 
 // writeConfig drops a config.toml into the isolation root's XDG_CONFIG_HOME so
-// the tuios process started against that root loads it at boot.
+// the dartuios process started against that root loads it at boot.
 func writeConfig(t *testing.T, base, body string) {
 	t.Helper()
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("writeConfig: mkdir: %v", err)
 	}
@@ -25,7 +25,7 @@ func writeConfig(t *testing.T, base, body string) {
 
 // TestStartupAllThreeSettings is the full combined behavior the [startup]
 // section exists for: with open_default_window, tiled and start_in_terminal_mode
-// all on, launching tuios drops the user straight into a session that already
+// all on, launching dartuios drops the user straight into a session that already
 // has one terminal open, is tiled, and is focused in terminal mode so typing
 // reaches the shell. Windows opened afterwards tile without ever toggling tiling.
 //
@@ -78,7 +78,7 @@ func TestStartupAllThreeSettings(t *testing.T) {
 	// tiled, they join the layout and partition the screen; if it had started
 	// floating they would stack at the same half-size box.
 	for i := 2; i <= 3; i++ {
-		out, err := tuiosCLI(t, base, "run-command", "NewWindow")
+		out, err := dartuiosCLI(t, base, "run-command", "NewWindow")
 		if err != nil {
 			t.Fatalf("run-command NewWindow #%d: %v\n%s", i, err, out)
 		}
@@ -110,7 +110,7 @@ func TestStartupAllThreeSettings(t *testing.T) {
 }
 
 // TestStartupDefaultsPreserved pins open_default_window, which is the one
-// [startup] setting still off: with no config, tuios boots to the empty-session
+// [startup] setting still off: with no config, dartuios boots to the empty-session
 // welcome screen and opens no window of its own. Tiled and daemon ship on and
 // are covered by TestAFirstRunIsDaemonBackedAndTiledWithDotsOnTheLeft.
 func TestStartupDefaultsPreserved(t *testing.T) {

@@ -6,15 +6,15 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // TestMouseForwardedToMouseModeGraphicsPane pins the reports a mouse-tracking
 // pane receives with the modes terminal-browser uses (any-motion + SGR +
-// SGR-pixel). A wheel over it must reach its emulator instead of tuios
+// SGR-pixel). A wheel over it must reach its emulator instead of dartuios
 // scrollback or copy mode, amplified to config.ScrollLines reports per notch,
 // and with 1016 on every report carries pixel coordinates. restored teaches the
 // emulator its modes from a daemon snapshot (RestoreModes, as every attach and

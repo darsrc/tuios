@@ -41,11 +41,11 @@ func TestDaemonVariantB_ToggleFirstThenWindows(t *testing.T) {
 	killDaemon(t, base)
 	waitBoot(t, term)
 
-	if out, err := tuiosCLI(t, base, "run-command", "--session", "vb", "EnableTiling"); err != nil {
+	if out, err := dartuiosCLI(t, base, "run-command", "--session", "vb", "EnableTiling"); err != nil {
 		t.Fatalf("EnableTiling failed: %v\n%s", err, out)
 	}
 	for i := 1; i <= 3; i++ {
-		if out, err := tuiosCLI(t, base, "run-command", "--session", "vb", "NewWindow"); err != nil {
+		if out, err := dartuiosCLI(t, base, "run-command", "--session", "vb", "NewWindow"); err != nil {
 			t.Fatalf("NewWindow #%d failed: %v\n%s", i, err, out)
 		}
 		waitWindowCount(t, term, i, fmt.Sprintf("after NewWindow #%d", i))
@@ -61,12 +61,12 @@ func TestDaemonVariantC_Verb(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "vc", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "vc", "--detach"); err != nil {
 		t.Fatalf("create detached: %v: %s", err, out)
 	}
 	// Detached session starts with one window; add two more via the daemon verb.
 	for i := 2; i <= 3; i++ {
-		if out, err := tuiosCLI(t, base, "run-command", "--session", "vc", "NewWindow"); err != nil {
+		if out, err := dartuiosCLI(t, base, "run-command", "--session", "vc", "NewWindow"); err != nil {
 			t.Fatalf("NewWindow #%d failed: %v\n%s", i, err, out)
 		}
 	}
@@ -78,7 +78,7 @@ func TestDaemonVariantC_Verb(t *testing.T) {
 		t.Fatalf("client never saw 3 windows: %v\n%s", err, c.Snapshot())
 	}
 
-	if out, err := tuiosCLI(t, base, "run-command", "--session", "vc", "ToggleTiling"); err != nil {
+	if out, err := dartuiosCLI(t, base, "run-command", "--session", "vc", "ToggleTiling"); err != nil {
 		t.Fatalf("ToggleTiling failed: %v\n%s", err, out)
 	}
 	rects := waitForSettledGeometry(t, base, 3)
@@ -91,11 +91,11 @@ func TestDaemonVariantD_Interactive(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "vd", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "vd", "--detach"); err != nil {
 		t.Fatalf("create detached: %v: %s", err, out)
 	}
 	for i := 2; i <= 3; i++ {
-		if out, err := tuiosCLI(t, base, "run-command", "--session", "vd", "NewWindow"); err != nil {
+		if out, err := dartuiosCLI(t, base, "run-command", "--session", "vd", "NewWindow"); err != nil {
 			t.Fatalf("NewWindow #%d failed: %v\n%s", i, err, out)
 		}
 	}

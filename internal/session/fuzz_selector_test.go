@@ -38,7 +38,7 @@ func FuzzSelector(f *testing.F) {
 		"harness:codex",
 		"harness:claude state:idle,done session:api-fan-*",
 		"needs:you",
-		"cwd:~/src/tuios cwd:~ cwd:/ cwd:/tmp/",
+		"cwd:~/src/dartuios cwd:~ cwd:/ cwd:/tmp/",
 		"host:local name:build group:fan/*",
 		"STATE:IDLE Harness:Codex",
 		"name:[a-",

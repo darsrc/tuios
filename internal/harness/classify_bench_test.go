@@ -11,7 +11,7 @@ import (
 // runs on every settle of every agent pane, so its cost times the number of
 // panes is the budget the manifest engine spends.
 func BenchmarkClassify(b *testing.B) {
-	r, _ := Load(os.Getenv("TUIOS_BENCH_MANIFESTS"))
+	r, _ := Load(os.Getenv("DARTUIOS_BENCH_MANIFESTS"))
 	for _, tc := range []struct {
 		harness string
 		tail    []string

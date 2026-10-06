@@ -10,7 +10,7 @@ import (
 // A scripted coding agent in the style of Claude Code. It reads two files,
 // thinks, proposes an edit, asks for approval with three options, and applies
 // the edit or not. It draws what the claude-code harness manifest keys on (the
-// spinner line and the "Do you want" menu), and it reports each state to tuios
+// spinner line and the "Do you want" menu), and it reports each state to dartuios
 // the way a hooked agent does, so the rail, the title glyph and the alerts all
 // react to it.
 
@@ -37,7 +37,7 @@ const indexDark = `<!doctype html>
 <h1>it works</h1>
 `
 
-// report tells tuios what state this pane's agent is in. See
+// report tells dartuios what state this pane's agent is in. See
 // app.ReportAgentState, which the browser build routes this to.
 func (t *TTY) report(state, message, kind string) {
 	t.Emit(EventAgentReport, map[string]any{
@@ -55,7 +55,7 @@ func cmdAgent(s *shell, args []string, _ string) int {
 	w := min(max(cols-2, 30), 60)
 
 	t.Print(agentOrange + "╭" + strings.Repeat("─", w-2) + "╮" + reset + "\r\n")
-	t.Print(boxLine(w, agentOrange+"✻"+reset+" Welcome to "+bold+"Claude Code"+reset+" (tuios demo)"))
+	t.Print(boxLine(w, agentOrange+"✻"+reset+" Welcome to "+bold+"Claude Code"+reset+" (dartuios demo)"))
 	t.Print(boxLine(w, ""))
 	t.Print(boxLine(w, agentGrey+"  A pretend agent. Nothing leaves this tab."+reset))
 	t.Print(agentOrange + "╰" + strings.Repeat("─", w-2) + "╯" + reset + "\r\n\r\n")

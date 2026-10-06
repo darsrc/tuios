@@ -7,9 +7,9 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The dock engine's half of the Bubble Tea loop: build the plan, start the
@@ -52,7 +52,7 @@ func (m *OS) StopDockComponents() {
 // SyncDockContext re-stamps the session name and socket onto the engine, for
 // the paths that learn which session they are on after Init has run: a daemon
 // attach names the session when the connection lands, and a session switch
-// changes it. Without this a component's TUIOS_SESSION would be whatever was
+// changes it. Without this a component's DARTUIOS_SESSION would be whatever was
 // known at boot, which for an attach is nothing.
 func (m *OS) SyncDockContext() {
 	m.dockEngine.SetContext(m.SessionName, dockSocketPath())
@@ -70,7 +70,7 @@ func (m *OS) ReloadDockComponents(cfg *config.UserConfig) tea.Cmd {
 }
 
 // dockSocketPath is the socket a component's command talks back through, so a
-// component can call tuios verbs without working out where the session lives.
+// component can call dartuios verbs without working out where the session lives.
 // Empty when there is no daemon, which is the honest answer for a standalone
 // session: there is no socket to call.
 func dockSocketPath() string {
@@ -227,7 +227,7 @@ func (m *OS) RunDockComponentClick(name string, button int) bool {
 	if !ok || strings.TrimSpace(c.OnClick) == "" {
 		return false
 	}
-	env := m.dockEngine.commandEnv(name, "TUIOS_CLICK_BUTTON="+strconv.Itoa(button))
+	env := m.dockEngine.commandEnv(name, "DARTUIOS_CLICK_BUTTON="+strconv.Itoa(button))
 	command := c.OnClick
 	go func() {
 		// #nosec G204 - the user's own config, run as the user, exactly as a

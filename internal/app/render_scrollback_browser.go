@@ -7,11 +7,11 @@ import (
 	"unicode/utf8"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/scrollback"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/scrollback"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // renderScrollbackBrowser renders the scrollback browser as a full-screen overlay.
@@ -31,7 +31,7 @@ func (m *OS) renderScrollbackBrowser() string {
 	// settings, like every other overlay.
 	//
 	// They were thirty-three hex literals. The one full-screen surface in
-	// tuios that ignored the user's theme was this one, so a person on a light
+	// dartuios that ignored the user's theme was this one, so a person on a light
 	// theme, or on any theme at all, got a dark blue panel with its own idea
 	// of every colour, and the search highlight here was a different yellow
 	// from the search highlight in a pane two keystrokes away.

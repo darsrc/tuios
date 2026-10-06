@@ -11,11 +11,11 @@ import (
 	"github.com/charmbracelet/x/ansi"
 )
 
-// TUIOS_SOCKET is what a pane is told about the daemon that runs it. It never
+// DARTUIOS_SOCKET is what a pane is told about the daemon that runs it. It never
 // chose the daemon a command reaches: XDG_RUNTIME_DIR does. An agent that set
-// TUIOS_SOCKET to a fresh path, expecting a daemon of its own, got the
+// DARTUIOS_SOCKET to a fresh path, expecting a daemon of its own, got the
 // person's daemon instead and created a session in it. A command now refuses
-// when TUIOS_SOCKET names a socket other than the one it would reach and no
+// when DARTUIOS_SOCKET names a socket other than the one it would reach and no
 // daemon listens there, which is exactly that mistake.
 //
 // How this could pass wrongly, written down first:
@@ -25,13 +25,13 @@ import (
 //     afterwards whether the session exists;
 //   - the check might refuse far more than the mistake, which would break
 //     every script that isolates itself with XDG_RUNTIME_DIR from inside a
-//     pane (whose TUIOS_SOCKET names the pane's own, live, daemon), so both
-//     that case and TUIOS_SOCKET naming the same socket are shown to work.
+//     pane (whose DARTUIOS_SOCKET names the pane's own, live, daemon), so both
+//     that case and DARTUIOS_SOCKET naming the same socket are shown to work.
 
 // sessionNames lists the sessions of the daemon under base.
 func sessionNames(t *testing.T, base string) []string {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "ls", "--json")
+	out, err := dartuiosCLI(t, base, "ls", "--json")
 	if err != nil {
 		t.Fatalf("ls: %v\n%s", err, out)
 	}
@@ -66,8 +66,8 @@ func hasName(names []string, want string) bool {
 // How this could pass wrongly: the path might fit the box and never be cut,
 // so the test refuses to run with a path that fits; and the command might not
 // see a terminal at all and print the bare text, so the box's header is
-// required in the output. The bytes are read as tuios wrote them, before the
-// terminal soft-wraps anything, so a line break inside the path is one tuios
+// required in the output. The bytes are read as dartuios wrote them, before the
+// terminal soft-wraps anything, so a line break inside the path is one dartuios
 // put there.
 //
 // Negative control: with RenderErrorText returning style.Render(s), the
@@ -75,7 +75,7 @@ func hasName(names []string, want string) bool {
 func TestSocketEnvRefusalKeepsThePathWholeOnATerminal(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "home", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "home", "--detach"); err != nil {
 		t.Fatalf("start the daemon: %v\n%s", err, out)
 	}
 	// The runtime directory can be a short stand-in (see xdgDir), so the path
@@ -91,7 +91,7 @@ func TestSocketEnvRefusalKeepsThePathWholeOnATerminal(t *testing.T) {
 	term := startIn(t, base, startOpts{
 		cols: cols, rows: 30,
 		args: []string{"new", "stray", "--detach"},
-		env:  []string{"TUIOS_SOCKET=" + fresh},
+		env:  []string{"DARTUIOS_SOCKET=" + fresh},
 		out:  &raw,
 		// --no-animations is a flag of the interface, not of `new`.
 		animations: true,
@@ -105,7 +105,7 @@ func TestSocketEnvRefusalKeepsThePathWholeOnATerminal(t *testing.T) {
 		t.Errorf("save the output: %v", err)
 	}
 	if code == 0 {
-		t.Errorf("a command with TUIOS_SOCKET naming no daemon ran:\n%s", out)
+		t.Errorf("a command with DARTUIOS_SOCKET naming no daemon ran:\n%s", out)
 	}
 	if !strings.Contains(out, "ERROR") {
 		t.Fatalf("the refusal was not rendered as a terminal error, so this checked nothing:\n%s", out)
@@ -127,7 +127,7 @@ func TestSocketEnvRefusalKeepsThePathWholeOnATerminal(t *testing.T) {
 	}
 }
 
-// TestSocketEnvNamingNoDaemonIsRefused is the incident: TUIOS_SOCKET set to a
+// TestSocketEnvNamingNoDaemonIsRefused is the incident: DARTUIOS_SOCKET set to a
 // path with no daemon, and a command that would otherwise have gone to the
 // daemon XDG_RUNTIME_DIR names.
 //
@@ -138,20 +138,20 @@ func TestSocketEnvRefusalKeepsThePathWholeOnATerminal(t *testing.T) {
 func TestSocketEnvNamingNoDaemonIsRefused(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "home", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "home", "--detach"); err != nil {
 		t.Fatalf("start the daemon: %v\n%s", err, out)
 	}
-	own := filepath.Join(xdgDir(base, "XDG_RUNTIME_DIR"), "tuios", "tuios.sock")
+	own := filepath.Join(xdgDir(base, "XDG_RUNTIME_DIR"), "dartuios", "dartuios.sock")
 	dir := artifactDir(t)
 	var transcript strings.Builder
 
 	fresh := filepath.Join(xdgDir(base, "XDG_RUNTIME_DIR"), "fresh.sock")
-	out, err := tuiosCLIEnv(t, base, []string{"TUIOS_SOCKET=" + fresh}, "new", "stray", "--detach")
-	transcript.WriteString("$ TUIOS_SOCKET=" + fresh + " tuios new stray --detach\n" + out + "\n")
+	out, err := dartuiosCLIEnv(t, base, []string{"DARTUIOS_SOCKET=" + fresh}, "new", "stray", "--detach")
+	transcript.WriteString("$ DARTUIOS_SOCKET=" + fresh + " dartuios new stray --detach\n" + out + "\n")
 	if err == nil {
-		t.Errorf("a command with TUIOS_SOCKET naming no daemon ran:\n%s", out)
+		t.Errorf("a command with DARTUIOS_SOCKET naming no daemon ran:\n%s", out)
 	}
-	for _, want := range []string{"TUIOS_SOCKET", fresh, "XDG_RUNTIME_DIR"} {
+	for _, want := range []string{"DARTUIOS_SOCKET", fresh, "XDG_RUNTIME_DIR"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("the refusal does not say %q:\n%s", want, out)
 		}
@@ -164,36 +164,36 @@ func TestSocketEnvNamingNoDaemonIsRefused(t *testing.T) {
 	// A command that only reads, over the verb protocol, is refused the same
 	// way rather than reading the other daemon.
 	for _, args := range [][]string{{"ls"}, {"list-windows", "-s", "home"}} {
-		out, err := tuiosCLIEnv(t, base, []string{"TUIOS_SOCKET=" + fresh}, args...)
-		transcript.WriteString("$ TUIOS_SOCKET=" + fresh + " tuios " + strings.Join(args, " ") + "\n" + out + "\n")
-		if err == nil || !strings.Contains(out, "TUIOS_SOCKET") {
-			t.Errorf("tuios %v with TUIOS_SOCKET naming no daemon was not refused: %v\n%s", args, err, out)
+		out, err := dartuiosCLIEnv(t, base, []string{"DARTUIOS_SOCKET=" + fresh}, args...)
+		transcript.WriteString("$ DARTUIOS_SOCKET=" + fresh + " dartuios " + strings.Join(args, " ") + "\n" + out + "\n")
+		if err == nil || !strings.Contains(out, "DARTUIOS_SOCKET") {
+			t.Errorf("dartuios %v with DARTUIOS_SOCKET naming no daemon was not refused: %v\n%s", args, err, out)
 		}
 	}
 	if names := sessionNames(t, base); hasName(names, "stray") {
 		t.Errorf("the refused command still created its session in the daemon under base: %v", names)
 	}
 
-	// The positive halves. TUIOS_SOCKET naming the socket the command reaches
+	// The positive halves. DARTUIOS_SOCKET naming the socket the command reaches
 	// anyway, as it does in every pane.
-	out, err = tuiosCLIEnv(t, base, []string{"TUIOS_SOCKET=" + own}, "new", "same", "--detach")
-	transcript.WriteString("$ TUIOS_SOCKET=" + own + " tuios new same --detach\n" + out + "\n")
+	out, err = dartuiosCLIEnv(t, base, []string{"DARTUIOS_SOCKET=" + own}, "new", "same", "--detach")
+	transcript.WriteString("$ DARTUIOS_SOCKET=" + own + " dartuios new same --detach\n" + out + "\n")
 	if err != nil {
-		t.Errorf("TUIOS_SOCKET naming the daemon's own socket was refused: %v\n%s", err, out)
+		t.Errorf("DARTUIOS_SOCKET naming the daemon's own socket was refused: %v\n%s", err, out)
 	}
 	// A script that isolates itself with XDG_RUNTIME_DIR from inside a pane:
-	// TUIOS_SOCKET names another, live, daemon, and the command goes where
+	// DARTUIOS_SOCKET names another, live, daemon, and the command goes where
 	// XDG_RUNTIME_DIR says, as it always did.
 	other := t.TempDir()
 	killDaemon(t, other)
-	if out, err := tuiosCLI(t, other, "new", "elsewhere", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, other, "new", "elsewhere", "--detach"); err != nil {
 		t.Fatalf("start the second daemon: %v\n%s", err, out)
 	}
-	otherSock := filepath.Join(xdgDir(other, "XDG_RUNTIME_DIR"), "tuios", "tuios.sock")
-	out, err = tuiosCLIEnv(t, base, []string{"TUIOS_SOCKET=" + otherSock}, "new", "isolated", "--detach")
-	transcript.WriteString("$ TUIOS_SOCKET=" + otherSock + " tuios new isolated --detach\n" + out + "\n")
+	otherSock := filepath.Join(xdgDir(other, "XDG_RUNTIME_DIR"), "dartuios", "dartuios.sock")
+	out, err = dartuiosCLIEnv(t, base, []string{"DARTUIOS_SOCKET=" + otherSock}, "new", "isolated", "--detach")
+	transcript.WriteString("$ DARTUIOS_SOCKET=" + otherSock + " dartuios new isolated --detach\n" + out + "\n")
 	if err != nil {
-		t.Errorf("TUIOS_SOCKET naming another live daemon was refused: %v\n%s", err, out)
+		t.Errorf("DARTUIOS_SOCKET naming another live daemon was refused: %v\n%s", err, out)
 	}
 	names := sessionNames(t, base)
 	for _, want := range []string{"same", "isolated"} {
@@ -202,7 +202,7 @@ func TestSocketEnvNamingNoDaemonIsRefused(t *testing.T) {
 		}
 	}
 	if hasName(sessionNames(t, other), "isolated") {
-		t.Errorf("TUIOS_SOCKET chose the daemon: the session went to the other one")
+		t.Errorf("DARTUIOS_SOCKET chose the daemon: the session went to the other one")
 	}
 	if err := os.WriteFile(filepath.Join(dir, "transcript.txt"), []byte(transcript.String()), 0o644); err != nil {
 		t.Errorf("save the transcript: %v", err)

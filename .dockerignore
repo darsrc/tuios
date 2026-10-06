@@ -8,7 +8,7 @@ CITATION.cff
 FUNDING.yml
 LICENSE
 SECURITY.md
-tuios.nix
+dartuios.nix
 .gitattributes
 Dockerfile
 flake.lock

@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // Which side runs a hook is now a decision, so it is pinned here.
@@ -16,7 +16,7 @@ import (
 // fires them and a client attached to a daemon session does not. That is what
 // makes three attached clients produce one firing rather than three, and it is
 // what makes the same hook fire when nobody is attached at all. A standalone
-// tuios has no daemon, so it fires everything itself.
+// dartuios has no daemon, so it fires everything itself.
 
 // sideRig builds a client with every hook registered and a recorder in place of
 // a shell.

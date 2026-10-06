@@ -143,7 +143,7 @@ func BoldFontByFamily(stack string, regular FontFace) (FontFace, bool) {
 }
 
 // cachedLookup memoizes one resolution for the life of the process, misses
-// included: a font that is not installed will not become installed while tuios
+// included: a font that is not installed will not become installed while dartuios
 // is running, and a repeated miss is a directory walk and a process spawn
 // nobody asked for.
 //

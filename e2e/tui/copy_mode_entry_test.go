@@ -21,7 +21,7 @@ import (
 //   - A search could match the command line rather than the output. The
 //     commands spell the word with a quote gap, so only the output holds it.
 
-// copyColorOpts runs tuios with truecolor, so the magenta ground reaches the
+// copyColorOpts runs dartuios with truecolor, so the magenta ground reaches the
 // screen as itself and not as the nearest palette colour.
 var copyColorOpts = startOpts{env: []string{"TERM=xterm-256color", "COLORTERM=truecolor"}}
 

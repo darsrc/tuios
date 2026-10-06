@@ -3,7 +3,7 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // TestRehydrationAdoptsAPaneCreatedElsewhere is the seventh route: a pane this
@@ -19,7 +19,7 @@ func TestRehydrationAdoptsAPaneCreatedElsewhere(t *testing.T) {
 	r := newRig(t, 1)
 
 	// The push the daemon sends every attached client is what materializes the
-	// pane, exactly as cmd/tuios wires it: the handler hands the state to the
+	// pane, exactly as cmd/dartuios wires it: the handler hands the state to the
 	// UI, which applies it.
 	pushed := make(chan *session.SessionState, 8)
 	r.client.OnStateSync(func(state *session.SessionState, _, _ string) {

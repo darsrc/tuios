@@ -6,7 +6,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-// hostPasteTimeout is how long tuios waits for the terminal to answer the OSC 52
+// hostPasteTimeout is how long dartuios waits for the terminal to answer the OSC 52
 // clipboard query before it tells the user nothing came back.
 //
 // The query is a request to a terminal that is free to ignore it, and many do:
@@ -23,7 +23,7 @@ type PasteTimeoutMsg struct {
 	Seq uint64
 }
 
-// ClipboardReadUnsupportedReason explains why tuios cannot read the clipboard
+// ClipboardReadUnsupportedReason explains why dartuios cannot read the clipboard
 // here, or "" when it can. It says what to do instead.
 //
 // A browser tab is the one client where the answer is known in advance. The
@@ -35,7 +35,7 @@ func (m *OS) ClipboardReadUnsupportedReason() string {
 	if !m.BrowserClient {
 		return ""
 	}
-	return "The browser does not give the clipboard to tuios. Press ctrl+v to paste, or cmd+v on a Mac."
+	return "The browser does not give the clipboard to dartuios. Press ctrl+v to paste, or cmd+v on a Mac."
 }
 
 // RequestHostPaste asks the terminal for its clipboard, or says why it cannot.

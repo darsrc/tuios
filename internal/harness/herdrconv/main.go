@@ -1,6 +1,6 @@
 // Command herdrconv converts a herdr agent-detection manifest
 // (github.com/herdrdev/herdr, src/detect/manifests/*.toml, Apache-2.0) into a
-// tuios harness manifest draft.
+// dartuios harness manifest draft.
 //
 //	go run ./internal/harness/herdrconv path/to/agent.toml > draft.toml
 //
@@ -15,13 +15,13 @@
 // The mapping:
 //
 //   - blocked becomes needs_input; working and idle carry over. unknown, and
-//     the skip_state_update rules that use it, have no tuios equivalent and
-//     are dropped: tuios has no "leave the state alone" rule.
+//     the skip_state_update rules that use it, have no dartuios equivalent and
+//     are dropped: dartuios has no "leave the state alone" rule.
 //   - herdr matches substrings case-folded, so the draft sets fold_case.
 //   - herdr's gates map one to one: contains becomes all, all becomes all_of,
 //     any becomes any_of, not becomes none_of. A group holding one substring
 //     is written in the flat lists (any, not) instead, which reads the same.
-//   - line_regex and regex both become tuios regex, which is (?m)-compiled, so
+//   - line_regex and regex both become dartuios regex, which is (?m)-compiled, so
 //     ^ and $ anchor lines either way. Patterns are rewritten from Rust regex
 //     to RE2 (\u{...} escapes, \p{Alphabetic}) and must compile, or the rule
 //     is dropped with the pattern named.
@@ -35,10 +35,10 @@
 //     screen can miss here, which is the cheap direction.
 //   - osc_title and osc_progress rules go to the [title] block, which reads
 //     the pane's title and, with region = "osc_progress", its last OSC 9;4
-//     report. A title substring matches whole tokens only in tuios; see
+//     report. A title substring matches whole tokens only in dartuios; see
 //     internal/harness/title.go.
 //   - top_non_empty_lines(N) and Codex's prompt-marker regions
-//     (after_last_prompt_marker and the like) have no tuios equivalent, and
+//     (after_last_prompt_marker and the like) have no dartuios equivalent, and
 //     their rules are dropped with that reason.
 package main
 
@@ -79,11 +79,11 @@ type manifest struct {
 var stateMap = map[string]string{"blocked": "needs_input", "working": "working", "idle": "idle"}
 
 // wholeRecentLines approximates herdr's whole_recent region, which is the
-// whole visible screen. tuios reads a fixed tail; eight lines is the window the
+// whole visible screen. dartuios reads a fixed tail; eight lines is the window the
 // hand-written manifests settled on for prompt-shaped chrome.
 const wholeRecentLines = 8
 
-// tailRegions are herdr's screen regions tuios reads the same way, mapped to
+// tailRegions are herdr's screen regions dartuios reads the same way, mapped to
 // the name the draft writes.
 var tailRegions = map[string]string{
 	"":                                "",
@@ -124,7 +124,7 @@ func main() {
 	}
 }
 
-// convert turns one herdr manifest into a tuios draft.
+// convert turns one herdr manifest into a dartuios draft.
 func convert(data []byte) (result, error) {
 	var m manifest
 	if err := toml.Unmarshal(data, &m); err != nil {
@@ -139,7 +139,7 @@ func convert(data []byte) (result, error) {
 			reason = checkGate(r.gate)
 		}
 		if reason == "" && block == "screen" && r.State == "idle" && region != "prompt_box" && !provesShape(r.gate) {
-			reason = "tuios needs an idle screen rule to read prompt_box or carry a pattern on every path; write one by hand"
+			reason = "dartuios needs an idle screen rule to read prompt_box or carry a pattern on every path; write one by hand"
 		}
 		if reason != "" {
 			res.dropped++
@@ -206,7 +206,7 @@ func convert(data []byte) (result, error) {
 // tail window it needs, or why it cannot be carried.
 func place(r rule) (block, region string, window int, dropReason string) {
 	if stateMap[r.State] == "" {
-		return "", "", 0, fmt.Sprintf("state %q has no tuios equivalent", r.State)
+		return "", "", 0, fmt.Sprintf("state %q has no dartuios equivalent", r.State)
 	}
 	name := strings.TrimSpace(r.Region)
 	switch name {
@@ -225,7 +225,7 @@ func place(r rule) (block, region string, window int, dropReason string) {
 			}
 		}
 	}
-	return "", "", 0, fmt.Sprintf("region %q has no tuios equivalent", name)
+	return "", "", 0, fmt.Sprintf("region %q has no dartuios equivalent", name)
 }
 
 // checkGate reports why a gate cannot be carried: an untranslatable pattern,

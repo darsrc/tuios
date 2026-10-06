@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // windowRowTitle is the label a session-management surface shows for a window.
@@ -36,8 +36,8 @@ func railWindowLabel(customName, foregroundCmd, title string) string {
 }
 
 // shellTitleLabel keeps the part of a shell's title that carries information:
-// the last element of the directory it names. "~/dev/tuios - fish" says the
-// same thing in every pane of one repo, where "tuios" at least says which repo,
+// the last element of the directory it names. "~/dev/dartuios - fish" says the
+// same thing in every pane of one repo, where "dartuios" at least says which repo,
 // in a quarter of the columns.
 func shellTitleLabel(title string) string {
 	head, _, _ := strings.Cut(title, " - ")

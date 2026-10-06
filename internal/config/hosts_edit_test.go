@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// What `tuios hosts add` and `tuios hosts remove` do to the file.
+// What `dartuios hosts add` and `dartuios hosts remove` do to the file.
 //
 // The rule under test throughout is that the command edits one table and
 // nothing else. A user who hand-wrote this file gets it back with their
@@ -34,7 +34,7 @@ func readFile(t *testing.T, path string) string {
 func TestAddingAHostThatExistsReplacesOnlyThatTable(t *testing.T) {
 	body := `[hosts.build]
 addr = "old-address"
-command = "/opt/tuios"
+command = "/opt/dartuios"
 
 [hosts.lab]
 addr = "lab-01"
@@ -48,7 +48,7 @@ addr = "lab-01"
 	if strings.Contains(got, "old-address") {
 		t.Errorf("ASSERTION: the old address survived the replacement:\n%s", got)
 	}
-	if strings.Contains(got, "/opt/tuios") {
+	if strings.Contains(got, "/opt/dartuios") {
 		t.Errorf("ASSERTION: a value the replacement did not set was kept:\n%s", got)
 	}
 	if !strings.Contains(got, `addr = "new-address"`) {
@@ -131,7 +131,7 @@ func TestAddedHostRoundTripsThroughTheParser(t *testing.T) {
 	path := writeTemp(t, "")
 	entry := HostConfig{
 		Addr:           "gaurav@buildbox",
-		Command:        "/home/gaurav/.local/bin/tuios",
+		Command:        "/home/gaurav/.local/bin/dartuios",
 		ConnectTimeout: 7,
 		SSHOptions:     []string{"-J", "bastion", "-o", "StrictHostKeyChecking=yes"},
 		ReposRoot:      "~/src",

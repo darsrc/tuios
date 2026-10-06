@@ -1,16 +1,16 @@
 name: Nix vendor hash
 
-# tuios.nix pins a hash of the Go module dependencies. update-nix.yml only
+# dartuios.nix pins a hash of the Go module dependencies. update-nix.yml only
 # refreshes it when a release is tagged, so a change to go.mod or go.sum on main
-# left `nix run github:Gaurav-Gosain/tuios` failing with a hash mismatch until
+# left `nix run github:darsrc/tuios` failing with a hash mismatch until
 # the next release (#220). This check fails the pull request that changes the
-# dependencies and prints the hash to put in tuios.nix.
+# dependencies and prints the hash to put in dartuios.nix.
 on:
   pull_request:
     paths:
       - go.mod
       - go.sum
-      - tuios.nix
+      - dartuios.nix
       - flake.nix
       - flake.lock
   push:
@@ -18,7 +18,7 @@ on:
     paths:
       - go.mod
       - go.sum
-      - tuios.nix
+      - dartuios.nix
       - flake.nix
       - flake.lock
   workflow_dispatch:
@@ -50,20 +50,20 @@ jobs:
       - name: Compare the vendor hash
         run: |
           set -u
-          pinned=$(sed -n 's/.*vendorHash = "\(sha256-[^"]*\)";.*/\1/p' tuios.nix)
+          pinned=$(sed -n 's/.*vendorHash = "\(sha256-[^"]*\)";.*/\1/p' dartuios.nix)
           if [ -z "$pinned" ]; then
-            echo "::error file=tuios.nix::No vendorHash = \"sha256-...\" line found."
+            echo "::error file=dartuios.nix::No vendorHash = \"sha256-...\" line found."
             exit 1
           fi
-          sed -i 's/vendorHash = "sha256-[^"]*";/vendorHash = pkgs.lib.fakeHash;/' tuios.nix
-          actual=$(nix build .#tuios --no-link 2>&1 | sed -n 's/.*got: *\(sha256-[^ ]*\).*/\1/p' | head -1)
-          git checkout -- tuios.nix
+          sed -i 's/vendorHash = "sha256-[^"]*";/vendorHash = pkgs.lib.fakeHash;/' dartuios.nix
+          actual=$(nix build .#dartuios --no-link 2>&1 | sed -n 's/.*got: *\(sha256-[^ ]*\).*/\1/p' | head -1)
+          git checkout -- dartuios.nix
           if [ -z "$actual" ]; then
-            echo "::error::Nix did not report a hash. Run 'nix build .#tuios' to see why."
+            echo "::error::Nix did not report a hash. Run 'nix build .#dartuios' to see why."
             exit 1
           fi
           if [ "$pinned" != "$actual" ]; then
-            echo "::error file=tuios.nix::The Go dependencies changed. Set vendorHash to \"$actual\" (it is \"$pinned\")."
+            echo "::error file=dartuios.nix::The Go dependencies changed. Set vendorHash to \"$actual\" (it is \"$pinned\")."
             exit 1
           fi
           echo "vendorHash is current: $pinned"

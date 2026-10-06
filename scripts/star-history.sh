@@ -2,7 +2,7 @@
 # Draw the README's star history chart from GitHub's own stargazer timestamps.
 #
 # Usage: scripts/star-history.sh [repo] [output.svg]
-#   repo:   owner/name (default: Gaurav-Gosain/tuios)
+#   repo:   owner/name (default: darsrc/tuios)
 #   output: path to write (default: assets/star-history.svg)
 #
 # star-history.com used to render this for us and now serves an error image in
@@ -12,7 +12,7 @@
 # result is also what keeps the README honest: GitHub's camo proxy caches a
 # remote image for hours regardless.
 #
-# The chart is drawn as a tuios pane: rounded accent border, a title pill on
+# The chart is drawn as a dartuios pane: rounded accent border, a title pill on
 # the border row, window controls on the other end, and a dock strip under the
 # pane. The colors are the chrome palette theme.UI() resolves on the default
 # charmtone ramp, not a lookalike, and the chrome is constant-dark for the
@@ -24,7 +24,7 @@
 # rewrites the same bytes and leaves nothing for CI to commit.
 set -eu
 
-REPO="${1:-Gaurav-Gosain/tuios}"
+REPO="${1:-darsrc/tuios}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${2:-$ROOT/assets/star-history.svg}"
 

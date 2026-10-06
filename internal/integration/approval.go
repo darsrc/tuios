@@ -13,9 +13,9 @@ import (
 // Some harnesses let a hook decide a permission prompt: Claude Code and Qwen
 // Code read a decision from their PermissionRequest hook's stdout, and opencode
 // takes a reply
-// to a permission request through its SDK, which the tuios plugin sends with
+// to a permission request through its SDK, which the dartuios plugin sends with
 // what the hook prints. For those events Translate adds an Approval to the
-// report, and `tuios agent-hook` may hold the prompt with the daemon's
+// report, and `dartuios agent-hook` may hold the prompt with the daemon's
 // request-approval verb until the person answers it in the Inbox.
 //
 // The person answers from one line of text, so a prompt is only offered to the
@@ -53,7 +53,7 @@ const ApprovalHookTimeout = 310
 
 // DefaultDenyMessage is what the model is told when the person denies a call
 // and gave no reason.
-const DefaultDenyMessage = "The user denied this from the tuios Inbox."
+const DefaultDenyMessage = "The user denied this from the dartuios Inbox."
 
 // MaxScopeLines bounds the rules "always" may add. More than this is not
 // offered: the Inbox shows every rule beside the key, and a long list is not
@@ -225,7 +225,7 @@ func claudePlanAnswer(decision, message string, input json.RawMessage, acceptEdi
 	return permissionRequestOutput(inner)
 }
 
-// openCodeAnswer is what the tuios opencode plugin reads: the reply the
+// openCodeAnswer is what the dartuios opencode plugin reads: the reply the
 // plugin posts to opencode's permission route, once, always or reject.
 func openCodeAnswer(decision, message string) (string, bool) {
 	reply := map[string]string{}

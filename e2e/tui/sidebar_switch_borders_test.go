@@ -71,10 +71,10 @@ func buildTiledSessionSwitch(t *testing.T, side string) *tuitest.Terminal {
 	killDaemon(t, base)
 	writeConfig(t, base, "[appearance]\nsidebar_enabled = true\nsidebar_position = \""+side+"\"\nshared_borders = true\n")
 
-	if out, err := tuiosCLI(t, base, "new", "alpha", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "alpha", "--detach"); err != nil {
 		t.Fatalf("create alpha: %v: %s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "new", "bravo", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "bravo", "--detach"); err != nil {
 		t.Fatalf("create bravo: %v: %s", err, out)
 	}
 

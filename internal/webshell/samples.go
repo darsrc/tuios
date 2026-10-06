@@ -2,15 +2,15 @@ package webshell
 
 import "strings"
 
-// sample is what a tuios subcommand that needs a real machine prints there,
+// sample is what a dartuios subcommand that needs a real machine prints there,
 // shown in the demo so a lesson about it has something to look at. The text
 // follows the docs page it links to.
 type sample struct {
-	doc  string // the docs page, under tuios.dev/docs/
+	doc  string // the docs page, under dartuios.dev/docs/
 	text string
 }
 
-// samples maps a tuios subcommand to its sample. Aliases share an entry.
+// samples maps a dartuios subcommand to its sample. Aliases share an entry.
 var samples = map[string]sample{
 	"ls": {"sessions", `╭──────┬─────────┬──────────┬─────────────┬─────────────╮
 │ NAME │ WINDOWS │ STATUS   │ CREATED     │ LAST ACTIVE │
@@ -27,12 +27,12 @@ var samples = map[string]sample{
 ╰──────────┴────────┴─────────────┴─────────────┴────────┴──────┴───────────────────╯`},
 	"send-agent-message": {"agent-messaging", `Sent to review (c7be946f). It is #2 in its inbox.`},
 	"fan": {"worktrees", `Started 3 agents on fan/dark-mode. Each prompt is sent when its agent is ready.
-  web-fan-dark-mode    fan/dark-mode    ~/.local/share/tuios/worktrees/web/fan-dark-mode
-  web-fan-dark-mode-2  fan/dark-mode-2  ~/.local/share/tuios/worktrees/web/fan-dark-mode-2
-  web-fan-dark-mode-3  fan/dark-mode-3  ~/.local/share/tuios/worktrees/web/fan-dark-mode-3`},
-	"worktree": {"worktrees", `Created branch feat/retry in ~/.local/share/tuios/worktrees/api/feat-retry.
+  web-fan-dark-mode    fan/dark-mode    ~/.local/share/dartuios/worktrees/web/fan-dark-mode
+  web-fan-dark-mode-2  fan/dark-mode-2  ~/.local/share/dartuios/worktrees/web/fan-dark-mode-2
+  web-fan-dark-mode-3  fan/dark-mode-3  ~/.local/share/dartuios/worktrees/web/fan-dark-mode-3`},
+	"worktree": {"worktrees", `Created branch feat/retry in ~/.local/share/dartuios/worktrees/api/feat-retry.
 Created session 'api-feat-retry'.`},
-	"list-verbs": {"control-protocol", `tuios control protocol, version 1
+	"list-verbs": {"control-protocol", `dartuios control protocol, version 1
   list-sessions    the sessions on this daemon
   new-window       open a window in a session
   send-text        type into a pane
@@ -40,7 +40,7 @@ Created session 'api-feat-retry'.`},
   wait-for         block until a pane prints, exits or goes quiet
   set-agent-state  report a pane's agent state
   subscribe        stream events as JSON lines
-  ...and more. tuios list-verbs <verb> shows one.`},
+  ...and more. dartuios list-verbs <verb> shows one.`},
 	"list-hooks": {"hooks", `╭───────────────────┬────────┬──────┬──────┬───────────┬────────────────────────╮
 │ EVENT             │ SIDE   │ RUNS │ EXIT │ LAST      │ COMMAND                │
 ├───────────────────┼────────┼──────┼──────┼───────────┼────────────────────────┤
@@ -63,6 +63,6 @@ func printSample(t *TTY, sub string) bool {
 	}
 	t.Print(dim + "On a real machine, this prints:" + reset + "\r\n")
 	t.Print(strings.ReplaceAll(s.text, "\n", "\r\n") + "\r\n")
-	t.Print(dim + "More: " + reset + cyan + "tuios.dev/docs/" + s.doc + reset + "\r\n")
+	t.Print(dim + "More: " + reset + cyan + "dartuios.dev/docs/" + s.doc + reset + "\r\n")
 	return true
 }

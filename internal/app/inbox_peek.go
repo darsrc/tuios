@@ -8,9 +8,9 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The Inbox's peek: space on an approval or a question reads the prompt the
@@ -27,7 +27,7 @@ import (
 // peek then reads the prompt again and says so, and the person answers what
 // is there now.
 //
-// A key that did not come from the keyboard, one that tuios send-keys pushed
+// A key that did not come from the keyboard, one that dartuios send-keys pushed
 // into this client, never answers: the nonce stands for the person, and an
 // agent that can drive the client with send-keys is not the person. The same
 // rule keeps such keys from signing a mail reply (agent_mail.go).
@@ -159,7 +159,7 @@ func (m *OS) InboxPeek() tea.Cmd {
 		return nil
 	}
 	if it.Host != "" || m.AttachedHost != "" {
-		m.ShowNotification("That prompt is on another machine: tuios peek-prompt -w HOST:SESSION:WINDOW reads it", "info", m.Settings.NotificationDuration)
+		m.ShowNotification("That prompt is on another machine: dartuios peek-prompt -w HOST:SESSION:WINDOW reads it", "info", m.Settings.NotificationDuration)
 		return nil
 	}
 	if m.DaemonClient == nil && m.Inbox.call == nil {

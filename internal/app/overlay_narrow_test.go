@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // narrowScreens are the sizes the overlays have to survive: a tall narrow
@@ -313,7 +313,7 @@ func TestTapeDialogsFitNarrowScreens(t *testing.T) {
 			assertFitsScreen(t, "tape manager delete", m.RenderTapeManager(), sc.w, sc.h)
 
 			m.TapeReview = &TapeReviewState{
-				Path:    "/home/someone/very/deep/project/directory/tree/.tuios.tape",
+				Path:    "/home/someone/very/deep/project/directory/tree/.dartuios.tape",
 				Dir:     "/home/someone/very/deep/project/directory/tree",
 				Content: []byte(strings.Repeat("Type \"a command line that is quite long indeed\"\n", 40)),
 			}

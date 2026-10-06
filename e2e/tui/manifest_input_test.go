@@ -14,7 +14,7 @@ import (
 // proves the agent idle with a rule reading only the last line of the screen,
 // and says the agent submits on a line feed. The fake agent reads its input
 // byte by byte with the terminal's CR to LF translation off, so the bytes it
-// prints are the bytes tuios wrote.
+// prints are the bytes dartuios wrote.
 //
 // Negative control: against a binary without the engine, the loader refuses
 // the manifest's bottom_non_empty_lines region, fan refuses the agent name, and
@@ -22,10 +22,10 @@ import (
 // submits with a carriage return, so the pane shows B:0d and never B:0a.
 
 const fakeAgentManifest = `schema_version = 1
-id = "tuiosfakeagent"
+id = "dartuiosfakeagent"
 [detect]
-comm  = ["tuiosfakeagent"]
-argv0 = ["tuiosfakeagent"]
+comm  = ["dartuiosfakeagent"]
+argv0 = ["dartuiosfakeagent"]
 [screen]
 enabled = true
 lines   = 4
@@ -57,32 +57,32 @@ func TestUserManifestInputReachesTheAgent(t *testing.T) {
 	if err := os.MkdirAll(bin, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(bin, "tuiosfakeagent"), []byte(fakeAgentScript), 0o755); err != nil {
+	if err := os.WriteFile(filepath.Join(bin, "dartuiosfakeagent"), []byte(fakeAgentScript), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
-	manifests := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "tuios", "harnesses")
+	manifests := filepath.Join(xdgDir(base, "XDG_CONFIG_HOME"), "dartuios", "harnesses")
 	if err := os.MkdirAll(manifests, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(manifests, "tuiosfakeagent.toml"), []byte(fakeAgentManifest), 0o600); err != nil {
+	if err := os.WriteFile(filepath.Join(manifests, "dartuiosfakeagent.toml"), []byte(fakeAgentManifest), 0o600); err != nil {
 		t.Fatal(err)
 	}
 
-	if out, err := tuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "plain", "--detach"); err != nil {
 		t.Fatalf("start the daemon: %v: %s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "doctor", "agents"); err != nil || !strings.Contains(out, "Manifest tuiosfakeagent is loaded from") {
+	if out, err := dartuiosCLI(t, base, "doctor", "agents"); err != nil || !strings.Contains(out, "Manifest dartuiosfakeagent is loaded from") {
 		t.Fatalf("doctor agents does not list the user manifest: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "fan", "1", "--agent", "tuiosfakeagent", "--repo", repo, "--name", "try/input", "hi"); err != nil {
+	if out, err := dartuiosCLI(t, base, "fan", "1", "--agent", "dartuiosfakeagent", "--repo", repo, "--name", "try/input", "hi"); err != nil {
 		t.Fatalf("fan: %v: %s", err, out)
 	}
 
 	var pane string
 	deadline := time.Now().Add(45 * time.Second)
 	for {
-		out, err := tuiosCLI(t, base, "capture-pane", "-s", "repo-try-input")
+		out, err := dartuiosCLI(t, base, "capture-pane", "-s", "repo-try-input")
 		if err == nil {
 			pane = out
 			if strings.Contains(pane, "B:0a") || strings.Contains(pane, "B:0d") {
@@ -97,7 +97,7 @@ func TestUserManifestInputReachesTheAgent(t *testing.T) {
 	}
 	// Give the rest of the bytes a moment to be printed.
 	time.Sleep(time.Second)
-	pane, _ = tuiosCLI(t, base, "capture-pane", "-s", "repo-try-input")
+	pane, _ = dartuiosCLI(t, base, "capture-pane", "-s", "repo-try-input")
 	for _, want := range []string{"B:1b", "B:68", "B:69", "B:0a"} {
 		if !strings.Contains(pane, want) {
 			t.Errorf("the agent did not read %s:\n%s", want, pane)

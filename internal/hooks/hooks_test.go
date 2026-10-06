@@ -15,7 +15,7 @@ func TestContextEnvVars(t *testing.T) {
 	tmpDir := t.TempDir()
 	envFile := filepath.Join(tmpDir, "env.txt")
 
-	m.Register(AfterFocusChange, "env | grep TUIOS_ > "+envFile)
+	m.Register(AfterFocusChange, "env | grep DARTUIOS_ > "+envFile)
 
 	m.Fire(AfterFocusChange, Context{
 		WindowID:   "win-abc",
@@ -33,11 +33,11 @@ func TestContextEnvVars(t *testing.T) {
 
 	content := string(data)
 	expected := []string{
-		"TUIOS_EVENT=after-focus-change",
-		"TUIOS_WINDOW_ID=win-abc",
-		"TUIOS_WINDOW_NAME=MyWindow",
-		"TUIOS_WORKSPACE=3",
-		"TUIOS_SESSION_ID=sess-xyz",
+		"DARTUIOS_EVENT=after-focus-change",
+		"DARTUIOS_WINDOW_ID=win-abc",
+		"DARTUIOS_WINDOW_NAME=MyWindow",
+		"DARTUIOS_WORKSPACE=3",
+		"DARTUIOS_SESSION_ID=sess-xyz",
 	}
 
 	for _, exp := range expected {

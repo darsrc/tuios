@@ -7,7 +7,7 @@
 #     x86_64-windows-gnu, aarch64-windows-gnu
 #
 # Output: .ghostty-vt/<target>/{lib,include,pkgconfig}. Point PKG_CONFIG_PATH
-# at the pkgconfig dir and build tuios with -tags ghostty.
+# at the pkgconfig dir and build dartuios with -tags ghostty.
 #
 # The pkgconfig file is rewritten rather than taken from the ghostty build:
 # upstream emits the bare library path in Libs:, which Go's cgo flag
@@ -80,7 +80,7 @@ includedir=\${prefix}/include
 libdir=\${prefix}/lib
 
 Name: libghostty-vt-static
-Description: Ghostty VT library (static, tuios pinned build)
+Description: Ghostty VT library (static, dartuios pinned build)
 Version: 0.1.0
 Cflags: -I\${includedir}
 Libs: -L\${libdir} -lghostty-vt

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // The directory a pane is in can come from two places, and they are not equal.
@@ -27,9 +27,9 @@ import (
 // Negative control: dropping the w.Cwd == "" condition fails here with the
 // stale directory.
 func TestAnAnnouncedDirectoryIsNotOverwrittenByTheDaemons(t *testing.T) {
-	w := &terminal.Window{Cwd: "/src/tuios/internal/app"}
-	adoptWindowCwd(w, "/src/tuios")
-	if w.Cwd != "/src/tuios/internal/app" {
+	w := &terminal.Window{Cwd: "/src/dartuios/internal/app"}
+	adoptWindowCwd(w, "/src/dartuios")
+	if w.Cwd != "/src/dartuios/internal/app" {
 		t.Errorf("the daemon's slower copy overwrote what the pane announced: got %q", w.Cwd)
 	}
 }
@@ -95,9 +95,9 @@ func TestAListingInFlightIsNotAskedForTwice(t *testing.T) {
 // TestAnEmptyDirectoryDoesNotWipeOne: a sync that omits the field must not take
 // away a directory the pane did announce.
 func TestAnEmptyDirectoryDoesNotWipeOne(t *testing.T) {
-	w := &terminal.Window{Cwd: "/src/tuios"}
+	w := &terminal.Window{Cwd: "/src/dartuios"}
 	adoptWindowCwd(w, "")
-	if w.Cwd != "/src/tuios" {
+	if w.Cwd != "/src/dartuios" {
 		t.Errorf("a sync with no directory wiped one: got %q", w.Cwd)
 	}
 	adoptWindowCwd(nil, "/anything") // must not panic

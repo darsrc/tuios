@@ -3,8 +3,8 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/shot"
 )
 
 // shotOS builds a client holding two live windows and a screenshot config that

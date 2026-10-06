@@ -17,7 +17,7 @@ import (
 )
 
 // HostCapabilities holds information about the host terminal's capabilities.
-// These are used to determine which features TUIOS can use for rendering.
+// These are used to determine which features dartuios can use for rendering.
 type HostCapabilities struct {
 	KittyGraphics bool
 	// KittyFileTransfer reports whether the host terminal can read a
@@ -68,7 +68,7 @@ type HostCapabilities struct {
 	// foreground and background, on the same terms.
 	//
 	// A palette index cannot say what colour it is: only the terminal drawing
-	// it can. Everything tuios renders unthemed comes out as indices, the host
+	// it can. Everything dartuios renders unthemed comes out as indices, the host
 	// resolves them, and anything that has to turn a finished frame back into
 	// cells of its own has no way to follow unless it asks. It used to guess
 	// with the xterm defaults, where index 4 is a navy so dark it is hard to
@@ -175,24 +175,24 @@ func DetectHostCapabilities() *HostCapabilities {
 	applyEnvironmentOverrides(caps)
 
 	// Debug output if requested. See capabilitiesDebugPath.
-	if os.Getenv("TUIOS_DEBUG_CAPS") == "1" {
+	if os.Getenv("DARTUIOS_DEBUG_CAPS") == "1" {
 		writeCapabilitiesDebug(caps)
 	}
 
 	return caps
 }
 
-// capabilitiesDebugPath is where TUIOS_DEBUG_CAPS writes.
+// capabilitiesDebugPath is where DARTUIOS_DEBUG_CAPS writes.
 //
-// It used to be a fixed /tmp/tuios_caps.log, which on a shared machine is one
+// It used to be a fixed /tmp/dartuios_caps.log, which on a shared machine is one
 // name every user races for and anyone can read. The state directory is
 // per-user, and the pid keeps two clients on one machine apart.
 func capabilitiesDebugPath() string {
-	name := fmt.Sprintf("tuios-caps.%d.log", os.Getpid())
+	name := fmt.Sprintf("dartuios-caps.%d.log", os.Getpid())
 	if dir := os.Getenv("XDG_STATE_HOME"); dir != "" {
-		return filepath.Join(dir, "tuios", name)
+		return filepath.Join(dir, "dartuios", name)
 	}
-	return filepath.Join(xdg.StateHome, "tuios", name)
+	return filepath.Join(xdg.StateHome, "dartuios", name)
 }
 
 // writeCapabilitiesDebug records what the probe found. A failure is silent:
@@ -583,7 +583,7 @@ func kittyProbeAnswer(response string, id int) (string, bool) {
 // writeGraphicsProbeFile stages a one-pixel RGB payload on disk for the
 // file-transmission capability probe.
 func writeGraphicsProbeFile() (string, error) {
-	f, err := os.CreateTemp("", "tuios-gfx-probe-*")
+	f, err := os.CreateTemp("", "dartuios-gfx-probe-*")
 	if err != nil {
 		return "", err
 	}
@@ -641,44 +641,44 @@ func readTTYResponse(tty *os.File, timeout time.Duration, done func(string) bool
 }
 
 func applyEnvironmentOverrides(caps *HostCapabilities) {
-	switch os.Getenv("TUIOS_KITTY_GRAPHICS") {
+	switch os.Getenv("DARTUIOS_KITTY_GRAPHICS") {
 	case "1":
 		caps.KittyGraphics = true
 	case "0":
 		caps.KittyGraphics = false
 	}
 
-	switch os.Getenv("TUIOS_KITTY_PLACEHOLDERS") {
+	switch os.Getenv("DARTUIOS_KITTY_PLACEHOLDERS") {
 	case "1":
 		caps.KittyPlaceholders = true
 	case "0":
 		caps.KittyPlaceholders = false
 	}
 
-	switch os.Getenv("TUIOS_SIXEL_GRAPHICS") {
+	switch os.Getenv("DARTUIOS_SIXEL_GRAPHICS") {
 	case "1":
 		caps.SixelGraphics = true
 	case "0":
 		caps.SixelGraphics = false
 	}
 
-	switch os.Getenv("TUIOS_KITTY_ANIMATION") {
+	switch os.Getenv("DARTUIOS_KITTY_ANIMATION") {
 	case "1":
 		caps.KittyAnimation = true
 	case "0":
 		caps.KittyAnimation = false
 	}
 
-	applyCellSizeOverride(caps, os.Getenv("TUIOS_CELL_SIZE"))
+	applyCellSizeOverride(caps, os.Getenv("DARTUIOS_CELL_SIZE"))
 }
 
-// applyCellSizeOverride reads TUIOS_CELL_SIZE, spelled WIDTHxHEIGHT in pixels.
+// applyCellSizeOverride reads DARTUIOS_CELL_SIZE, spelled WIDTHxHEIGHT in pixels.
 //
-// Every picture tuios draws in cells is sized from the host's answer to the
+// Every picture dartuios draws in cells is sized from the host's answer to the
 // pixel-geometry query, and a host that does not answer it gets a guess. The
 // guess is close enough for an icon and not close enough for a whole captured
 // screen, which is drawn at the shape the cell size says it has. This is the
-// way to tell tuios the real number, and it is what the tests use so an
+// way to tell dartuios the real number, and it is what the tests use so an
 // assertion about a placement box is arithmetic rather than a guess about the
 // terminal running them.
 func applyCellSizeOverride(caps *HostCapabilities, spec string) {

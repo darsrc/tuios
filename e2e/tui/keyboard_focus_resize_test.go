@@ -31,7 +31,7 @@ import (
 type focusFixture struct {
 	config string
 	env    []string
-	// standalone runs plain tuios with no daemon behind it.
+	// standalone runs plain dartuios with no daemon behind it.
 	standalone bool
 	// layout is a palette search that picks a layout after tiling is on.
 	layout string
@@ -213,7 +213,7 @@ func TestFocusAltArrowsOwnBordersAddNoLine(t *testing.T) {
 }
 
 func TestFocusAltArrowsPixelHostAddNoLine(t *testing.T) {
-	runFocusCase(t, focusCase{focusFixture{config: sharedBordersConfig, env: []string{"TUIOS_CELL_SIZE=9x20"}}, altArrowRoundTrips})
+	runFocusCase(t, focusCase{focusFixture{config: sharedBordersConfig, env: []string{"DARTUIOS_CELL_SIZE=9x20"}}, altArrowRoundTrips})
 }
 
 func TestFocusAltArrowsStandaloneAddNoLine(t *testing.T) {
@@ -292,7 +292,7 @@ func TestFocusAltArrowsFishStandaloneAddNoLine(t *testing.T) {
 }
 
 func TestFocusAltArrowsFishPixelHostAddNoLine(t *testing.T) {
-	runFocusCase(t, focusCase{focusFixture{config: sharedBordersConfig, fish: true, env: []string{"TUIOS_CELL_SIZE=9x20"}}, altArrowRoundTrips})
+	runFocusCase(t, focusCase{focusFixture{config: sharedBordersConfig, fish: true, env: []string{"DARTUIOS_CELL_SIZE=9x20"}}, altArrowRoundTrips})
 }
 
 func TestFocusAltArrowsFishOwnBordersAddNoLine(t *testing.T) {
@@ -301,31 +301,31 @@ func TestFocusAltArrowsFishOwnBordersAddNoLine(t *testing.T) {
 
 func TestFocusAltArrowsFishKittyHostAddNoLine(t *testing.T) {
 	runFocusCase(t, focusCase{focusFixture{config: sharedBordersConfig, fish: true,
-		env: []string{"TUIOS_KITTY_GRAPHICS=1", "KITTY_WINDOW_ID=1", "TERM=xterm-kitty", "TUIOS_CELL_SIZE=9x20", "KITTY_SHELL_INTEGRATION=enabled"}}, altArrowRoundTrips})
+		env: []string{"DARTUIOS_KITTY_GRAPHICS=1", "KITTY_WINDOW_ID=1", "TERM=xterm-kitty", "DARTUIOS_CELL_SIZE=9x20", "KITTY_SHELL_INTEGRATION=enabled"}}, altArrowRoundTrips})
 }
 
 func TestFocusAltArrowsFishAnimatedAddNoLine(t *testing.T) {
 	runFocusCase(t, focusCase{focusFixture{config: sharedBordersConfig, fish: true, animations: true,
-		env: []string{"TUIOS_KITTY_GRAPHICS=1", "KITTY_WINDOW_ID=1", "TERM=xterm-kitty", "TUIOS_CELL_SIZE=9x20"}}, altArrowRoundTrips})
+		env: []string{"DARTUIOS_KITTY_GRAPHICS=1", "KITTY_WINDOW_ID=1", "TERM=xterm-kitty", "DARTUIOS_CELL_SIZE=9x20"}}, altArrowRoundTrips})
 }
 
 func TestFocusAltArrowsFishAnimatedOwnBordersAddNoLine(t *testing.T) {
 	runFocusCase(t, focusCase{focusFixture{config: "[appearance]\nshared_borders = false\n", fish: true, animations: true,
-		env: []string{"TUIOS_KITTY_GRAPHICS=1", "KITTY_WINDOW_ID=1", "TERM=xterm-kitty", "TUIOS_CELL_SIZE=9x20"}}, altArrowRoundTrips})
+		env: []string{"DARTUIOS_KITTY_GRAPHICS=1", "KITTY_WINDOW_ID=1", "TERM=xterm-kitty", "DARTUIOS_CELL_SIZE=9x20"}}, altArrowRoundTrips})
 }
 
 func TestFocusTabFishAnimatedOwnBordersAddsNoLine(t *testing.T) {
 	runFocusCase(t, focusCase{focusFixture{config: "[appearance]\nshared_borders = false\n", fish: true, animations: true,
-		env: []string{"TUIOS_CELL_SIZE=9x20"}}, tabRoundTrips})
+		env: []string{"DARTUIOS_CELL_SIZE=9x20"}}, tabRoundTrips})
 }
 
 // TestRenderTraceRecordsEachAnnouncement is the diagnostic the macOS report
-// is asked to run: with TUIOS_RENDER_TRACE set, every size handed to a guest
+// is asked to run: with DARTUIOS_RENDER_TRACE set, every size handed to a guest
 // is written to the trace with the code path that handed it. A swap under
 // shared borders announces one size per pane, so the trace has to show it.
 func TestRenderTraceRecordsEachAnnouncement(t *testing.T) {
 	trace := filepath.Join(t.TempDir(), "trace.log")
-	term := focusPanes(t, focusFixture{config: sharedBordersConfig, env: []string{"TUIOS_RENDER_TRACE=" + trace}})
+	term := focusPanes(t, focusFixture{config: sharedBordersConfig, env: []string{"DARTUIOS_RENDER_TRACE=" + trace}})
 	leaveTerminalMode(t, term)
 	send(t, term, "H")
 	if n := winchRows(t, term, "one swap to the left"); n < 1 {

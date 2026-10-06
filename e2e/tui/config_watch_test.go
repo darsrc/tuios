@@ -9,7 +9,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// Editing config.toml in one pane has to reach the tuios running in the next
+// Editing config.toml in one pane has to reach the dartuios running in the next
 // one. These drive the real file: a running client, a save on disk, and the
 // screen afterwards.
 //
@@ -19,7 +19,7 @@ import (
 
 // configPathIn is where a client started with startIn reads its config from.
 func configPathIn(base string) string {
-	return filepath.Join(base, "XDG_CONFIG_HOME", "tuios", "config.toml")
+	return filepath.Join(base, "XDG_CONFIG_HOME", "dartuios", "config.toml")
 }
 
 // saveConfigLikeAnEditor replaces the config the way vim does: a new file

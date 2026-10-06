@@ -11,12 +11,12 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // scriptDoneLinger is how long the "DONE" completion indicator stays on screen
@@ -913,7 +913,7 @@ func (m *OS) SetConfig(path, value string) error {
 // setConfigFromRegistry applies any option the config registry knows.
 //
 // The switch above is six paths, hand-written, and it was the whole of what a
-// running tuios could be told to change. Everything else in the file, which is
+// running dartuios could be told to change. Everything else in the file, which is
 // most of the sidebar and all but one of the dock's settings, could be written
 // into a config file and not changed while running. The registry already
 // describes every settable path and can set one on a UserConfig, so the live
@@ -1163,7 +1163,7 @@ func (m *OS) startRemoteSendKeys(keys string, literal bool, raw bool, windowTarg
 		return nil, nil
 	}
 
-	// Parse and synthesize TUIOS key events
+	// Parse and synthesize dartuios key events
 	var keyMsgs []tea.KeyPressMsg
 	if raw {
 		// Raw mode: each character is a separate key, no splitting

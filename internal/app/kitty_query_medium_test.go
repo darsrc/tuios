@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // newQueryTestPassthrough builds a passthrough whose host either can or cannot
@@ -31,7 +31,7 @@ func newQueryTestPassthrough(t *testing.T, hostReadsFiles bool) *KittyPassthroug
 	kp := NewKittyPassthroughWithOptions(KittyPassthroughOptions{Output: devnull})
 	kp.enabled = true
 	// ForceEnable would also pin inlineGraphics; leave it off so the test
-	// exercises the capability rather than the tuios-web override.
+	// exercises the capability rather than the dartuios-web override.
 	kp.inlineGraphics = false
 	return kp
 }
@@ -43,7 +43,7 @@ func queryResponse(kp *KittyPassthrough, cmd *vt.KittyCommand) string {
 }
 
 // TestForwardQueryReportsFileMediaUnsupported pins the fix for kitty graphics
-// failing when tuios runs inside a browser-backed terminal such as sip's.
+// failing when dartuios runs inside a browser-backed terminal such as sip's.
 //
 // kitten icat probes direct, temp-file and shared-memory transmission and
 // commits to whichever comes back OK. Answering OK to a file medium the host

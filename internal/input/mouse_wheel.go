@@ -4,8 +4,8 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/app"
 )
 
 // wheelIsHorizontal reports whether a wheel event is on the horizontal axis.

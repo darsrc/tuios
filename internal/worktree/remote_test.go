@@ -7,31 +7,31 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 func TestNormalizeRemoteJoinsTheSpellingsOfOneRepository(t *testing.T) {
 	same := []string{
-		"https://github.com/Gaurav-Gosain/tuios",
-		"https://github.com/Gaurav-Gosain/tuios.git",
-		"https://GitHub.com/Gaurav-Gosain/tuios/",
-		"git@github.com:Gaurav-Gosain/tuios.git",
-		"github.com:Gaurav-Gosain/tuios",
-		"ssh://git@github.com/Gaurav-Gosain/tuios.git",
-		"ssh://git@github.com:22/Gaurav-Gosain/tuios",
-		"git://github.com/Gaurav-Gosain/tuios",
+		"https://github.com/darsrc/tuios",
+		"https://github.com/darsrc/tuios.git",
+		"https://GitHub.com/darsrc/tuios/",
+		"git@github.com:darsrc/tuios.git",
+		"github.com:darsrc/tuios",
+		"ssh://git@github.com/darsrc/tuios.git",
+		"ssh://git@github.com:22/darsrc/tuios",
+		"git://github.com/darsrc/tuios",
 	}
-	want := "github.com/Gaurav-Gosain/tuios"
+	want := "github.com/darsrc/tuios"
 	for _, s := range same {
 		if got := NormalizeRemote(s); got != want {
 			t.Errorf("NormalizeRemote(%q) = %q, want %q", s, got, want)
 		}
 	}
 	different := []string{
-		"https://github.com/Gaurav-Gosain/tuios-web",
-		"https://gitlab.com/Gaurav-Gosain/tuios",
-		"https://github.com/someone-else/tuios",
-		"/src/tuios",
+		"https://github.com/darsrc/tuios-web",
+		"https://gitlab.com/darsrc/tuios",
+		"https://github.com/someone-else/dartuios",
+		"/src/dartuios",
 	}
 	for _, s := range different {
 		if got := NormalizeRemote(s); got == want {

@@ -17,10 +17,10 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// kitten icat draws nothing inside tuios, reported while recording.
+// kitten icat draws nothing inside dartuios, reported while recording.
 //
 // Two bugs, one cause. kitten icat is written in Go and encodes its payloads
-// with base64.RawStdEncoding, so nothing it sends is padded, and tuios decoded
+// with base64.RawStdEncoding, so nothing it sends is padded, and dartuios decoded
 // with StdEncoding, which requires padding:
 //
 //   - In its default mode for a PNG, icat sends the file's path (t=f). A path
@@ -33,7 +33,7 @@ import (
 // Both tests run in the standalone TUI and against a daemon, whose kitty query
 // answers are its own and not the standalone passthrough's.
 
-// icatImage is the PNG these tests draw, with dimensions nothing else in tuios
+// icatImage is the PNG these tests draw, with dimensions nothing else in dartuios
 // transmits so its commands can be told apart on the wire.
 const (
 	icatImageW = 37
@@ -65,14 +65,14 @@ func writeIcatPNG(t *testing.T, dir string) (string, []byte) {
 	return path, buf.Bytes()
 }
 
-// startGraphicsPane boots tuios against a host that answers like kitty, opens
+// startGraphicsPane boots dartuios against a host that answers like kitty, opens
 // one pane and leaves it in terminal mode at a shell prompt.
 func startGraphicsPane(t *testing.T, daemon bool) (*tuitest.Terminal, *kittyHost) {
 	t.Helper()
 	host := newKittyHost()
 	term, base := start(t, startOpts{
 		cols: 120, rows: 40,
-		env:           []string{"TUIOS_SIXEL_GRAPHICS=0"},
+		env:           []string{"DARTUIOS_SIXEL_GRAPHICS=0"},
 		out:           host,
 		daemonDefault: daemon,
 	})
@@ -183,9 +183,9 @@ func TestKittenIcatDrawsInAPane(t *testing.T) {
 			host.mark("icat")
 
 			// Default mode. The host answered that it reads files, so icat
-			// sends the path and tuios hands it to the host.
+			// sends the path and dartuios hands it to the host.
 			runToExit(t, term, kitten+" icat --stdin=no "+path)
-			// Stream mode. The bytes go through tuios.
+			// Stream mode. The bytes go through dartuios.
 			runToExit(t, term, kitten+" icat --stdin=no --transfer-mode=stream "+path)
 			time.Sleep(time.Second)
 

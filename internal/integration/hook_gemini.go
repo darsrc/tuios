@@ -7,7 +7,7 @@ package integration
 // PreCompress), the common input fields (session_id, transcript_path, cwd,
 // hook_event_name, timestamp), and Notification's notification_type
 // "ToolPermission" with a message and details. It also says a hook must print
-// nothing but its JSON answer on stdout, which is why `tuios agent-hook
+// nothing but its JSON answer on stdout, which is why `dartuios agent-hook
 // gemini-cli` prints an empty object.
 //
 //	SessionStart          idle, and the session id and transcript path

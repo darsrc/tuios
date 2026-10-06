@@ -4,7 +4,7 @@
 // here) with two things taken out: the hidden `man` command, which linked
 // mango and roff to write a man page, and golang.org/x/text/cases, which
 // upper-cased the first word of an error title. Together they were 375 KB
-// of the tuios binary. The help and error output is otherwise the same.
+// of the dartuios binary. The help and error output is otherwise the same.
 package fang
 
 import (

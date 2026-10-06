@@ -191,14 +191,14 @@
     "skip": "Cursor"
   },
   {
-    "name": "a pane TUIOS_AGENT names as Codex",
-    "env": {"TUIOS_AGENT": "codex"},
+    "name": "a pane DARTUIOS_AGENT names as Codex",
+    "env": {"DARTUIOS_AGENT": "codex"},
     "payload": {"session_id": "sess-1", "hook_event_name": "Stop"},
     "skip": "foreign harness"
   },
   {
-    "name": "a pane TUIOS_AGENT names as Claude",
-    "env": {"TUIOS_AGENT": "claude"},
+    "name": "a pane DARTUIOS_AGENT names as Claude",
+    "env": {"DARTUIOS_AGENT": "claude"},
     "payload": {"session_id": "sess-1", "hook_event_name": "Stop"},
     "want": {"state": "done", "agent_session_id": "sess-1", "activity": {"event": "turn_end"}}
   },
@@ -237,14 +237,14 @@
     "skip": "comes from Grok"
   },
   {
-    "name": "TUIOS_AGENT names a harness with no integration",
-    "env": {"TUIOS_AGENT": "aider"},
+    "name": "DARTUIOS_AGENT names a harness with no integration",
+    "env": {"DARTUIOS_AGENT": "aider"},
     "payload": {"hook_event_name": "Stop", "session_id": "sess-1"},
-    "skip": "foreign harness: TUIOS_AGENT names aider"
+    "skip": "foreign harness: DARTUIOS_AGENT names aider"
   },
   {
-    "name": "TUIOS_AGENT names a harness tuios does not know",
-    "env": {"TUIOS_AGENT": "my-own-agent"},
+    "name": "DARTUIOS_AGENT names a harness dartuios does not know",
+    "env": {"DARTUIOS_AGENT": "my-own-agent"},
     "payload": {"hook_event_name": "Stop", "session_id": "sess-1"},
     "want": {"state": "done", "agent_session_id": "sess-1", "activity": {"event": "turn_end"}}
   }

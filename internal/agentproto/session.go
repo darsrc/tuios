@@ -12,7 +12,7 @@ import (
 // The pane program: one agent over its protocol, shown as a transcript with a
 // prompt line under it.
 //
-// The pane is where the person talks to the agent, and it is also what tuios
+// The pane is where the person talks to the agent, and it is also what dartuios
 // already knows how to drive: a prompt ask-agent or start-agent types arrives
 // as a paste and a carriage return, the transcript is plain text capture-pane
 // reads, and the agent's state reaches the rail and the Inbox as reports from
@@ -28,7 +28,7 @@ import (
 // there.
 
 // Reporter carries the session's state to the daemon. A nil Reporter reports
-// nothing, which is how the program runs outside tuios.
+// nothing, which is how the program runs outside dartuios.
 type Reporter interface {
 	// Report sets the pane's agent state. kind is approval for a
 	// permission, and ifState, when set, is the states the pane must be in

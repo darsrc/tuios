@@ -7,8 +7,8 @@ import (
 	"slices"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/integration"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/integration"
 )
 
 // Some chrome only means something to a person who runs agents: the prefix
@@ -103,12 +103,12 @@ func (m *OS) prefixMenuBindings() []config.Keybinding {
 	return out
 }
 
-// agentIntegrationMsg reports that a harness on this machine has tuios's
+// agentIntegrationMsg reports that a harness on this machine has dartuios's
 // hooks installed.
 type agentIntegrationMsg struct{}
 
 // checkAgentIntegrationCmd looks, once and off the UI goroutine, for an agent
-// integration installed with `tuios integration install`. A harness whose
+// integration installed with `dartuios integration install`. A harness whose
 // configuration directory does not exist is skipped with one stat, so a
 // machine with no agents on it pays a handful of stats at start.
 func (m *OS) checkAgentIntegrationCmd() tea.Cmd {
@@ -121,7 +121,7 @@ func (m *OS) checkAgentIntegrationCmd() tea.Cmd {
 			if fi, err := os.Stat(t.ConfigDir(env)); err != nil || !fi.IsDir() {
 				continue
 			}
-			if t.Status(env, "tuios").Installed {
+			if t.Status(env, "dartuios").Installed {
 				return agentIntegrationMsg{}
 			}
 		}

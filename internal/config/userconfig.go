@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 	"github.com/pelletier/go-toml/v2"
 )
 
@@ -56,7 +56,7 @@ type UserConfig struct {
 	// offered as addresses when adding a host. It changes suggestions only;
 	// nothing is added on its own. See tailscale.go.
 	Tailscale TailscaleConfig `toml:"tailscale,omitempty"`
-	// Agents is the [agents] table: how tuios treats the coding agents in its
+	// Agents is the [agents] table: how dartuios treats the coding agents in its
 	// panes. Outside the option registry for the same reason as the tables
 	// above. See agents.go.
 	Agents AgentsConfig `toml:"agents,omitempty"`
@@ -120,19 +120,19 @@ type StartupConfig struct {
 	// state, so attaching to a session laid out one way never re-arranges it to
 	// match the config of whoever attached.
 	Layout string `toml:"layout"`
-	// Daemon makes a bare "tuios" attach to a daemon-backed session instead of
+	// Daemon makes a bare "dartuios" attach to a daemon-backed session instead of
 	// running a standalone one, so a session survives the terminal window it was
-	// started in without anybody typing "tuios attach" (default: true).
+	// started in without anybody typing "dartuios attach" (default: true).
 	//
-	// It changes bare "tuios" and nothing else: every subcommand already says
+	// It changes bare "dartuios" and nothing else: every subcommand already says
 	// which it wants, and a session already running is a separate process this
-	// cannot reach. TUIOS_NO_DAEMON=1 and --standalone both override it, and a
-	// bare "tuios" whose daemon will not start runs standalone for that one run
+	// cannot reach. DARTUIOS_NO_DAEMON=1 and --standalone both override it, and a
+	// bare "dartuios" whose daemon will not start runs standalone for that one run
 	// and says so, so this never leaves the user without a terminal.
 	Daemon bool `toml:"daemon"`
 }
 
-// TapeConfig holds settings for per-directory project tapes (.tuios.tape).
+// TapeConfig holds settings for per-directory project tapes (.dartuios.tape).
 //
 // Autorun is the master switch for detecting a project tape when the focused
 // window's shell enters a directory that carries one:
@@ -176,7 +176,7 @@ type DaemonConfig struct {
 	// AgentBinaries lists extra binary names to treat as agents, merged with the
 	// built-in defaults (not replacing them).
 	AgentBinaries []string `toml:"agent_binaries"`
-	// RespondFromShell lets `tuios respond`, run from a shell outside every
+	// RespondFromShell lets `dartuios respond`, run from a shell outside every
 	// pane, answer an agent's prompt without an attached client. Off by default:
 	// respond is then for the person at the Inbox of an attached client. A
 	// caller inside a pane is refused either way.
@@ -201,9 +201,9 @@ var ResumeAgentsModes = []string{ResumeAgentsAsk, ResumeAgentsAuto, ResumeAgents
 
 // AppearanceConfig holds appearance-related settings
 type AppearanceConfig struct {
-	BorderStyle              string                  `toml:"border_style"`                 // Border style: rounded, normal, thick, double, hidden, block, ascii, outer-half-block, inner-half-block, glyphs
+	BorderStyle              string                  `toml:"border_style"`                 // Border style: dar (default), rounded, normal, thick, double, hidden, block, ascii, outer-half-block, inner-half-block, glyphs
 	ZenMode                  string                  `toml:"zen_mode"`                     // Zen mode: disabled, always, mouse (default: disabled)
-	Links                    string                  `toml:"links"`                        // Links tuios acts on: off, marked, all (default: all)
+	Links                    string                  `toml:"links"`                        // Links dartuios acts on: off, marked, all (default: all)
 	HideWindowButtons        bool                    `toml:"hide_window_buttons"`          // Hide window control buttons (minimize, maximize, close)
 	WindowButtonStyle        string                  `toml:"window_button_style"`          // Window control style: pill, dots (default: dots)
 	WindowButtonPosition     string                  `toml:"window_button_position"`       // Which end of the title bar the window controls sit on: right, left (default: left)
@@ -260,7 +260,7 @@ type AppearanceConfig struct {
 	ZoomFollowsFocus       *bool  `toml:"zoom_follows_focus"`        // Hand the zoom to the pane the focus lands on (default: true)
 	WindowButtonZoom       *bool  `toml:"window_button_zoom"`        // Carry the zoom control on a tiled pane's title bar (default: true)
 	SidebarGitDirty        *bool  `toml:"git_dirty"`                 // Count changed and untracked paths in the rail's git section (default: true)
-	Glyphs                 string `toml:"glyphs"`                    // Chrome glyph set: default, unicode, heavy, ascii, or one from ~/.config/tuios/glyphs
+	Glyphs                 string `toml:"glyphs"`                    // Chrome glyph set: default, unicode, heavy, ascii, or one from ~/.config/dartuios/glyphs
 	Gap                    int    `toml:"gap"`                       // Cells of empty space kept between neighbouring tiled panes (default: 0)
 	// MasterRatio and ScrollColumnWidth are percentages rather than fractions
 	// because that is what a settings stepper and a CLI argument can carry: the
@@ -274,7 +274,7 @@ type AppearanceConfig struct {
 	ClockFormat       string `toml:"clock_format"`        // Go time layout the clock overlay is drawn with (default: 15:04:05)
 	DimUnfocused      int    `toml:"dim_unfocused"`       // Percent an unfocused pane's content is carried toward its own ground (default: 0)
 	DimMultifocus     bool   `toml:"dim_multifocus"`      // Dim the panes in the multifocus set too (default: false)
-	// The backgrounds tuios paints on cells that have none of their own. Each
+	// The backgrounds dartuios paints on cells that have none of their own. Each
 	// takes off, theme or #RRGGBB. background is the default for every
 	// surface; a surface's own key overrides it, and empty follows it. See
 	// ResolveBackground.
@@ -497,7 +497,7 @@ type ScrollbarConfig struct {
 // paints over its own output to mark text.
 //
 // All four were fixed hex literals in the render loop. They are the one part
-// of a pane's colours tuios chooses rather than the program running in it, so
+// of a pane's colours dartuios chooses rather than the program running in it, so
 // they are the one part a person cannot fix by changing their theme, and the
 // selection colour in particular sat over every pane in a violet nothing else
 // on screen used.
@@ -669,7 +669,7 @@ var defaultCopyFlash = true
 func DefaultConfig() *UserConfig {
 	cfg := &UserConfig{
 		Appearance: AppearanceConfig{
-			BorderStyle:              "rounded",
+			BorderStyle:              BorderStyleDAR,
 			ZenMode:                  ZenModeDisabled,
 			Links:                    LinksAll,
 			HideWindowButtons:        false,
@@ -683,7 +683,7 @@ func DefaultConfig() *UserConfig {
 			ClickToType:              ClickToTypeDouble,
 			KittyPlaceholders:        KittyPlaceholdersAuto,
 			AutoEnterTerminalOnFocus: AutoEnterTerminalOff,
-			Glyphs:                   theme.GlyphSetNone,
+			Glyphs:                   theme.GlyphSetDAR,
 			Motion:                   MotionFull,
 			ModalDim:                 new(ModalDimDefault),
 			PanelPadding:             overlay.DefaultPanelPadding,
@@ -694,7 +694,7 @@ func DefaultConfig() *UserConfig {
 			ZoomSize:                 ZoomSizeDefault,
 			NiriScrollCells:          NiriScrollCellsDefault,
 			PrefixRepeatTime:         &defaultPrefixRepeatTime,
-			Scrollbar:                ScrollbarConfig{Style: ScrollbarStyleTrack, Tint: ScrollbarTintQuiet},
+			Scrollbar:                ScrollbarConfig{Style: ScrollbarStyleThin, Tint: ScrollbarTintQuiet},
 			Background:               BackgroundOff,
 			Selection: SelectionConfig{
 				Bg: DefaultSelectionBg, Fg: DefaultSelectionFg,
@@ -840,7 +840,7 @@ func DefaultConfig() *UserConfig {
 				// They matter most on macOS. The direct chords for this are
 				// alt+left and alt+right, and those are the two a macOS
 				// terminal is most likely to rewrite into the readline word
-				// motions before tuios ever sees them, so the prefix is the
+				// motions before dartuios ever sees them, so the prefix is the
 				// path that works with no terminal settings at all.
 				//
 				// The arrows rather than hjkl: j is the jump-to-message key
@@ -1448,7 +1448,7 @@ func clampPercent(v, lo, hi, fallback int) int {
 // LoadUserConfig loads the user configuration from XDG config directory
 func LoadUserConfig() (*UserConfig, error) {
 	// Try to find existing config file
-	configPath, err := xdg.SearchConfigFile("tuios/config.toml")
+	configPath, err := xdg.SearchConfigFile("dartuios/config.toml")
 	if err != nil {
 		// Config doesn't exist, create default
 		return createDefaultConfig()
@@ -1519,7 +1519,7 @@ func ParseUserConfig(data []byte) (*UserConfig, error) {
 func createDefaultConfig() (*UserConfig, error) {
 	cfg := DefaultConfig()
 
-	configPath, err := xdg.ConfigFile("tuios/config.toml")
+	configPath, err := xdg.ConfigFile("dartuios/config.toml")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get config path: %w", err)
 	}
@@ -1674,7 +1674,7 @@ func fillMissingAppearance(cfg, defaultCfg *UserConfig) {
 // This is the whole of the config-file-to-globals mapping, deliberately: an
 // entrypoint that loads a config and calls this gets every setting the settings
 // page can write, with nothing left needing a second call. That matters for
-// callers that do not also call ApplyOverrides: `tuios tape`, the pkg/tuios
+// callers that do not also call ApplyOverrides: `dartuios tape`, the pkg/dartuios
 // embed, and every live config reload through ConfigReloadedMsg. A setting
 // mapped only in ApplyOverrides would be dropped for them. ApplyOverrides still layers CLI flags on top, so flags
 // keep winning where they are set.
@@ -2089,7 +2089,7 @@ func ApplyAppearanceConfig(cfg *UserConfig, s *Settings) {
 // actually drive. Both apply passes call it, so a config file cannot mean two
 // different frame rates depending on which one ran: ApplyOverrides runs alone
 // for the entrypoints that have no ApplyAppearanceConfig, and both run (in that
-// order) for cmd/tuios.
+// order) for cmd/dartuios.
 func clampMaxFPS(fps int) int {
 	return max(min(fps, MaxFPSCap), MinConfiguredFPS)
 }
@@ -2619,10 +2619,10 @@ func ConfigWarnings(cfg *UserConfig) []string {
 
 // GetConfigPath returns the path to the config file
 func GetConfigPath() (string, error) {
-	path, err := xdg.SearchConfigFile("tuios/config.toml")
+	path, err := xdg.SearchConfigFile("dartuios/config.toml")
 	if err != nil {
 		// Return where it would be created
-		return xdg.ConfigFile("tuios/config.toml")
+		return xdg.ConfigFile("dartuios/config.toml")
 	}
 	return path, nil
 }

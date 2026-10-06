@@ -14,7 +14,7 @@ import (
 	"sync"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/pkg/applist"
+	"github.com/darsrc/tuios/pkg/applist"
 )
 
 // Icons are drawn as real pictures, not glyphs, and only where the host can
@@ -44,7 +44,7 @@ const (
 	launcherIconCols = 2
 	launcherIconRows = 1
 
-	// launcherIconIDBase is where tuios's own kitty image ids start.
+	// launcherIconIDBase is where dartuios's own kitty image ids start.
 	// KittyPassthrough hands guest images ids counting up from 1, so a pane has
 	// to draw four billion images before its allocator reaches this range. It
 	// does wrap rather than skip the range, so this is very unlikely rather than

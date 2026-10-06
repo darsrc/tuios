@@ -3,7 +3,7 @@ package app
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // spacedSwitcherItems are the labels a rename can now produce.

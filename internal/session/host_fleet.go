@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/federation"
 )
 
 // The fleet: this daemon following the agents of every linked host.
@@ -44,7 +44,7 @@ import (
 // redial the stream resumes from the last seq it delivered (the host's replay
 // ring), and relists when the host says the replay cannot be exact.
 //
-// A host whose tuios predates the Inbox or the resumable stream is followed by
+// A host whose dartuios predates the Inbox or the resumable stream is followed by
 // polling, as every host was before: list-hosts says so in events and
 // events_note, and the client keeps its poll for that host.
 //
@@ -86,14 +86,14 @@ const (
 	// after the stream failed with the link still up.
 	fleetRetry = 2 * time.Second
 	// fleetPollingRetry is how long a pump waits before trying again to
-	// stream from a host whose tuios could not, in case it was upgraded.
+	// stream from a host whose dartuios could not, in case it was upgraded.
 	fleetPollingRetry = time.Minute
 	// fleetMaxSessions and fleetMaxAgents bound what the cache keeps per host.
 	fleetMaxSessions = 512
 	fleetMaxAgents   = 2048
 )
 
-// errFleetOld reports a host whose tuios cannot stream its agents.
+// errFleetOld reports a host whose dartuios cannot stream its agents.
 type errFleetOld struct{ note string }
 
 func (e errFleetOld) Error() string { return e.note }
@@ -659,7 +659,7 @@ func (c *fleetConn) listAttention() (fleetListing, error) {
 	}
 	if err != nil {
 		if errors.As(err, &verr) && verr.Code == ErrVerbUnknownVerb {
-			return fleetListing{}, errFleetOld{note: "The tuios on this host has no Inbox, so its agents are polled and what waits there is not shown here. Update tuios on the host and restart its daemon."}
+			return fleetListing{}, errFleetOld{note: "The dartuios on this host has no Inbox, so its agents are polled and what waits there is not shown here. Update dartuios on the host and restart its daemon."}
 		}
 		return fleetListing{}, err
 	}
@@ -668,7 +668,7 @@ func (c *fleetConn) listAttention() (fleetListing, error) {
 		return fleetListing{}, fmt.Errorf("the host sent an Inbox this build cannot read: %w", err)
 	}
 	if l.BootID == "" {
-		return fleetListing{}, errFleetOld{note: "The tuios on this host cannot resume its event stream, so its agents are polled. Update tuios on the host and restart its daemon."}
+		return fleetListing{}, errFleetOld{note: "The dartuios on this host cannot resume its event stream, so its agents are polled. Update dartuios on the host and restart its daemon."}
 	}
 	return l, nil
 }
@@ -684,7 +684,7 @@ func (c *fleetConn) subscribe(after uint64, boot string) error {
 	})
 	var verr *verbError
 	if errors.As(err, &verr) && verr.Code == ErrVerbInvalidParams && verr.Hint != nil && (verr.Hint.Param == "after_seq" || verr.Hint.Param == "boot_id") && strings.Contains(verr.Message, "has no parameter") {
-		return errFleetOld{note: "The tuios on this host cannot resume its event stream, so its agents are polled. Update tuios on the host and restart its daemon."}
+		return errFleetOld{note: "The dartuios on this host cannot resume its event stream, so its agents are polled. Update dartuios on the host and restart its daemon."}
 	}
 	return err
 }

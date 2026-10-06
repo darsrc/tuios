@@ -66,7 +66,7 @@ jobs:
           context: .
           push: false
           load: true
-          tags: tuios:ci
+          tags: dartuios:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -75,5 +75,5 @@ jobs:
       # both commands have to be in the image and able to say what they are.
       - name: Both commands are in the image
         run: |
-          docker run --rm --entrypoint /tuios tuios:ci --version
-          docker run --rm --entrypoint /tuios-web tuios:ci --version
+          docker run --rm --entrypoint /dartuios dartuios:ci --version
+          docker run --rm --entrypoint /dartuios-web dartuios:ci --version

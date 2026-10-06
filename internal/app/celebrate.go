@@ -9,14 +9,14 @@ import (
 	tea "charm.land/bubbletea/v2"
 	uv "github.com/charmbracelet/ultraviolet"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // A celebration is a short confetti burst drawn in terminal cells over the
 // composed frame. It is for a guided tour that wants to mark a finished step,
-// and nothing in tuios starts one on its own.
+// and nothing in dartuios starts one on its own.
 //
 // Where it draws. composeFrame runs draw over the canvas after the spotlight
 // pass and before Render, the same place and for the same reason as the beam:

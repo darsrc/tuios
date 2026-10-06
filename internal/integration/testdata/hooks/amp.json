@@ -25,7 +25,7 @@
     "want": {"state": "idle", "agent_session_id": "T-abc"}
   },
   {
-    "name": "agent.end with a status tuios does not know",
+    "name": "agent.end with a status dartuios does not know",
     "payload": {"hook_event_name": "agent.end", "session_id": "T-abc", "status": "paused"},
     "skip": "not a state change"
   },

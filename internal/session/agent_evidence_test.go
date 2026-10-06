@@ -39,7 +39,7 @@ func detectionRow(t *testing.T, sp string, verb, session, windowID string) map[s
 // daemon's clock, it grows while nothing new arrives, and a pane nothing ever
 // set a state on has no age at all.
 func TestEvidenceAgeUnderAFakeClock(t *testing.T) {
-	t.Setenv("TUIOS_AGENT_DETECT_SECONDS", "0")
+	t.Setenv("DARTUIOS_AGENT_DETECT_SECONDS", "0")
 	d, sp := startTestDaemon(t)
 	var now atomic.Int64
 	d.evidenceClock = func() time.Time { return time.Unix(0, now.Load()) }
@@ -87,10 +87,10 @@ func TestEvidenceAgeUnderAFakeClock(t *testing.T) {
 
 // TestListAgentsNamesAHintedPaneHint pins the identity field on list-agents
 // for the weakest tier: a pane whose process is not an agent and whose only
-// evidence is TUIOS_AGENT in its environment reads identity hint, the same
+// evidence is DARTUIOS_AGENT in its environment reads identity hint, the same
 // word get-agent-state uses.
 func TestListAgentsNamesAHintedPaneHint(t *testing.T) {
-	t.Setenv("TUIOS_AGENT_DETECT_SECONDS", "0")
+	t.Setenv("DARTUIOS_AGENT_DETECT_SECONDS", "0")
 	d, sp := startTestDaemon(t)
 	sess := makeSessionWithWindow(t, d, "hinted")
 	winID := sess.GetState().Windows[0].ID
@@ -119,7 +119,7 @@ func TestListAgentsNamesAHintedPaneHint(t *testing.T) {
 // the age runs from the later of the stamp and the last output. A state the
 // agent reported itself keeps its own stamp, whatever the pane prints.
 func TestEvidenceAgeFollowsOutputForAnInferredState(t *testing.T) {
-	t.Setenv("TUIOS_AGENT_DETECT_SECONDS", "0")
+	t.Setenv("DARTUIOS_AGENT_DETECT_SECONDS", "0")
 	d, sp := startTestDaemon(t)
 	var now atomic.Int64
 	d.evidenceClock = func() time.Time { return time.Unix(0, now.Load()) }

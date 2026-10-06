@@ -30,14 +30,14 @@ import (
 // a good fit for here: it needs a real daemon, a real shell writing as fast as
 // it can into a real PTY, and a reader that has to keep up. tee is the control,
 // so one write reaches both a file and the terminal; a complete file puts printf,
-// seq and the shell beyond suspicion and places any loss inside tuios.
+// seq and the shell beyond suspicion and places any loss inside dartuios.
 //
 // The assertion is adjacency rather than a line count, because a line count
 // cannot tell a slow reader from a lossy one: the numbers say where the hole is.
 func TestDaemonCaptureKeepsFastOutput(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "capture-load", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "capture-load", "--detach"); err != nil {
 		t.Fatalf("create session: %v: %s", err, out)
 	}
 	w := firstWindow(t, base, "capture-load")

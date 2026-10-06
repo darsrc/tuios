@@ -510,7 +510,7 @@ func attentionNoItem(id string) *verbError {
 	return hintedVerbError(ErrVerbInvalidParams, "no attention item has id "+echoName(id), &VerbHint{
 		Param:   "id",
 		Verb:    "list-attention",
-		Command: "tuios list-attention --snoozed",
+		Command: "dartuios list-attention --snoozed",
 		Detail:  "The item may already be closed: its pane moved on, the mail was read, or someone else dismissed it.",
 	})
 }

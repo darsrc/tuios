@@ -85,8 +85,8 @@
     "skip": "not mapped"
   },
   {
-    "name": "an opencode hook in a pane TUIOS_AGENT gives to Kilo",
-    "env": {"TUIOS_AGENT": "kilo-code"},
+    "name": "an opencode hook in a pane DARTUIOS_AGENT gives to Kilo",
+    "env": {"DARTUIOS_AGENT": "kilo-code"},
     "payload": {"hook_event_name": "session.idle", "session_id": "ses_1"},
     "skip": "foreign harness"
   }

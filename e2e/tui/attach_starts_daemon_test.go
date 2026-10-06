@@ -16,11 +16,11 @@ import (
 
 // This file covers the state a user reaches by closing their laptop lid: every
 // session saved on disk, no daemon listening. Attach used to refuse there and
-// name 'tuios new', which makes a different session than the ones being asked
+// name 'dartuios new', which makes a different session than the ones being asked
 // for. The daemon restores everything it finds when it starts, so the sessions
 // were one process away the whole time.
 
-// lsRow is a row of 'tuios ls --json', including the flag that only appears
+// lsRow is a row of 'dartuios ls --json', including the flag that only appears
 // when no daemon is holding the session.
 type lsRow struct {
 	Name     string `json:"name"`
@@ -28,12 +28,12 @@ type lsRow struct {
 	Saved    bool   `json:"saved"`
 }
 
-// listSessionRows runs 'tuios ls --json' and returns the rows with the exit
+// listSessionRows runs 'dartuios ls --json' and returns the rows with the exit
 // status, which is the whole point of the command for a script: 0 means a
 // daemon answered, noDaemonExit means the rows came off the disk instead.
 func listSessionRows(t *testing.T, base string) ([]lsRow, int) {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "ls", "--json")
+	out, err := dartuiosCLI(t, base, "ls", "--json")
 	var rows []lsRow
 	if jsonErr := json.Unmarshal([]byte(out), &rows); jsonErr != nil {
 		t.Fatalf("ls --json is not JSON: %v\n%s", jsonErr, out)
@@ -55,7 +55,7 @@ func waitForRows(t *testing.T, base string, want func([]lsRow) bool) []lsRow {
 	}
 }
 
-// noDaemonExit is the status 'tuios ls' reports when no daemon answered.
+// noDaemonExit is the status 'dartuios ls' reports when no daemon answered.
 const noDaemonExit = 3
 
 func exitCode(t *testing.T, err error) int {
@@ -71,16 +71,16 @@ func exitCode(t *testing.T, err error) int {
 }
 
 // TestAttachStartsTheDaemonAndBringsSessionsBack is the reported bug end to
-// end: sessions saved, no daemon, and a bare 'tuios attach'.
+// end: sessions saved, no daemon, and a bare 'dartuios attach'.
 func TestAttachStartsTheDaemonAndBringsSessionsBack(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-autostart", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-autostart", "--detach"); err != nil {
 		t.Fatalf("create detached session: %v: %s", err, out)
 	}
 	// kill-server is synchronous and saves every session on the way out.
-	if out, err := tuiosCLI(t, base, "kill-server"); err != nil {
+	if out, err := dartuiosCLI(t, base, "kill-server"); err != nil {
 		t.Fatalf("kill-server: %v: %s", err, out)
 	}
 
@@ -168,7 +168,7 @@ func TestClientsStartingAtOnceProduceOneDaemon(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			<-begin
-			outs[i], errs[i] = tuiosCLI(t, base, "new", fmt.Sprintf("e2e-race-%d", i), "--detach")
+			outs[i], errs[i] = dartuiosCLI(t, base, "new", fmt.Sprintf("e2e-race-%d", i), "--detach")
 		}()
 	}
 	close(begin)
@@ -188,7 +188,7 @@ func TestClientsStartingAtOnceProduceOneDaemon(t *testing.T) {
 		t.Fatalf("one daemon should hold all %d sessions, the listing has %+v", starters, rows)
 	}
 
-	if out, err := tuiosCLI(t, base, "kill-server"); err != nil {
+	if out, err := dartuiosCLI(t, base, "kill-server"); err != nil {
 		t.Fatalf("kill-server: %v: %s", err, out)
 	}
 	if _, code := listSessionRows(t, base); code != noDaemonExit {

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // What a machine linked to this one may do here.
@@ -21,7 +21,7 @@ import (
 // (internal/config's link_policy.go): the built-in default, then
 // [hosts."*"], then [hosts.PEER].
 //
-// The peer is named by the link-peer handshake, which `tuios stdio-proxy`
+// The peer is named by the link-peer handshake, which `dartuios stdio-proxy`
 // sends as the first line of every connection it opens for a link: the name
 // the hub gave for itself in the stream's open frame, or the name the proxy
 // was pinned to with --as, which a forced command in authorized_keys fixes. A
@@ -310,7 +310,7 @@ func linkForbidden(d *Daemon, cs *connState, what string, missing []string, reas
 	return hintedVerbError(ErrVerbForbidden, what+" is refused: "+reason, &VerbHint{Detail: detail})
 }
 
-// verbLinkPeer is the handshake: `tuios stdio-proxy` names the machine a link
+// verbLinkPeer is the handshake: `dartuios stdio-proxy` names the machine a link
 // connection came from, once, before anything else is sent on it.
 func (d *Daemon) verbLinkPeer(cs *connState, params json.RawMessage) (any, *verbError) {
 	var p struct {

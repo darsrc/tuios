@@ -18,7 +18,7 @@ import (
 // output, and output arrives when it arrives, which is what "randomly" means
 // from the chair.
 //
-// Both rows drive one real tuios on one real daemon, real SGR wheel reports for
+// Both rows drive one real dartuios on one real daemon, real SGR wheel reports for
 // the scroll and the real leader chord for the workspace switch. The assertion
 // is the frame: the newest line on screen is where the viewport is.
 //
@@ -38,7 +38,7 @@ import (
 // window_scroll_anchor_test.go also records which of its controls turned out
 // to be invalid.
 //
-// The strip, which is the other thing "scrolling" means in tuios, is pinned in
+// The strip, which is the other thing "scrolling" means in dartuios, is pinned in
 // scroll_strip_workspace_test.go. This file is only about a pane's own
 // scrollback.
 
@@ -121,7 +121,7 @@ func TestScrolledPaneHoldsItsPlaceUnderNewOutput(t *testing.T) {
 func TestAPeersWorkspaceSwitchLeavesAScrolledPaneWhereItIs(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "anchorws", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "anchorws", "--detach"); err != nil {
 		t.Fatalf("create session: %v: %s", err, out)
 	}
 

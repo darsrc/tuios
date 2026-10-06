@@ -20,10 +20,10 @@ func TestSelectorNarrowsTheInboxAndGuardsABroadcast(t *testing.T) {
 	term, base := attachClientBase(t)
 
 	for _, s := range []struct{ name, harness string }{{"e2e-sel-codex", "codex"}, {"e2e-sel-claude", "claude-code"}} {
-		if out, err := tuiosCLI(t, base, "new", s.name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", s.name, "--detach"); err != nil {
 			t.Fatalf("create %s: %v\n%s", s.name, err, out)
 		}
-		if out, err := tuiosCLI(t, base, "set-agent-state", "-s", s.name, "needs_input",
+		if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", s.name, "needs_input",
 			"--kind", "approval", "--harness", s.harness, "-m", "approve Bash from "+s.harness); err != nil {
 			t.Fatalf("set-agent-state in %s: %v\n%s", s.name, err, out)
 		}
@@ -54,30 +54,30 @@ func TestSelectorNarrowsTheInboxAndGuardsABroadcast(t *testing.T) {
 	}
 
 	// The same selector on the command line.
-	out, err := tuiosCLI(t, base, "list-agents", "--select", "harness:codex")
+	out, err := dartuiosCLI(t, base, "list-agents", "--select", "harness:codex")
 	if err != nil || !strings.Contains(out, "e2e-sel-codex") || strings.Contains(out, "e2e-sel-claude") || !strings.Contains(out, "--confirm") {
 		t.Fatalf("list-agents --select did not list only the codex agent with a token: %v\n%s", err, out)
 	}
 
 	// Not at a terminal and not confirmed: nothing is sent, and the set is named.
-	out, err = tuiosCLI(t, base, "send-agent-message", "--select", "harness:codex,claude-code", "rebase onto main")
+	out, err = dartuiosCLI(t, base, "send-agent-message", "--select", "harness:codex,claude-code", "rebase onto main")
 	if err == nil || !strings.Contains(out, "Nothing was sent") || !strings.Contains(out, "e2e-sel-codex") || !strings.Contains(out, "e2e-sel-claude") {
 		t.Fatalf("an unconfirmed send by selector did not refuse and list the set: %v\n%s", err, out)
 	}
-	out, _ = tuiosCLI(t, base, "read-agent-messages", "-s", "e2e-sel-codex", "--limit", "5")
+	out, _ = dartuiosCLI(t, base, "read-agent-messages", "-s", "e2e-sel-codex", "--limit", "5")
 	if strings.Contains(out, "rebase onto main") {
 		t.Fatalf("an unconfirmed send reached the pane:\n%s", out)
 	}
 
-	out, err = tuiosCLI(t, base, "send-agent-message", "--select", "harness:codex", "--yes", "rebase onto main")
+	out, err = dartuiosCLI(t, base, "send-agent-message", "--select", "harness:codex", "--yes", "rebase onto main")
 	if err != nil || !strings.Contains(out, "1 sent, 0 refused") {
 		t.Fatalf("send by selector with --yes: %v\n%s", err, out)
 	}
-	out, _ = tuiosCLI(t, base, "read-agent-messages", "-s", "e2e-sel-codex", "--limit", "5")
+	out, _ = dartuiosCLI(t, base, "read-agent-messages", "-s", "e2e-sel-codex", "--limit", "5")
 	if !strings.Contains(out, "rebase onto main") {
 		t.Fatalf("the confirmed message is not in the codex session's ring:\n%s", out)
 	}
-	out, _ = tuiosCLI(t, base, "read-agent-messages", "-s", "e2e-sel-claude", "--limit", "5")
+	out, _ = dartuiosCLI(t, base, "read-agent-messages", "-s", "e2e-sel-claude", "--limit", "5")
 	if strings.Contains(out, "rebase onto main") {
 		t.Fatalf("the message reached a pane the selector did not match:\n%s", out)
 	}

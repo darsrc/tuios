@@ -6,14 +6,14 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
-// Pane grants: what a process in a pane may do through tuios.
+// Pane grants: what a process in a pane may do through dartuios.
 //
 // Every connection on the daemon socket used to be able to call every verb.
 // restrict-connection (conn_scope.go) lets a caller give authority up on its
-// own connection, which bounds tuios mcp but not a process that opens a
+// own connection, which bounds dartuios mcp but not a process that opens a
 // connection of its own. Pane grants bound the pane: every JSON verb and
 // every binary message from a connection placed in a pane of this daemon is
 // checked against what that pane holds, before its handler runs.
@@ -55,10 +55,10 @@ import (
 // can give respond to a pane that does not hold it.
 //
 // How a connection is placed in a pane: the kernel's record of the peer's pid
-// first (peerPane, the test resolve-pane uses), then the TUIOS_PANE_ID in that
+// first (peerPane, the test resolve-pane uses), then the DARTUIOS_PANE_ID in that
 // process's environment for a pane still being created, and on a platform
-// with no peer pid the TUIOS_PANE_ID and TUIOS_PANE_TOKEN the connection
-// presents with pane-grants, which the tuios CLI does on its own there. A
+// with no peer pid the DARTUIOS_PANE_ID and DARTUIOS_PANE_TOKEN the connection
+// presents with pane-grants, which the dartuios CLI does on its own there. A
 // connection placed in no pane is held to nothing new: the person's CLI, the
 // attached client, and the hooks and dock components the person configured
 // keep full rights. A connection over a link is held to that link's policy
@@ -363,7 +363,7 @@ type paneAuth struct {
 	window  string
 	session string
 	// via is how the pane was found: pid from the kernel, env from the
-	// process's TUIOS_PANE_ID, token from a presented TUIOS_PANE_TOKEN.
+	// process's DARTUIOS_PANE_ID, token from a presented DARTUIOS_PANE_TOKEN.
 	via      string
 	grants   Grants
 	explicit bool
@@ -496,7 +496,7 @@ func (d *Daemon) placePaneWindow(cs *connState) (window, via string) {
 		// A process in a pane whose window is not recorded yet names it in
 		// its environment. Only a pane the grant table holds counts, which
 		// is every local pane from before its process started.
-		if id, ok := readProcEnvVar(cs.peerPID, "TUIOS_PANE_ID"); ok && id != "" {
+		if id, ok := readProcEnvVar(cs.peerPID, "DARTUIOS_PANE_ID"); ok && id != "" {
 			if _, known := d.manager.grants.lookup(id); known {
 				return id, "env"
 			}
@@ -538,9 +538,9 @@ func grantForbidden(verb string, pa *paneAuth, why string) *verbError {
 	}
 	return hintedVerbError(ErrVerbForbidden, verb+" is refused for this pane: "+why, &VerbHint{
 		Verb:    "pane-grants",
-		Command: "tuios pane-grants",
+		Command: "dartuios pane-grants",
 		Detail: "Pane " + shortWindowID(pa.window) + " holds " + pa.grants.String() + ", " + source + ". Nothing was done. " +
-			"The person can give this pane more with tuios set-pane-grants -w " + shortWindowID(pa.window) + " --grants <names>, " +
+			"The person can give this pane more with dartuios set-pane-grants -w " + shortWindowID(pa.window) + " --grants <names>, " +
 			"or every pane started with none with mode and grants under [agents.permissions] in config.toml.",
 	})
 }
@@ -798,10 +798,10 @@ func (d *Daemon) checkGrantMessage(cs *connState, t MessageType) *verbError {
 	}
 	LogBasic("Pane %s (%s) refused binary message %d", shortWindowID(pa.window), pa.grants.String(), t)
 	if t == MsgExecuteCommand {
-		// tuios run-command sends this, and so did tuios get-window before
+		// dartuios run-command sends this, and so did dartuios get-window before
 		// the get-window verb. Name what the caller ran, not attach.
 		return grantForbidden("run-command", pa, "run-command runs a window-manager command through the client protocol, which needs the admin grant. "+
-			"To read one window, use tuios get-window or list-windows, which need read")
+			"To read one window, use dartuios get-window or list-windows, which need read")
 	}
 	return grantForbidden("attach", pa, "the client protocol (attach, input, windows) needs the admin grant")
 }
@@ -839,7 +839,7 @@ func (d *Daemon) launchGrants(cs *connState, requested []string) (*Grants, *verb
 		if want != nil && want.Has(GrantRespond) {
 			return nil, hintedVerbError(ErrVerbForbidden, "grants: respond cannot be given from another machine", &VerbHint{
 				Param:  "grants",
-				Detail: "respond answers prompts for the person, so only the person on this machine gives it, with tuios set-pane-grants. Nothing was started.",
+				Detail: "respond answers prompts for the person, so only the person on this machine gives it, with dartuios set-pane-grants. Nothing was started.",
 			})
 		}
 		return want, nil
@@ -859,7 +859,7 @@ func (d *Daemon) launchGrants(cs *connState, requested []string) (*Grants, *verb
 		return nil, hintedVerbError(ErrVerbForbidden, "grants: a pane cannot give more than it holds, and this one holds "+pa.grants.String(), &VerbHint{
 			Param:   "grants",
 			Verb:    "pane-grants",
-			Command: "tuios pane-grants",
+			Command: "dartuios pane-grants",
 			Detail:  "Name grants this pane holds, or omit grants. Nothing was started.",
 		})
 	}
@@ -870,7 +870,7 @@ func (d *Daemon) launchGrants(cs *connState, requested []string) (*Grants, *verb
 var grantsParam = verbParam{
 	Name:        "grants",
 	Type:        "[]string",
-	Description: "What the new pane may do through tuios: read, write, fan, respond, admin, or none. Omit for the default of [agents.permissions], or, from a pane without admin, the calling pane's own grants. A pane may give only what it holds, and admin does not include respond. A window on another machine holds what that machine gives it.",
+	Description: "What the new pane may do through dartuios: read, write, fan, respond, admin, or none. Omit for the default of [agents.permissions], or, from a pane without admin, the calling pane's own grants. A pane may give only what it holds, and admin does not include respond. A window on another machine holds what that machine gives it.",
 	Accepted:    grantAccepted,
 }
 
@@ -1027,7 +1027,7 @@ func (d *Daemon) verbSetPaneGrants(cs *connState, params json.RawMessage) (any, 
 	}, nil
 }
 
-// envValue is TUIOS_PANE_GRANTS for a pane: what it holds when it starts,
+// envValue is DARTUIOS_PANE_GRANTS for a pane: what it holds when it starts,
 // for a script to read. The daemon's answer to pane-grants is the one that
 // counts, because grants can change after the process started.
 func (t *paneGrantTable) envValue(windowID string) string {

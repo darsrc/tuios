@@ -1,4 +1,4 @@
-# TUIOS Enhanced Demo Tape Script
+# dartuios Enhanced Demo Tape Script
 # This script demonstrates the enhanced tape scripting language with explicit mode switching
 # and comprehensive window/workspace management
 

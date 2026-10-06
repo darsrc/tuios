@@ -8,7 +8,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/federation"
 )
 
 // open-host-connection: a connection to the daemon on another machine.
@@ -46,7 +46,7 @@ func (d *Daemon) verbOpenHostConnection(cs *connState, params json.RawMessage) (
 		return nil, verr
 	}
 	if p.Host == "" {
-		return nil, invalidParam("host", "open-host-connection needs a host name. Run 'tuios hosts' to see the configured hosts.")
+		return nil, invalidParam("host", "open-host-connection needs a host name. Run 'dartuios hosts' to see the configured hosts.")
 	}
 	if p.Host == federation.LocalHostName {
 		return nil, invalidParam("host", "host "+echoName(p.Host)+" is this machine. Connect to the daemon socket directly.")
@@ -100,7 +100,7 @@ func hostConnectionError(host string, err error) *verbError {
 	message, code := federationErrorText(err)
 	hint := &VerbHint{
 		Param:   "host",
-		Command: "tuios hosts",
+		Command: "dartuios hosts",
 		Detail:  "The listing says why the host is not up. Nothing is queued for a host that is down.",
 	}
 	if code == ErrVerbUnknownHost {

@@ -23,9 +23,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz/vtgen"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/fuzz/vtgen"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 const (
@@ -230,7 +230,7 @@ func FuzzEmulatorSplitEquivalence(f *testing.F) {
 	for _, seed := range [][]byte{
 		{},
 		{0x01},
-		[]byte("tuios"),
+		[]byte("dartuios"),
 		[]byte("\xe4\xb8\x96\xe4\xb8\x96"),
 		[]byte("the quick brown fox"),
 	} {
@@ -254,7 +254,7 @@ func FuzzEmulatorRenderRoundTrip(f *testing.F) {
 	for _, seed := range [][]byte{
 		{},
 		{0x02},
-		[]byte("tuios"),
+		[]byte("dartuios"),
 		[]byte("\x1b[31mred\x1b[0m"),
 		[]byte("the quick brown fox"),
 	} {
@@ -277,17 +277,17 @@ func FuzzEmulatorRenderRoundTrip(f *testing.F) {
 // eating a visible cell, and the screen depending on where a PTY read boundary
 // fell) are also pinned by TestVTGen_ZeroWidthAttachesOrDrops and the grapheme
 // cell tests.
-// TUIOS_METAMORPHIC_SEEDS widens the sweep for a longer campaign; the
+// DARTUIOS_METAMORPHIC_SEEDS widens the sweep for a longer campaign; the
 // default keeps an ordinary `go test` fast.
 func TestVTGen_Metamorphic(t *testing.T) {
 	seeds := 300
 	if testing.Short() {
 		seeds = 50
 	}
-	if v := os.Getenv("TUIOS_METAMORPHIC_SEEDS"); v != "" {
+	if v := os.Getenv("DARTUIOS_METAMORPHIC_SEEDS"); v != "" {
 		n, err := strconv.Atoi(v)
 		if err != nil {
-			t.Fatalf("TUIOS_METAMORPHIC_SEEDS=%q is not a number", v)
+			t.Fatalf("DARTUIOS_METAMORPHIC_SEEDS=%q is not a number", v)
 		}
 		seeds = n
 	}

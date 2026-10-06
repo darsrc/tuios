@@ -10,13 +10,13 @@ import (
 //
 // Every other verb addresses a session that already exists, so an external
 // program could drive a workspace but never set one up: it had to shell out to
-// `tuios new --detach` or give up. It creates the session the way the detached
+// `dartuios new --detach` or give up. It creates the session the way the detached
 // CLI path does, in the daemon, with no client anywhere, and it creates the
 // first window in the same call because a session with no windows is a session
 // nothing else can be done to.
 
 // defaultVerbSessionWidth and defaultVerbSessionHeight are the nominal size a
-// session gets when the caller names none. They match what `tuios new --detach`
+// session gets when the caller names none. They match what `dartuios new --detach`
 // sends. Nothing is drawn at this size: an attached client replaces it with its
 // own viewport, and a detached session only needs a size its PTYs can start at.
 const (
@@ -77,7 +77,7 @@ func (d *Daemon) verbNewSession(_ *connState, params json.RawMessage) (any, *ver
 		return nil, hintedVerbError(ErrVerbSessionExists, "session "+name+" already exists", &VerbHint{
 			Param:     "name",
 			Verb:      "list-sessions",
-			Command:   "tuios ls",
+			Command:   "dartuios ls",
 			Available: d.sessionNames(),
 			Detail:    "the daemon already holds a session by this name. Choose another name, omit name to have one generated, or address the session that exists.",
 		})
@@ -91,7 +91,7 @@ func (d *Daemon) verbNewSession(_ *connState, params json.RawMessage) (any, *ver
 			return nil, hintedVerbError(ErrVerbSessionExists, err.Error(), &VerbHint{
 				Param:     "name",
 				Verb:      "list-sessions",
-				Command:   "tuios ls",
+				Command:   "dartuios ls",
 				Available: d.sessionNames(),
 			})
 		}

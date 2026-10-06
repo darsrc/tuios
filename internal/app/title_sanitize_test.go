@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // TestPrintableTitleDropsDecorative asserts the shared sanitizer strips the
@@ -40,7 +40,7 @@ func TestPrintableTitleDropsDecorative(t *testing.T) {
 		}
 	}
 
-	for _, keep := range []string{"● run │ tests → ok", "●▲○■× café 日本語 (v2) ─ ok"} {
+	for _, keep := range []string{"◆ run │ tests → ok", "◆?○✓×◊ café 日本語 (v2) ─ ok"} {
 		if got := printableTitle(keep); got != keep {
 			t.Errorf("printableTitle mangled legitimate glyphs: got %q want %q", got, keep)
 		}

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // claudePermissionPrompt is what Claude Code paints and then goes silent behind.
@@ -182,7 +182,7 @@ func TestAVisibleBlockerBeatsAClaimThatWentQuiet(t *testing.T) {
 // for a pane going blind between two things that were both working correctly.
 //
 // The shipped hook shim reports a state and nothing else, because a hook knows
-// what its turn is doing and has no reason to know what tuios calls the program
+// what its turn is doing and has no reason to know what dartuios calls the program
 // it runs inside. That report used to write its empty harness id over the one
 // the foreground-process detector had worked out, and the screen tier keys on
 // that id to know whose rules to run: after one hook event the pane had no rules

@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/gitstate"
-	"github.com/Gaurav-Gosain/tuios/internal/review"
-	"github.com/Gaurav-Gosain/tuios/internal/worktree"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/gitstate"
+	"github.com/darsrc/tuios/internal/review"
+	"github.com/darsrc/tuios/internal/worktree"
 )
 
 // Review: the diff of what an agent changed, the notes the person leaves on
@@ -81,7 +81,7 @@ type reviewRepo struct {
 	root string
 	// repoRoot is the main checkout of the repository.
 	repoRoot string
-	// recorded is the base the worktree was made from, when tuios made it.
+	// recorded is the base the worktree was made from, when dartuios made it.
 	recorded string
 	// info is the session's worktree record, nil for a plain repository.
 	info *WorktreeInfo
@@ -110,8 +110,8 @@ func (d *Daemon) reviewTarget(sessionName, window string) (*Session, WindowState
 	target := state.Windows[idx]
 	if target.Host != "" {
 		return nil, WindowState{}, reviewRepo{}, hintedVerbError(ErrVerbNotRepo, "window "+shortWindowID(target.ID)+" runs on "+echoName(target.Host)+", and its repository is there, not here", &VerbHint{
-			Command: "tuios worktree pull " + target.Host + ":<session>",
-			Detail:  "Nothing was read. Reviewing a pane on another machine is not supported yet: attach to that machine and review it there, or bring its work here with tuios worktree pull and review that.",
+			Command: "dartuios worktree pull " + target.Host + ":<session>",
+			Detail:  "Nothing was read. Reviewing a pane on another machine is not supported yet: attach to that machine and review it there, or bring its work here with dartuios worktree pull and review that.",
 		})
 	}
 	cwd := target.Cwd
@@ -123,7 +123,7 @@ func (d *Daemon) reviewTarget(sessionName, window string) (*Session, WindowState
 	if wt := sess.worktreeListing(); wt != nil && !wt.Gone && (cwd == "" || within(canonRoot(wt.Path), canonRoot(cwd))) {
 		recorded := wt.Base
 		if recorded == "" && wt.Managed {
-			// A worktree tuios made from HEAD left the main checkout's
+			// A worktree dartuios made from HEAD left the main checkout's
 			// branch, which is its base, as compare-fan counts it.
 			if b, err := worktree.CurrentBranch(wt.RepoRoot); err == nil && b != "" && b != wt.Branch {
 				recorded = b
@@ -280,7 +280,7 @@ func (d *Daemon) reviewSibling(cs *connState, sess *Session, repo reviewRepo, na
 	if sib == sess || info.Group != repo.info.Group || info.RepoRoot != repo.info.RepoRoot {
 		return nil, hintedVerbError(ErrVerbInvalidParams, "session "+sib.Name+" is not another attempt of fan "+repo.info.Group, &VerbHint{
 			Param:   "against",
-			Command: "tuios fan compare " + sess.Name,
+			Command: "dartuios fan compare " + sess.Name,
 			Detail:  "Nothing was read. against names another session of the same fan.",
 		})
 	}
@@ -580,7 +580,7 @@ func (d *Daemon) newReviewNote(repo reviewRepo, p reviewNoteParams, text string,
 func reviewNoteMissingError(id string) *verbError {
 	return hintedVerbError(ErrVerbInvalidParams, "no review note "+echoName(id)+" on this pane", &VerbHint{
 		Param:   "id",
-		Command: "tuios review notes",
+		Command: "dartuios review notes",
 		Detail:  "Nothing was changed. List the pane's notes to see their ids.",
 	})
 }
@@ -661,7 +661,7 @@ func (d *Daemon) verbSendReview(cs *connState, params json.RawMessage) (any, *ve
 	if len(picked) == 0 {
 		return nil, hintedVerbError(ErrVerbNoNotes, "window "+shortWindowID(target.ID)+" has no unsent review notes", &VerbHint{
 			Verb:    "review-note",
-			Command: "tuios review note -w " + shortWindowID(target.ID) + " FILE:LINE 'text'",
+			Command: "dartuios review note -w " + shortWindowID(target.ID) + " FILE:LINE 'text'",
 			Detail:  "Nothing was sent. Add a note first, or name notes already sent with ids to send them again.",
 		})
 	}
@@ -689,7 +689,7 @@ func (d *Daemon) verbSendReview(cs *connState, params json.RawMessage) (any, *ve
 		}
 		if !d.agentReady(target, fanReadyStates) || d.queue.count(target.ID) > 0 {
 			return nil, hintedVerbError(ErrVerbNotReady, "the agent in window "+shortWindowID(target.ID)+" is not at rest with nothing queued, so the notes were not sent", &VerbHint{
-				Command: "tuios review send -w " + shortWindowID(target.ID),
+				Command: "dartuios review send -w " + shortWindowID(target.ID),
 				Detail:  "Nothing was sent. Leave now out to queue the notes: they are typed when the agent next comes to rest.",
 			})
 		}

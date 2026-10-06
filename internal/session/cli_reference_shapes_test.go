@@ -56,7 +56,7 @@ func docKeys(m map[string]any) []string {
 func TestCLIReferenceSessionInfoShape(t *testing.T) {
 	sess := newTestSession(t)
 	want := docKeys(buildSessionInfoData(sess, sess.GetState(), true, HostFocusFocused))
-	got := docKeys(cliReferenceJSON(t, "### `tuios session-info`"))
+	got := docKeys(cliReferenceJSON(t, "### `dartuios session-info`"))
 	if !slices.Equal(got, want) {
 		t.Errorf("CLI_REFERENCE session-info sample has fields\n  %v\nthe daemon sends\n  %v", got, want)
 	}
@@ -72,7 +72,7 @@ func TestCLIReferenceListWindowsShape(t *testing.T) {
 	sess.UpdateState(st)
 	data := buildWindowListData(sess.GetState())
 
-	doc := cliReferenceJSON(t, "### `tuios list-windows`")
+	doc := cliReferenceJSON(t, "### `dartuios list-windows`")
 	if got, want := docKeys(doc), docKeys(data); !slices.Equal(got, want) {
 		t.Errorf("CLI_REFERENCE list-windows sample has fields\n  %v\nthe daemon sends\n  %v", got, want)
 	}

@@ -28,7 +28,7 @@ import (
 // lines, and this implements it directly rather than running `gio trash`.
 //
 // gio is the desktop's own implementation and handles more cases than this
-// does. It is also a process that has to be on the machine, and tuios runs on
+// does. It is also a process that has to be on the machine, and dartuios runs on
 // machines where it is not: a container, a build box, the far end of an ssh
 // session. A default that works on the maintainer's laptop and refuses on the
 // server is not a default. Running it also means one spawn per delete and an
@@ -69,7 +69,7 @@ func homeTrashDir() (string, error) {
 	return filepath.Join(xdg.DataHome, "Trash"), nil
 }
 
-// trashAvailable reports whether this system has a trash tuios can put a file
+// trashAvailable reports whether this system has a trash dartuios can put a file
 // in. Windows does not, and a delete there is permanent and says so.
 func trashAvailable() bool { return runtime.GOOS != "windows" }
 
@@ -205,7 +205,7 @@ func trashInfoPath(p string) string {
 // naming the way round it.
 func trashError(err error) string {
 	if errors.Is(err, syscall.EXDEV) {
-		return "That file is on another disk. tuios can not trash it. Use permanent delete."
+		return "That file is on another disk. dartuios can not trash it. Use permanent delete."
 	}
 	if err != nil && strings.Contains(err.Error(), "no trash on this system") {
 		return "This system has no trash. Use permanent delete."

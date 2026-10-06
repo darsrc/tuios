@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // countingConn counts the reads and writes made on a connection, which on an
@@ -204,14 +204,14 @@ func BenchmarkE2EKeystroke(b *testing.B) {
 	b.ReportMetric(float64(rig.conn.writes.Load()-w0)/float64(b.N), "client-writes/key")
 }
 
-// TestE2EIdleProbe holds the rig open and idle for TUIOS_PERF_IDLE_SECONDS,
+// TestE2EIdleProbe holds the rig open and idle for DARTUIOS_PERF_IDLE_SECONDS,
 // so a syscall counter run against the test binary can see what an attached
 // client and its daemon do when nobody is typing. It is skipped unless asked
 // for.
 func TestE2EIdleProbe(t *testing.T) {
-	secs := os.Getenv("TUIOS_PERF_IDLE_SECONDS")
+	secs := os.Getenv("DARTUIOS_PERF_IDLE_SECONDS")
 	if secs == "" {
-		t.Skip("set TUIOS_PERF_IDLE_SECONDS to run")
+		t.Skip("set DARTUIOS_PERF_IDLE_SECONDS to run")
 	}
 	d, err := time.ParseDuration(secs + "s")
 	if err != nil {

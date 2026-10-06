@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 func BenchmarkEmulator_PlainTextWrite(b *testing.B) {

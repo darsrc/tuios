@@ -22,11 +22,11 @@ func TestAPaneWhoseFarShellExitsClosesItsWindow(t *testing.T) {
 	base := t.TempDir()
 	remote := remoteMachine(t)
 	ssh := writeFakeSSHTo(t, base, remote)
-	writeOneHostConfig(t, base, tuiosBin)
-	env := []string{"TUIOS_SSH=" + ssh}
+	writeOneHostConfig(t, base, dartuiosBin)
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
 	// The far daemon has to be running for a pane to be opened on it.
-	if out, err := tuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far-shell", "--detach"); err != nil {
 		t.Fatalf("create the far session: %v\n%s", err, out)
 	}
 
@@ -36,7 +36,7 @@ func TestAPaneWhoseFarShellExitsClosesItsWindow(t *testing.T) {
 		return containsAll(s, "build", "up")
 	}, "the daemon never reported build up")
 
-	if out, err := tuiosCLIEnv(t, base, env, "new-window", "goner", "-s", "home",
+	if out, err := dartuiosCLIEnv(t, base, env, "new-window", "goner", "-s", "home",
 		"--host", "build", "--", "/bin/sh", "-c", "echo READY; sleep 2; exit 0"); err != nil {
 		t.Fatalf("create a window on build: %v\n%s", err, out)
 	}

@@ -174,13 +174,13 @@ var (
 
 func init() {
 	// Initialize default logger
-	debugLogger = log.New(os.Stderr, "[TUIOS] ", log.LstdFlags|log.Lmicroseconds)
+	debugLogger = log.New(os.Stderr, "[dartuios] ", log.LstdFlags|log.Lmicroseconds)
 
 	// Initialize log buffer with 1000 entries
 	logBuffer = NewLogBuffer(1000)
 
 	// Check environment variable for initial debug level
-	if level := os.Getenv("TUIOS_LOG_LEVEL"); level != "" {
+	if level := os.Getenv("DARTUIOS_LOG_LEVEL"); level != "" {
 		SetDebugLevel(ParseDebugLevel(level))
 	}
 }
@@ -215,7 +215,7 @@ func GetDebugLevel() DebugLevel {
 func SetDebugOutput(w io.Writer) {
 	debugMu.Lock()
 	defer debugMu.Unlock()
-	debugLogger = log.New(w, "[TUIOS] ", log.LstdFlags|log.Lmicroseconds)
+	debugLogger = log.New(w, "[dartuios] ", log.LstdFlags|log.Lmicroseconds)
 }
 
 // ProtocolLog logs a message at the specified level.

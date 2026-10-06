@@ -74,7 +74,7 @@ func TestHostedGraceParses(t *testing.T) {
 	}
 }
 
-// TestRewritingAHostKeepsItsLinkPolicy: `tuios hosts add` on a known name
+// TestRewritingAHostKeepsItsLinkPolicy: `dartuios hosts add` on a known name
 // rewrites the table, and must not drop what the machine may do here.
 func TestRewritingAHostKeepsItsLinkPolicy(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "config.toml")

@@ -4,7 +4,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestKeyNormalizerAcceptsBothSpellingsOfAShiftedKey pins the rule that a
@@ -90,8 +90,8 @@ func TestKeyNormalizer_AccentedKeys(t *testing.T) {
 //
 // Every option below is written to config.toml by the settings page and read
 // back from a package global. They used to be applied only by ApplyOverrides,
-// which cmd/tuios calls and nothing else does, so a session that loaded its
-// config through ApplyAppearanceConfig alone (`tuios tape`, the pkg/tuios
+// which cmd/dartuios calls and nothing else does, so a session that loaded its
+// config through ApplyAppearanceConfig alone (`dartuios tape`, the pkg/dartuios
 // embed, and every live reload through ConfigReloadedMsg) came back with the
 // defaults and the change looked lost.
 func TestApplyAppearanceConfig_CoversTheWholeFile(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestDaemonWindowCloseUnderOutputFlood is a race-detector regression test for

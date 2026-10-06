@@ -1,11 +1,11 @@
-# Using TUIOS as a Library
+# Using dartuios as a Library
 
-TUIOS can be imported and used as a library in your own Go applications. This allows you to embed a full-featured terminal window manager in your Bubble Tea applications.
+dartuios can be imported and used as a library in your own Go applications. This allows you to embed a full-featured terminal window manager in your Bubble Tea applications.
 
 ## Installation
 
 ```bash
-go get github.com/Gaurav-Gosain/tuios/pkg/tuios
+go get github.com/darsrc/tuios/pkg/dartuios
 ```
 
 ## Quick Start
@@ -18,16 +18,16 @@ package main
 import (
     "log"
 
-    "github.com/Gaurav-Gosain/tuios/pkg/tuios"
+    "github.com/darsrc/tuios/pkg/dartuios"
     tea "charm.land/bubbletea/v2"
 )
 
 func main() {
-    // Create a new TUIOS instance with default options
-    model := tuios.New()
+    // Create a new dartuios instance with default options
+    model := dartuios.New()
 
     // Create the Bubble Tea program with recommended options
-    p := tea.NewProgram(model, tuios.ProgramOptions()...)
+    p := tea.NewProgram(model, dartuios.ProgramOptions()...)
 
     // Run the program
     if _, err := p.Run(); err != nil {
@@ -39,14 +39,14 @@ func main() {
 ### With Custom Options
 
 ```go
-model := tuios.New(
-    tuios.WithTheme("dracula"),
-    tuios.WithShowKeys(true),
-    tuios.WithAnimations(false),
-    tuios.WithWorkspaces(9),
-    tuios.WithBorderStyle("rounded"),
-    tuios.WithDockbarPosition("bottom"),
-    tuios.WithScrollbackLines(20000),
+model := dartuios.New(
+    dartuios.WithTheme("dracula"),
+    dartuios.WithShowKeys(true),
+    dartuios.WithAnimations(false),
+    dartuios.WithWorkspaces(9),
+    dartuios.WithBorderStyle("rounded"),
+    dartuios.WithDockbarPosition("bottom"),
+    dartuios.WithScrollbackLines(20000),
 )
 ```
 
@@ -58,7 +58,7 @@ For better performance, use the provided mouse motion filter:
 p := tea.NewProgram(
     model,
     tea.WithFPS(60),
-    tea.WithFilter(tuios.FilterMouseMotion),
+    tea.WithFilter(dartuios.FilterMouseMotion),
 )
 ```
 
@@ -69,7 +69,7 @@ p := tea.NewProgram(
 Set the color theme. Available themes include "dracula", "nord", "tokyonight", and 300+ others from bubbletint.
 
 ```go
-tuios.WithTheme("dracula")
+dartuios.WithTheme("dracula")
 ```
 
 ### WithShowKeys(enabled bool)
@@ -77,7 +77,7 @@ tuios.WithTheme("dracula")
 Enable the showkeys overlay to display pressed keys (useful for demos).
 
 ```go
-tuios.WithShowKeys(true)
+dartuios.WithShowKeys(true)
 ```
 
 ### WithAnimations(enabled bool)
@@ -85,7 +85,7 @@ tuios.WithShowKeys(true)
 Enable or disable window animations. When disabled, windows snap instantly.
 
 ```go
-tuios.WithAnimations(false)
+dartuios.WithAnimations(false)
 ```
 
 ### WithASCIIOnly(enabled bool)
@@ -93,7 +93,7 @@ tuios.WithAnimations(false)
 Use ASCII characters instead of Nerd Font icons for compatibility.
 
 ```go
-tuios.WithASCIIOnly(true)
+dartuios.WithASCIIOnly(true)
 ```
 
 ### WithWorkspaces(n int)
@@ -101,7 +101,7 @@ tuios.WithASCIIOnly(true)
 Set the number of workspaces (1-9).
 
 ```go
-tuios.WithWorkspaces(4)
+dartuios.WithWorkspaces(4)
 ```
 
 ### WithBorderStyle(style string)
@@ -118,7 +118,7 @@ Set the window border style. Valid values:
 - `"ascii"`
 
 ```go
-tuios.WithBorderStyle("thick")
+dartuios.WithBorderStyle("thick")
 ```
 
 ### WithDockbarPosition(position string)
@@ -129,7 +129,7 @@ Set the dockbar position. Valid values:
 - `"hidden"`
 
 ```go
-tuios.WithDockbarPosition("bottom")
+dartuios.WithDockbarPosition("bottom")
 ```
 
 ### WithHideWindowButtons(hide bool)
@@ -137,7 +137,7 @@ tuios.WithDockbarPosition("bottom")
 Hide the minimize/maximize/close buttons in window title bars.
 
 ```go
-tuios.WithHideWindowButtons(true)
+dartuios.WithHideWindowButtons(true)
 ```
 
 ### WithWindowButtonStyle(style string)
@@ -145,20 +145,20 @@ tuios.WithHideWindowButtons(true)
 How the window controls are drawn: `"pill"` (glyphs on a filled pill) or
 `"dots"` (macOS traffic lights, which name themselves on hover). On the left,
 the pill puts close at the outer corner: close, zoom, minimize. See
-[the configuration reference](https://tuios.dev/docs/configuration).
+[the configuration reference](https://dartuios.dev/docs/configuration).
 
 ```go
-tuios.WithWindowButtonStyle("dots")
+dartuios.WithWindowButtonStyle("dots")
 ```
 
 ### WithWindowButtonPosition(position string)
 
 Which end of the title bar the window controls sit on: `"left"` (default, the
 way macOS does it) or `"right"`. See
-[the configuration reference](https://tuios.dev/docs/configuration).
+[the configuration reference](https://dartuios.dev/docs/configuration).
 
 ```go
-tuios.WithWindowButtonPosition("left")
+dartuios.WithWindowButtonPosition("left")
 ```
 
 ### WithScrollbackLines(lines int)
@@ -166,15 +166,15 @@ tuios.WithWindowButtonPosition("left")
 Set the scrollback buffer size (100-1000000).
 
 ```go
-tuios.WithScrollbackLines(50000)
+dartuios.WithScrollbackLines(50000)
 ```
 
 ### WithSize(width, height int)
 
-Set the initial terminal size. Usually not needed as TUIOS auto-detects.
+Set the initial terminal size. Usually not needed as dartuios auto-detects.
 
 ```go
-tuios.WithSize(120, 40)
+dartuios.WithSize(120, 40)
 ```
 
 ### WithSSHMode(enabled bool)
@@ -182,13 +182,13 @@ tuios.WithSize(120, 40)
 Enable SSH mode for running over SSH connections.
 
 ```go
-tuios.WithSSHMode(true)
+dartuios.WithSSHMode(true)
 ```
 
 ### NewForPTY
 
-`tuios.NewForPTY` builds an instance bound to an existing PTY rather than the
-process's own terminal; see the doc comment in `pkg/tuios/tuios.go` for the
+`dartuios.NewForPTY` builds an instance bound to an existing PTY rather than the
+process's own terminal; see the doc comment in `pkg/dartuios/dartuios.go` for the
 contract.
 
 ### WithUserConfig(cfg *config.UserConfig)
@@ -196,14 +196,14 @@ contract.
 Provide a custom user configuration instead of loading from file.
 
 ```go
-cfg := tuios.Config.DefaultConfig()
+cfg := dartuios.Config.DefaultConfig()
 cfg.Keybindings.LeaderKey = "ctrl+a"
-tuios.WithUserConfig(cfg)
+dartuios.WithUserConfig(cfg)
 ```
 
 ## Web Terminal Integration
 
-TUIOS can be served through the browser using the [sip library](https://github.com/Gaurav-Gosain/sip):
+dartuios can be served through the browser using the [sip library](https://github.com/Gaurav-Gosain/sip):
 
 ```go
 package main
@@ -213,7 +213,7 @@ import (
     "log"
 
     "github.com/Gaurav-Gosain/sip"
-    "github.com/Gaurav-Gosain/tuios/pkg/tuios"
+    "github.com/darsrc/tuios/pkg/dartuios"
     tea "charm.land/bubbletea/v2"
 )
 
@@ -223,14 +223,14 @@ func main() {
     err := server.ServeWithProgram(context.Background(), func(sess sip.Session) *tea.Program {
         pty := sess.Pty()
 
-        // Create TUIOS for the web session
-        model := tuios.New(
-            tuios.WithSize(pty.Width, pty.Height),
-            tuios.WithTheme("dracula"),
+        // Create dartuios for the web session
+        model := dartuios.New(
+            dartuios.WithSize(pty.Width, pty.Height),
+            dartuios.WithTheme("dracula"),
         )
 
-        // sip's options first, then tuios's.
-        return tea.NewProgram(model, append(sip.MakeOptions(sess), tuios.ProgramOptions()...)...)
+        // sip's options first, then dartuios's.
+        return tea.NewProgram(model, append(sip.MakeOptions(sess), dartuios.ProgramOptions()...)...)
     })
 
     if err != nil {
@@ -240,9 +240,9 @@ func main() {
 ```
 
 Build the program yourself with `ServeWithProgram` rather than returning the
-options from `Serve`. Both `sip.MakeOptions` and `tuios.ProgramOptions` carry a
+options from `Serve`. Both `sip.MakeOptions` and `dartuios.ProgramOptions` carry a
 `tea.WithFilter`, and the last one set wins. `Serve` appends sip's options after
-yours, which drops the tuios mouse motion filter. `tuios-web` builds its
+yours, which drops the dartuios mouse motion filter. `dartuios-web` builds its
 program the same way.
 
 ## SSH Server Integration
@@ -253,7 +253,7 @@ For SSH server integration, use the Wish library:
 package main
 
 import (
-    "github.com/Gaurav-Gosain/tuios/pkg/tuios"
+    "github.com/darsrc/tuios/pkg/dartuios"
     tea "charm.land/bubbletea/v2"
     "charm.land/ssh"
     "charm.land/wish/v2"
@@ -267,13 +267,13 @@ func main() {
             bubbletea.MiddlewareWithProgramHandler(func(sess ssh.Session) *tea.Program {
                 pty, _, _ := sess.Pty()
 
-                model := tuios.New(
-                    tuios.WithSize(pty.Window.Width, pty.Window.Height),
-                    tuios.WithSSHMode(true),
+                model := dartuios.New(
+                    dartuios.WithSize(pty.Window.Width, pty.Window.Height),
+                    dartuios.WithSSHMode(true),
                 )
 
-                // wish's options first, then tuios's.
-                return tea.NewProgram(model, append(bubbletea.MakeOptions(sess), tuios.ProgramOptions()...)...)
+                // wish's options first, then dartuios's.
+                return tea.NewProgram(model, append(bubbletea.MakeOptions(sess), dartuios.ProgramOptions()...)...)
             }),
         ),
     )
@@ -284,8 +284,8 @@ func main() {
 
 `bubbletea.Middleware` has the same ordering problem as sip's `Serve`: it
 appends `MakeOptions` after the options you return, so its `tea.WithFilter`
-replaces the tuios one. `MiddlewareWithProgramHandler` lets you put them in the
-right order. The `tuios ssh` server in `internal/server` does the same.
+replaces the dartuios one. `MiddlewareWithProgramHandler` lets you put them in the
+right order. The `dartuios ssh` server in `internal/server` does the same.
 
 `WithSSHMode` makes the model an SSH client: the settings page does not write
 the operator's config file and desktop actions do not run on the server. It
@@ -295,22 +295,22 @@ served without it, including one behind sip, is treated as a local client.
 
 ## Configuration Access
 
-The `tuios.Config` struct provides access to configuration utilities:
+The `dartuios.Config` struct provides access to configuration utilities:
 
 ```go
 // Load user config from file
-cfg, err := tuios.Config.LoadUserConfig()
+cfg, err := dartuios.Config.LoadUserConfig()
 
 // Get default config
-cfg := tuios.Config.DefaultConfig()
+cfg := dartuios.Config.DefaultConfig()
 
 // Get config file path
-path, err := tuios.Config.GetConfigPath()
+path, err := dartuios.Config.GetConfigPath()
 ```
 
 ## Model Methods
 
-The TUIOS model provides several public methods:
+The dartuios model provides several public methods:
 
 ### Window Management
 
@@ -335,16 +335,16 @@ The TUIOS model provides several public methods:
 
 ## Example: Custom Wrapper
 
-You can wrap TUIOS in your own model for additional functionality:
+You can wrap dartuios in your own model for additional functionality:
 
 ```go
 type MyApp struct {
-    tuios *tuios.Model
+    dartuios *dartuios.Model
     // your additional state
 }
 
 func (m *MyApp) Init() tea.Cmd {
-    return m.tuios.Init()
+    return m.dartuios.Init()
 }
 
 func (m *MyApp) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -355,14 +355,14 @@ func (m *MyApp) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         return m, nil
     }
 
-    // Delegate to TUIOS
-    updated, cmd := m.tuios.Update(msg)
-    m.tuios = updated.(*tuios.Model)
+    // Delegate to dartuios
+    updated, cmd := m.dartuios.Update(msg)
+    m.dartuios = updated.(*dartuios.Model)
     return m, cmd
 }
 
 func (m *MyApp) View() string {
-    return m.tuios.View()
+    return m.dartuios.View()
 }
 ```
 
@@ -372,4 +372,4 @@ func (m *MyApp) View() string {
 - [Keybindings](KEYBINDINGS.md): Keyboard shortcuts
 - [Configuration](CONFIGURATION.md): Config file options
 - [Web Terminal](WEB.md): Browser-based access
-- [sip](https://github.com/Gaurav-Gosain/sip): the web serving library behind `tuios-web`
+- [sip](https://github.com/Gaurav-Gosain/sip): the web serving library behind `dartuios-web`

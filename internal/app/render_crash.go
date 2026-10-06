@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // Drawing the crash overlay.
@@ -23,7 +23,7 @@ import (
 
 // crashPanelWidth is the inner width the overlay would like. It holds a stack
 // frame's file:line without wrapping on any screen wide enough to have shown
-// tuios in the first place, and FitWidth gives back what a narrower one can.
+// dartuios in the first place, and FitWidth gives back what a narrower one can.
 const crashPanelWidth = 76
 
 // crashHints is the footer. Three keys, in the order a user needs them: read
@@ -44,7 +44,7 @@ var crashHints = []overlay.Hint{
 // second, and there is no apology, because an apology is a line of text between
 // the user and the answer.
 var crashLead = []string{
-	"tuios reached a state it does not expect.",
+	"dartuios reached a state it does not expect.",
 	"Your panes and your session are still running. Press esc to go back to them.",
 	"Send the report and this gets fixed.",
 }
@@ -80,7 +80,7 @@ func crashPanel(report *CrashReport, notice string, width, height int, pal overl
 	body := max(height-overhead, 1)
 
 	p := overlay.Panel{
-		Title: "tuios hit a bug",
+		Title: "dartuios hit a bug",
 		Width: inner,
 		Body:  strings.Join(crashBody(report, notice, inner, body, pal), "\n"),
 		Hints: crashHints,

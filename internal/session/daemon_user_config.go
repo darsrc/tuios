@@ -4,18 +4,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
 )
 
 // DaemonConfigFromUser maps the parts of the user's config file the daemon
 // owns onto the daemon's own config: the [daemon] section, the [hosts] table
 // and the hooks the daemon fires.
 //
-// Every starter calls it: `tuios daemon`, and the SSH and web servers when
+// Every starter calls it: `dartuios daemon`, and the SSH and web servers when
 // they start a daemon in-process. It used to be three hand-written subsets,
-// and a daemon started by `tuios ssh` ran with no agent detection settings and
-// no hosts while the same file gave both to a daemon started by `tuios
+// and a daemon started by `dartuios ssh` ran with no agent detection settings and
+// no hosts while the same file gave both to a daemon started by `dartuios
 // attach`. The fields the starter owns (Version, Foreground, LogFile,
 // DisableAutoRestore) stay the starter's to fill.
 //
@@ -87,7 +87,7 @@ func DaemonConfigFromUser(uc *config.UserConfig) *DaemonConfig {
 
 // HostsFromConfig turns the [hosts] config table into the daemon's host list.
 // Nothing is validated here; the federation table does that and reports what it
-// dropped, so the reason reaches 'tuios hosts' rather than only the log.
+// dropped, so the reason reaches 'dartuios hosts' rather than only the log.
 func HostsFromConfig(cfg *config.UserConfig) []federation.Host {
 	if cfg == nil || len(cfg.Hosts) == 0 {
 		return nil

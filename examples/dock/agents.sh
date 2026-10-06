@@ -2,9 +2,9 @@
 # Dock component: how many panes are running an agent, and what they are doing.
 #
 #   [dock.custom.agents]
-#   command  = "~/.config/tuios/dock/agents.sh"
+#   command  = "~/.config/dartuios/dock/agents.sh"
 #   refresh  = "event:after-agent-state"
-#   on-click = "tuios list-windows"
+#   on-click = "dartuios list-windows"
 #
 # This is the component the whole feature is for. With several agents working in
 # several panes, the one thing you want off the bar is whether any of them is
@@ -17,7 +17,7 @@ set -eu
 
 command -v jq >/dev/null 2>&1 || exit 0
 
-states=$(tuios list-windows --json 2>/dev/null |
+states=$(dartuios list-windows --json 2>/dev/null |
 	jq -r '.windows[] | .agent_state // empty' 2>/dev/null) || exit 0
 [ -n "$states" ] || exit 0
 

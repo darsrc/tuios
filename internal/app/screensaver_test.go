@@ -5,7 +5,7 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // withSpyInputHandler swaps in a handler that records whether it was reached,
@@ -81,7 +81,7 @@ func TestScreensaverFrameMessageDoesNotResurrectADismissedSaver(t *testing.T) {
 // TestArmedScreensaverDoesNothingToTheIdleTick is the guard on the constraint
 // that shaped this whole feature.
 //
-// tuios must not tick at idle, and a screen saver is by definition a thing that
+// dartuios must not tick at idle, and a screen saver is by definition a thing that
 // waits for idle. It gets away with it because arming is one deferred timer and
 // the running animation drives its own frames, so nothing on the maintenance
 // tick's fast path ever reads screensaver state. This asserts that directly: a
@@ -188,7 +188,7 @@ func TestScreensaverEatsPointerMotionToo(t *testing.T) {
 // event, so ordinary typing is untouched.
 //
 // Negative control: eating input whenever the saver is merely enabled rather
-// than actually showing makes this fail, and makes tuios unusable.
+// than actually showing makes this fail, and makes dartuios unusable.
 func TestInputReachesThePaneWhenTheSaverIsDown(t *testing.T) {
 	win := newTestWindow(t, "saver-0003", 40, 10)
 	m := newTestOS(win)

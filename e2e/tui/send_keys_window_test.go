@@ -27,7 +27,7 @@ func TestSendKeysToANamedWindowWithAClientAttached(t *testing.T) {
 	var ids []string
 	for _, name := range []string{"pager-a", "pager-b"} {
 		args := append([]string{"new-window", "-s", sess, "--no-focus", "--print-id", name, "--"}, echo...)
-		out, err := tuiosCLI(t, base, args...)
+		out, err := dartuiosCLI(t, base, args...)
 		if err != nil {
 			t.Fatalf("new-window %s: %v\n%s", name, err, out)
 		}
@@ -36,14 +36,14 @@ func TestSendKeysToANamedWindowWithAClientAttached(t *testing.T) {
 			t.Fatalf("new-window --print-id printed %q, want a full window id", out)
 		}
 		ids = append(ids, id)
-		if out, err := tuiosCLI(t, base, "wait-for", "window-output", "-s", sess, "-w", name, "--pattern", "ready", "--timeout", "10000"); err != nil {
+		if out, err := dartuiosCLI(t, base, "wait-for", "window-output", "-s", sess, "-w", name, "--pattern", "ready", "--timeout", "10000"); err != nil {
 			t.Fatalf("window %s never started: %v\n%s", name, err, out)
 		}
 	}
 	focusedBefore := focusedWindowID(t, base, sess)
 	before := capture(t, base, sess, "pager-b")
 
-	out, err := tuiosCLI(t, base, "send-keys", "-s", sess, "-w", "pager-a", "Down", "--repeat", "3")
+	out, err := dartuiosCLI(t, base, "send-keys", "-s", sess, "-w", "pager-a", "Down", "--repeat", "3")
 	if err != nil {
 		t.Fatalf("send-keys to pager-a: %v\n%s", err, out)
 	}
@@ -60,7 +60,7 @@ func TestSendKeysToANamedWindowWithAClientAttached(t *testing.T) {
 	}
 
 	// The other window by id, with a page key.
-	if out, err := tuiosCLI(t, base, "send-keys", "-s", sess, "-w", ids[1], "PageDown"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-keys", "-s", sess, "-w", ids[1], "PageDown"); err != nil {
 		t.Fatalf("send-keys to pager-b: %v\n%s", err, out)
 	}
 	waitCapture(t, base, sess, "pager-b", "^[[6~")
@@ -73,7 +73,7 @@ func TestSendKeysToANamedWindowWithAClientAttached(t *testing.T) {
 // capture is one window's visible screen.
 func capture(t *testing.T, base, sess, window string) string {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "capture-pane", "-s", sess, "-w", window)
+	out, err := dartuiosCLI(t, base, "capture-pane", "-s", sess, "-w", window)
 	if err != nil {
 		t.Fatalf("capture-pane %s: %v\n%s", window, err, out)
 	}
@@ -83,7 +83,7 @@ func capture(t *testing.T, base, sess, window string) string {
 // focusedWindowID is the id of the session's focused window.
 func focusedWindowID(t *testing.T, base, sess string) string {
 	t.Helper()
-	out, err := tuiosCLI(t, base, "list-windows", "-s", sess, "--json")
+	out, err := dartuiosCLI(t, base, "list-windows", "-s", sess, "--json")
 	if err != nil {
 		t.Fatalf("list-windows: %v\n%s", err, out)
 	}

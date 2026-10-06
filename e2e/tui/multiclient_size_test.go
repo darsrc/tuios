@@ -84,7 +84,7 @@ func twoClientSession(t *testing.T, name string, cols, rows int) (*tuitest.Termi
 	t.Helper()
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 		t.Fatalf("create session %s: %v: %s", name, err, out)
 	}
 	return attachIn(t, base, name, startOpts{cols: cols, rows: rows}), base

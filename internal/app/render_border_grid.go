@@ -10,10 +10,10 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // separatorSplits returns the divider lines for the layout that placed the
@@ -357,6 +357,10 @@ func (m *OS) renderSeparatorOverlay() []*lipgloss.Layer {
 	// has the chrome's rule to meet instead, one cell further out.
 	rules := m.chromeRules(bounds)
 	border := m.Settings.GetBorderForStyle()
+	// The ring the focused pane is outlined in. It carries the style's focused
+	// weight, so the outline is a heavy line where the dividers are light, and
+	// the focused pane reads as one without leaning on the tint alone.
+	focusBorder := m.Settings.GetFocusedBorderForStyle()
 	// The perimeter of the focused window, clipped to the tiled bounds. Cells on
 	// it are drawn in the focus color, so the focused pane reads as an outlined
 	// rectangle even though every segment is shared with a neighbour.
@@ -375,7 +379,7 @@ func (m *OS) renderSeparatorOverlay() []*lipgloss.Layer {
 	// none of them, so a frame that matches the last one reuses its layers.
 	key := separatorKey{
 		bounds: bounds, viewW: viewW, viewH: viewH,
-		rules: rules, border: border, focus: focus,
+		rules: rules, border: border, focusBorder: focusBorder, focus: focus,
 		unfocused: unfocusedStr, focused: focusedStr,
 	}
 	if memo := &m.separatorMemo; memo.valid && memo.key == key &&
@@ -396,6 +400,7 @@ type separatorKey struct {
 	viewW, viewH       int
 	rules              chromeRules
 	border             lipgloss.Border
+	focusBorder        lipgloss.Border
 	focus              borderPerimeter
 	unfocused, focused string
 }
@@ -414,7 +419,7 @@ type separatorMemo struct {
 // buildSeparatorLayers draws the divider overlay for one set of inputs.
 func (m *OS) buildSeparatorLayers(splits []dividerLine, stack []paneLayer, key separatorKey) []*lipgloss.Layer {
 	bounds, viewW, viewH := key.bounds, key.viewW, key.viewH
-	rules, border, focus := key.rules, key.border, key.focus
+	rules, border, focusBorder, focus := key.rules, key.border, key.focusBorder, key.focus
 
 	// Nothing may be painted into a cell a pane's guest owns, and two panes
 	// crossing mid-transition put one of them over the other's edge. So an edge
@@ -567,15 +572,19 @@ func (m *OS) buildSeparatorLayers(splits []dividerLine, stack []paneLayer, key s
 		}
 
 		onFocus := focus.contains(x, y)
-		// At a corner of the focused perimeter, bend the line into the focused
-		// window. This is the only signal that is independent of color, and it
-		// is what disambiguates two panes sharing a single divider: the divider
-		// hooks toward whichever side owns it. Plain segments and the meeting
-		// with a chrome rule are replaced, both being places the perimeter turns;
-		// a crossing between two dividers keeps the arms its neighbours need.
-		if onFocus && (ch == chVert || ch == chHoriz || c.join != joinNone) {
-			if corner, ok := focus.corner(x, y, border); ok {
+		// On the focused perimeter, carry the style's focused weight: the ring's
+		// corners bend into the focused window with its focused corner glyph,
+		// and its straight runs take its focused sides. This is the signal
+		// independent of color that disambiguates two panes sharing a single
+		// divider — the outline hooks toward whichever side owns it. A crossing
+		// between two dividers keeps the arms its neighbours need.
+		if onFocus {
+			if corner, ok := focus.corner(x, y, focusBorder); ok {
 				ch = corner
+			} else if ch == chVert {
+				ch = firstRune(focusBorder.Left, chVert)
+			} else if ch == chHoriz {
+				ch = firstRune(focusBorder.Top, chHoriz)
 			}
 		}
 		chars = append(chars, charPos{x, y, ch, onFocus, c.join != joinNone})

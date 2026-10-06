@@ -47,7 +47,7 @@ func narrowRailAgentRows(t *testing.T, tokens string, state bool) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	useShippedLooks(base)
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -58,22 +58,22 @@ func narrowRailAgentRows(t *testing.T, tokens string, state bool) {
 	if err := os.WriteFile(filepath.Join(dir, "config.toml"), []byte(config), 0o600); err != nil {
 		t.Fatalf("write config: %v", err)
 	}
-	if out, err := tuiosCLI(t, base, "new", "rail", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "rail", "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-window", "-s", "rail", "--name", long); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-window", "-s", "rail", "--name", long); err != nil {
 		t.Fatalf("name the first pane: %v\n%s", err, out)
 	}
 	// Enough agents that each row has one line, which is the line the
 	// harness and the state share with the name.
 	names := []string{long, short, "db", "api", "ci", "docs"}
 	for _, name := range names[1:] {
-		if out, err := tuiosCLI(t, base, "new-window", name, "-s", "rail", "--no-focus"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new-window", name, "-s", "rail", "--no-focus"); err != nil {
 			t.Fatalf("open pane %s: %v\n%s", name, err, out)
 		}
 	}
 	for _, name := range names {
-		if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "rail", "-w", name, "working", "--harness", "claude-code"); err != nil {
+		if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "rail", "-w", name, "working", "--harness", "claude-code"); err != nil {
 			t.Fatalf("set-agent-state on %s: %v\n%s", name, err, out)
 		}
 	}
@@ -156,10 +156,10 @@ func TestNarrowRailKeepsTheAgentNameBeforeItsHarness(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
 	useShippedLooks(base)
-	if out, err := tuiosCLI(t, base, "new", "rail", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "rail", "--detach"); err != nil {
 		t.Fatalf("create the session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-window", "-s", "rail", "--name", long); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-window", "-s", "rail", "--name", long); err != nil {
 		t.Fatalf("name the first pane: %v\n%s", err, out)
 	}
 	// Enough agents that the section has no room for a second line per row,
@@ -167,12 +167,12 @@ func TestNarrowRailKeepsTheAgentNameBeforeItsHarness(t *testing.T) {
 	// that puts the harness in front of the name.
 	names := []string{long, tooLong, short, "web", "api", "ci"}
 	for _, name := range names[1:] {
-		if out, err := tuiosCLI(t, base, "new-window", name, "-s", "rail", "--no-focus"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new-window", name, "-s", "rail", "--no-focus"); err != nil {
 			t.Fatalf("open pane %s: %v\n%s", name, err, out)
 		}
 	}
 	for _, name := range names {
-		if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "rail", "-w", name, "working", "--harness", "claude-code"); err != nil {
+		if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "rail", "-w", name, "working", "--harness", "claude-code"); err != nil {
 			t.Fatalf("set-agent-state on %s: %v\n%s", name, err, out)
 		}
 	}

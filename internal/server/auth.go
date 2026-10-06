@@ -14,7 +14,7 @@ import (
 	"github.com/adrg/xdg"
 	gossh "golang.org/x/crypto/ssh"
 
-	"github.com/Gaurav-Gosain/tuios/internal/netutil"
+	"github.com/darsrc/tuios/internal/netutil"
 )
 
 // Authentication for the SSH server.
@@ -23,17 +23,17 @@ import (
 // NoClientAuth when no PasswordHandler, PublicKeyHandler or
 // KeyboardInteractiveHandler is installed (see server.go in that module), so
 // every connection was accepted, including one that names a user nobody has.
-// The session it got is the full TUIOS, and TUIOS opens shells as the account
+// The session it got is the full dartuios, and dartuios opens shells as the account
 // running the server. That is a shell on this machine for anyone who can reach
 // the port.
 //
 // Public keys, not passwords: every machine with an ssh client already has a
 // keypair, so there is nothing new to store here and nothing to guess.
 
-// ConfigAuthorizedKeys is where TUIOS keeps its own list, relative to the XDG
+// ConfigAuthorizedKeys is where dartuios keeps its own list, relative to the XDG
 // config home. It is read before ~/.ssh/authorized_keys so a user can grant
-// TUIOS a narrower set than their sshd trusts.
-const ConfigAuthorizedKeys = "tuios/authorized_keys"
+// dartuios a narrower set than their sshd trusts.
+const ConfigAuthorizedKeys = "dartuios/authorized_keys"
 
 // AuthorizedKeys is the set of public keys that may open a session, and the
 // file they came from.
@@ -184,14 +184,14 @@ func (p *SSHAuthPlan) Authenticated() bool { return p != nil && p.Keys.Enabled()
 // PlanSSHAuth decides how one bind authenticates, and refuses the bind that
 // cannot be served safely.
 //
-// It mirrors checkTransportSecurity in cmd/tuios-web, which refuses a
+// It mirrors checkTransportSecurity in cmd/dartuios-web, which refuses a
 // non-loopback bind that would carry keystrokes in clear text. Same shape, same
 // three outcomes: configured and allowed, loopback and allowed, non-loopback
 // and refused unless the operator opts out by hand. The two gates share
 // netutil.IsLoopbackHost so they cannot disagree about which address is on the
 // network.
 //
-// noAuth wins over a keys file, unlike --insecure in tuios-web, which a
+// noAuth wins over a keys file, unlike --insecure in dartuios-web, which a
 // certificate overrides. The reason is recovery: an operator locked out by a
 // keys file that no longer holds their key needs one flag that gets them back
 // in, and a flag that sometimes does nothing is not that.
@@ -211,7 +211,7 @@ func PlanSSHAuth(host, authorizedKeysPath string, noAuth bool) (*SSHAuthPlan, er
 		return nil, fmt.Errorf("%w on %s with no authentication: add a public key to %s, or pass --no-auth to accept it",
 			ErrNoSSHAuth, host, filepath.Join(xdg.ConfigHome, ConfigAuthorizedKeys))
 	}
-	return &SSHAuthPlan{Warning: noAuthWarning(host, "TUIOS found no authorized keys file.")}, nil
+	return &SSHAuthPlan{Warning: noAuthWarning(host, "dartuios found no authorized keys file.")}, nil
 }
 
 // noAuthWarning is the one loud line an unauthenticated server prints at

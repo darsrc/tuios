@@ -9,8 +9,8 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // Getting a lost link back.
@@ -67,12 +67,12 @@ const (
 )
 
 // reconnectBudget is how long this client keeps trying, which is
-// hostReconnectBudget unless TUIOS_HOST_RECONNECT_BUDGET names another
+// hostReconnectBudget unless DARTUIOS_HOST_RECONNECT_BUDGET names another
 // duration. The variable exists so a test can watch the client give up without
 // waiting three minutes for it, and it is read once: a person who wants a
-// longer budget on a link that is often down sets it before tuios starts.
+// longer budget on a link that is often down sets it before dartuios starts.
 var reconnectBudget = sync.OnceValue(func() time.Duration {
-	if v := os.Getenv("TUIOS_HOST_RECONNECT_BUDGET"); v != "" {
+	if v := os.Getenv("DARTUIOS_HOST_RECONNECT_BUDGET"); v != "" {
 		if d, err := time.ParseDuration(v); err == nil && d > 0 {
 			return d
 		}
@@ -138,7 +138,7 @@ func (m *OS) beginHostReconnect(cause error) tea.Cmd {
 	}
 	m.LogWarn("The link to %s dropped: %v. Connecting again.", m.hostReconnect.host, cause)
 	m.ShowNotification(
-		fmt.Sprintf("The link to %s dropped. tuios is connecting again.", m.hostReconnect.host),
+		fmt.Sprintf("The link to %s dropped. dartuios is connecting again.", m.hostReconnect.host),
 		"warning", m.Settings.NotificationWarningDuration)
 	// The panes are left exactly as they are. The last frame the far session
 	// sent is the truest thing on screen until a new one arrives, and clearing
@@ -381,18 +381,18 @@ func hostReconnectReason(host string, err error) string {
 	}
 	if shake, ok := errors.AsType[*session.HostHandshakeError](err); ok {
 		if _, ok := errors.AsType[*session.ProtocolMismatchError](shake.Err); ok {
-			return fmt.Sprintf("The tuios on %s cannot serve this client. Upgrade tuios on one machine.", host)
+			return fmt.Sprintf("The dartuios on %s cannot serve this client. Upgrade dartuios on one machine.", host)
 		}
 	}
 	if connErr, ok := errors.AsType[*session.HostConnectError](err); ok {
 		switch connErr.Code {
 		case session.ErrVerbUnknownHost:
-			return fmt.Sprintf("The host %s is not configured. Add it with 'tuios hosts add'.", host)
+			return fmt.Sprintf("The host %s is not configured. Add it with 'dartuios hosts add'.", host)
 		case session.ErrVerbProtocolMismatch, session.ErrVerbUnknownVerb:
-			return "The daemon on this machine is too old. Restart it with 'tuios kill-server'."
+			return "The daemon on this machine is too old. Restart it with 'dartuios kill-server'."
 		}
 	}
-	return what + fmt.Sprintf(" The session keeps running there. Run 'tuios hosts' to see %s.", host)
+	return what + fmt.Sprintf(" The session keeps running there. Run 'dartuios hosts' to see %s.", host)
 }
 
 // hostLinkNote is the dock's one line about a link that is not there. It is

@@ -4,13 +4,13 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // Unbinding from the overlay. Two verbs, because a user who wants a key gone
 // means one of two different things:
 //
-//   - "tuios should stop taking this key, the program in my pane wants it."
+//   - "dartuios should stop taking this key, the program in my pane wants it."
 //     That is KeybindFreeKey: the key comes off every action in every scope,
 //     because a key still claimed by one of them still never reaches the pane.
 //   - "this action should not be on this key." That is KeybindUnbindSelected:
@@ -188,7 +188,7 @@ func (m *OS) KeybindFreeSelectedKey() tea.Cmd {
 
 // KeybindFreeCapturedKey frees the key the recorder last captured. This is the
 // short path for the case the recorder exists to find: press ctrl+r, press the
-// key your program wants, read that tuios takes it, take it back.
+// key your program wants, read that dartuios takes it, take it back.
 func (m *OS) KeybindFreeCapturedKey() tea.Cmd {
 	key, _ := m.KeybindCaptured()
 	if key == "" {

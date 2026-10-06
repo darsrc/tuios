@@ -5,9 +5,9 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // withClickToType sets the policy for a test and restores it after.
@@ -19,7 +19,7 @@ func withClickToType(t *testing.T, mode string) {
 }
 
 // clickPane presses and releases the left button on a cell through HandleInput,
-// the entry point cmd/tuios registers with SetInputHandler. The policy lives on
+// the entry point cmd/dartuios registers with SetInputHandler. The policy lives on
 // the press and resolves on the release, and both have to travel the real
 // routing: a handler called directly would prove nothing about whether a click
 // reaches it.

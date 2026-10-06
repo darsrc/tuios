@@ -15,7 +15,7 @@ import (
 // It is not cached here; the standalone path caches it per process.
 func DetectTerm() (termType, colorTerm string) {
 	// TERM and COLORTERM set explicitly are trusted as they are. This is the
-	// case tuios-web depends on, because its stdout is not a TTY.
+	// case dartuios-web depends on, because its stdout is not a TTY.
 	envTerm := os.Getenv("TERM")
 	envColorTerm := os.Getenv("COLORTERM")
 	if envColorTerm == "truecolor" && envTerm != "" && envTerm != "dumb" {

@@ -78,13 +78,13 @@ func (a *ACP) Start(ctx context.Context, cwd string) (Info, error) {
 			"fs":       map[string]bool{"readTextFile": false, "writeTextFile": false},
 			"terminal": false,
 		},
-		"clientInfo": map[string]string{"name": "tuios", "title": "tuios", "version": a.version},
+		"clientInfo": map[string]string{"name": "dartuios", "title": "dartuios", "version": a.version},
 	}, &init)
 	if err != nil {
 		return Info{}, fmt.Errorf("initialize: %w", err)
 	}
 	if init.ProtocolVersion != acpProtocolVersion {
-		return Info{}, fmt.Errorf("the agent speaks ACP version %d, and tuios speaks version %d", init.ProtocolVersion, acpProtocolVersion)
+		return Info{}, fmt.Errorf("the agent speaks ACP version %d, and dartuios speaks version %d", init.ProtocolVersion, acpProtocolVersion)
 	}
 	var info Info
 	if ai := init.AgentInfo; ai != nil {
@@ -378,7 +378,7 @@ func flatInput(raw json.RawMessage) (map[string]string, bool) {
 
 func (a *ACP) onRequest(r *Request) {
 	if r.Method != "session/request_permission" {
-		r.ReplyError(codeMethodNotFound, "tuios does not offer "+r.Method)
+		r.ReplyError(codeMethodNotFound, "dartuios does not offer "+r.Method)
 		return
 	}
 	var p struct {

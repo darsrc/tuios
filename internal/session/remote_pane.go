@@ -145,7 +145,7 @@ func openRemotePane(ctx context.Context, fed paneFederation, host string, spec h
 	opened, br, err := openPaneReply(stream, spec)
 	if err != nil {
 		_ = stream.Close()
-		return nil, fmt.Errorf("tuios on %s could not start a pane: %w", host, err)
+		return nil, fmt.Errorf("dartuios on %s could not start a pane: %w", host, err)
 	}
 	p := &remotePane{
 		host: host, id: opened.Pane, fed: fed, stream: stream, br: br,
@@ -223,7 +223,7 @@ func openPaneReply(stream io.ReadWriteCloser, spec hostedPaneSpec) (paneOpened, 
 	}
 	if resp.Error != nil {
 		if resp.Error.Code == ErrVerbUnknownVerb {
-			return paneOpened{}, nil, fmt.Errorf("that machine's tuios is too old to host a pane. Update it, then restart its daemon with 'tuios kill-server'")
+			return paneOpened{}, nil, fmt.Errorf("that machine's dartuios is too old to host a pane. Update it, then restart its daemon with 'dartuios kill-server'")
 		}
 		return paneOpened{}, nil, resp.Error
 	}
@@ -322,7 +322,7 @@ func (p *remotePane) Read(b []byte) (int, error) {
 }
 
 // errPaneReconnecting is what a write gets while the link is being restored.
-var errPaneReconnecting = errors.New("the link to this pane's machine is down and tuios is reconnecting")
+var errPaneReconnecting = errors.New("the link to this pane's machine is down and dartuios is reconnecting")
 
 // Write sends input to the process. While the pane is being reattached there
 // is nowhere to send it, and the keystrokes are refused rather than queued:

@@ -5,14 +5,14 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // A pane scrolled back with the wheel is in an implicit copy mode, and any key
-// the person presses ends it: they have stopped reading. tuios send-keys is
+// the person presses ends it: they have stopped reading. dartuios send-keys is
 // dispatched through the same handler, so an agent typing into the pane ended
 // the person's scrolled view too, at a moment decided by another process.
 //

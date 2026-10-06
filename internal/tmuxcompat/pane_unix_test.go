@@ -36,7 +36,7 @@ func runHolderIfAsked() {
 		}
 		os.Exit(RunPane(PaneOptions{
 			Dir:     os.Getenv("TMUXCOMPAT_TEST_DIR"),
-			Window:  os.Getenv("TUIOS_PANE_ID"),
+			Window:  os.Getenv("DARTUIOS_PANE_ID"),
 			Command: cmd,
 			Env:     []string{"HOLDER_EXTRA=yes"},
 			Shell:   "/bin/sh",
@@ -88,7 +88,7 @@ func startHolderEnv(t *testing.T, dir, window string, env []string, cmd ...strin
 		holderEnvKey+"=1",
 		"TMUXCOMPAT_TEST_DIR="+dir,
 		"TMUXCOMPAT_TEST_CMD="+strings.Join(cmd, "\x1f"),
-		"TUIOS_PANE_ID="+window,
+		"DARTUIOS_PANE_ID="+window,
 	)
 	// No stdout or stderr: a command the holder leaves running must not hold
 	// the test binary's output open.

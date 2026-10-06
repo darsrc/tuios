@@ -6,14 +6,14 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // The config file watcher, for every client.
 //
-// It used to be installed by one entry point, bare `tuios`, so an edit to the
-// config file reached a standalone client and nothing else: not `tuios
-// attach`, which is what startup.daemon = true turns bare `tuios` into, not a
+// It used to be installed by one entry point, bare `dartuios`, so an edit to the
+// config file reached a standalone client and nothing else: not `dartuios
+// attach`, which is what startup.daemon = true turns bare `dartuios` into, not a
 // session over SSH and not a browser tab. The watcher is started here, by the
 // model, in Init, so a client cannot be built without it. What it delivers is
 // applied through ApplyReloadedConfig, which writes this session's settings

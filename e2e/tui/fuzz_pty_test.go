@@ -10,16 +10,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz"
 	"github.com/Gaurav-Gosain/tuitest"
+	"github.com/darsrc/tuios/internal/fuzz"
 )
 
 // The other end of the fuzzer: the same action alphabet, replayed against a real
-// tuios in a real PTY with a real daemon behind it.
+// dartuios in a real PTY with a real daemon behind it.
 //
 // It used to be the weaker oracle, and it used to boot the binary with no
-// arguments, which is the standalone TUI (cmd/tuios/main.go RunE -> runLocal).
-// That target had no daemon at all, so the half of tuios this file exists to
+// arguments, which is the standalone TUI (cmd/dartuios/main.go RunE -> runLocal).
+// That target had no daemon at all, so the half of dartuios this file exists to
 // cover was not being covered: every finding it could produce was one the
 // in-process target could produce faster. It now attaches to a real session, and
 // the oracle asks the daemon what it holds rather than asking the client whether
@@ -31,7 +31,7 @@ import (
 // against a screen scrape would be slower and less certain about the same
 // property. What lives here is what only exists once a socket is involved.
 //
-// Runs are short and shrinking is off by default. A replay costs a full tuios
+// Runs are short and shrinking is off by default. A replay costs a full dartuios
 // boot plus a daemon plus its shells, so the minimisation that takes seconds in
 // process takes minutes here; a PTY finding is reproduced with its script and
 // then narrowed in process when the class allows it.
@@ -44,7 +44,7 @@ const (
 	ptyPanes = 3
 	// daemonEvery is how often the rules that cost a subprocess run when nothing
 	// has disturbed the transport. The free rules run after every action; these
-	// fork a tuios per pane, and running them after all of a drag's motion
+	// fork a dartuios per pane, and running them after all of a drag's motion
 	// reports would spend the whole budget interrogating a daemon about a state
 	// no action changed.
 	daemonEvery = 4
@@ -63,7 +63,7 @@ const (
 	spliceSettle = 1 * time.Second
 )
 
-// ptyTarget drives one tuios client against one daemon.
+// ptyTarget drives one dartuios client against one daemon.
 type ptyTarget struct {
 	t          *testing.T
 	term       *tuitest.Terminal
@@ -142,12 +142,12 @@ func (p *ptyTarget) Reset() error {
 	killDaemon(p.t, p.base)
 
 	for _, name := range []string{p.session, p.session + "-b"} {
-		if out, err := tuiosCLI(p.t, p.base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(p.t, p.base, "new", name, "--detach"); err != nil {
 			return fmt.Errorf("create session %s: %w: %s", name, err, strings.TrimSpace(out))
 		}
 	}
 	for range ptyPanes - 1 {
-		if out, err := tuiosCLI(p.t, p.base, "new-window", "-s", p.session); err != nil {
+		if out, err := dartuiosCLI(p.t, p.base, "new-window", "-s", p.session); err != nil {
 			return fmt.Errorf("new-window: %w: %s", err, strings.TrimSpace(out))
 		}
 	}
@@ -409,7 +409,7 @@ func (p *ptyTarget) applyDetach() {
 	}
 	if _, err := p.term.Wait(uiTimeout); err != nil {
 		// Still attached, and that is not reported. Whether the leader chord
-		// reaches tuios depends on the mode the run has wandered into and on
+		// reaches dartuios depends on the mode the run has wandered into and on
 		// what the focused pane is doing with the keyboard, so a detach that
 		// does not happen here is a statement about the state the fuzzer built
 		// and not about detaching. The claim that detaching works is made from a
@@ -442,7 +442,7 @@ func (p *ptyTarget) applyAttach() {
 // applySecondClient attaches another client to the live session, lets it
 // rehydrate, and takes it away again.
 //
-// Its size is deliberately different. tuios renders a shared session at the
+// Its size is deliberately different. dartuios renders a shared session at the
 // smallest attached client's size, so a second client is also the size
 // negotiation path, and the first client has to survive being resized by
 // somebody else's arrival and departure.
@@ -463,7 +463,7 @@ func (p *ptyTarget) applySecondClient() {
 // restore path: kill-server writes the session state and waits for the socket to
 // go, and the next attach starts a daemon that reads it back.
 func (p *ptyTarget) applyDaemonRestart() {
-	if out, err := tuiosCLI(p.t, p.base, "kill-server"); err != nil {
+	if out, err := dartuiosCLI(p.t, p.base, "kill-server"); err != nil {
 		p.note("daemon-restart", "kill-server failed: %v: %s", err, strings.TrimSpace(out))
 	}
 	if p.term != nil {
@@ -500,7 +500,7 @@ func (p *ptyTarget) applyDaemonRestart() {
 // the rule this file was rewritten for, and it costs nothing, which is why it
 // gets to run on every step rather than on a sample of them.
 //
-// The daemon tier forks a tuios per pane and runs when an action disturbed the
+// The daemon tier forks a dartuios per pane and runs when an action disturbed the
 // transport or every daemonEvery steps otherwise. It is the half that can tell
 // a client that is merely behind from a client that is wrong.
 func (p *ptyTarget) Check() []fuzz.Violation {
@@ -529,8 +529,8 @@ func (p *ptyTarget) checkClient() []fuzz.Violation {
 		// and the chord pool has several: ctrl+b d detaches, ctrl+b q quits, and
 		// closing the last pane can take the session with it. Enumerating them
 		// would be a table that goes stale the next time a binding is added, and
-		// the exit code already draws the line the rule wants: zero is tuios
-		// deciding to stop, anything else is tuios being stopped. Two seeds were
+		// the exit code already draws the line the rule wants: zero is dartuios
+		// deciding to stop, anything else is dartuios being stopped. Two seeds were
 		// reported as pty-exit for pressing detach.
 		//
 		// The client is gone either way, so the target records that. The daemon
@@ -540,7 +540,7 @@ func (p *ptyTarget) checkClient() []fuzz.Violation {
 			p.term, p.detached = nil, true
 			return nil
 		}
-		return one("pty-exit", "tuios exited with code %d after %s", code, p.last)
+		return one("pty-exit", "dartuios exited with code %d after %s", code, p.last)
 	}
 	s := t.Screen()
 	text := s.Text()
@@ -682,7 +682,7 @@ func (p *ptyTarget) checkPanes() []fuzz.Violation {
 		grid, err := daemonPane(p.base, p.current, w.ID)
 		if err != nil {
 			// A pane closed between the list and the capture is a race in the
-			// reading, not a finding about tuios.
+			// reading, not a finding about dartuios.
 			continue
 		}
 		if a, b, found := spliceIn(grid); found {
@@ -893,7 +893,7 @@ func (p *ptyTarget) note(rule, format string, args ...any) {
 // time anyone reads the report, and a daemon that crashed wrote its reason
 // there and nowhere else.
 func daemonLogTail(base string, lines int) string {
-	data, err := os.ReadFile(filepath.Join(xdgDir(base, "XDG_STATE_HOME"), "tuios", "daemon.log"))
+	data, err := os.ReadFile(filepath.Join(xdgDir(base, "XDG_STATE_HOME"), "dartuios", "daemon.log"))
 	if err != nil {
 		return "(no daemon log: " + err.Error() + ")"
 	}
@@ -1028,7 +1028,7 @@ func attachedSessions(base string) []string {
 		Name     string `json:"name"`
 		Attached bool   `json:"attached"`
 	}
-	out, err := tuiosOut(base, "ls", "--json")
+	out, err := dartuiosOut(base, "ls", "--json")
 	if err != nil || json.Unmarshal([]byte(out), &sessions) != nil {
 		return nil
 	}
@@ -1143,28 +1143,28 @@ func ptyWeights() []int {
 
 // TestFuzzPTY is the bounded PTY campaign:
 //
-//	cd e2e/tui && TUIOS_E2E=1 go test -count=1 -run TestFuzzPTY ./...
+//	cd e2e/tui && DARTUIOS_E2E=1 go test -count=1 -run TestFuzzPTY ./...
 //
 // Seeds and steps are settable so a local run can go wider:
 //
-//	TUIOS_E2E=1 TUIOS_FUZZ_SEEDS=200 TUIOS_FUZZ_STEPS=120 \
+//	DARTUIOS_E2E=1 DARTUIOS_FUZZ_SEEDS=200 DARTUIOS_FUZZ_STEPS=120 \
 //	  go test -count=1 -run TestFuzzPTY -timeout 4h ./...
 //
-// TUIOS_FUZZ_FIRST moves the starting seed, which is what makes a wide campaign
+// DARTUIOS_FUZZ_FIRST moves the starting seed, which is what makes a wide campaign
 // survivable. tuitest panics on a scroll region wider than the screen (see the
 // third footgun in harness_test.go) and a panic in its pump goroutine takes the
 // test binary down with every finding it had not yet printed. Batches of ten
 // cost one batch when that happens instead of the whole run:
 //
 //	for f in 0 10 20 30; do
-//	  TUIOS_E2E=1 TUIOS_FUZZ_FIRST=$f TUIOS_FUZZ_SEEDS=10 \
+//	  DARTUIOS_E2E=1 DARTUIOS_FUZZ_FIRST=$f DARTUIOS_FUZZ_SEEDS=10 \
 //	    go test -count=1 -run TestFuzzPTY -timeout 1h ./...
 //	done
 func TestFuzzPTY(t *testing.T) {
-	first := uint64(ptyEnvInt(t, "TUIOS_FUZZ_FIRST", 0))
-	seeds := ptyEnvInt(t, "TUIOS_FUZZ_SEEDS", 2)
-	steps := ptyEnvInt(t, "TUIOS_FUZZ_STEPS", 40)
-	shrink := os.Getenv("TUIOS_FUZZ_SHRINK") != ""
+	first := uint64(ptyEnvInt(t, "DARTUIOS_FUZZ_FIRST", 0))
+	seeds := ptyEnvInt(t, "DARTUIOS_FUZZ_SEEDS", 2)
+	steps := ptyEnvInt(t, "DARTUIOS_FUZZ_STEPS", 40)
+	shrink := os.Getenv("DARTUIOS_FUZZ_SHRINK") != ""
 
 	for i := range uint64(seeds) {
 		seed := first + i

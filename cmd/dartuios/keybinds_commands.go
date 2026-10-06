@@ -1,0 +1,321 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+
+	"charm.land/lipgloss/v2"
+	"charm.land/lipgloss/v2/table"
+	"github.com/darsrc/tuios/internal/config"
+)
+
+func listKeybindings() error {
+	userConfig, err := config.LoadUserConfig()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
+		fmt.Fprintln(os.Stderr, "Using default keybindings...")
+		userConfig = config.DefaultConfig()
+	}
+
+	registry := config.NewKeybindRegistry(userConfig)
+
+	printKeybindingsTable(registry)
+	return nil
+}
+
+func generateWorkspaceActions() []string {
+	actions := []string{}
+	for i := 1; i <= 9; i++ {
+		actions = append(actions, fmt.Sprintf("switch_workspace_%d", i))
+	}
+	for i := 1; i <= 9; i++ {
+		actions = append(actions, fmt.Sprintf("move_and_follow_%d", i))
+	}
+	return actions
+}
+
+func printKeybindingsTable(registry *config.KeybindRegistry) {
+	leader := registry.GetConfig().Keybindings.LeaderKey
+	if leader == "" {
+		leader = config.Global.LeaderKey
+	}
+
+	headerStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("12")).
+		Padding(0, 1)
+
+	cellStyle := lipgloss.NewStyle().
+		Padding(0, 1)
+
+	sections := []struct {
+		Title   string
+		Actions []string
+	}{
+		{
+			Title: "Global",
+			Actions: []string{
+				"command_palette", "launcher",
+			},
+		},
+		{
+			Title: "Window Management",
+			Actions: []string{
+				"new_window", "close_window", "rename_window",
+				"minimize_window", "restore_all",
+				"next_window", "prev_window",
+				"toggle_multifocus_active", "toggle_multifocus_all",
+			},
+		},
+		{
+			Title:   "Workspaces",
+			Actions: generateWorkspaceActions(),
+		},
+		{
+			Title: "Layout",
+			Actions: []string{
+				"snap_left", "snap_right", "focus_up", "focus_down",
+				"snap_fullscreen", "unsnap",
+				"toggle_tiling", "swap_left", "swap_right", "swap_up", "swap_down",
+			},
+		},
+		{
+			Title: "Modes",
+			Actions: []string{
+				"enter_terminal_mode", "enter_window_mode",
+				"toggle_help", "quit",
+			},
+		},
+		{
+			Title: "Selection",
+			Actions: []string{
+				"copy_selection", "paste_clipboard", "clear_selection", "hints",
+			},
+		},
+		{
+			Title: "System",
+			Actions: []string{
+				"toggle_logs", "toggle_cache_stats",
+			},
+		},
+	}
+
+	fmt.Println()
+	fmt.Println(lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("14")).Render("dartuios Keybindings"))
+	fmt.Println()
+
+	// The whole press, chord included, from every section that binds the
+	// action. GetKeys gave the bare key of the first section only, which
+	// listed launcher as "a" (its key after the leader) and not alt+space.
+	presses := config.PressesByAction(registry)
+	for _, section := range sections {
+		rows := keybindListRows(presses, section.Actions)
+		if len(rows) == 0 {
+			continue
+		}
+
+		t := table.New().
+			Border(lipgloss.RoundedBorder()).
+			BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("8"))).
+			Headers("Keys", "Action").
+			Rows(rows...).
+			StyleFunc(func(row, _ int) lipgloss.Style {
+				if row == -1 {
+					return headerStyle
+				}
+				return cellStyle
+			})
+
+		fmt.Println(lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("11")).Render(section.Title))
+		fmt.Println(t.Render())
+		fmt.Println()
+	}
+
+	note := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("8")).
+		Italic(true).
+		Render("Note: " + leader + " is the leader key. Press it followed by another key for prefix commands.\n" +
+			"Set keybindings.leader_key to move it.\n" +
+			"`dartuios keybinds unbind <action>` takes a key off one action.\n" +
+			"`dartuios keybinds free <key>` hands a key back to the program in the pane.\n" +
+			"Run `dartuios keybinds doctor` for every scope, including the ones not listed here.")
+	fmt.Println(note)
+	fmt.Println()
+}
+
+// keybindListRows is the Keys and Action columns for one section of
+// 'dartuios keybinds list'. An action with nothing to press is left out.
+func keybindListRows(presses map[string][]string, actions []string) [][]string {
+	var rows [][]string
+	for _, action := range actions {
+		keys := presses[action]
+		if len(keys) == 0 {
+			continue
+		}
+		desc := config.ActionDescriptions[action]
+		if desc == "" {
+			desc = action
+		}
+		rows = append(rows, []string{strings.Join(keys, ", "), desc})
+	}
+	return rows
+}
+
+func listCustomKeybindings() error {
+	userConfig, err := config.LoadUserConfig()
+	if err != nil {
+		return fmt.Errorf("error loading config: %w", err)
+	}
+
+	defaultConfig := config.DefaultConfig()
+
+	customizations := findCustomizations(userConfig, defaultConfig)
+
+	if len(customizations) == 0 {
+		fmt.Println(lipgloss.NewStyle().Foreground(lipgloss.Color("8")).Render("No custom keybindings configured. All keybindings are using defaults."))
+		fmt.Println()
+		fmt.Println("Run 'dartuios keybinds list' to see all keybindings.")
+		return nil
+	}
+
+	headerStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("12")).
+		Padding(0, 1)
+
+	cellStyle := lipgloss.NewStyle().
+		Padding(0, 1)
+
+	fmt.Println()
+	fmt.Println(lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("14")).Render("Custom Keybindings"))
+	fmt.Println()
+
+	rows := [][]string{}
+	for _, custom := range customizations {
+		rows = append(rows, []string{
+			custom.Action,
+			custom.DefaultKeys,
+			custom.CustomKeys,
+		})
+	}
+
+	t := table.New().
+		Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("8"))).
+		Headers("Action", "Default", "Custom").
+		Rows(rows...).
+		StyleFunc(func(row, _ int) lipgloss.Style {
+			if row == -1 {
+				return headerStyle
+			}
+			return cellStyle
+		})
+
+	fmt.Println(t.Render())
+	fmt.Println()
+
+	note := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("11")).
+		Render(fmt.Sprintf("Found %d customized keybinding(s)", len(customizations)))
+	fmt.Println(note)
+	fmt.Println()
+	return nil
+}
+
+type Customization struct {
+	Action      string
+	DefaultKeys string
+	CustomKeys  string
+}
+
+func findCustomizations(userCfg, defaultCfg *config.UserConfig) []Customization {
+	var customizations []Customization
+
+	compareSections := func(userSection, defaultSection map[string][]string) {
+		for action, defaultKeys := range defaultSection {
+			userKeys, exists := userSection[action]
+			if !exists {
+				continue
+			}
+
+			if !stringSlicesEqual(userKeys, defaultKeys) {
+				customizations = append(customizations, Customization{
+					Action:      formatActionName(action),
+					DefaultKeys: strings.Join(defaultKeys, ", "),
+					CustomKeys:  strings.Join(userKeys, ", "),
+				})
+			}
+		}
+	}
+
+	compareSections(userCfg.Keybindings.WindowManagement, defaultCfg.Keybindings.WindowManagement)
+	compareSections(userCfg.Keybindings.Workspaces, defaultCfg.Keybindings.Workspaces)
+	compareSections(userCfg.Keybindings.Layout, defaultCfg.Keybindings.Layout)
+	compareSections(userCfg.Keybindings.ModeControl, defaultCfg.Keybindings.ModeControl)
+	compareSections(userCfg.Keybindings.System, defaultCfg.Keybindings.System)
+	compareSections(userCfg.Keybindings.PrefixMode, defaultCfg.Keybindings.PrefixMode)
+	compareSections(userCfg.Keybindings.WindowPrefix, defaultCfg.Keybindings.WindowPrefix)
+	compareSections(userCfg.Keybindings.MinimizePrefix, defaultCfg.Keybindings.MinimizePrefix)
+	compareSections(userCfg.Keybindings.WorkspacePrefix, defaultCfg.Keybindings.WorkspacePrefix)
+
+	return customizations
+}
+
+func stringSlicesEqual(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func formatActionName(action string) string {
+	if desc, ok := config.ActionDescriptions[action]; ok {
+		return desc
+	}
+	return strings.ReplaceAll(action, "_", " ")
+}
+
+// loadKeybindConfig reads the user's config for a command that only reports
+// keys. Unlike config.LoadUserConfig it never writes a default config file, and
+// any failure falls back to the defaults.
+func loadKeybindConfig() *config.UserConfig {
+	path, err := config.GetConfigPath()
+	if err != nil {
+		return config.DefaultConfig()
+	}
+	// #nosec G304 - the path is the user's own config file
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return config.DefaultConfig()
+	}
+	cfg, err := config.ParseUserConfig(data)
+	if err != nil {
+		return config.DefaultConfig()
+	}
+	return cfg
+}
+
+// layoutSaveHint is what 'dartuios layout list' prints when nothing is saved. A
+// layout is saved from inside a session, with the layout prefix or the command
+// palette, so the hint names the keys the user's config binds for it.
+func layoutSaveHint(cfg *config.UserConfig) string {
+	const palette = `pick "Save layout" in the command palette`
+	kb := cfg.Keybindings
+	leader := kb.LeaderKey
+	if leader == "" {
+		leader = "ctrl+b"
+	}
+	layoutKeys := kb.PrefixMode["prefix_layout"]
+	saveKeys := kb.LayoutPrefix["layout_prefix_save"]
+	if len(layoutKeys) == 0 || len(saveKeys) == 0 {
+		return "No saved layouts. To save one, open a session and " + palette + "."
+	}
+	return fmt.Sprintf("No saved layouts. To save one, open a session and press %s %s %s, or %s.",
+		leader, layoutKeys[0], saveKeys[0], palette)
+}

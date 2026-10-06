@@ -13,7 +13,7 @@ package vt_test
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 func TestConform_TabStops(t *testing.T) {

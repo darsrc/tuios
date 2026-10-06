@@ -59,7 +59,7 @@ func TestSetTableRedialsAChangedAddress(t *testing.T) {
 
 func TestSetTableLeavesAnUnchangedHostAlone(t *testing.T) {
 	stub := startStubDaemon(t, helloOK("1.2.3", 0))
-	h := Host{Name: "build", Addr: "unused", Command: "tuios", ConnectTimeout: 3 * time.Second, SSHOptions: []string{"-J", "jump"}}
+	h := Host{Name: "build", Addr: "unused", Command: "dartuios", ConnectTimeout: 3 * time.Second, SSHOptions: []string{"-J", "jump"}}
 	m := managerFor(t, testOptions(proxyDialer(t, stub)), h)
 	waitForStatus(t, m, "build", StatusUp)
 

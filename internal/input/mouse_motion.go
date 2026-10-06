@@ -4,15 +4,15 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // guestWantsMotion reports whether a guest's own mouse mode would have had the
 // host report this motion to it. The host is held in all-motion tracking so
-// tuios can draw its own hover and follow focus, so this is the only thing
+// dartuios can draw its own hover and follow focus, so this is the only thing
 // standing between a guest and motion it never asked for:
 //
 //   - 1003 (any-event): every motion.

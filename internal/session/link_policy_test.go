@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // What a machine linked to this one may do here. See link_policy.go.
@@ -300,7 +300,7 @@ func TestAHubIsHeldToThePolicyTheFarMachineHasForIt(t *testing.T) {
 }
 
 // startHubAndPolicyFar is startHubAndLinkedFar with the far proxy running
-// DialForLink, as tuios stdio-proxy does, pinned to pinned when it is set.
+// DialForLink, as dartuios stdio-proxy does, pinned to pinned when it is set.
 func startHubAndPolicyFar(t *testing.T, pinned string) (*Daemon, *farSide) {
 	t.Helper()
 	t.Setenv("XDG_RUNTIME_DIR", testutil.RuntimeDir(t))

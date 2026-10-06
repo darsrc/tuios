@@ -3,7 +3,7 @@ package config_test
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // TestAnExistingConfigKeepsTheStartupItWasWritten is the upgrade contract for
@@ -11,7 +11,7 @@ import (
 //
 // The [startup] booleans have no fill-missing pass, so a file that does not
 // name them reads them as false. That is not an oversight here: it means the
-// two defaults that change what happens the moment tuios starts reach a new
+// two defaults that change what happens the moment dartuios starts reach a new
 // install only. Somebody who already has a config file goes on getting the
 // floating, standalone session they had, and the daemon never appears on a
 // machine that was not asked for one.

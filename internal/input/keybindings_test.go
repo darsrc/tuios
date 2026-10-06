@@ -85,7 +85,7 @@ func TestHomeEndFollowDECCKM(t *testing.T) {
 }
 
 // TestKeysWithoutALegacyEncodingReachThePane feeds the bytes a host terminal
-// really sends through the decoder tuios reads them with, and pins what a pane
+// really sends through the decoder dartuios reads them with, and pins what a pane
 // without the kitty protocol receives. Every one of these used to produce no
 // bytes at all: keypad Enter did nothing, and neither did the keypad with
 // NumLock off, SS3 keypad digits, Begin, or F13 and up.

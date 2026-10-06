@@ -39,7 +39,7 @@ func TestKeyParser(t *testing.T) {
 		{"controls", []string{"\x7f\x08\x03\x04\x15"}, "<bs> <bs> <c-c> <c-d> <c-u>"},
 		{"arrows and function keys are dropped", []string{"\x1b[A\x1b[1;5C\x1bOP\x1b[15~x"}, "x"},
 		{"alt and a key is dropped", []string{"\x1bxy"}, "y"},
-		{"a paste then enter, the way tuios types a prompt", []string{"\x1b[200~line one\r\nline two\x1b[201~\r"}, "<paste line one\nline two> <enter>"},
+		{"a paste then enter, the way dartuios types a prompt", []string{"\x1b[200~line one\r\nline two\x1b[201~\r"}, "<paste line one\nline two> <enter>"},
 		{"a paste split across reads", []string{"\x1b[20", "0~ab", "c\x1b[2", "01~"}, "<paste abc>"},
 		{"control bytes inside a paste stay text until the end marker", []string{"\x1b[200~a\x03b\x1b[201~"}, "<paste a\x03b>"},
 		{"utf8 split across reads", []string{"\xc3", "\xa9\xe2\x82", "\xac"}, "é €"},

@@ -190,10 +190,10 @@ func (d *Daemon) resolveAgentLaunch(param, spec, pathList string) (agentLaunch, 
 		}
 		hint := &VerbHint{
 			Param:  param,
-			Detail: "Install it, name a program that is installed, or pass env with the PATH it is on. The tuios CLI sends its own PATH.",
+			Detail: "Install it, name a program that is installed, or pass env with the PATH it is on. The dartuios CLI sends its own PATH.",
 		}
 		// A name no manifest knows may be a harness spelled wrong, so the
-		// ones tuios recognises are listed, with the closest.
+		// ones dartuios recognises are listed, with the closest.
 		if launch.harness == "" && d.agentMatcher.registry != nil {
 			ids := d.agentMatcher.registry.IDs()
 			hint.Available, hint.DidYouMean = ids, closestMatch(name, ids)
@@ -207,7 +207,7 @@ func (d *Daemon) resolveAgentLaunch(param, spec, pathList string) (agentLaunch, 
 // callerEnv checks the environment a caller sent and returns it as KEY=VALUE
 // pairs in name order, with the PATH among them, which is where programs are
 // looked up. A call from another machine may not send one: its variables name
-// directories and settings of that machine. A TUIOS_ variable is refused, since
+// directories and settings of that machine. A DARTUIOS_ variable is refused, since
 // those are the contract a pane's process reads its identity from, and so are
 // TMUX and TMUX_PANE, which the daemon strips on purpose (guestenv).
 func callerEnv(cs *connState, env map[string]string) ([]string, string, *verbError) {
@@ -235,8 +235,8 @@ func callerEnv(cs *connState, env map[string]string) ([]string, string, *verbErr
 		switch {
 		case !envNameRE.MatchString(k):
 			return nil, "", invalidParam("env", "env: "+echoName(k)+" is not a variable name")
-		case strings.HasPrefix(k, "TUIOS_") || k == "TUIOS":
-			return nil, "", invalidParam("env", "env: "+echoName(k)+" is set by tuios for every pane and cannot be passed")
+		case strings.HasPrefix(k, "DARTUIOS_") || k == "dartuios":
+			return nil, "", invalidParam("env", "env: "+echoName(k)+" is set by dartuios for every pane and cannot be passed")
 		case k == "TMUX" || k == "TMUX_PANE":
 			return nil, "", invalidParam("env", "env: "+k+" would make the agent believe it runs in tmux, and cannot be passed")
 		case strings.ContainsRune(v, 0):
@@ -282,7 +282,7 @@ func readyBy(w WindowState) string {
 // When the pane has not been ready for agentHeldAfter and is not on
 // needs_input, which raises its own Inbox item, held is called once with the
 // pane as it is, and the Inbox gets an item saying the agent waits at a screen
-// tuios does not recognise. The item is closed when the wait ends, and by the
+// dartuios does not recognise. The item is closed when the wait ends, and by the
 // pane's next state change.
 //
 // harness is the harness the daemon started, when a manifest named it. It

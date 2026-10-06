@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // legacyDaemon is a faithful stand-in for a daemon built before the JSON verb
@@ -123,11 +123,11 @@ func TestHandshakeAgainstLegacyDaemonReportsMismatch(t *testing.T) {
 	// exact command that fixes it, naming both versions.
 	msg := mismatch.Error()
 	for _, want := range []string{
-		"The running TUIOS daemon does not speak this client's control protocol",
+		"The running dartuios daemon does not speak this client's control protocol",
 		"daemon 0.9.0",
 		"client 1.4.0",
 		"upgraded while the daemon kept running",
-		"tuios kill-server",
+		"dartuios kill-server",
 		"2 session(s)",
 	} {
 		if !strings.Contains(msg, want) {
@@ -184,7 +184,7 @@ func TestProbeLegacyDaemonIgnoresStaleSocket(t *testing.T) {
 	if err := os.WriteFile(socketPath, nil, 0o600); err != nil {
 		t.Fatalf("write stale socket: %v", err)
 	}
-	if filepath.Dir(socketPath) != filepath.Join(runtimeDir, "tuios") {
+	if filepath.Dir(socketPath) != filepath.Join(runtimeDir, "dartuios") {
 		t.Fatalf("socket path %q escaped the isolated runtime dir", socketPath)
 	}
 

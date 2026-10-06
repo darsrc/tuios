@@ -10,7 +10,7 @@ import (
 //
 // Without -l, tmux looks each argument up as a key name first and sends it as
 // literal text only when it is not one. The shim does the same lookup and
-// writes the bytes itself, rather than passing names to tuios send-keys, whose
+// writes the bytes itself, rather than passing names to dartuios send-keys, whose
 // key syntax is its own ("ctrl+c", comma separated) and would read tmux text
 // differently.
 

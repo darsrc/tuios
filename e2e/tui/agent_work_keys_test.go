@@ -56,7 +56,7 @@ func TestAgentWorkKeysWaitForAnAgent(t *testing.T) {
 
 	// A pane reports an agent waiting on an approval, which also gives the
 	// Inbox an item.
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "needs_input",
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "needs_input",
 		"--kind", "approval", "--harness", "claude-code", "-m", "approve Bash: go test ./..."); err != nil {
 		t.Fatalf("set-agent-state: %v\n%s", err, out)
 	}
@@ -124,7 +124,7 @@ func TestAgentWorkKeysWaitForAnAgent(t *testing.T) {
 func TestPendingPrefixKeysReachThePane(t *testing.T) {
 	term, base := attachClientBase(t)
 	// An agent in view, so the keys are the ones a person with agents has.
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "working",
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-ctrlp", "working",
 		"--harness", "claude-code"); err != nil {
 		t.Fatalf("set-agent-state: %v\n%s", err, out)
 	}

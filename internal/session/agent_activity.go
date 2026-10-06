@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // An agent pane's activity: the prompts, tool calls, tool results and

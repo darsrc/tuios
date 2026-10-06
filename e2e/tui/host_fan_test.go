@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/testutil"
+	"github.com/darsrc/tuios/internal/testutil"
 )
 
 // Starting agents on another machine and bringing their work back, driven
@@ -24,12 +24,12 @@ import (
 // carried the commits and dropped the uncommitted work, or a start-agent that
 // ignored the host.
 
-// tuiosCLIInDir is tuiosCLIEnv run from dir, which is how a command finds the
+// dartuiosCLIInDir is dartuiosCLIEnv run from dir, which is how a command finds the
 // repository the person is in.
-func tuiosCLIInDir(t *testing.T, base, dir string, env []string, args ...string) (string, error) {
+func dartuiosCLIInDir(t *testing.T, base, dir string, env []string, args ...string) (string, error) {
 	t.Helper()
 	pinPreV080Looks(t, base)
-	cmd := exec.Command(tuiosBin, args...)
+	cmd := exec.Command(dartuiosBin, args...)
 	cmd.Dir = dir
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -52,7 +52,7 @@ func TestFanOnAHostAndPullTheWorkBack(t *testing.T) {
 	// Each daemon puts its worktrees under its own data directory, as two
 	// machines would. The fixture's shared directory would put the pulled
 	// worktree on top of the far one.
-	t.Setenv("TUIOS_WORKTREE_DIR", "")
+	t.Setenv("DARTUIOS_WORKTREE_DIR", "")
 	remote := remoteMachine(t)
 
 	// The same repository on both machines, cloned over two spellings of
@@ -64,22 +64,22 @@ func TestFanOnAHostAndPullTheWorkBack(t *testing.T) {
 	cloneWithOrigin(t, origin, here, "git@example.com:acme/api")
 
 	// build's daemon runs, as it would on a machine someone uses.
-	if out, err := tuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, remote, "new", "far", "--detach"); err != nil {
 		t.Fatalf("start build's daemon: %v\n%s", err, out)
 	}
 
 	ssh := writeFakeSSHTo(t, base, remote)
-	cfgDir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	cfgDir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(cfgDir, 0o700); err != nil {
 		t.Fatal(err)
 	}
-	cfg := "[hosts.build]\naddr = \"someone@buildbox\"\ncommand = \"" + tuiosBin + "\"\nconnect_timeout = 5\nrepos_root = \"" + reposRoot + "\"\n"
+	cfg := "[hosts.build]\naddr = \"someone@buildbox\"\ncommand = \"" + dartuiosBin + "\"\nconnect_timeout = 5\nrepos_root = \"" + reposRoot + "\"\n"
 	if err := os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(cfg), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	env := []string{"TUIOS_SSH=" + ssh}
+	env := []string{"DARTUIOS_SSH=" + ssh}
 	killDaemon(t, base)
-	if out, err := tuiosCLIEnv(t, base, env, "new", "home", "--detach"); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, env, "new", "home", "--detach"); err != nil {
 		t.Fatalf("start the hub daemon: %v\n%s", err, out)
 	}
 	waitForHostListing(t, base, func(s string) bool {
@@ -87,7 +87,7 @@ func TestFanOnAHostAndPullTheWorkBack(t *testing.T) {
 	}, "the hub never reported build up")
 
 	// Two agents on build, for the repository this directory is in.
-	out, err := tuiosCLIInDir(t, base, here, env, "fan", "2", "--host", "build", "--agent", "claude", "--name", "try/remote", "Add a retry to the client.")
+	out, err := dartuiosCLIInDir(t, base, here, env, "fan", "2", "--host", "build", "--agent", "claude", "--name", "try/remote", "Add a retry to the client.")
 	if err != nil {
 		t.Fatalf("ASSERTION: fan --host build failed: %v\n%s", err, out)
 	}
@@ -97,14 +97,14 @@ func TestFanOnAHostAndPullTheWorkBack(t *testing.T) {
 		}
 	}
 	// They are build's sessions, not this machine's.
-	if local, _ := tuiosCLI(t, base, "worktree", "ls"); strings.Contains(local, "try/remote") {
+	if local, _ := dartuiosCLI(t, base, "worktree", "ls"); strings.Contains(local, "try/remote") {
 		t.Fatalf("ASSERTION: the fan ran on this machine:\n%s", local)
 	}
 
 	var rows []map[string]any
 	deadline := time.Now().Add(45 * time.Second)
 	for {
-		out, err := tuiosCLIInDir(t, base, here, env, "worktree", "ls", "--host", "build", "--group", "try/remote", "--json")
+		out, err := dartuiosCLIInDir(t, base, here, env, "worktree", "ls", "--host", "build", "--group", "try/remote", "--json")
 		if err != nil {
 			t.Fatalf("worktree ls --host build: %v\n%s", err, out)
 		}
@@ -151,7 +151,7 @@ func TestFanOnAHostAndPullTheWorkBack(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	out, err = tuiosCLIInDir(t, base, here, env, "worktree", "pull", "build:api-try-remote-2", "--detach")
+	out, err = dartuiosCLIInDir(t, base, here, env, "worktree", "pull", "build:api-try-remote-2", "--detach")
 	if err != nil {
 		t.Fatalf("ASSERTION: worktree pull failed: %v\n%s", err, out)
 	}
@@ -185,13 +185,13 @@ func TestFanOnAHostAndPullTheWorkBack(t *testing.T) {
 	}
 	// A second pull under the same name is refused rather than moving the
 	// branch.
-	if out, err := tuiosCLIInDir(t, base, here, env, "worktree", "pull", "build:api-try-remote-2", "--detach"); err == nil || !strings.Contains(out, "already exists") {
+	if out, err := dartuiosCLIInDir(t, base, here, env, "worktree", "pull", "build:api-try-remote-2", "--detach"); err == nil || !strings.Contains(out, "already exists") {
 		t.Errorf("ASSERTION: a second pull onto an existing branch was not refused: %v\n%s", err, out)
 	}
 
 	// One more agent on build, in its checkout of this repository. The
 	// command returns once the agent is ready and the prompt is taken.
-	out, err = tuiosCLIInDir(t, base, here, env, "start-agent", "-s", "build:agents", "claude", "--prompt", "Look at the retry.", "--json")
+	out, err = dartuiosCLIInDir(t, base, here, env, "start-agent", "-s", "build:agents", "claude", "--prompt", "Look at the retry.", "--json")
 	if err != nil {
 		t.Fatalf("ASSERTION: start-agent on build failed: %v\n%s", err, out)
 	}
@@ -202,12 +202,12 @@ func TestFanOnAHostAndPullTheWorkBack(t *testing.T) {
 	if started["host"] != "build" || started["cwd"] != farCheckout || started["prompt_status"] != "sent" || started["created_session"] != true {
 		t.Errorf("ASSERTION: start-agent = %v, want a new session on build in %s with the prompt sent", started, farCheckout)
 	}
-	if pane, err := tuiosCLIEnv(t, base, env, "capture-pane", "-s", "build:agents"); err != nil || !strings.Contains(pane, "GOT: Look at the retry.") {
+	if pane, err := dartuiosCLIEnv(t, base, env, "capture-pane", "-s", "build:agents"); err != nil || !strings.Contains(pane, "GOT: Look at the retry.") {
 		t.Errorf("ASSERTION: the agent on build never got the prompt: %v\n%s", err, pane)
 	}
 
 	// Keep the winner on build: its sibling there goes.
-	out, err = tuiosCLIInDir(t, base, here, env, "fan", "keep", "build:api-try-remote-2")
+	out, err = dartuiosCLIInDir(t, base, here, env, "fan", "keep", "build:api-try-remote-2")
 	if err != nil {
 		t.Fatalf("ASSERTION: fan keep on build failed: %v\n%s", err, out)
 	}

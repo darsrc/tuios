@@ -1,5 +1,5 @@
 // Package cliflags holds the interface flags every binary that renders the
-// TUI registers: `tuios` and its TUI commands, `tuios ssh`, and `tuios-web`.
+// TUI registers: `dartuios` and its TUI commands, `dartuios ssh`, and `dartuios-web`.
 //
 // They live here so the binaries cannot drift apart and each one accepts every
 // override on the command line. The package is kept apart from internal/config so the
@@ -9,7 +9,7 @@ package cliflags
 import (
 	"github.com/spf13/pflag"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // Interface is the values of the interface flags. The zero value applies
@@ -40,7 +40,7 @@ type Interface struct {
 
 // Register adds the interface flags to fs, bound to i. Calling it for several
 // flag sets with the same i binds them all to one set of values, which is how
-// `tuios` gives each of its TUI commands the same flags.
+// `dartuios` gives each of its TUI commands the same flags.
 func (i *Interface) Register(fs *pflag.FlagSet) {
 	fs.BoolVar(&i.ASCIIOnly, "ascii-only", false, "Use ASCII characters instead of Nerd Font icons")
 	fs.StringVar(&i.ThemeName, "theme", "", "Color theme to use (e.g., dracula, nord, tokyonight). Leave empty to use standard terminal colors without theming")

@@ -15,9 +15,9 @@ import (
 const maxSocketPath = 104
 
 // sockNameAllowance is what the caller still has to append to the directory
-// this returns. The daemon puts its socket at <dir>/tuios/tuios.sock and its
+// this returns. The daemon puts its socket at <dir>/dartuios/dartuios.sock and its
 // pid file at that plus ".pid", which is the longest of them.
-const sockNameAllowance = len("/tuios/tuios.sock.pid")
+const sockNameAllowance = len("/dartuios/dartuios.sock.pid")
 
 // RuntimeDir returns a directory to use as XDG_RUNTIME_DIR in a test that
 // starts a daemon, short enough that the socket path inside it still fits in a

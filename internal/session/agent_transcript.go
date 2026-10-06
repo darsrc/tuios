@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
-	"github.com/Gaurav-Gosain/tuios/internal/transcript"
+	"github.com/darsrc/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/transcript"
 )
 
 // transcriptDebounce coalesces the several appends one turn produces into one

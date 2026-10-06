@@ -4,7 +4,7 @@
 // and the registry that serves them.
 //
 // chroma's own lexers package embeds all 279 of its definitions, 2.4 MB of
-// XML that made up a tenth of the tuios binary, and parses the header of
+// XML that made up a tenth of the dartuios binary, and parses the header of
 // every one at start. This package carries the languages a repository is
 // likely to hold, gzipped, and registers them on first use. A file in any
 // other language is drawn plain. gen.go writes the .xml.gz files and says

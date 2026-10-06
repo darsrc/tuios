@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-// The read loop starts before the handlers exist: cmd/tuios attaches, starts
+// The read loop starts before the handlers exist: cmd/dartuios attaches, starts
 // reading, builds the program, and only then registers OnStateSync and
 // OnSessionResize. A broadcast landing in that window used to be dropped on
 // the floor, and both messages are last-value-wins snapshots the daemon does

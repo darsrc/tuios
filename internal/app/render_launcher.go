@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
-	"github.com/Gaurav-Gosain/tuios/pkg/applist"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
+	"github.com/darsrc/tuios/pkg/applist"
 )
 
 // Launcher layout constants. These are the preferred sizes; a narrower or
@@ -227,5 +227,5 @@ func launcherDetail(e applist.Entry) string {
 // accent. It is the palette's own name renderer with no agent-state glyph to
 // splice in, kept shared so the two lists highlight a match identically.
 func launcherRowName(name string, match []int, bg, nameColor color.Color, selected bool, pal overlay.Palette) string {
-	return paletteRowName(name, "", false, match, bg, nameColor, selected, pal)
+	return paletteRowName(name, "", false, match, bg, nameColor, selected, pal, 0)
 }

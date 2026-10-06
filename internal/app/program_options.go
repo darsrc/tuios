@@ -8,13 +8,13 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/debuglog"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/debuglog"
 )
 
-// ProgramOptions is the one list of Bubble Tea options a tuios client runs
+// ProgramOptions is the one list of Bubble Tea options a dartuios client runs
 // with. Every entry point spreads it into tea.NewProgram: the local client,
-// the attach client, tape playback, the SSH server and tuios-web.
+// the attach client, tape playback, the SSH server and dartuios-web.
 //
 // It exists because the list used to be typed out at five sites, and an
 // option added to one was silently missing from the others. The motion filter
@@ -24,7 +24,7 @@ import (
 // What is in here is what is true of every client regardless of transport:
 //
 //   - The frame rate cap. One number for every client.
-//   - No signal handler. Every tuios process already owns its signals: the
+//   - No signal handler. Every dartuios process already owns its signals: the
 //     local commands install a handler that sends QuitMsg, and the servers
 //     cancel a context that quits each session. A second handler per program
 //     is at best redundant, and in a server it is one per connection.
@@ -46,7 +46,7 @@ func ProgramOptions() []tea.ProgramOption {
 		// is clamped to. bubbletea runs a standing ticker at this rate for
 		// the life of the program whether or not a frame is pending, so the
 		// number is the idle wake-up rate of every client: at the ceiling
-		// (which bubbletea itself caps at 120) an idle tuios woke 590 times a
+		// (which bubbletea itself caps at 120) an idle dartuios woke 590 times a
 		// second and spent 1.0% of a core doing nothing; at the default 60 it
 		// is 370 and 0.6%. Raising max_fps above the value it started with
 		// takes effect on the next start, which the settings row says.
@@ -56,14 +56,14 @@ func ProgramOptions() []tea.ProgramOption {
 	}
 }
 
-// eventDebugLog says whether TUIOS_DEBUG_INTERNAL=1 asked for the event log,
+// eventDebugLog says whether DARTUIOS_DEBUG_INTERNAL=1 asked for the event log,
 // read once on the first event rather than per event. The local command sets
 // the variable at startup before the program runs, so the first event sees it.
 var eventDebugLog = sync.OnceValue(func() bool {
-	return os.Getenv("TUIOS_DEBUG_INTERNAL") == "1"
+	return os.Getenv("DARTUIOS_DEBUG_INTERNAL") == "1"
 })
 
-// debugLogEvent logs events to /tmp/tuios-events.log when TUIOS_DEBUG_INTERNAL=1.
+// debugLogEvent logs events to /tmp/dartuios-events.log when DARTUIOS_DEBUG_INTERNAL=1.
 // Only logs KeyPressMsg, MouseMotionMsg, and unknown events in TerminalMode
 // to diagnose phantom keypresses (issue #78).
 func debugLogEvent(m *OS, msg tea.Msg) {

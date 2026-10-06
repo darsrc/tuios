@@ -109,7 +109,7 @@ func cmdGit(s *shell, args []string) int {
 		return 0
 	}
 	if args[0] == "--version" || args[0] == "version" {
-		t.Print("git version 2.99.0 (tuios web edition)\r\n")
+		t.Print("git version 2.99.0 (dartuios web edition)\r\n")
 		return 0
 	}
 	if !inRepo(s.cwd) {
@@ -230,7 +230,7 @@ func gitLog(t *TTY, args []string) int {
 			t.Printf("%s%s%s%s %s\r\n", yellow, c.hash, ref, reset, c.message)
 		} else {
 			t.Printf("%scommit %s%s%s\r\n", yellow, c.hash, ref, reset)
-			t.Print("Author: guest <guest@tuios.dev>\r\n")
+			t.Print("Author: guest <guest@dartuios.dev>\r\n")
 			t.Print("Date:   " + c.when.Format("Mon Jan 2 15:04 2006") + "\r\n\r\n")
 			t.Print("    " + c.message + "\r\n\r\n")
 		}
@@ -371,6 +371,6 @@ func gitShow(t *TTY) int {
 	fsMu.RLock()
 	c := repo.commits[len(repo.commits)-1]
 	fsMu.RUnlock()
-	t.Printf("%scommit %s%s\r\nAuthor: guest <guest@tuios.dev>\r\nDate:   %s\r\n\r\n    %s\r\n", yellow, c.hash, reset, c.when.Format("Mon Jan 2 15:04 2006"), c.message)
+	t.Printf("%scommit %s%s\r\nAuthor: guest <guest@dartuios.dev>\r\nDate:   %s\r\n\r\n    %s\r\n", yellow, c.hash, reset, c.when.Format("Mon Jan 2 15:04 2006"), c.message)
 	return 0
 }

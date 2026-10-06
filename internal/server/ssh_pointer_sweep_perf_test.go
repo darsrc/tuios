@@ -19,18 +19,18 @@ import (
 
 // TestPerfSSHPointerSweep measures what a pointer sweep costs the server
 // process over a real SSH session: CPU time per motion event, and the bytes
-// the session writes back. It is a measurement, gated behind TUIOS_PERF=1, and
+// the session writes back. It is a measurement, gated behind DARTUIOS_PERF=1, and
 // asserts nothing about time. Run it on a tree with and without the motion
 // filter in the shared program options to see what the filter saves:
 //
-//	TUIOS_PERF=1 go test -run TestPerfSSHPointerSweep -v ./internal/server/
+//	DARTUIOS_PERF=1 go test -run TestPerfSSHPointerSweep -v ./internal/server/
 //
 // The sweep crosses the dock row, which is chrome: no clause of the filter
 // claims it, so with the filter every event is dropped before Update and
 // without it every event composes a frame the renderer then finds unchanged.
 func TestPerfSSHPointerSweep(t *testing.T) {
-	if os.Getenv("TUIOS_PERF") != "1" {
-		t.Skip("set TUIOS_PERF=1 to measure the pointer sweep over SSH")
+	if os.Getenv("DARTUIOS_PERF") != "1" {
+		t.Skip("set DARTUIOS_PERF=1 to measure the pointer sweep over SSH")
 	}
 
 	port := freePort(t)

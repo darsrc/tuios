@@ -5,7 +5,7 @@ import (
 	"slices"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // sidebarNavRow is one keyboard-navigable rail row: what the cursor can land on
@@ -649,7 +649,7 @@ func (m *OS) sessionCreateChan() chan SessionCreatedMsg {
 }
 
 // nextSessionName is the first free "session-N", the same scheme the CLI's
-// `tuios new` uses.
+// `dartuios new` uses.
 func (m *OS) nextSessionName() string {
 	taken := make(map[string]bool)
 	if m.DaemonClient != nil {

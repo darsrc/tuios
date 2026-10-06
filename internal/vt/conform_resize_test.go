@@ -18,7 +18,7 @@ import (
 
 	uv "github.com/charmbracelet/ultraviolet"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // rowDisplayWidth is what a reader that walks the row and draws each cell whole

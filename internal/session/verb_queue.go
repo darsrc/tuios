@@ -96,12 +96,12 @@ func (d *Daemon) verbQueuePrompt(cs *connState, params json.RawMessage) (any, *v
 
 // queueTarget resolves the pane a message is queued for: the named window, or
 // the focused one. The person's inbox has no keyboard, and a pane that runs
-// no agent tuios knows of has nobody to take a prompt.
+// no agent dartuios knows of has nobody to take a prompt.
 func queueTarget(sess *Session, state *SessionState, window string) (WindowState, *verbError) {
 	if window == AgentInboxHuman {
 		return WindowState{}, hintedVerbError(ErrVerbNoKeyboard, "human has no pane to type into", &VerbHint{
 			Param:   "window",
-			Command: "tuios send-agent-message -w human '<your message>'",
+			Command: "dartuios send-agent-message -w human '<your message>'",
 			Detail:  "human is the person at the attached client. Leave them mail with send-agent-message -w human.",
 		})
 	}
@@ -118,10 +118,10 @@ func queueTarget(sess *Session, state *SessionState, window string) (WindowState
 	}
 	target := state.Windows[idx]
 	if !isAgentWindow(target) {
-		return WindowState{}, hintedVerbError(ErrVerbInvalidParams, "window "+shortWindowID(target.ID)+" runs no agent tuios knows of, so nothing would take a queued prompt", &VerbHint{
+		return WindowState{}, hintedVerbError(ErrVerbInvalidParams, "window "+shortWindowID(target.ID)+" runs no agent dartuios knows of, so nothing would take a queued prompt", &VerbHint{
 			Param:   "window",
 			Verb:    "list-agents",
-			Command: "tuios send-text -w " + shortWindowID(target.ID) + " '<text>'",
+			Command: "dartuios send-text -w " + shortWindowID(target.ID) + " '<text>'",
 			Detail:  "Nothing was queued. A queue waits for an agent to come to rest. list-agents lists the panes with one; send-text types into a plain pane now.",
 		})
 	}
@@ -171,7 +171,7 @@ func (d *Daemon) newQueueEntry(cs *connState, sess *Session, state *SessionState
 				if fid, _, err := d.resolveSender(state, from, true); err != nil || fid != pa.window {
 					return nil, hintedVerbError(ErrVerbForbidden, "queue-prompt from "+echoName(from)+" is refused: a pane queues only as itself", &VerbHint{
 						Param:  "from",
-						Detail: "Nothing was queued. Leave from out, or pass $TUIOS_PANE_ID.",
+						Detail: "Nothing was queued. Leave from out, or pass $DARTUIOS_PANE_ID.",
 					})
 				}
 			}
@@ -389,7 +389,7 @@ func (d *Daemon) verbCancelQueued(cs *connState, params json.RawMessage) (any, *
 		return nil, hintedVerbError(ErrVerbInvalidParams, "no queued entry "+echoName(p.ID)+" in session "+echoName(sess.Name), &VerbHint{
 			Param:   "id",
 			Verb:    "list-queued",
-			Command: "tuios queue ls",
+			Command: "dartuios queue ls",
 			Detail:  "Nothing was dropped. The entry may have been typed already, or dropped when its pane or agent went away.",
 		})
 	}

@@ -21,7 +21,7 @@ import (
 // UI, within seconds of any command producing output.
 //
 // The assertion is deliberately about *continued* rendering rather than about a
-// single frame: a frozen tuios keeps showing whatever was on screen when it
+// single frame: a frozen dartuios keeps showing whatever was on screen when it
 // died, so "content is present" passes against a corpse. Each round emits a
 // marker the shell computes, and the marker must appear on screen while the
 // previous rounds' output is still streaming. A frozen UI never shows the next
@@ -39,7 +39,7 @@ func TestSustainedOutputKeepsRendering(t *testing.T) {
 	// A directory big enough that each listing is a real burst of output, so
 	// the PTY reader is taking the exclusive lock continuously while the UI
 	// goroutine renders.
-	runInShell(t, term, "mkdir -p /tmp/tuios-e2e-ls && (cd /tmp/tuios-e2e-ls && for i in $(seq 1 200); do : > f$i; done) && echo SETUP-DONE",
+	runInShell(t, term, "mkdir -p /tmp/dartuios-e2e-ls && (cd /tmp/dartuios-e2e-ls && for i in $(seq 1 200); do : > f$i; done) && echo SETUP-DONE",
 		"SETUP-DONE", soakTimeout)
 
 	const rounds = 6
@@ -48,7 +48,7 @@ func TestSustainedOutputKeepsRendering(t *testing.T) {
 		// ls of the large directory, then a marker the shell must compute. The
 		// marker can only render if the UI goroutine is still alive after the
 		// burst it just had to draw.
-		cmd := fmt.Sprintf("ls /tmp/tuios-e2e-ls; ls /tmp/tuios-e2e-ls; echo ROUND-$((%d))-OK", i)
+		cmd := fmt.Sprintf("ls /tmp/dartuios-e2e-ls; ls /tmp/dartuios-e2e-ls; echo ROUND-$((%d))-OK", i)
 		if err := term.SendKeys(cmd, tuitest.Enter); err != nil {
 			t.Fatalf("round %d: send: %v", i, err)
 		}
@@ -62,7 +62,7 @@ func TestSustainedOutputKeepsRendering(t *testing.T) {
 	}
 
 	// The UI must still respond to input, not merely have painted. A frozen
-	// tuios cannot service the keystroke that toggles the mode indicator.
+	// dartuios cannot service the keystroke that toggles the mode indicator.
 	leaveTerminalMode(t, term)
 	if !strings.Contains(term.Screen().Text(), "Window management mode") {
 		t.Fatalf("UI did not react to the mode switch after sustained output\n%s", term.Snapshot())

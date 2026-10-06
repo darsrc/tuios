@@ -24,13 +24,13 @@ import (
 // config file but never reaches the daemon, or a daemon that reads the table
 // once at start. Both were the state of the world before this branch.
 
-// tuiosCLIEnv is tuiosCLI with extra environment, which the host commands need:
-// TUIOS_SSH names the ssh stand-in, and `tuios hosts test` dials in the CLI's
+// dartuiosCLIEnv is dartuiosCLI with extra environment, which the host commands need:
+// DARTUIOS_SSH names the ssh stand-in, and `dartuios hosts test` dials in the CLI's
 // own process rather than the daemon's.
-func tuiosCLIEnv(t *testing.T, base string, env []string, args ...string) (string, error) {
+func dartuiosCLIEnv(t *testing.T, base string, env []string, args ...string) (string, error) {
 	t.Helper()
 	pinPreV080Looks(t, base)
-	cmd := exec.Command(tuiosBin, args...)
+	cmd := exec.Command(dartuiosBin, args...)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
 		cmd.Env = append(cmd.Env, key+"="+xdgDir(base, key))
@@ -40,13 +40,13 @@ func tuiosCLIEnv(t *testing.T, base string, env []string, args ...string) (strin
 	return string(out), err
 }
 
-// waitForHostListing polls `tuios hosts` until the output satisfies want.
+// waitForHostListing polls `dartuios hosts` until the output satisfies want.
 func waitForHostListing(t *testing.T, base string, want func(string) bool, why string) string {
 	t.Helper()
 	deadline := time.Now().Add(30 * time.Second)
 	var out string
 	for time.Now().Before(deadline) {
-		out, _ = tuiosCLI(t, base, "hosts")
+		out, _ = dartuiosCLI(t, base, "hosts")
 		if want(out) {
 			return out
 		}
@@ -61,15 +61,15 @@ func waitForHostListing(t *testing.T, base string, want func(string) bool, why s
 func TestAddingAHostReachesTheRunningDaemon(t *testing.T) {
 	base := t.TempDir()
 	ssh := writeFakeSSH(t, base)
-	env := []string{"TUIOS_SSH=" + ssh}
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
 	// The daemon starts with no hosts at all, which is the default install.
 	term := startIn(t, base, startOpts{args: []string{"new", "fed-add"}, env: env})
 	waitBoot(t, term)
 
-	out, err := tuiosCLI(t, base, "hosts")
+	out, err := dartuiosCLI(t, base, "hosts")
 	if err != nil {
-		t.Fatalf("tuios hosts: %v\n%s", err, out)
+		t.Fatalf("dartuios hosts: %v\n%s", err, out)
 	}
 	if !strings.Contains(out, "No hosts are configured") {
 		t.Fatalf("the daemon did not start with an empty host table:\n%s", out)
@@ -77,67 +77,67 @@ func TestAddingAHostReachesTheRunningDaemon(t *testing.T) {
 
 	// The command a person types. --command points the far side at this test's
 	// own binary, which is what the ssh stand-in ends up running.
-	out, err = tuiosCLIEnv(t, base, env, "hosts", "add", "build", "someone@buildbox",
-		"--command", tuiosBin, "--connect-timeout", "5")
+	out, err = dartuiosCLIEnv(t, base, env, "hosts", "add", "build", "someone@buildbox",
+		"--command", dartuiosBin, "--connect-timeout", "5")
 	if err != nil {
-		t.Fatalf("ASSERTION: 'tuios hosts add' failed: %v\n%s", err, out)
+		t.Fatalf("ASSERTION: 'dartuios hosts add' failed: %v\n%s", err, out)
 	}
-	t.Logf("tuios hosts add:\n%s", out)
+	t.Logf("dartuios hosts add:\n%s", out)
 
 	// No restart, no kill-server, no second daemon. The listing has to change on
 	// its own because the daemon follows the file.
 	listing := waitForHostListing(t, base, func(s string) bool {
 		return strings.Contains(s, "build") && strings.Contains(s, "up")
 	}, "the host added from the command line never came up in the running daemon")
-	t.Logf("tuios hosts after add:\n%s", listing)
+	t.Logf("dartuios hosts after add:\n%s", listing)
 
-	// `tuios hosts test` dials the machine itself and says what happened.
-	out, err = tuiosCLIEnv(t, base, env, "hosts", "test", "build")
+	// `dartuios hosts test` dials the machine itself and says what happened.
+	out, err = dartuiosCLIEnv(t, base, env, "hosts", "test", "build")
 	if err != nil {
-		t.Fatalf("ASSERTION: 'tuios hosts test' failed against a host that is up: %v\n%s", err, out)
+		t.Fatalf("ASSERTION: 'dartuios hosts test' failed against a host that is up: %v\n%s", err, out)
 	}
 	if !strings.Contains(out, "The host answers") {
-		t.Errorf("ASSERTION: 'tuios hosts test' did not report the host as answering:\n%s", out)
+		t.Errorf("ASSERTION: 'dartuios hosts test' did not report the host as answering:\n%s", out)
 	}
-	t.Logf("tuios hosts test:\n%s", out)
+	t.Logf("dartuios hosts test:\n%s", out)
 
 	// Removing it closes the link, again with no restart.
-	out, err = tuiosCLIEnv(t, base, env, "hosts", "remove", "build")
+	out, err = dartuiosCLIEnv(t, base, env, "hosts", "remove", "build")
 	if err != nil {
-		t.Fatalf("ASSERTION: 'tuios hosts remove' failed: %v\n%s", err, out)
+		t.Fatalf("ASSERTION: 'dartuios hosts remove' failed: %v\n%s", err, out)
 	}
 	waitForHostListing(t, base, func(s string) bool {
 		return strings.Contains(s, "No hosts are configured")
 	}, "the host removed from the command line stayed in the running daemon")
 }
 
-// TestHostTestReportsWhatSSHSaid is the reason `tuios hosts test` exists: when
+// TestHostTestReportsWhatSSHSaid is the reason `dartuios hosts test` exists: when
 // the link fails, the words that explain it come from ssh, and they have to
 // reach the person who ran the command.
 func TestHostTestReportsWhatSSHSaid(t *testing.T) {
 	base := t.TempDir()
-	env := []string{"TUIOS_SSH=" + writeRefusingSSH(t, filepath.Join(base, "bin"))}
+	env := []string{"DARTUIOS_SSH=" + writeRefusingSSH(t, filepath.Join(base, "bin"))}
 
 	// The add dials once and says what ssh said, and the host is added all
 	// the same: a refusal is something to fix, not a reason to forget the
 	// machine.
-	out, err := tuiosCLIEnv(t, base, env, "hosts", "add", "build", "someone@buildbox", "--connect-timeout", "2")
+	out, err := dartuiosCLIEnv(t, base, env, "hosts", "add", "build", "someone@buildbox", "--connect-timeout", "2")
 	if err != nil {
-		t.Fatalf("ASSERTION: 'tuios hosts add' failed against a host ssh refused; the host must be added anyway: %v\n%s", err, out)
+		t.Fatalf("ASSERTION: 'dartuios hosts add' failed against a host ssh refused; the host must be added anyway: %v\n%s", err, out)
 	}
 	if !strings.Contains(out, "Permission denied") {
 		t.Errorf("ASSERTION: what ssh said never reached the user at add time:\n%s", out)
 	}
-	t.Logf("tuios hosts add against a refused host:\n%s", out)
+	t.Logf("dartuios hosts add against a refused host:\n%s", out)
 
-	out, err = tuiosCLIEnv(t, base, env, "hosts", "test", "build")
+	out, err = dartuiosCLIEnv(t, base, env, "hosts", "test", "build")
 	if err == nil {
-		t.Errorf("ASSERTION: 'tuios hosts test' succeeded against a host ssh refused:\n%s", out)
+		t.Errorf("ASSERTION: 'dartuios hosts test' succeeded against a host ssh refused:\n%s", out)
 	}
 	if !strings.Contains(out, "Permission denied") {
 		t.Errorf("ASSERTION: what ssh said never reached the user:\n%s", out)
 	}
-	t.Logf("tuios hosts test against a refused host:\n%s", out)
+	t.Logf("dartuios hosts test against a refused host:\n%s", out)
 }
 
 // writeRefusingSSH puts an ssh stand-in in dir that fails the way ssh does
@@ -161,8 +161,8 @@ func TestAddingAHostKeepsTheRestOfTheConfigFile(t *testing.T) {
 	base := t.TempDir()
 	// The add dials the host once. The stand-in refuses, so nothing reaches
 	// the network and nothing reads the developer's ssh configuration.
-	env := []string{"TUIOS_SSH=" + writeRefusingSSH(t, filepath.Join(base, "bin"))}
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	env := []string{"DARTUIOS_SSH=" + writeRefusingSSH(t, filepath.Join(base, "bin"))}
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -172,9 +172,9 @@ func TestAddingAHostKeepsTheRestOfTheConfigFile(t *testing.T) {
 		t.Fatalf("write config: %v", err)
 	}
 
-	out, err := tuiosCLIEnv(t, base, env, "hosts", "add", "build", "someone@buildbox")
+	out, err := dartuiosCLIEnv(t, base, env, "hosts", "add", "build", "someone@buildbox")
 	if err != nil {
-		t.Fatalf("tuios hosts add: %v\n%s", err, out)
+		t.Fatalf("dartuios hosts add: %v\n%s", err, out)
 	}
 	data, err := os.ReadFile(path) //nolint:gosec // the config this test wrote
 	if err != nil {

@@ -1,4 +1,4 @@
-// Package tuie2e drives a real tuios binary inside a real pseudo-terminal and
+// Package tuie2e drives a real dartuios binary inside a real pseudo-terminal and
 // asserts on what a user would actually see on screen.
 //
 // # Why this is a separate, nested Go module
@@ -6,7 +6,7 @@
 // The harness (github.com/Gaurav-Gosain/tuitest) is a test-only dependency that
 // spawns PTYs and vendors a VT emulator. tuitest is public, so requiring it
 // would work, but it would land in the dependency graph of everyone who imports
-// tuios, for code that only ever runs under `go test`. A nested module keeps the
+// dartuios, for code that only ever runs under `go test`. A nested module keeps the
 // tests versioned alongside the code they guard while leaving the main module's
 // go.mod and go.sum untouched.
 //
@@ -18,18 +18,18 @@
 //
 // # Running
 //
-//	cd e2e/tui && TUIOS_E2E=1 go test -count=1 ./...
+//	cd e2e/tui && DARTUIOS_E2E=1 go test -count=1 ./...
 //
-// Without TUIOS_E2E the whole package skips, because every test here forks a
+// Without DARTUIOS_E2E the whole package skips, because every test here forks a
 // full multiplexer plus its shell children. TestMain builds the binary under
-// test once into a temporary directory; set TUIOS_E2E_BIN to point the same
+// test once into a temporary directory; set DARTUIOS_E2E_BIN to point the same
 // assertions at a prebuilt binary, which is how the negative controls described
 // in NEGATIVE_CONTROLS.md are run.
 //
 // # Always pass -count=1
 //
 // This is not a style preference. Go caches test results, and a cached result
-// survives a change of TUIOS_E2E_BIN, so re-running the suite against a
+// survives a change of DARTUIOS_E2E_BIN, so re-running the suite against a
 // deliberately broken binary can replay the previous PASS and report that a
 // regression test caught nothing when in fact it was never executed. That
 // happened while writing this suite and briefly made a genuine negative control
@@ -39,13 +39,13 @@
 // # -race is not useful here
 //
 // The race detector instruments the test process, and the code under test runs
-// in a separate tuios process, so -race on this package costs time and detects
-// nothing. Race coverage for tuios's own internals belongs in the main module's
+// in a separate dartuios process, so -race on this package costs time and detects
+// nothing. Race coverage for dartuios's own internals belongs in the main module's
 // unit tests, which is where the emulator-resize race is pinned.
 //
 // # Isolation
 //
-// Every tuios instance gets a private set of XDG directories under the test's
+// Every dartuios instance gets a private set of XDG directories under the test's
 // own TempDir, so the daemon socket, session state, and config file never touch
 // the developer's real ~/.config, ~/.local/state, or /run/user/$UID. tuitest
 // starts the child with setsid and tears down the whole process group, so the
@@ -54,10 +54,10 @@
 // # Two harness footguns this file works around
 //
 //  1. WaitStable can report stability against a pre-action frame: called right
-//     after sending input, its quiet window can elapse before tuios has reacted.
+//     after sending input, its quiet window can elapse before dartuios has reacted.
 //     Everything here waits on expected content instead.
 //
-//  2. tuios boots into window-management mode, where plain characters are
+//  2. dartuios boots into window-management mode, where plain characters are
 //     window-manager commands rather than shell input, and for 150ms after
 //     entering terminal mode it deliberately swallows unmodified single-character
 //     keys. enterTerminalMode handles both. An *attached* client is the other way
@@ -77,12 +77,12 @@
 //     A real terminal clamps DECSTBM to the screen.
 //
 //     This is not exotic. A client renders a frame for the size it last knew
-//     about, the PTY shrinks, and the frame lands afterwards; tuios is entitled
+//     about, the PTY shrinks, and the frame lands afterwards; dartuios is entitled
 //     to emit that and every real terminal tolerates it. It killed an 850 second
 //     fuzz campaign and took every finding in it, because a panic in the pump
 //     goroutine cannot be recovered by the test. Until tuitest clamps, a long
 //     campaign has to be run in seed batches so one crash costs one batch: see
-//     TUIOS_FUZZ_FIRST on TestFuzzPTY.
+//     DARTUIOS_FUZZ_FIRST on TestFuzzPTY.
 package tuie2e
 
 import (
@@ -112,7 +112,7 @@ const (
 	welcomeText = "Terminal UI Operating System"
 	welcomeHint = "new window"
 
-	// insertGuard is tuios's post-terminal-mode suppression window for
+	// insertGuard is dartuios's post-terminal-mode suppression window for
 	// unmodified single-character keys (internal/input/keyboard_terminal.go).
 	insertGuard = 150 * time.Millisecond
 
@@ -139,54 +139,115 @@ const (
 	terminalModeProbe = 3 * time.Second
 )
 
-// tuiosBin is the binary under test, resolved once by TestMain.
-var tuiosBin string
+// paneTopCorners and paneBottomCorners are the pane-border corner glyphs
+// dartuios draws across its border styles (rounded, normal, thick, double). A
+// detector that wants "the pane's top border" must accept all of them rather
+// than one style's corner, so a border-style change does not break it. Dialogs
+// are a separate corner family (anchored ◜) and are deliberately not in these
+// sets.
+var (
+	paneTopCorners    = []rune{'╭', '┌', '┏', '╔'}
+	paneBottomCorners = []rune{'╰', '└', '┗', '╚'}
+)
+
+func lineHasPaneTopCorner(line string) bool {
+	for _, c := range paneTopCorners {
+		if strings.ContainsRune(line, c) {
+			return true
+		}
+	}
+	return false
+}
+
+func lineHasPaneBottomCorner(line string) bool {
+	for _, c := range paneBottomCorners {
+		if strings.ContainsRune(line, c) {
+			return true
+		}
+	}
+	return false
+}
+
+func isPaneTopCorner(content string) bool {
+	for _, c := range paneTopCorners {
+		if content == string(c) {
+			return true
+		}
+	}
+	return false
+}
+
+func isPaneBottomCorner(content string) bool {
+	for _, c := range paneBottomCorners {
+		if content == string(c) {
+			return true
+		}
+	}
+	return false
+}
+
+// findPaneTopCornerCell finds the first pane top-left corner on the screen,
+// across border styles. ok is false when no pane corner is on screen.
+func findPaneTopCornerCell(s tuitest.Screen) (row, col int, ok bool) {
+	cols, rows := s.Size()
+	for y := range rows {
+		for x := range cols {
+			if isPaneTopCorner(s.Cell(x, y).Content) {
+				return y, x, true
+			}
+		}
+	}
+	return 0, 0, false
+}
+
+// dartuiosBin is the binary under test, resolved once by TestMain.
+var dartuiosBin string
 
 // TestMain exists only to turn runE2E's return into an exit status. The build
 // directory is removed by a defer inside runE2E, and os.Exit runs no defers, so
 // every statement that needs cleaning up lives in the function below rather
-// than here. A build directory holds a linked tuios binary, and on a machine
+// than here. A build directory holds a linked dartuios binary, and on a machine
 // where /tmp is a tmpfs each leaked one is memory that never comes back.
 func TestMain(m *testing.M) {
 	os.Exit(runE2E(m))
 }
 
 func runE2E(m *testing.M) int {
-	if os.Getenv("TUIOS_E2E") == "" {
-		fmt.Fprintln(os.Stderr, "e2e: skipping, set TUIOS_E2E=1 to run (spawns real multiplexer daemons)")
+	if os.Getenv("DARTUIOS_E2E") == "" {
+		fmt.Fprintln(os.Stderr, "e2e: skipping, set DARTUIOS_E2E=1 to run (spawns real multiplexer daemons)")
 		return 0
 	}
 	// The runtime directories that had to be moved out of the isolation roots
 	// live under one root, removed once here rather than per test: a test's own
 	// cleanup runs while another test may still be deriving the same path.
 	sweepShortRuntimeRoots()
-	// A run started from a tuios pane inherits the pane's TUIOS_SOCKET, which
-	// names the person's daemon, and tuiosCLI passes the environment on. The
+	// A run started from a dartuios pane inherits the pane's DARTUIOS_SOCKET, which
+	// names the person's daemon, and dartuiosCLI passes the environment on. The
 	// commands would dial it to check it; the suite has no business there.
-	_ = os.Unsetenv("TUIOS_SOCKET")
+	_ = os.Unsetenv("DARTUIOS_SOCKET")
 	defer func() { _ = os.RemoveAll(shortRuntimeRoot) }()
 
-	if bin := os.Getenv("TUIOS_E2E_BIN"); bin != "" {
+	if bin := os.Getenv("DARTUIOS_E2E_BIN"); bin != "" {
 		abs, err := filepath.Abs(bin)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "e2e: resolve TUIOS_E2E_BIN: %v\n", err)
+			fmt.Fprintf(os.Stderr, "e2e: resolve DARTUIOS_E2E_BIN: %v\n", err)
 			return 1
 		}
-		tuiosBin = abs
+		dartuiosBin = abs
 	} else {
-		dir, err := os.MkdirTemp("", "tuios-e2e-bin")
+		dir, err := os.MkdirTemp("", "dartuios-e2e-bin")
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "e2e: temp dir: %v\n", err)
 			return 1
 		}
 		defer os.RemoveAll(dir)
-		tuiosBin = filepath.Join(dir, "tuios")
-		build := exec.Command("go", "build", "-o", tuiosBin, "./cmd/tuios")
+		dartuiosBin = filepath.Join(dir, "dartuios")
+		build := exec.Command("go", "build", "-o", dartuiosBin, "./cmd/dartuios")
 		build.Dir = "../.."
 		build.Stderr = os.Stderr
 		build.Stdout = os.Stderr
 		if err := build.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "e2e: build tuios: %v\n", err)
+			fmt.Fprintf(os.Stderr, "e2e: build dartuios: %v\n", err)
 			return 1
 		}
 	}
@@ -194,15 +255,15 @@ func runE2E(m *testing.M) int {
 	return m.Run()
 }
 
-// startOpts configures a tuios instance for a test.
+// startOpts configures a dartuios instance for a test.
 type startOpts struct {
 	// cols and rows size the PTY. Zero means 120x40.
 	cols, rows int
-	// args are extra tuios command-line flags, e.g. "--shared-borders".
+	// args are extra dartuios command-line flags, e.g. "--shared-borders".
 	args []string
 	// env are extra KEY=VALUE entries layered over the isolated defaults.
 	env []string
-	// out receives a copy of what tuios wrote to the PTY, so a test can assert
+	// out receives a copy of what dartuios wrote to the PTY, so a test can assert
 	// on output that never reaches the grid. OSC 52 clipboard writes are the
 	// reason it exists: a copy is invisible on screen but unmistakable on the
 	// wire.
@@ -220,24 +281,24 @@ type startOpts struct {
 	// --no-animations, because animations make frames non-deterministic; a
 	// test of what an animation leaves behind needs them.
 	animations bool
-	// daemonDefault runs tuios with the shipped startup.daemon, so a bare
-	// "tuios" attaches to a daemon. Every other test here holds the standalone
-	// TUI still with TUIOS_NO_DAEMON=1; see startIn.
+	// daemonDefault runs dartuios with the shipped startup.daemon, so a bare
+	// "dartuios" attaches to a daemon. Every other test here holds the standalone
+	// TUI still with DARTUIOS_NO_DAEMON=1; see startIn.
 	daemonDefault bool
-	// shippedLooks runs tuios with the appearance defaults as they ship. Every
+	// shippedLooks runs dartuios with the appearance defaults as they ship. Every
 	// other test here runs with the looks from before v0.8.0 pinned in its
 	// config; see pinPreV080Looks.
 	shippedLooks bool
 	// logPath, when set, receives the path of the raw PTY log, for a test
-	// that reads what tuios printed after the TUI gave the screen back.
+	// that reads what dartuios printed after the TUI gave the screen back.
 	logPath *string
-	// wrap runs tuios under another program: argv is wrap followed by the
-	// tuios command line. The host colour tests put a stand-in host terminal
+	// wrap runs dartuios under another program: argv is wrap followed by the
+	// dartuios command line. The host colour tests put a stand-in host terminal
 	// there (testdata/hostterm).
 	wrap []string
 }
 
-// start spawns tuios in a hermetic environment and returns the terminal plus
+// start spawns dartuios in a hermetic environment and returns the terminal plus
 // the isolation directory root, which multi-client tests reuse so a second
 // client reaches the same daemon.
 func start(t *testing.T, o startOpts) (*tuitest.Terminal, string) {
@@ -269,7 +330,7 @@ var xdgKeys = []string{
 	"XDG_CONFIG_DIRS", "XDG_DATA_DIRS",
 	// HOME, which is not an XDG key but is read the same way. The harness
 	// integrations install into and look for files under the home (~/.claude,
-	// ~/.codex and the rest), and tuios counts an installed integration as a
+	// ~/.codex and the rest), and dartuios counts an installed integration as a
 	// sign that agents run here. With the real home, a developer who had
 	// installed one saw the suite behave as if an agent had been seen, and
 	// the tests of what shows before the first agent failed on that machine
@@ -277,7 +338,7 @@ var xdgKeys = []string{
 	"HOME",
 }
 
-// startIn spawns tuios against an explicit isolation root, so two clients can
+// startIn spawns dartuios against an explicit isolation root, so two clients can
 // share one daemon by sharing the root.
 func startIn(t *testing.T, base string, o startOpts) *tuitest.Terminal {
 	t.Helper()
@@ -312,15 +373,15 @@ func startIn(t *testing.T, base string, o startOpts) *tuitest.Terminal {
 	}
 	// A predictable POSIX shell, and no user rc files changing the prompt.
 	env = append(env, "SHELL=/bin/sh", "ENV=", "PS1=$ ")
-	// startup.daemon ships on, so a bare "tuios" is a daemon client. Every test
+	// startup.daemon ships on, so a bare "dartuios" is a daemon client. Every test
 	// in this package that passes no subcommand was written against the
 	// standalone TUI and asserts on it, so keep them standalone rather than let
 	// a hundred assertions quietly change what they run. The variable is read
-	// in exactly one place, the bare-"tuios" decision, so it leaves `attach`,
+	// in exactly one place, the bare-"dartuios" decision, so it leaves `attach`,
 	// `new` and every other subcommand alone. daemonDefault opts back in, and
 	// the test of the shipped default is the one caller that sets it.
 	if !o.daemonDefault {
-		env = append(env, "TUIOS_NO_DAEMON=1")
+		env = append(env, "DARTUIOS_NO_DAEMON=1")
 	}
 	// The same reasoning for the looks v0.8.0 changed: the tests were written
 	// against the dock at the bottom, no rail, full-screen zoom and a click
@@ -337,7 +398,7 @@ func startIn(t *testing.T, base string, o startOpts) *tuitest.Terminal {
 		}
 	}
 	pinPreV080LooksIn(t, base, configHome)
-	// GORACE is forwarded so a tuios built with -race can be driven through this
+	// GORACE is forwarded so a dartuios built with -race can be driven through this
 	// suite and have its findings survive. tuitest replaces the child's whole
 	// environment, so without this the child runs with GORACE unset and the race
 	// detector writes to stderr, which is the PTY the assertions read: the report
@@ -353,7 +414,7 @@ func startIn(t *testing.T, base string, o startOpts) *tuitest.Terminal {
 		cols, rows = 120, 40
 	}
 
-	argv := append(append(append([]string{}, o.wrap...), tuiosBin), o.args...)
+	argv := append(append(append([]string{}, o.wrap...), dartuiosBin), o.args...)
 	// Animations make frames non-deterministic without testing anything these
 	// assertions care about.
 	if !o.animations {
@@ -448,9 +509,9 @@ func logSurvivors(t *testing.T, base string) {
 //
 // It exists because every daemon-backed test in this package had to know two
 // things nothing here wrote down. The first is the argv: the session name is a
-// positional argument to `attach`, not a `-s` flag, and plain `tuios` in this
+// positional argument to `attach`, not a `-s` flag, and plain `dartuios` in this
 // package is not a client but the standalone TUI, because startIn holds it
-// there with TUIOS_NO_DAEMON=1; a test that used it was testing a tuios with no
+// there with DARTUIOS_NO_DAEMON=1; a test that used it was testing a dartuios with no
 // daemon behind it. The second is the mode, which windowManagementMode
 // explains.
 func attachIn(t *testing.T, base, session string, o startOpts) *tuitest.Terminal {
@@ -499,7 +560,7 @@ func windowManagementMode(t *testing.T, term *tuitest.Terminal) {
 // ends. The registered cleanup still runs afterwards and finds nothing to do.
 func killDaemonNow(t *testing.T, base string) {
 	t.Helper()
-	if out, err := tuiosCLI(t, base, "kill-server"); err != nil {
+	if out, err := dartuiosCLI(t, base, "kill-server"); err != nil {
 		t.Logf("kill-server under %s (best effort): %v: %s", base, err, strings.TrimSpace(out))
 	}
 }
@@ -508,7 +569,7 @@ func killDaemonNow(t *testing.T, base string) {
 func waitBoot(t *testing.T, term *tuitest.Terminal) {
 	t.Helper()
 	if err := term.WaitForText(welcomeText, bootTimeout); err != nil {
-		t.Fatalf("tuios never reached the welcome screen: %v", err)
+		t.Fatalf("dartuios never reached the welcome screen: %v", err)
 	}
 }
 
@@ -610,7 +671,7 @@ func waitWindowCount(t *testing.T, term *tuitest.Terminal, n int, what string) {
 // the 150ms single-character suppression guard, after which typed text reaches
 // the shell instead of being eaten as a window-manager binding.
 //
-// The "i" is retried because a single one is not reliably delivered: tuios
+// The "i" is retried because a single one is not reliably delivered: dartuios
 // suppresses unmodified single-character keys for a window after several mode
 // transitions, and a keystroke that lands inside one of those windows is
 // silently dropped with no feedback. Retrying is what a user does, and it keeps
@@ -629,7 +690,7 @@ func enterTerminalMode(t *testing.T, term *tuitest.Terminal) {
 			return
 		}
 		if _, exited := term.ExitCode(); exited {
-			t.Fatalf("tuios exited while entering terminal mode\n%s", term.Snapshot())
+			t.Fatalf("dartuios exited while entering terminal mode\n%s", term.Snapshot())
 		}
 	}
 	t.Fatalf("did not enter terminal mode after %d attempts\n%s", attempts, term.Snapshot())
@@ -708,11 +769,11 @@ func renameWindow(t *testing.T, term *tuitest.Terminal, name string) {
 	}
 }
 
-// alive fails the test if tuios has exited, attaching the last screen.
+// alive fails the test if dartuios has exited, attaching the last screen.
 func alive(t *testing.T, term *tuitest.Terminal, when string) {
 	t.Helper()
 	if code, exited := term.ExitCode(); exited {
-		t.Fatalf("tuios exited with code %d %s\n%s", code, when, term.Snapshot())
+		t.Fatalf("dartuios exited with code %d %s\n%s", code, when, term.Snapshot())
 	}
 }
 
@@ -769,16 +830,16 @@ func waitForAll(t *testing.T, term *tuitest.Terminal, timeout time.Duration, wha
 	}
 }
 
-// tuiosCLI runs a tuios subcommand (ls, send-keys, ...) against the daemon
+// dartuiosCLI runs a dartuios subcommand (ls, send-keys, ...) against the daemon
 // living under an isolation root, and returns its combined output.
-func tuiosCLI(t *testing.T, base string, args ...string) (string, error) {
+func dartuiosCLI(t *testing.T, base string, args ...string) (string, error) {
 	t.Helper()
 	// A subcommand that loads the config writes the default file when there
 	// is none, and a file written with the shipped values would read as the
 	// test's own choice when the client starts. So the pins go in first here
 	// too.
 	pinPreV080Looks(t, base)
-	cmd := exec.Command(tuiosBin, args...)
+	cmd := exec.Command(dartuiosBin, args...)
 	cmd.Dir = workDirIn(t, base)
 	cmd.Env = append(os.Environ(), "SHELL=/bin/sh")
 	for _, key := range xdgKeys {
@@ -788,14 +849,14 @@ func tuiosCLI(t *testing.T, base string, args ...string) (string, error) {
 	return string(out), err
 }
 
-// workDirIn is the directory every tuios this suite spawns starts in, and so
+// workDirIn is the directory every dartuios this suite spawns starts in, and so
 // the directory the daemon and every shell under it start in: a plain
 // directory under the isolation root, never the checkout the suite runs from.
 //
 // The suite used to inherit the test binary's directory, which is a checkout
-// of tuios. That was invisible until the daemon started reading a session's
+// of dartuios. That was invisible until the daemon started reading a session's
 // directory: run from a linked worktree, every session the suite made became a
-// worktree session of tuios, grouped under a "tuios" row and labelled by the
+// worktree session of dartuios, grouped under a "dartuios" row and labelled by the
 // branch instead of its name, and nine rail tests failed for anyone working in
 // a worktree while passing for anyone working in the main checkout. A suite
 // whose result depends on where the repository sits is not hermetic.
@@ -834,12 +895,12 @@ func killDaemon(t *testing.T, base string) {
 		return
 	}
 	t.Cleanup(func() {
-		if out, err := tuiosCLI(t, base, "kill-server"); err != nil {
+		if out, err := dartuiosCLI(t, base, "kill-server"); err != nil {
 			t.Logf("kill-server (best effort): %v: %s", err, strings.TrimSpace(out))
 		}
 		deadline := time.Now().Add(5 * time.Second)
 		for {
-			out, err := tuiosCLI(t, base, "ls", "--json")
+			out, err := dartuiosCLI(t, base, "ls", "--json")
 			var sessions []struct {
 				Name string `json:"name"`
 			}
@@ -867,12 +928,12 @@ func killDaemon(t *testing.T, base string) {
 // press report per button-down, one motion report for each cell the pointer
 // crosses while a button is held, and one release report per button-up. A
 // helper that takes a shortcut here does not merely test less than it claims.
-// It puts tuios into a state no user can reach, and every assertion made after
+// It puts dartuios into a state no user can reach, and every assertion made after
 // that runs against that state.
 //
 // Two shortcuts this suite used to take, both fixed here:
 //
-//  1. clickAt sent n presses and one trailing release. tuios copies a selection
+//  1. clickAt sent n presses and one trailing release. dartuios copies a selection
 //     on release, so a triple click produced a single clipboard write where a
 //     real mouse produces three releases and two writes. Anything that happens
 //     on an intermediate release was structurally unobservable, which is how a
@@ -881,7 +942,7 @@ func killDaemon(t *testing.T, base string) {
 //
 //  2. leftClick and shiftRightClick sent a press and no release at all. A left
 //     press inside a pane sets OS.InteractionMode, and while that flag is set
-//     tuios deliberately stops polling pane content (internal/app/os_render.go
+//     dartuios deliberately stops polling pane content (internal/app/os_render.go
 //     returns early on it). A press with no release therefore freezes every
 //     pane for the remainder of the test, so any later wait for shell output is
 //     waiting on a program that has stopped reading its panes.
@@ -889,29 +950,29 @@ func killDaemon(t *testing.T, base string) {
 //
 // What this cannot simulate is documented in NEGATIVE_CONTROLS.md under
 // "What this harness structurally cannot observe"; the short version is that
-// cmd/tuios/run.go installs a whitelist filter that drops motion events unless
+// cmd/dartuios/run.go installs a whitelist filter that drops motion events unless
 // a drag, a resize, an overlay drag, the scrollback browser or a mouse-tracking
 // application is active, so motion sent outside those states is dropped before
 // the model sees it and asserting on its effect would assert on nothing.
 
 const (
 	// mouseGap is the pause after each mouse report. Real reports arrive one at
-	// a time with human-scale gaps between them, and tuios coalesces motion to
+	// a time with human-scale gaps between them, and dartuios coalesces motion to
 	// a frame budget, so back-to-back writes are not the input a user produces.
 	mouseGap = 30 * time.Millisecond
 	// multiClickHold is how long a button of a multi-click gesture stays down,
 	// and multiClickGap is the pause before the next one goes down. Together
 	// they set the press-to-press interval, which is the figure that has to stay
-	// inside internal/input.multiClickInterval for tuios to read the clicks as
+	// inside internal/input.multiClickInterval for dartuios to read the clicks as
 	// one gesture: 40ms against a 300ms window.
 	//
 	// They are shorter than mouseGap, and deliberately so. mouseGap is spaced
-	// for motion, which tuios coalesces to a frame budget; presses and releases
-	// pass through untouched (cmd/tuios/run.go filters motion and nothing else),
+	// for motion, which dartuios coalesces to a frame budget; presses and releases
+	// pass through untouched (cmd/dartuios/run.go filters motion and nothing else),
 	// and the harness was measured sending all six reports of a triple click
 	// with no pause at all and having every one of them counted, 10 times out of
 	// 10. So the pause between the clicks of one gesture buys no fidelity, and
-	// what it costs is margin: tuios measures the interval when it processes the
+	// what it costs is margin: dartuios measures the interval when it processes the
 	// press, not when the byte arrives, so every millisecond of nominal spacing
 	// is a millisecond less stall it takes to push the third click outside the
 	// window and turn the gesture into a double click plus a single one.
@@ -928,7 +989,7 @@ const (
 	gestureGap = 800 * time.Millisecond
 )
 
-// sendMouse writes one SGR mouse report and then pauses, so tuios sees a
+// sendMouse writes one SGR mouse report and then pauses, so dartuios sees a
 // sequence of separate events rather than one burst.
 func sendMouse(t *testing.T, term *tuitest.Terminal, what string, ev tuitest.MouseEvent) {
 	t.Helper()
@@ -971,7 +1032,7 @@ func mouseRelease(t *testing.T, term *tuitest.Terminal, col, row int, button tui
 // The action is MouseDrag rather than MouseMove. tuitest used to encode a
 // MouseMove carrying a button as a drag, so the two spelled the same wire
 // report; it now takes MouseMove at its word and drops the button, which turns
-// every report here into a bare hover. tuios reads a press, a run of hovers and
+// every report here into a bare hover. dartuios reads a press, a run of hovers and
 // a release as a click, so a drag stopped moving anything at all.
 func mouseMotion(t *testing.T, term *tuitest.Terminal, col, row int, button tuitest.MouseButton, mods tuitest.KeyMods) {
 	t.Helper()
@@ -990,7 +1051,7 @@ func mouseClick(t *testing.T, term *tuitest.Terminal, col, row int, button tuite
 // mouseDrag is one complete drag: press, a motion report for every cell between
 // the two points, then release at the far end.
 //
-// The intermediate reports are not decoration. tuios tracks a selection, a
+// The intermediate reports are not decoration. dartuios tracks a selection, a
 // window move and a resize from motion, and a press-then-release with nothing
 // in between is a click, not a drag: the drag-distance threshold in
 // handleMouseRelease treats it as one and snaps the window back.
@@ -1018,7 +1079,7 @@ func abs(n int) int {
 // spells that now; it used to be written out by hand, because the MouseButton
 // zero value is the left button and there was no way to say "no button".
 //
-// Read the doc comment on the mouse section before using this. tuios's motion
+// Read the doc comment on the mouse section before using this. dartuios's motion
 // filter drops bare motion in every state except an active drag, resize,
 // overlay drag, scrollback browser, a pane running a mouse-tracking
 // application, the sidebar band, and pane content while appearance.links is on.
@@ -1153,18 +1214,18 @@ func disableTiling(t *testing.T, term *tuitest.Terminal) {
 	}
 }
 
-// unixSocketPathMax is the longest socket path the suite lets tuios bind. The
+// unixSocketPathMax is the longest socket path the suite lets dartuios bind. The
 // kernel's own cap is 104 bytes on darwin and 108 on linux, both counting the
 // terminator, so this is the smaller one less the terminator.
 const unixSocketPathMax = 103
 
-// longestRuntimeSocket is the longest socket tuios binds under its runtime
+// longestRuntimeSocket is the longest socket dartuios binds under its runtime
 // directory, relative to it: a tmux shim pane holder's socket, named by a pane
-// number of up to ten digits. The daemon's tuios.sock and its link sockets
-// (tuios.sock.link-human is the longest) are shorter. A runtime directory is
-// measured against this one, since measuring it against tuios.sock alone let
+// number of up to ten digits. The daemon's dartuios.sock and its link sockets
+// (dartuios.sock.link-human is the longest) are shorter. A runtime directory is
+// measured against this one, since measuring it against dartuios.sock alone let
 // a root through whose daemon bound and whose pane holders could not.
-var longestRuntimeSocket = filepath.Join("tuios", "tmux", "p", "2147483647.sock")
+var longestRuntimeSocket = filepath.Join("dartuios", "tmux", "p", "2147483647.sock")
 
 // shortRuntimeRoot is where a runtime directory goes when the isolation root
 // is too long to hold one. Per user and per test process. It was per user
@@ -1173,13 +1234,13 @@ var longestRuntimeSocket = filepath.Join("tuios", "tmux", "p", "2147483647.sock"
 // the first run still had up: the first run's tests then read "the daemon is
 // not running", and its cleanups could not reach those daemons to stop them.
 // sweepShortRuntimeRoots removes the roots of runs that are gone.
-var shortRuntimeRoot = filepath.Join("/tmp", fmt.Sprintf("tuios-e2e-%d-%d", os.Getuid(), os.Getpid()))
+var shortRuntimeRoot = filepath.Join("/tmp", fmt.Sprintf("dartuios-e2e-%d-%d", os.Getuid(), os.Getpid()))
 
 // sweepShortRuntimeRoots removes the short runtime roots of this user's test
 // processes that no longer exist, which a killed run leaves behind. The root
 // of a process still running is left alone.
 func sweepShortRuntimeRoots() {
-	prefix := fmt.Sprintf("tuios-e2e-%d-", os.Getuid())
+	prefix := fmt.Sprintf("dartuios-e2e-%d-", os.Getuid())
 	entries, err := os.ReadDir("/tmp")
 	if err != nil {
 		return
@@ -1236,12 +1297,12 @@ var redirected sync.Map
 // xdgDir is the directory one XDG variable points at for an isolation root,
 // and the only reason it is a function is the socket.
 //
-// The daemon binds <XDG_RUNTIME_DIR>/tuios/tuios.sock, and a unix socket path
+// The daemon binds <XDG_RUNTIME_DIR>/dartuios/dartuios.sock, and a unix socket path
 // is capped by the kernel at about a hundred bytes. t.TempDir names its
 // directory after the test, and on macOS the temp root is already
 // /var/folders/<16 chars>/<16 chars>/T/, so a test with a long name spends the
-// whole budget before tuios adds a byte: the bind fails, the daemon exits 1,
-// and the test reports that tuios never reached its welcome screen. Every test
+// whole budget before dartuios adds a byte: the bind fails, the daemon exits 1,
+// and the test reports that dartuios never reached its welcome screen. Every test
 // in the suite fails that way, which reads like a broken harness rather than a
 // path length.
 //

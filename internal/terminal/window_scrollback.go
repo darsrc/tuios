@@ -72,7 +72,7 @@ func (w *Window) EnterCopyMode() {
 }
 
 // EnterCopyModeCentered enters copy mode with the copy cursor at column 0 of
-// the middle row, the vim-style entry tuios used before the cursor entry. It is
+// the middle row, the vim-style entry dartuios used before the cursor entry. It is
 // what appearance.selection.copy_entry = "center" asks for.
 func (w *Window) EnterCopyModeCentered() {
 	w.enterCopyMode(0, w.ContentHeight()/2)

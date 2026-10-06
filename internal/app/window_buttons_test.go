@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 func withButtonStyle(t *testing.T, style string, fn func()) {
@@ -25,7 +25,7 @@ func withButtonStyle(t *testing.T, style string, fn func()) {
 func drawTopBorder(t *testing.T, m *OS, win *terminal.Window, tiling bool) ([]rune, []WindowButtonRect) {
 	t.Helper()
 	content := strings.Repeat(" ", win.Width)
-	out := m.addToBorder(content, lipgloss.Width(content)-2, lipgloss.Color("#7dd3fc"), win, 1, tiling)
+	out := m.addToBorder(content, lipgloss.Width(content)-2, lipgloss.Color("#7dd3fc"), win, 1, tiling, false)
 	top, _, _ := strings.Cut(out, "\n")
 	return []rune(ansi.Strip(top)), m.windowButtonRects[win.ID]
 }
@@ -124,8 +124,8 @@ func markAt(m *OS, win *terminal.Window, a WindowButtonAction) string {
 func TestWindowButtonGoldenBorders(t *testing.T) {
 	theme.SetActiveGlyphs(theme.GlyphSetNone)
 	const (
-		l = ""
-		r = ""
+		l = "▏" // WindowPillLeft
+		r = "▕" // WindowPillRight
 	)
 	cases := []struct {
 		name, style, position string

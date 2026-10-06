@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"charm.land/ssh"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // Terminals known to render the kitty graphics protocol. The client's terminal,
@@ -31,7 +31,7 @@ var sixelCapableTerminals = map[string]bool{
 }
 
 // detectClientGraphics inspects what a connected SSH client reports about its
-// terminal and returns the graphics capabilities TUIOS should use for that
+// terminal and returns the graphics capabilities dartuios should use for that
 // session. Everything here is passive: it reads the TERM from the pty-req, any
 // environment the client forwarded, and the pixel dimensions the client sent
 // with the pty-req. It never writes a query to the session or reads its input,
@@ -54,13 +54,13 @@ func buildClientCapabilities(term string, environ []string, win ssh.Window) *ses
 	caps.SixelGraphics = sixelCapableTerminals[name]
 
 	// Explicit client overrides win over identity-based guesses.
-	switch env["TUIOS_KITTY_GRAPHICS"] {
+	switch env["DARTUIOS_KITTY_GRAPHICS"] {
 	case "1":
 		caps.KittyGraphics = true
 	case "0":
 		caps.KittyGraphics = false
 	}
-	switch env["TUIOS_SIXEL_GRAPHICS"] {
+	switch env["DARTUIOS_SIXEL_GRAPHICS"] {
 	case "1":
 		caps.SixelGraphics = true
 	case "0":
@@ -81,9 +81,9 @@ func buildClientCapabilities(term string, environ []string, win ssh.Window) *ses
 	}
 	// An explicit cell size wins over the pty-req, and is the only source there
 	// is for the many SSH clients that forward no pixel dimensions at all. It
-	// is the same TUIOS_CELL_SIZE a local client reads, so the variable means
+	// is the same DARTUIOS_CELL_SIZE a local client reads, so the variable means
 	// one thing wherever it is set.
-	if cw, ch, ok := parseCellSize(env["TUIOS_CELL_SIZE"]); ok {
+	if cw, ch, ok := parseCellSize(env["DARTUIOS_CELL_SIZE"]); ok {
 		caps.CellWidth, caps.CellHeight = cw, ch
 	}
 

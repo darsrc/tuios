@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/ptyspawn"
+	"github.com/darsrc/tuios/internal/ptyspawn"
 )
 
 // TestAttachFromOwnPaneIsRefused is #235 at the daemon: a client in a pane of
@@ -25,7 +25,7 @@ func TestAttachFromOwnPaneIsRefused(t *testing.T) {
 
 	for name, prefix := range map[string]string{
 		"with the pane environment":    "",
-		"without the pane environment": "env -u TUIOS_PANE_ID -u TUIOS_WINDOW_ID -u TUIOS_SESSION -u TUIOS_SOCKET -u TUIOS_PANE_TOKEN ",
+		"without the pane environment": "env -u DARTUIOS_PANE_ID -u DARTUIOS_WINDOW_ID -u DARTUIOS_SESSION -u DARTUIOS_SOCKET -u DARTUIOS_PANE_TOKEN ",
 	} {
 		t.Run(name, func(t *testing.T) {
 			out := filepath.Join(t.TempDir(), "out")
@@ -50,7 +50,7 @@ func TestUnnamedAttachFromPaneIsRefused(t *testing.T) {
 	out := filepath.Join(t.TempDir(), "out")
 	runInPane(t, d, sess, b, helperCommand(t, sp, out, "attach", ""))
 	got := waitHelper(t, out)
-	if !strings.Contains(got, `You are inside session "bare"`) || !strings.Contains(got, "tuios attach NAME") {
+	if !strings.Contains(got, `You are inside session "bare"`) || !strings.Contains(got, "dartuios attach NAME") {
 		t.Errorf("an unnamed attach from a pane got %q, want the refusal that asks for a name", got)
 	}
 }
@@ -70,7 +70,7 @@ func TestAttachFromPaneToOtherSessionIsAllowed(t *testing.T) {
 }
 
 // TestServedAndForcedAttachFromOwnPaneAreAllowed covers the two ways past the
-// refusal: a served client (tuios-web, the SSH server) takes its size from a
+// refusal: a served client (dartuios-web, the SSH server) takes its size from a
 // remote viewer, and a forced attach asked for it.
 func TestServedAndForcedAttachFromOwnPaneAreAllowed(t *testing.T) {
 	skipWithoutPeerPID(t)
@@ -88,7 +88,7 @@ func TestServedAndForcedAttachFromOwnPaneAreAllowed(t *testing.T) {
 }
 
 // spawnHelperOnOwnTerminal starts the helper from this test process, outside
-// every pane, on a PTY of its own, with no TUIOS_ variables but env. It
+// every pane, on a PTY of its own, with no DARTUIOS_ variables but env. It
 // returns the PTY, whose output is what the helper wrote to its terminal.
 func spawnHelperOnOwnTerminal(t *testing.T, sp, out, mode, args string, env ...string) io.Reader {
 	t.Helper()
@@ -99,7 +99,7 @@ func spawnHelperOnOwnTerminal(t *testing.T, sp, out, mode, args string, env ...s
 	pty, cmd, err := ptyspawn.Spawn(80, 24, func() *exec.Cmd {
 		c := exec.Command(exe, "-test.run=^TestHelperSocketCaller$")
 		for _, kv := range os.Environ() {
-			if !strings.HasPrefix(kv, "TUIOS_") {
+			if !strings.HasPrefix(kv, "DARTUIOS_") {
 				c.Env = append(c.Env, kv)
 			}
 		}
@@ -324,7 +324,7 @@ func TestDetachedPaneProcessWithoutTerminalIsRefused(t *testing.T) {
 	// with no controlling terminal.
 	cmd := exec.Command("/bin/sh", "-c", helperCommand(t, sp, out, "attach", "orphan")+" &")
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
-	cmd.Env = append(os.Environ(), "TUIOS_PANE_ID="+b, helperDetachEnv+"=1")
+	cmd.Env = append(os.Environ(), "DARTUIOS_PANE_ID="+b, helperDetachEnv+"=1")
 	if err := cmd.Run(); err != nil {
 		t.Fatalf("sh: %v", err)
 	}

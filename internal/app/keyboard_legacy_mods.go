@@ -40,7 +40,7 @@ func fixKittyLegacyMods(k tea.Key, hostKitty bool) tea.Key {
 }
 
 // fixHostKeyMods applies fixKittyLegacyMods to a key event from the host
-// terminal. Every other message is returned unchanged. Keys that tuios makes
+// terminal. Every other message is returned unchanged. Keys that dartuios makes
 // itself (send-keys, tapes) do not come through here, since they carry the
 // modifiers they were given.
 func (m *OS) fixHostKeyMods(msg tea.Msg) tea.Msg {

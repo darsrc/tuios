@@ -1,7 +1,7 @@
 // Package layout provides window tiling and layout management for the terminal.
 package layout
 
-import "github.com/Gaurav-Gosain/tuios/internal/config"
+import "github.com/darsrc/tuios/internal/config"
 
 // TileLayout represents the position and size for a tiled window
 type TileLayout struct {

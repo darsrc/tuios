@@ -8,13 +8,13 @@ import (
 	"testing"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
 	"github.com/adrg/xdg"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // Fixtures and helpers shared across the package's tests. They used to sit in
@@ -116,7 +116,7 @@ func useTempConfig(t *testing.T) string {
 	t.Cleanup(xdg.Reload)
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
 	xdg.Reload()
-	path, err := xdg.ConfigFile("tuios/config.toml")
+	path, err := xdg.ConfigFile("dartuios/config.toml")
 	if err != nil {
 		t.Fatalf("resolve temp config path: %v", err)
 	}

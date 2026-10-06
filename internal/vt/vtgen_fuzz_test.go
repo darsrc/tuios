@@ -10,7 +10,7 @@ package vt_test
 // after every step rather than only watching for a panic.
 //
 // The generator lives in internal/fuzz/vtgen because the shipped binary must
-// not link it, which cmd/tuios/imports_test.go asserts. A test file may import
+// not link it, which cmd/dartuios/imports_test.go asserts. A test file may import
 // it freely: `go list -deps` on the binary does not follow test imports.
 
 import (
@@ -18,8 +18,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz/vtgen"
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/fuzz/vtgen"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // replay runs a script into a fresh emulator and returns the first invariant it
@@ -192,7 +192,7 @@ func FuzzEmulatorScript(f *testing.F) {
 		{},
 		{0x01},
 		{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
-		[]byte("tuios"),
+		[]byte("dartuios"),
 		[]byte("the quick brown fox jumps over the lazy dog"),
 	} {
 		f.Add(seed)

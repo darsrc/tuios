@@ -132,7 +132,7 @@ func startMotionClient(t *testing.T, env []string, level string) *tuitest.Termin
 	killDaemon(t, base)
 	useShippedLooks(base)
 	writeConfig(t, base, "[startup]\ntiled = true\n[appearance]\nmotion = \""+level+"\"\n")
-	if out, err := tuiosCLI(t, base, "new", "e2e-motion", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-motion", "--detach"); err != nil {
 		t.Fatalf("create session: %v\n%s", err, out)
 	}
 	term := startIn(t, base, startOpts{args: []string{"attach", "e2e-motion"}, shippedLooks: true, env: env, animations: true})
@@ -253,13 +253,13 @@ func shimmerRun(t *testing.T, d chromeDepth, level string) {
 	killDaemon(t, base)
 	useShippedLooks(base)
 	writeConfig(t, base, "[startup]\ntiled = true\n[appearance]\nmotion = \""+level+"\"\n")
-	if out, err := tuiosCLI(t, base, "new", "shim", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "shim", "--detach"); err != nil {
 		t.Fatalf("create session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-window", "-s", "shim", "--name", name); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-window", "-s", "shim", "--name", name); err != nil {
 		t.Fatalf("name the pane: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "shim", "working", "--harness", "claude-code"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "shim", "working", "--harness", "claude-code"); err != nil {
 		t.Fatalf("set-agent-state: %v\n%s", err, out)
 	}
 	var wire byteCounter
@@ -303,7 +303,7 @@ func shimmerRun(t *testing.T, d chromeDepth, level string) {
 	}
 
 	// The agent stops: the name settles and the client goes quiet.
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "shim", "idle"); err != nil {
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "shim", "idle"); err != nil {
 		t.Fatalf("set-agent-state idle: %v\n%s", err, out)
 	}
 	time.Sleep(time.Second)
@@ -335,7 +335,7 @@ func shimmerRun(t *testing.T, d chromeDepth, level string) {
 func TestFullMotionWithoutAgentsStaysIdle(t *testing.T) {
 	var wire byteCounter
 	statsPath := filepath.Join(t.TempDir(), "tickstats")
-	term, _ := start(t, startOpts{out: &wire, animations: true, env: []string{"TUIOS_STATS_FILE=" + statsPath}})
+	term, _ := start(t, startOpts{out: &wire, animations: true, env: []string{"DARTUIOS_STATS_FILE=" + statsPath}})
 	waitBoot(t, term)
 	newWindow(t, term)
 	newWindow(t, term)

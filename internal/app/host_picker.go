@@ -9,15 +9,15 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/layout"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/layout"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The machine picker: which machine a new window's process runs on.
 //
 // A session can hold windows whose processes are on different machines, and
-// until now the only way to make one was `tuios new-window --host`. This is
+// until now the only way to make one was `dartuios new-window --host`. This is
 // the way from inside the UI.
 //
 // It is a picker rather than a prompt because the answer is one of a known
@@ -141,7 +141,7 @@ func (m *OS) OpenHostPicker() {
 	if len(m.HostPickerItems) <= 1 {
 		// Only this machine. Offering a list of one is a dialog that asks a
 		// question with one answer, so the window is simply made here.
-		m.ShowNotification("No other machines are configured. Add one with 'tuios hosts add'",
+		m.ShowNotification("No other machines are configured. Add one with 'dartuios hosts add'",
 			"info", m.Settings.NotificationDuration)
 		return
 	}

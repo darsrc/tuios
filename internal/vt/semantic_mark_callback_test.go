@@ -3,7 +3,7 @@ package vt_test
 import (
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // TestSemanticMarkCallback holds the SemanticMark callback to what a shell

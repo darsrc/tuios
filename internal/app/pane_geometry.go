@@ -3,8 +3,8 @@ package app
 import (
 	"strconv"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The pane geometry inputs (shared borders and the pane gap) are session

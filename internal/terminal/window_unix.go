@@ -78,7 +78,7 @@ func (w *Window) HasForegroundProcess() bool {
 // ForegroundCommand returns the command name of the pane's foreground process
 // group, or "" when it cannot be read.
 //
-// This is the one thing tuios can observe about what is running inside a pane
+// This is the one thing dartuios can observe about what is running inside a pane
 // rather than infer. The pane's program is asked nothing: the kernel is asked
 // which process group owns the terminal, and then what that group is called
 // (procComm: /proc on Linux, a sysctl on macOS). Callers must treat "" as "not

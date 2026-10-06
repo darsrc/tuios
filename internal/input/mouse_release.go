@@ -2,8 +2,8 @@ package input
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/darsrc/tuios/internal/app"
 )
 
 // handleMouseRelease handles mouse release events
@@ -304,13 +304,17 @@ func handleMouseRelease(msg tea.MouseReleaseMsg, o *app.OS) (*app.OS, tea.Cmd) {
 		const dragThreshold = 5
 
 		if dragDistance >= dragThreshold {
-			// Detect edge zones for snapping
-			// The zone rule lives with the bounds rule in internal/app, so the
-			// region the zones sit on and the region a snap fills cannot disagree.
-			snapTo := o.SnapZoneAt(mouse.X, mouse.Y)
+			if o.SnapBesideAt(o.DraggedWindowIndex, mouse.X, mouse.Y) {
+				o.DraggedWindowIndex = -1
+			} else {
+				// Detect edge zones for snapping
+				// The zone rule lives with the bounds rule in internal/app, so the
+				// region the zones sit on and the region a snap fills cannot disagree.
+				snapTo := o.SnapZoneAt(mouse.X, mouse.Y)
 
-			if snapTo != app.NoSnap {
-				o.Snap(o.DraggedWindowIndex, snapTo)
+				if snapTo != app.NoSnap {
+					o.Snap(o.DraggedWindowIndex, snapTo)
+				}
 			}
 		}
 		o.DraggedWindowIndex = -1

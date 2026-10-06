@@ -19,7 +19,7 @@ exe_glob  = ["**/vendor/*/bin/codex", "**/codex"]
 # regions cut at Codex's own prompt marker (after_last_prompt_marker and
 # friends); the rules here read the bottom lines instead. herdr's
 # transcript_viewer rule, which holds the state while the transcript pager is
-# open, has no equivalent: tuios has no "leave the state alone" rule.
+# open, has no equivalent: dartuios has no "leave the state alone" rule.
 [screen]
 enabled   = true
 fold_case = true

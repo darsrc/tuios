@@ -1,8 +1,8 @@
 # Sessions
 
-TUIOS runs in one of two modes: a daemon session that lives in a background
+dartuios runs in one of two modes: a daemon session that lives in a background
 process and survives the client that draws it, and a local session that lives
-and dies with the process you started. A plain `tuios` gives you a daemon
+and dies with the process you started. A plain `dartuios` gives you a daemon
 session. This document covers both, what attaching and detaching do, and exactly
 what does and does not come back after each kind of interruption.
 
@@ -28,7 +28,7 @@ what does and does not come back after each kind of interruption.
 ## Local Sessions
 
 ```bash
-tuios --standalone
+dartuios --standalone
 ```
 
 A local session keeps everything, the window manager, the terminal emulators and
@@ -44,13 +44,13 @@ daemon sessions.
 Ask for a local session in one of three ways:
 
 ```bash
-tuios --standalone           # this one run
-TUIOS_NO_DAEMON=1 tuios      # every tuios in this shell
+dartuios --standalone           # this one run
+DARTUIOS_NO_DAEMON=1 dartuios      # every dartuios in this shell
 ```
 
 ```toml
 [startup]
-daemon = false               # every tuios, from the config file
+daemon = false               # every dartuios, from the config file
 ```
 
 The flag and the environment variable both beat the config file. They are the
@@ -59,44 +59,44 @@ way back to a terminal when the daemon is the thing that will not start.
 ## Daemon Sessions
 
 ```bash
-tuios
+dartuios
 ```
 
-Running `tuios` with no subcommand attaches to a daemon-backed session, and
+Running `dartuios` with no subcommand attaches to a daemon-backed session, and
 starts the daemon first if none is running. This is `startup.daemon`, and it
 ships on. A daemon that will not start does not leave you without a terminal:
-`tuios` says so and runs the session standalone for that one run.
+`dartuios` says so and runs the session standalone for that one run.
 
 An install that already has a config file keeps what that file says. The
-`[startup]` booleans are only read from the file, so `tuios` on an existing
+`[startup]` booleans are only read from the file, so `dartuios` on an existing
 machine goes on doing what it did.
 
-A daemon session lives in a separate `tuios` daemon process. The daemon owns the
+A daemon session lives in a separate `dartuios` daemon process. The daemon owns the
 shell processes (PTYs) and runs a terminal emulator for each one, so output keeps
 being parsed whether or not anyone is watching. A client is only a viewer: it
 subscribes to PTY output, draws it, and forwards your keystrokes back.
 
 ```bash
-tuios new mysession          # create a persistent session and attach to it
-tuios new mysession --detach # create it headless, attach later
-tuios attach mysession       # attach to an existing session
-tuios attach                 # attach to the most recent session
-tuios attach mysession -c    # attach, creating the session if it is missing
-tuios ls                     # list live sessions
-tuios ls --json              # the same list, machine readable
-tuios kill-session mysession # terminate a session and all its windows
+dartuios new mysession          # create a persistent session and attach to it
+dartuios new mysession --detach # create it headless, attach later
+dartuios attach mysession       # attach to an existing session
+dartuios attach                 # attach to the most recent session
+dartuios attach mysession -c    # attach, creating the session if it is missing
+dartuios ls                     # list live sessions
+dartuios ls --json              # the same list, machine readable
+dartuios kill-session mysession # terminate a session and all its windows
 ```
 
 The daemon starts automatically when you create or attach to a session. You can
 also run it explicitly:
 
 ```bash
-tuios daemon                 # run in the foreground (useful for debugging)
-tuios daemon --log-level=messages
-tuios kill-server            # stop the daemon and all its sessions
+dartuios daemon                 # run in the foreground (useful for debugging)
+dartuios daemon --log-level=messages
+dartuios kill-server            # stop the daemon and all its sessions
 ```
 
-`tuios kill-server` is synchronous. It returns only after every session's state
+`dartuios kill-server` is synchronous. It returns only after every session's state
 has been written and the daemon's socket has been removed, so a new daemon can
 be started as soon as it returns.
 
@@ -108,8 +108,8 @@ Every attached client has full control: it sees all output, sends input, and
 manipulates windows. There is no per-client permission tier, so share a session
 only with people you would hand the keyboard to. Local clients are gated by the
 socket's Unix permissions (same user only), SSH clients by SSH authentication,
-and web clients by whatever stands in front of `tuios-web`. See
-[Multi-client sessions](https://tuios.dev/docs/sessions) on the site for
+and web clients by whatever stands in front of `dartuios-web`. See
+[Multi-client sessions](https://dartuios.dev/docs/sessions) on the site for
 the full picture.
 
 ### In-app session switching
@@ -205,16 +205,16 @@ each window it spawns a **fresh shell** in that window's saved working directory
 exists), and writes a dim one-line notice into it:
 
 ```
--- tuios: session restored, fresh shell in /home/you/project --
+-- dartuios: session restored, fresh shell in /home/you/project --
 ```
 
-Restored shells get `TUIOS_RESTORED=1` in their environment, so your shell rc can
+Restored shells get `DARTUIOS_RESTORED=1` in their environment, so your shell rc can
 react to a restore without relying on the banner.
 
 The session itself is marked too, so you can tell a session that just came back
 from one that has been running for days without opening a pane. A restored
-session shows a `restored` tag in `tuios ls`, in the sidebar and in the session
-switcher, and `tuios attach` says so before it hands over the screen:
+session shows a `restored` tag in `dartuios ls`, in the sidebar and in the session
+switcher, and `dartuios attach` says so before it hands over the screen:
 
 ```
 Session "work" was restored: layout came back from saved state; the shells are new.
@@ -232,24 +232,24 @@ prompt is empty.
 Agents are the exception worth knowing about. An agent's process ends like any
 other, and whatever turn it was running does not finish. But a coding agent
 keeps its conversation on disk, and a pane whose harness reported the
-conversation id (the hooks `tuios integration install` sets up do) keeps that
+conversation id (the hooks `dartuios integration install` sets up do) keeps that
 id in the state file. For such a pane, when its harness has a resume command
 (Claude Code, Codex, opencode and more), the restore offers to start the
 harness again on the same conversation, as `daemon.resume_agents` says: `ask`
 (the default) puts a Resume row in the Inbox that you answer with `y`, `auto`
 types `claude --resume <id>` (or the harness's own form) into the new shell,
-and `off` does neither. `tuios resume-agent -w <pane>` does it by hand. See
+and `off` does neither. `dartuios resume-agent -w <pane>` does it by hand. See
 [Agent state](AGENT_STATE.md#resuming-after-a-restart).
 
 Start the daemon with `--no-restore` to skip automatic restoration; saved state
-is left on disk and can still be restored on demand with `tuios resurrect`.
+is left on disk and can still be restored on demand with `dartuios resurrect`.
 
-A session killed with `tuios kill-session` has its saved state deleted, because
+A session killed with `dartuios kill-session` has its saved state deleted, because
 an explicit kill is a deliberate teardown and must not leave the session
 restorable. Quitting a daemon session from inside the client (`Ctrl+B` `q`) kills
 the session and so does the same.
 
-If a state file is corrupt, or was written by a newer TUIOS whose format this
+If a state file is corrupt, or was written by a newer dartuios whose format this
 build does not understand, it is moved into an archive directory rather than
 deleted, and skipped. One bad file can never block the daemon from starting or
 prevent other sessions from being restored.
@@ -257,11 +257,11 @@ prevent other sessions from being restored.
 ## The resurrect Command
 
 ```bash
-tuios resurrect              # list the sessions that can be restored
-tuios resurrect mysession    # restore that session and attach to it
+dartuios resurrect              # list the sessions that can be restored
+dartuios resurrect mysession    # restore that session and attach to it
 ```
 
-With no arguments, `tuios resurrect` prints a table of every saved session with
+With no arguments, `dartuios resurrect` prints a table of every saved session with
 its window count, whether it is already live, and how long ago its state was
 saved.
 
@@ -272,22 +272,22 @@ an alias for the same command.
 
 If the restore fails, the command says which of the reasons applies: there is no
 saved state under that name, the state is corrupt, or the state was written by a
-newer TUIOS. In the last two cases it also prints where the file was archived.
+newer dartuios. In the last two cases it also prints where the file was archived.
 
 ## Windows on Another Machine
 
 A window's process does not have to run on the machine the session is on.
 
 ```bash
-tuios new-window deploy --host build
+dartuios new-window deploy --host build
 ```
 
 The window belongs to the session it was created in. It is drawn here, sized by
 the layout here, and closed here; only the process is on `build`. The machine
-comes from the `[hosts]` table, the same one `tuios hosts` lists, and a name
+comes from the `[hosts]` table, the same one `dartuios hosts` lists, and a name
 that is not in it is refused before anything is started.
 
-A session holding such a window is still an ordinary session, so `tuios ls`, the
+A session holding such a window is still an ordinary session, so `dartuios ls`, the
 verbs, the mailbox, hooks and resurrection keep working on it with no special
 case. What makes the window different is one field recording where its process
 is.
@@ -312,25 +312,25 @@ what the answer means itself. The rules, the manifests and your configuration
 stay with the window.
 
 An agent in such a pane also reports its own state and reads its mail, with the
-same commands and hooks as anywhere. The pane has `TUIOS_PANE_ID`, the window's
-id on the machine holding it, and `TUIOS_PANE_HOSTED=1`, and no `TUIOS_SOCKET`.
-A report the agent sends naming `$TUIOS_PANE_ID` goes to the daemon on the
+same commands and hooks as anywhere. The pane has `DARTUIOS_PANE_ID`, the window's
+id on the machine holding it, and `DARTUIOS_PANE_HOSTED=1`, and no `DARTUIOS_SOCKET`.
+A report the agent sends naming `$DARTUIOS_PANE_ID` goes to the daemon on the
 machine it runs on, which sends it back over a channel the daemon holding the
 window opened, since the link is dialled one way. The daemon holding the window
 runs it as that window and nothing else. Only the process in the pane is
 forwarded for, and only state, meta, session id, its own mail and a wait for its
 own mail cross. See [A pane on another machine](AGENT_STATE.md#a-pane-on-another-machine).
 With a machine holding the window from before this, the pane has no
-`TUIOS_PANE_ID` and a report fails with `protocol_mismatch`; the agent is still
+`DARTUIOS_PANE_ID` and a report fails with `protocol_mismatch`; the agent is still
 detected.
 
-`TUIOS_SESSION` is deliberately not set in such a pane. It would name a session
+`DARTUIOS_SESSION` is deliberately not set in such a pane. It would name a session
 on the other machine, and every tool that reads it addresses a session on the
-machine it is running on. `TUIOS_SESSION_REMOTE` carries the name for anything
+machine it is running on. `DARTUIOS_SESSION_REMOTE` carries the name for anything
 that wants to know where the pane came from.
 
 Sending mail between machines is a different thing and it does work: see
-`tuios send-agent-message -s build:api -w 1 'text'`. When `build`'s link is
+`dartuios send-agent-message -s build:api -w 1 'text'`. When `build`'s link is
 down the message waits on this machine and goes when the link is back; see
 [Mail waiting for another machine](AGENT_STATE.md#mail-waiting-for-another-machine). A reply from the person
 over a link is verified on the far machine only when this machine vouched for
@@ -347,13 +347,13 @@ and it does not know which session the pane belongs to. All of that is here, on
 the daemon that owns the window, exactly as it is for a pane of its own.
 
 That division has a consequence worth knowing: the pane is **not** a window of
-any session on the other machine. It will not appear in `tuios ls` there, and
+any session on the other machine. It will not appear in `dartuios ls` there, and
 it is not enrolled in that machine's size negotiation, so a layout here can
 never shrink a session someone is working in there.
 
 ### What it needs
 
-Both machines need a tuios new enough to speak `open-pane`. An older one
+Both machines need a dartuios new enough to speak `open-pane`. An older one
 refuses by name and says to update it.
 
 ### What the other machine may do here
@@ -381,7 +381,7 @@ may do here](CONFIGURATION.md#what-another-machine-may-do-here) for the table,
   pane is resized a row and back, so a full screen program draws its screen
   again. If the grace runs out first, or the process exits meanwhile, the
   window closes the way it closes when its shell exits. With `hosted_grace =
-  "0"` on the other machine, or a tuios there too old to keep a pane, the
+  "0"` on the other machine, or a dartuios there too old to keep a pane, the
   window ends when the link does, as it always did.
 - **Closing the window ends the process at once.** A window closed on purpose
   tells the other machine with `close-pane`, so its process does not wait out
@@ -398,8 +398,8 @@ may do here](CONFIGURATION.md#what-another-machine-may-do-here) for the table,
 A hosted window keeps the window here and the process there, and ends when the
 link stays down past the far machine's `hosted_grace`. For agent work that
 should outlive the link for good, start the whole session on the other machine
-instead. `tuios fan --host build`, `tuios worktree new --host
-build` and `tuios start-agent -s build:SESSION` make the sessions on build,
+instead. `dartuios fan --host build`, `dartuios worktree new --host
+build` and `dartuios start-agent -s build:SESSION` make the sessions on build,
 where they run and survive like any of build's sessions, and they show in the
 rail under build.
 
@@ -416,9 +416,9 @@ With no `repos_root`, build looks under `~/src`, `~/dev`, `~/code`,
 `~/projects`, `~/repos`, `~/git`, `~/work` and `~/go/src` there. `--clone`
 clones the repository there when build has none.
 
-`tuios worktree pull build:SESSION` brings a worktree session's commits and its
+`dartuios worktree pull build:SESSION` brings a worktree session's commits and its
 uncommitted work into a new worktree session here, on a new branch. Nothing on
-build changes. See [CLI Reference](CLI_REFERENCE.md#tuios-worktree).
+build changes. See [CLI Reference](CLI_REFERENCE.md#dartuios-worktree).
 
 ## Global Sessions
 
@@ -444,7 +444,7 @@ why the picker appears here and nowhere else.
 Make one from the `+` on the group header, or from the shell:
 
 ```bash
-tuios new deploy --global
+dartuios new deploy --global
 ```
 
 A global session is created with no windows, since the first pane is the one you
@@ -459,24 +459,24 @@ already exist stay listed.
 
 ## Machines on a Tailnet
 
-If this machine is on a [Tailscale](https://tailscale.com) tailnet, tuios can
+If this machine is on a [Tailscale](https://tailscale.com) tailnet, dartuios can
 list the machines on it and offer them as addresses:
 
 ```bash
-tuios hosts tailnet
+dartuios hosts tailnet
 ```
 
 ```
    arch-btw          arch-btw.example.ts.net          offline
  + ente              ente.example.ts.net
  = forgejo           forgejo.example.ts.net           already the host forgejo
-   my-phone          my-phone.example.ts.net          cannot run tuios (iOS)
+   my-phone          my-phone.example.ts.net          cannot run dartuios (iOS)
 ```
 
 Add one:
 
 ```bash
-tuios hosts add ente --tailnet
+dartuios hosts add ente --tailnet
 ```
 
 **Nothing is added on its own.** This is the same rule the ssh_config aliases
@@ -485,12 +485,12 @@ not what to connect to.
 
 **Nothing new is dialled either.** A host added this way is reached over ssh like
 every other host. A MagicDNS name resolves like any other name, so the tailnet is
-how the name resolves and how the traffic is carried, and tuios does not open a
+how the name resolves and how the traffic is carried, and dartuios does not open a
 tailnet connection itself. That also means ssh over a tailnet already worked
 before this existed: you could always write the MagicDNS name as an address by
 hand. This saves you the typing and tells you what is there.
 
-tuios asks the `tailscaled` already running on this machine, through the local
+dartuios asks the `tailscaled` already running on this machine, through the local
 API, which is the same thing `tailscale status` asks. It needs no root, no
 auth key, and no operator setting. A machine with no tailscale on it gets an
 empty list and behaves exactly as it did before.
@@ -498,7 +498,7 @@ empty list and behaves exactly as it did before.
 Every machine is listed, offered or not, and one that is not offered says why.
 By default a machine is left out when it is offline, when it is this machine,
 when it was shared in from another tailnet, or when it runs an operating system
-that cannot host a tuios daemon.
+that cannot host a dartuios daemon.
 
 Change any of that in the `[tailscale]` table:
 
@@ -533,7 +533,7 @@ socket = ""
 build = "root"
 ```
 
-For a script or an agent, `tuios hosts tailnet --json` gives every machine with
+For a script or an agent, `dartuios hosts tailnet --json` gives every machine with
 `offered` and, when it is false, `skipped` saying which rule left it out.
 
 ## Copying
@@ -559,8 +559,8 @@ one moves down a tall narrow block, which the other three cross in an instant.
 
 The same table holds the colours a pane marks text with: the selection, search
 matches, the match under the cursor, and the copy mode cursor. They follow the
-theme nowhere else in tuios, because they are the one part of a pane's colours
-tuios chooses rather than the program running in it, so they are settings. A
+theme nowhere else in dartuios, because they are the one part of a pane's colours
+dartuios chooses rather than the program running in it, so they are settings. A
 text colour left empty keeps the colour the program wrote, and tints only the
 background behind it.
 
@@ -591,9 +591,9 @@ a match in a pane are the same colour.
 
 | What | Path |
 |---|---|
-| Saved session state | `$XDG_STATE_HOME/tuios/sessions/<name>.json` (typically `~/.local/state/tuios/sessions/`) |
-| Archived bad state | `$XDG_STATE_HOME/tuios/sessions/archive/`, pruned after 14 days |
-| Daemon socket | `$XDG_RUNTIME_DIR/tuios/tuios.sock`, falling back to `/tmp/tuios-<uid>/tuios.sock` |
+| Saved session state | `$XDG_STATE_HOME/dartuios/sessions/<name>.json` (typically `~/.local/state/dartuios/sessions/`) |
+| Archived bad state | `$XDG_STATE_HOME/dartuios/sessions/archive/`, pruned after 14 days |
+| Daemon socket | `$XDG_RUNTIME_DIR/dartuios/dartuios.sock`, falling back to `/tmp/dartuios-<uid>/dartuios.sock` |
 | Daemon PID file | the socket path with `.pid` appended |
 
 The socket lives in the runtime directory and does not survive a reboot, which is
@@ -603,7 +603,7 @@ reboot.
 
 ### Running a separate daemon
 
-`XDG_RUNTIME_DIR` chooses the daemon every `tuios` command reaches (on Windows,
+`XDG_RUNTIME_DIR` chooses the daemon every `dartuios` command reaches (on Windows,
 `LOCALAPPDATA`). To run a second daemon, for a test or a script, give it its own
 runtime and state directories, so it has its own socket and keeps its own saved
 sessions:
@@ -611,15 +611,15 @@ sessions:
 ```bash
 export XDG_RUNTIME_DIR=/tmp/scratch/run XDG_STATE_HOME=/tmp/scratch/state
 mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
-tuios new scratch --detach      # starts a daemon at /tmp/scratch/run/tuios/tuios.sock
-tuios ls                        # that daemon's sessions
-tuios kill-server               # stops it
+dartuios new scratch --detach      # starts a daemon at /tmp/scratch/run/dartuios/dartuios.sock
+dartuios ls                        # that daemon's sessions
+dartuios kill-server               # stops it
 ```
 
-`TUIOS_SOCKET` does not choose a daemon. tuios sets it in every pane to the
+`DARTUIOS_SOCKET` does not choose a daemon. dartuios sets it in every pane to the
 socket of the daemon that runs the pane, so a program can find that daemon, and
 every process started from the pane inherits it. A command that finds
-`TUIOS_SOCKET` naming a different socket where no daemon is listening refuses
+`DARTUIOS_SOCKET` naming a different socket where no daemon is listening refuses
 and says what to set, because that is someone expecting it to select a daemon.
 When it names the socket the command uses, or another live daemon (a script in
 a pane that set its own `XDG_RUNTIME_DIR`), the command runs against the daemon
@@ -645,11 +645,11 @@ a pane that set its own `XDG_RUNTIME_DIR`), the command runs against the daemon
   attach from.
 - **Panes never inherit `TMUX` or `TMUX_PANE`.** Every pane starts from the
   environment of the process that spawns it, less these two, whether it is a
-  daemon pane, a pane hosted for another machine, or a standalone pane. A tuios
+  daemon pane, a pane hosted for another machine, or a standalone pane. A dartuios
   started from inside tmux used to pass them on, and a program in the pane then
   believed it was in a tmux pane: Codex wrapped its notifications in tmux
-  passthrough, which tuios drops, and an agent that opens panes through tmux
-  reached the outer tmux. Running tmux inside a tuios pane still works, and no
+  passthrough, which dartuios drops, and an agent that opens panes through tmux
+  reached the outer tmux. Running tmux inside a dartuios pane still works, and no
   longer warns about nesting.
 - **Resurrection restores structure, not work.** It is a way to get your layout
   and directories back, not a way to survive a crash without losing anything.

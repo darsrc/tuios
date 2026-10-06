@@ -10,18 +10,18 @@ import (
 	tea "charm.land/bubbletea/v2"
 	uv "github.com/charmbracelet/ultraviolet"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The host terminal's own colours.
 //
 // A program that picks a light or a dark palette asks the terminal for its
 // background with OSC 11, and some ask for the default text colour (OSC 10)
-// and the sixteen ANSI colours (OSC 4) too. Inside tuios the terminal that
-// answers is a pane's emulator, and with no tuios theme and no pane background
+// and the sixteen ANSI colours (OSC 4) too. Inside dartuios the terminal that
+// answers is a pane's emulator, and with no dartuios theme and no pane background
 // it used to answer with its own defaults: a black background and a white
-// foreground, whatever the terminal around tuios really was. Codex, Claude
+// foreground, whatever the terminal around dartuios really was. Codex, Claude
 // Code and helix then drew their dark palettes on a light terminal.
 //
 // So each client asks its own terminal. The local client's startup probe
@@ -41,7 +41,7 @@ import (
 // The local client also follows the terminal's light and dark switch. It turns
 // on mode 2031, and a terminal that supports it (ghostty, kitty, contour and
 // others) then reports every change of the system appearance with DSR 997.
-// tuios answers each report by asking for the colours again, since the new
+// dartuios answers each report by asking for the colours again, since the new
 // scheme's background is what matters and the report only says light or dark.
 // The mode is only turned on for a local client, because only the local
 // client turns it off again when it exits (terminal.ResetTerminal): an SSH or

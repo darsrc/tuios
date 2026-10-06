@@ -30,15 +30,15 @@ func TestAssetName(t *testing.T) {
 		binary, version, goos, goarch string
 		want                          string
 	}{
-		{"tuios", "v0.7.0", "linux", "arm", ""},
-		{"tuios", "v0.7.0", "linux", "amd64", "tuios_0.7.0_Linux_x86_64.tar.gz"},
-		{"tuios", "0.7.0", "linux", "amd64", "tuios_0.7.0_Linux_x86_64.tar.gz"},
-		{"tuios", "v0.7.0", "darwin", "arm64", "tuios_0.7.0_Darwin_arm64.tar.gz"},
-		{"tuios", "v0.7.0", "windows", "amd64", "tuios_0.7.0_Windows_x86_64.tar.gz"},
-		{"tuios", "v0.7.0", "linux", "386", "tuios_0.7.0_Linux_i386.tar.gz"},
-		{"tuios", "v0.7.0", "freebsd", "arm64", "tuios_0.7.0_Freebsd_arm64.tar.gz"},
-		{"tuios-web", "v0.7.0", "linux", "amd64", "tuios-web_0.7.0_Linux_x86_64.tar.gz"},
-		{"tuios-web", "v1.2.3-rc1", "darwin", "amd64", "tuios-web_1.2.3-rc1_Darwin_x86_64.tar.gz"},
+		{"dartuios", "v0.7.0", "linux", "arm", ""},
+		{"dartuios", "v0.7.0", "linux", "amd64", "dartuios_0.7.0_Linux_x86_64.tar.gz"},
+		{"dartuios", "0.7.0", "linux", "amd64", "dartuios_0.7.0_Linux_x86_64.tar.gz"},
+		{"dartuios", "v0.7.0", "darwin", "arm64", "dartuios_0.7.0_Darwin_arm64.tar.gz"},
+		{"dartuios", "v0.7.0", "windows", "amd64", "dartuios_0.7.0_Windows_x86_64.tar.gz"},
+		{"dartuios", "v0.7.0", "linux", "386", "dartuios_0.7.0_Linux_i386.tar.gz"},
+		{"dartuios", "v0.7.0", "freebsd", "arm64", "dartuios_0.7.0_Freebsd_arm64.tar.gz"},
+		{"dartuios-web", "v0.7.0", "linux", "amd64", "dartuios-web_0.7.0_Linux_x86_64.tar.gz"},
+		{"dartuios-web", "v1.2.3-rc1", "darwin", "amd64", "dartuios-web_1.2.3-rc1_Darwin_x86_64.tar.gz"},
 	}
 	for _, tc := range cases {
 		got, err := AssetName(tc.binary, tc.version, tc.goos, tc.goarch)
@@ -65,8 +65,8 @@ func TestAssetName(t *testing.T) {
 // fails, because the file uses two.
 func TestParseChecksums(t *testing.T) {
 	file := "" +
-		"1111111111111111111111111111111111111111111111111111111111111111  tuios_0.7.0_Linux_x86_64.tar.gz\n" +
-		"2222222222222222222222222222222222222222222222222222222222222222  tuios-web_0.7.0_Linux_x86_64.tar.gz\n" +
+		"1111111111111111111111111111111111111111111111111111111111111111  dartuios_0.7.0_Linux_x86_64.tar.gz\n" +
+		"2222222222222222222222222222222222222222222222222222222222222222  dartuios-web_0.7.0_Linux_x86_64.tar.gz\n" +
 		"\n" +
 		"# a comment nobody promised would not be here\n"
 
@@ -77,8 +77,8 @@ func TestParseChecksums(t *testing.T) {
 	if len(sums) != 2 {
 		t.Fatalf("parsed %d digests, want 2: %v", len(sums), sums)
 	}
-	if sums["tuios_0.7.0_Linux_x86_64.tar.gz"] != strings.Repeat("1", 64) {
-		t.Errorf("wrong digest for the tuios archive: %q", sums["tuios_0.7.0_Linux_x86_64.tar.gz"])
+	if sums["dartuios_0.7.0_Linux_x86_64.tar.gz"] != strings.Repeat("1", 64) {
+		t.Errorf("wrong digest for the dartuios archive: %q", sums["dartuios_0.7.0_Linux_x86_64.tar.gz"])
 	}
 
 	// A file with nothing readable in it must not parse as "no digests, so
@@ -99,18 +99,18 @@ func TestParseChecksums(t *testing.T) {
 func TestVerify(t *testing.T) {
 	data := []byte("the archive bytes")
 	sum := sha256.Sum256(data)
-	sums := Checksums{"tuios_0.7.0_Linux_x86_64.tar.gz": hex.EncodeToString(sum[:])}
+	sums := Checksums{"dartuios_0.7.0_Linux_x86_64.tar.gz": hex.EncodeToString(sum[:])}
 
-	if err := sums.Verify("tuios_0.7.0_Linux_x86_64.tar.gz", data); err != nil {
+	if err := sums.Verify("dartuios_0.7.0_Linux_x86_64.tar.gz", data); err != nil {
 		t.Errorf("the published archive did not verify: %v", err)
 	}
 
-	err := sums.Verify("tuios_0.7.0_Linux_x86_64.tar.gz", []byte("something else"))
+	err := sums.Verify("dartuios_0.7.0_Linux_x86_64.tar.gz", []byte("something else"))
 	if _, ok := errors.AsType[*ChecksumMismatch](err); !ok {
 		t.Errorf("altered bytes gave %v, want a mismatch", err)
 	}
 
-	if err := sums.Verify("tuios_0.7.0_Darwin_arm64.tar.gz", data); !errors.Is(err, ErrNoChecksum) {
+	if err := sums.Verify("dartuios_0.7.0_Darwin_arm64.tar.gz", data); !errors.Is(err, ErrNoChecksum) {
 		t.Errorf("an unpublished name gave %v, want ErrNoChecksum", err)
 	}
 }
@@ -149,10 +149,10 @@ func tarGz(t *testing.T, entries map[string]string) []byte {
 // nested case fails.
 func TestBinaryFromArchive(t *testing.T) {
 	for name, entries := range map[string]map[string]string{
-		"among other files":          {"README.md": "readme", "LICENSE": "license", "tuios": "ELF binary"},
-		"under a hostile entry path": {"../../../etc/tuios": "ELF binary"},
+		"among other files":          {"README.md": "readme", "LICENSE": "license", "dartuios": "ELF binary"},
+		"under a hostile entry path": {"../../../etc/dartuios": "ELF binary"},
 	} {
-		got, err := BinaryFromArchive(bytes.NewReader(tarGz(t, entries)), "tuios")
+		got, err := BinaryFromArchive(bytes.NewReader(tarGz(t, entries)), "dartuios")
 		if err != nil {
 			t.Errorf("%s: BinaryFromArchive: %v", name, err)
 			continue
@@ -168,7 +168,7 @@ func TestBinaryFromArchive(t *testing.T) {
 //
 // Negative control: ignore the gzip error and this panics or misreports.
 func TestBinaryFromArchiveRefusesRubbish(t *testing.T) {
-	if _, err := BinaryFromArchive(strings.NewReader("<html>404</html>"), "tuios"); err == nil {
+	if _, err := BinaryFromArchive(strings.NewReader("<html>404</html>"), "dartuios"); err == nil {
 		t.Error("an HTML page was accepted as an archive")
 	}
 }

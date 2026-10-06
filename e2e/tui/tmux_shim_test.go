@@ -11,7 +11,7 @@ import (
 )
 
 // TestTmuxShimOpensATeammatePane drives the tmux shim the way Claude Code
-// agent teams drive tmux: a command started under tuios tmux-shim asks tmux
+// agent teams drive tmux: a command started under dartuios tmux-shim asks tmux
 // for its pane and window, splits off a pane running the cat placeholder,
 // names it, and respawns it with the teammate's command. The attached client
 // must draw the second pane, the pane must carry the name, and the respawned
@@ -49,8 +49,8 @@ func TestTmuxShimOpensATeammatePane(t *testing.T) {
 		t.Fatal(err)
 	}
 	// The quotes keep the typed line itself from matching the marker.
-	line := tuiosBin + " tmux-shim -- sh " + script + ` || echo SHIM_"FAILED"` + "\n"
-	if o, err := tuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
+	line := dartuiosBin + " tmux-shim -- sh " + script + ` || echo SHIM_"FAILED"` + "\n"
+	if o, err := dartuiosCLI(t, base, "send-text", "-s", "e2e-ctrlp", line); err != nil {
 		t.Fatalf("send-text: %v\n%s", err, o)
 	}
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -74,7 +74,7 @@ func TestTmuxShimOpensATeammatePane(t *testing.T) {
 	}
 	teammate := lines[2]
 
-	panes, err := tuiosCLI(t, base, "list-windows", "-s", "e2e-ctrlp", "--json")
+	panes, err := dartuiosCLI(t, base, "list-windows", "-s", "e2e-ctrlp", "--json")
 	if err != nil {
 		t.Fatalf("list-windows: %v\n%s", err, panes)
 	}
@@ -92,7 +92,7 @@ func TestTmuxShimOpensATeammatePane(t *testing.T) {
 	deadline := time.Now().Add(shellTimeout)
 	var agents string
 	for time.Now().Before(deadline) {
-		agents, _ = tuiosCLI(t, base, "list-agents", "-s", "e2e-ctrlp", "--json")
+		agents, _ = dartuiosCLI(t, base, "list-agents", "-s", "e2e-ctrlp", "--json")
 		if strings.Contains(agents, `"claude-code"`) && strings.Contains(agents, "mate-pane") {
 			break
 		}

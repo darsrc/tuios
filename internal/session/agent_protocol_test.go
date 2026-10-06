@@ -14,7 +14,7 @@ func fakeProtoExe(t *testing.T, d *Daemon) string {
 	t.Helper()
 	dir := t.TempDir()
 	out := filepath.Join(dir, "argv")
-	script := filepath.Join(dir, "tuios")
+	script := filepath.Join(dir, "dartuios")
 	body := "#!/bin/sh\nfor a in \"$@\"; do printf '%s\\n' \"$a\"; done > " + out + "\nwhile IFS= read -r line; do :; done\n"
 	if err := os.WriteFile(script, []byte(body), 0o755); err != nil {
 		t.Fatal(err)

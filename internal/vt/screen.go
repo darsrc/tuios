@@ -647,7 +647,7 @@ func (s *Screen) blankWideRunesCutByMargins() {
 
 // withBlankPen runs fn with the pen background cleared, so any erase or scroll
 // it performs leaves default-background cells behind instead of inheriting the
-// guest's colour. For screen edits tuios synthesises rather than replays.
+// guest's colour. For screen edits dartuios synthesises rather than replays.
 func (s *Screen) withBlankPen(fn func()) {
 	bg := s.cur.Pen.Bg
 	s.cur.Pen.Bg = nil

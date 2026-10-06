@@ -1,7 +1,7 @@
 name: Lint
 
 # Static analysis on every pull request: golangci-lint with the repository's
-# .golangci.yml, govulncheck for known vulnerabilities in code tuios reaches,
+# .golangci.yml, govulncheck for known vulnerabilities in code dartuios reaches,
 # and go vet on the platforms the release builds for but no test job runs on.
 # The unit test workflow covers gofmt, tidy and vet on linux.
 

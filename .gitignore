@@ -1,12 +1,12 @@
-tuios
-tuios-web
-tuios.exe
+dartuios
+dartuios-web
+dartuios.exe
 dist/
 *.mov
 .DS_Store
-!tuios/
-!cmd/tuios/
-!cmd/tuios-web/
+!dartuios/
+!cmd/dartuios/
+!cmd/dartuios-web/
 .direnv/
 result
 *.backup
@@ -39,3 +39,5 @@ zz_*_test.go
 .wasm-build/
 /learn-web/
 .zig-cache/
+/DAR-TUI-PLATFORM-SPEC.md
+/DAR-TUI-STYLE-SKILL.md

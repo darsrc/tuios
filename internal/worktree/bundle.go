@@ -105,7 +105,7 @@ func Bundle(path, branch, exclude, dest string) error {
 // The patch is read through a temporary index, so the worktree's own index
 // is not touched: what the agent staged stays staged, and nothing is added.
 func WorkingPatch(path, dest string) (int, error) {
-	tmp, err := os.CreateTemp("", "tuios-index-*")
+	tmp, err := os.CreateTemp("", "dartuios-index-*")
 	if err != nil {
 		return 0, err
 	}

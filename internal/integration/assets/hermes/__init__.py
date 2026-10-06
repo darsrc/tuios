@@ -1,13 +1,13 @@
-"""Hermes plugin installed by tuios to report the session a pane runs."""
+"""Hermes plugin installed by dartuios to report the session a pane runs."""
 
-# installed by tuios
-# managed by tuios; `tuios integration install hermes` overwrites this file and
-# `tuios integration uninstall hermes` removes it.
-# TUIOS_INTEGRATION_ID=hermes
-# TUIOS_INTEGRATION_VERSION=__TUIOS_VERSION__
+# installed by dartuios
+# managed by dartuios; `dartuios integration install hermes` overwrites this file and
+# `dartuios integration uninstall hermes` removes it.
+# DARTUIOS_INTEGRATION_ID=hermes
+# DARTUIOS_INTEGRATION_VERSION=__DARTUIOS_VERSION__
 #
-# Reports the session id of an interactive Hermes session to the tuios pane it
-# runs in, through `tuios agent-hook hermes`, so the pane can be resumed. The
+# Reports the session id of an interactive Hermes session to the dartuios pane it
+# runs in, through `dartuios agent-hook hermes`, so the pane can be resumed. The
 # pane's state is left to its screen rules.
 
 from __future__ import annotations
@@ -16,12 +16,12 @@ import json
 import os
 import subprocess
 
-_TUIOS = __TUIOS_COMMAND__
+_dartuios = __DARTUIOS_COMMAND__
 _INTERACTIVE = {"cli", "tui", "desktop", "acp"}
 
 
 def _enabled() -> bool:
-    return os.environ.get("TUIOS_ENV") == "1" or bool(os.environ.get("TUIOS_AGENT"))
+    return os.environ.get("DARTUIOS_ENV") == "1" or bool(os.environ.get("DARTUIOS_AGENT"))
 
 
 def _report(event: str, **kwargs) -> None:
@@ -41,7 +41,7 @@ def _report(event: str, **kwargs) -> None:
         }
         if os.name == "nt":
             options["creationflags"] = subprocess.CREATE_NO_WINDOW
-        subprocess.run([_TUIOS, "agent-hook", "hermes", "--integration", "__TUIOS_VERSION__"], **options)
+        subprocess.run([_dartuios, "agent-hook", "hermes", "--integration", "__DARTUIOS_VERSION__"], **options)
     except Exception:
         # A report that cannot be sent must never break Hermes.
         pass

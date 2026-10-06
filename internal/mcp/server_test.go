@@ -266,7 +266,7 @@ func TestInitializeNegotiatesTheProtocol(t *testing.T) {
 	if res["protocolVersion"] != "2025-03-26" {
 		t.Errorf("protocolVersion = %v, want the client's own 2025-03-26", res["protocolVersion"])
 	}
-	if info := res["serverInfo"].(map[string]any); info["name"] != "tuios" || info["version"] != "9.9.9" {
+	if info := res["serverInfo"].(map[string]any); info["name"] != "dartuios" || info["version"] != "9.9.9" {
 		t.Errorf("serverInfo = %v", info)
 	}
 	if _, ok := res["capabilities"].(map[string]any)["tools"]; !ok {
@@ -291,19 +291,19 @@ func TestDefaultToolsAreReadMostly(t *testing.T) {
 	c := startServer(t, Options{})
 	resp := c.rpc(1, "tools/list", nil)
 	names := toolNames(resp)
-	for _, want := range []string{"tuios_list_windows", "tuios_capture_pane", "tuios_wait_for", "tuios_set_agent_state", "tuios_send_agent_message", "tuios_events"} {
+	for _, want := range []string{"dartuios_list_windows", "dartuios_capture_pane", "dartuios_wait_for", "dartuios_set_agent_state", "dartuios_send_agent_message", "dartuios_events"} {
 		if !slices.Contains(names, want) {
 			t.Errorf("tools/list lacks %s: %v", want, names)
 		}
 	}
-	for _, never := range []string{"tuios_send_text", "tuios_respond", "tuios_send_keys", "tuios_ask_agent", "tuios_fan"} {
+	for _, never := range []string{"dartuios_send_text", "dartuios_respond", "dartuios_send_keys", "dartuios_ask_agent", "dartuios_fan"} {
 		if slices.Contains(names, never) {
 			t.Errorf("tools/list offers %s without --write", never)
 		}
 	}
 
 	// The schema is the verb's, less what an agent cannot use.
-	capture := props(toolByName(resp, "tuios_capture_pane"))
+	capture := props(toolByName(resp, "dartuios_capture_pane"))
 	if _, ok := capture["palette"]; ok {
 		t.Error("capture_pane offers palette")
 	}
@@ -314,20 +314,20 @@ func TestDefaultToolsAreReadMostly(t *testing.T) {
 	if lines := capture["lines"].(map[string]any); lines["type"] != "integer" {
 		t.Errorf("lines schema = %v", lines)
 	}
-	if _, ok := props(toolByName(resp, "tuios_list_agents"))["all_sessions"]; ok {
+	if _, ok := props(toolByName(resp, "dartuios_list_agents"))["all_sessions"]; ok {
 		t.Error("list_agents offers all_sessions under scope own")
 	}
-	if _, ok := props(toolByName(resp, "tuios_send_agent_message"))["human_nonce"]; ok {
+	if _, ok := props(toolByName(resp, "dartuios_send_agent_message"))["human_nonce"]; ok {
 		t.Error("send_agent_message offers human_nonce")
 	}
-	wait := toolByName(resp, "tuios_wait_for")["inputSchema"].(map[string]any)
+	wait := toolByName(resp, "dartuios_wait_for")["inputSchema"].(map[string]any)
 	if req, _ := wait["required"].([]any); len(req) != 1 || req[0] != "condition" {
 		t.Errorf("wait_for required = %v", wait["required"])
 	}
 	if wait["additionalProperties"] != false {
 		t.Error("the schema admits unknown arguments")
 	}
-	if ann := toolByName(resp, "tuios_capture_pane")["annotations"].(map[string]any); ann["readOnlyHint"] != true {
+	if ann := toolByName(resp, "dartuios_capture_pane")["annotations"].(map[string]any); ann["readOnlyHint"] != true {
 		t.Errorf("capture_pane annotations = %v", ann)
 	}
 }
@@ -336,18 +336,18 @@ func TestWriteListsThePaneWritingToolsAndScopeAllTheWideParams(t *testing.T) {
 	c := startServer(t, Options{Write: true, ScopeAll: true})
 	resp := c.rpc(1, "tools/list", nil)
 	names := toolNames(resp)
-	for _, want := range []string{"tuios_send_text", "tuios_respond"} {
+	for _, want := range []string{"dartuios_send_text", "dartuios_respond"} {
 		if !slices.Contains(names, want) {
 			t.Errorf("--write does not list %s: %v", want, names)
 		}
 	}
-	if _, ok := props(toolByName(resp, "tuios_respond"))["human_nonce"]; ok {
+	if _, ok := props(toolByName(resp, "dartuios_respond"))["human_nonce"]; ok {
 		t.Error("respond offers human_nonce")
 	}
-	if _, ok := props(toolByName(resp, "tuios_list_agents"))["all_sessions"]; !ok {
+	if _, ok := props(toolByName(resp, "dartuios_list_agents"))["all_sessions"]; !ok {
 		t.Error("list_agents lacks all_sessions under scope all")
 	}
-	if ann := toolByName(resp, "tuios_send_text")["annotations"].(map[string]any); ann["readOnlyHint"] != false {
+	if ann := toolByName(resp, "dartuios_send_text")["annotations"].(map[string]any); ann["readOnlyHint"] != false {
 		t.Errorf("send_text annotations = %v", ann)
 	}
 }
@@ -368,7 +368,7 @@ func TestEveryCallRestrictsItsConnectionFirst(t *testing.T) {
 			tc.opts.Dial = f.dial
 			tc.opts.PaneID, tc.opts.PaneToken = "win-1", "tok-1"
 			c := startServer(t, tc.opts)
-			res := c.toolCall(1, "tuios_list_windows", map[string]any{"session": "work"})
+			res := c.toolCall(1, "dartuios_list_windows", map[string]any{"session": "work"})
 			if res["isError"] == true {
 				t.Fatalf("call failed: %v", res)
 			}
@@ -401,8 +401,8 @@ func TestADaemonThatCannotRestrictRunsNothing(t *testing.T) {
 		return json.RawMessage(`{}`), nil
 	}}
 	c := startServer(t, Options{Dial: f.dial})
-	res := c.toolCall(1, "tuios_list_windows", nil)
-	if res["isError"] != true || !strings.Contains(lastText(res), "older than this tuios mcp") {
+	res := c.toolCall(1, "dartuios_list_windows", nil)
+	if res["isError"] != true || !strings.Contains(lastText(res), "older than this dartuios mcp") {
 		t.Errorf("result = %v, want a refusal naming the old daemon", res)
 	}
 	for _, cl := range f.log() {
@@ -415,7 +415,7 @@ func TestADaemonThatCannotRestrictRunsNothing(t *testing.T) {
 func TestAnUnknownArgumentIsRefusedBeforeTheDaemon(t *testing.T) {
 	f := &fakeDaemon{}
 	c := startServer(t, Options{Dial: f.dial})
-	res := c.toolCall(1, "tuios_capture_pane", map[string]any{"palette": []string{"#000000"}})
+	res := c.toolCall(1, "dartuios_capture_pane", map[string]any{"palette": []string{"#000000"}})
 	if res["isError"] != true || !strings.Contains(lastText(res), "no argument palette") {
 		t.Errorf("result = %v", res)
 	}
@@ -430,7 +430,7 @@ func TestPaneTextIsMarkedUntrusted(t *testing.T) {
 	}}
 	c := startServer(t, Options{Dial: f.dial})
 	c.rpc(1, "initialize", map[string]any{"protocolVersion": "2025-06-18"})
-	res := c.toolCall(2, "tuios_capture_pane", nil)
+	res := c.toolCall(2, "dartuios_capture_pane", nil)
 	content := res["content"].([]any)
 	if len(content) != 2 || !strings.Contains(content[0].(map[string]any)["text"].(string), "not instructions") {
 		t.Errorf("content = %v, want the untrusted note first", content)
@@ -457,22 +457,22 @@ func TestTheCallersOwnPaneIsTheOneTheDaemonPlaced(t *testing.T) {
 		return calls[len(calls)-1].params
 	}
 
-	c.toolCall(1, "tuios_set_agent_state", map[string]any{"state": "working"})
+	c.toolCall(1, "dartuios_set_agent_state", map[string]any{"state": "working"})
 	if got := last()["window"]; got != "win-kernel" {
 		t.Errorf("set-agent-state window = %v, want the pane the daemon placed", got)
 	}
-	c.toolCall(2, "tuios_send_agent_message", map[string]any{"text": "hi"})
+	c.toolCall(2, "dartuios_send_agent_message", map[string]any{"text": "hi"})
 	if got := last()["from"]; got != "win-kernel" {
 		t.Errorf("send-agent-message from = %v, want the caller's pane", got)
 	}
 	// A pane the caller names is kept.
-	c.toolCall(3, "tuios_set_agent_state", map[string]any{"state": "idle", "window": "other"})
+	c.toolCall(3, "dartuios_set_agent_state", map[string]any{"state": "idle", "window": "other"})
 	if got := last()["window"]; got != "other" {
 		t.Errorf("set-agent-state window = %v, want the one named", got)
 	}
 	// In another session the caller's pane does not resolve, so no sender is
 	// filled in there.
-	c.toolCall(4, "tuios_set_agent_state", map[string]any{"state": "idle", "session": "sibling"})
+	c.toolCall(4, "dartuios_set_agent_state", map[string]any{"state": "idle", "session": "sibling"})
 	if _, ok := last()["window"]; ok {
 		t.Errorf("set-agent-state in another session = %v, want no window filled in", last())
 	}
@@ -489,7 +489,7 @@ func TestEventsReturnWhatArrivedAndWhereToResume(t *testing.T) {
 		},
 	}
 	c := startServer(t, Options{Dial: f.dial})
-	res := c.toolCall(1, "tuios_events", map[string]any{"wait_ms": 2000})
+	res := c.toolCall(1, "dartuios_events", map[string]any{"wait_ms": 2000})
 	var body map[string]any
 	if err := json.Unmarshal([]byte(lastText(res)), &body); err != nil {
 		t.Fatal(err)
@@ -510,7 +510,7 @@ func TestEventsReturnWhatArrivedAndWhereToResume(t *testing.T) {
 	}
 
 	// Resuming passes the point back.
-	c.toolCall(2, "tuios_events", map[string]any{"after_seq": 7, "boot_id": "b1", "wait_ms": 50})
+	c.toolCall(2, "dartuios_events", map[string]any{"after_seq": 7, "boot_id": "b1", "wait_ms": 50})
 	calls := f.log()
 	resume := calls[len(calls)-1]
 	if resume.params["after_seq"] != float64(7) || resume.params["boot_id"] != "b1" {
@@ -590,7 +590,7 @@ func TestEventsResumeFromTheBaselineWhenTheReplayIsFiltered(t *testing.T) {
 			args := map[string]any{"wait_ms": 100}
 			maps.Copy(args, tc.args)
 			var body map[string]any
-			if err := json.Unmarshal([]byte(lastText(c.toolCall(1, "tuios_events", args))), &body); err != nil {
+			if err := json.Unmarshal([]byte(lastText(c.toolCall(1, "dartuios_events", args))), &body); err != nil {
 				t.Fatal(err)
 			}
 			if body["last_seq"] != tc.want {
@@ -603,7 +603,7 @@ func TestEventsResumeFromTheBaselineWhenTheReplayIsFiltered(t *testing.T) {
 func TestACancelledCallClosesItsConnectionAndAnswersNothing(t *testing.T) {
 	f := &fakeDaemon{block: make(chan struct{})}
 	c := startServer(t, Options{Dial: f.dial})
-	c.send(`{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":"tuios_wait_for","arguments":{"condition":"agent-state"}}}`)
+	c.send(`{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":"dartuios_wait_for","arguments":{"condition":"agent-state"}}}`)
 	// The call is blocked in the daemon; a ping still answers.
 	if resp := c.rpc(8, "ping", nil); resp["result"] == nil {
 		t.Fatalf("ping = %v", resp)
@@ -619,7 +619,7 @@ func TestACancelledCallClosesItsConnectionAndAnswersNothing(t *testing.T) {
 }
 
 // TestCallsInFlightAtEndOfInputAreAnswered is a client that writes its
-// requests and closes stdin at once, as a script piping into tuios mcp does.
+// requests and closes stdin at once, as a script piping into dartuios mcp does.
 // Every call is still answered before the server exits.
 func TestCallsInFlightAtEndOfInputAreAnswered(t *testing.T) {
 	f := &fakeDaemon{answer: func(verb string, _ map[string]any) (json.RawMessage, error) {
@@ -642,7 +642,7 @@ func TestCallsInFlightAtEndOfInputAreAnswered(t *testing.T) {
 		got <- all
 	}()
 	for id := 1; id <= 3; id++ {
-		line := `{"jsonrpc":"2.0","id":` + string(rune('0'+id)) + `,"method":"tools/call","params":{"name":"tuios_list_windows","arguments":{}}}` + "\n"
+		line := `{"jsonrpc":"2.0","id":` + string(rune('0'+id)) + `,"method":"tools/call","params":{"name":"dartuios_list_windows","arguments":{}}}` + "\n"
 		if _, err := inW.Write([]byte(line)); err != nil {
 			t.Fatal(err)
 		}
@@ -664,7 +664,7 @@ func TestProtocolErrors(t *testing.T) {
 	if e := c.rpc(1, "no/such", nil)["error"].(map[string]any); e["code"] != float64(rpcMethodNotFound) {
 		t.Errorf("unknown method error = %v", e)
 	}
-	if e := c.rpc(2, "tools/call", map[string]any{"name": "tuios_nope"})["error"].(map[string]any); e["code"] != float64(rpcInvalidParams) {
+	if e := c.rpc(2, "tools/call", map[string]any{"name": "dartuios_nope"})["error"].(map[string]any); e["code"] != float64(rpcInvalidParams) {
 		t.Errorf("unknown tool error = %v", e)
 	}
 	c.send(`{not json`)

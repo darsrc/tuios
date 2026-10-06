@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The dock as an ordered list of named components.
@@ -385,7 +385,7 @@ func (m *OS) DockComponents() []DockComponentInfo {
 // The degradation order is the design's, and it is not arbitrary. The meters
 // are readouts nobody can act on, so they already yielded their columns to the
 // minimized entries; a custom cell yields before either, because it is the one
-// thing on the bar tuios cannot reason about the value of. What is left when
+// thing on the bar dartuios cannot reason about the value of. What is left when
 // nothing fits is the same thing that was left before components existed.
 func (m *OS) renderDockRightCells(room int, meterStyle lipgloss.Style) (string, []dockCustomHit) {
 	// One pass over the plan builds the segments in draw order. The two meters
@@ -448,7 +448,7 @@ func (m *OS) renderDockRightCells(room int, meterStyle lipgloss.Style) (string, 
 		}
 
 		// A custom cell yields before a meter does, because it is the one thing
-		// on the bar tuios cannot reason about the value of. Then the CPU graph
+		// on the bar dartuios cannot reason about the value of. Then the CPU graph
 		// before the RAM figure: a clipped graph reads as noise where a clipped
 		// figure still reads as a figure.
 		if i := lastSegmentMatching(len(segs), func(i int) bool { return segs[i].custom }); i >= 0 {

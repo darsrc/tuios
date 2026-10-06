@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
 	"github.com/Gaurav-Gosain/tuitest"
+	"github.com/darsrc/tuios/internal/overlay"
 )
 
 // latteGround is catppuccin_latte's background, the ground the rail and the
@@ -67,7 +67,7 @@ func TestLightThemeRailAndDockAreReadable(t *testing.T) {
 	useShippedLooks(base)
 	writeConfig(t, base, "[appearance]\ntheme = \"catppuccin_latte\"\n")
 	for _, name := range []string{"e2e-lite", "e2e-quill"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create session %s: %v\n%s", name, err, out)
 		}
 	}

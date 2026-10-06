@@ -10,7 +10,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/tape"
 )
 
 // tapeSeedSettle is how long the seeded window in a freshly created project
@@ -186,7 +186,7 @@ func (m *OS) startTapePlayback(commands []tape.Command, workspace int) {
 }
 
 // PlayTapeMsg asks the Update loop to play a tape script. The browser build
-// sends it when a lesson, or the fake shell's `tuios tape play`, plays one.
+// sends it when a lesson, or the fake shell's `dartuios tape play`, plays one.
 type PlayTapeMsg struct {
 	// Name is what the notification calls the tape.
 	Name string
@@ -195,7 +195,7 @@ type PlayTapeMsg struct {
 }
 
 // PlayTape parses a tape script and plays it in this session through the
-// interactive player, the one `tuios tape play` and the tape manager use. It
+// interactive player, the one `dartuios tape play` and the tape manager use. It
 // returns the tick that drives playback.
 func (m *OS) PlayTape(name, script string) (tea.Cmd, error) {
 	if m.ScriptMode {

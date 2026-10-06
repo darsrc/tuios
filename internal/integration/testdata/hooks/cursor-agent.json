@@ -50,7 +50,7 @@
     "want": {"state": "none", "agent_session_id": "cu-1"}
   },
   {
-    "name": "a permission hook tuios never registers",
+    "name": "a permission hook dartuios never registers",
     "payload": {"hook_event_name": "beforeShellExecution", "conversation_id": "cu-1", "command": "rm -rf build"},
     "skip": "event not mapped"
   }

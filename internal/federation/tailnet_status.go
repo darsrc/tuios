@@ -19,7 +19,7 @@ import (
 // the browser build, which has no tailscaled to ask. See tailnet_js.go.
 //
 // The status comes from `tailscale status --json`, the tailscale command's
-// own read of the same local API call. tuios used to link tailscale's Go
+// own read of the same local API call. dartuios used to link tailscale's Go
 // client for it, which brought 650 KB of tailscale packages (and most of
 // net/http) into the binary for one read-only call. The command also finds
 // tailscaled the way the client did, including every macOS variant, since
@@ -82,7 +82,7 @@ func tailscaleCommands() []string {
 // TailnetMachines lists the tailnet, marking which machines are offered as
 // addresses.
 //
-// An error means tailscaled could not be asked. Every caller in tuios treats
+// An error means tailscaled could not be asked. Every caller in dartuios treats
 // that as an empty list: discovery is a convenience, and a machine without
 // tailscale still types an address.
 func TailnetMachines(ctx context.Context, opt TailnetOptions) ([]TailnetMachine, error) {

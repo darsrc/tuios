@@ -78,7 +78,7 @@ func liveLauncherPlacements(stream []byte) []string {
 	return out
 }
 
-// del applies one a=d command. Only the forms tuios can emit or provoke are
+// del applies one a=d command. Only the forms dartuios can emit or provoke are
 // modelled; an unknown d value is treated as deleting nothing, which is the
 // conservative answer for a leak check.
 func del(live map[gfxKey]bool, p map[string]string, id uint32) {
@@ -150,8 +150,8 @@ func writeIconPNG(t *testing.T, path string, shade uint8) {
 // developer's own applications never reach the list.
 func iconEnv(base string, extra ...string) []string {
 	return append([]string{
-		"TUIOS_KITTY_GRAPHICS=1",
-		"TUIOS_SIXEL_GRAPHICS=0",
+		"DARTUIOS_KITTY_GRAPHICS=1",
+		"DARTUIOS_SIXEL_GRAPHICS=0",
 		"XDG_DATA_DIRS=" + filepath.Join(base, "no-such-data-dir"),
 		"PATH=/usr/bin:/bin",
 	}, extra...)

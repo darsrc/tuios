@@ -13,7 +13,7 @@ const (
 )
 
 // The shape a pane has before its guest says otherwise. Steady rather than
-// blinking is what tuios has always shown, and a pane that has never seen a
+// blinking is what dartuios has always shown, and a pane that has never seen a
 // DECSCUSR must keep showing it, so this is pinned rather than left to a zero
 // value.
 const (

@@ -25,7 +25,7 @@ func TestInboxOnTheShippedLooks(t *testing.T) {
 	useShippedLooks(base)
 
 	for _, name := range []string{"e2e-home", "e2e-fan"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create session %s: %v\n%s", name, err, out)
 		}
 	}
@@ -45,7 +45,7 @@ func TestInboxOnTheShippedLooks(t *testing.T) {
 			dockOnTop(s), railHeaderColumn(s), term.Snapshot())
 	}
 
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-fan", "needs_input",
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-fan", "needs_input",
 		"--kind", "approval", "--harness", "claude-code", "-m", "approve Bash: go test ./..."); err != nil {
 		t.Fatalf("set-agent-state in the other session: %v\n%s", err, out)
 	}

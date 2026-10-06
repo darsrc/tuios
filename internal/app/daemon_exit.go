@@ -103,7 +103,7 @@ func (m *OS) ExitNotice() string {
 		return ""
 
 	case ExitDaemonLost:
-		return "tuios lost the connection to the daemon.\n" +
+		return "dartuios lost the connection to the daemon.\n" +
 			"The daemon stopped, or it failed.\n" +
 			"Connect again after the daemon starts."
 
@@ -113,7 +113,7 @@ func (m *OS) ExitNotice() string {
 			reason = "The link to " + m.AttachedHost + " closed."
 		}
 		return reason + "\n" +
-			"tuios tried to connect again and stopped.\n" +
+			"dartuios tried to connect again and stopped.\n" +
 			"Connect again when the link is back."
 
 	default:

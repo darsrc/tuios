@@ -10,7 +10,7 @@ import (
 //
 // A title is a short string the program publishes about itself with OSC 0 or
 // OSC 2, and the agents already use it: Claude Code puts a spinner there while
-// it works, Codex writes "Action Required" there when it is blocked. tuios
+// it works, Codex writes "Action Required" there when it is blocked. dartuios
 // parsed the sequence and kept the string for the window's name, and no tier
 // ever looked at it.
 //

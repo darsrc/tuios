@@ -18,7 +18,7 @@ import (
 //
 // Run it and paste the map it prints over the one in effect_picker.go:
 //
-//	TUIOS_MEASURE=1 go test ./internal/app -run TestMeasureEffectOpenings -v
+//	DARTUIOS_MEASURE=1 go test ./internal/app -run TestMeasureEffectOpenings -v
 //
 // It is skipped otherwise. It builds every effect five times over an 80x24
 // screen, which is a few seconds nobody needs on an ordinary run.
@@ -29,10 +29,10 @@ import (
 // comment on effectOpenings.
 func measureReferenceScreen(t testing.TB, win interface{ Write([]byte) (int, error) }) {
 	t.Helper()
-	_, _ = win.Write([]byte("\x1b[32m~/dev/tuios\x1b[0m on \x1b[35mmain\x1b[0m\r\n$ go test ./internal/app\r\n"))
+	_, _ = win.Write([]byte("\x1b[32m~/dev/dartuios\x1b[0m on \x1b[35mmain\x1b[0m\r\n$ go test ./internal/app\r\n"))
 	for i := range 12 {
 		_, _ = win.Write(fmt.Appendf(nil,
-			"ok  \tgithub.com/Gaurav-Gosain/tuios/internal/pkg%02d\t\x1b[33m0.0%02ds\x1b[0m\r\n", i, i))
+			"ok  \tgithub.com/darsrc/tuios/internal/pkg%02d\t\x1b[33m0.0%02ds\x1b[0m\r\n", i, i))
 	}
 	_, _ = win.Write([]byte("$ "))
 }
@@ -138,8 +138,8 @@ func measureReadable(engine *tfx.Engine, want map[measureCoord]measureLook) int 
 // random vary by a few percent between runs, and the rest are identical every
 // time.
 func TestMeasureEffectOpenings(t *testing.T) {
-	if os.Getenv("TUIOS_MEASURE") == "" {
-		t.Skip("set TUIOS_MEASURE=1 to measure")
+	if os.Getenv("DARTUIOS_MEASURE") == "" {
+		t.Skip("set DARTUIOS_MEASURE=1 to measure")
 	}
 	const cols, rows, runs, maxFrames = 80, 24, 5, 8000
 

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // lockMods are the modifier bits a terminal reports for the lock keys. They say
@@ -14,7 +14,7 @@ import (
 const lockMods = tea.ModCapsLock | tea.ModNumLock | tea.ModScrollLock
 
 // bindingKeys returns every spelling a binding for msg may be written as, most
-// literal first. One physical chord reaches tuios under several names depending
+// literal first. One physical chord reaches dartuios under several names depending
 // on what the host terminal negotiated, and a binding has to answer to all of
 // them:
 //
@@ -115,7 +115,7 @@ func chordRune(msg tea.KeyPressMsg) rune {
 // actually pressed.
 //
 // ESC b and ESC f are word-back and word-forward, and sending them for
-// Option+arrow is the macOS convention rather than a fault. It costs tuios the
+// Option+arrow is the macOS convention rather than a fault. It costs dartuios the
 // two chords all the same, because what arrives says nothing about an arrow
 // key having been pressed.
 var macRewrittenAltArrowKeys = map[string]string{
@@ -131,7 +131,7 @@ var macRewrittenAltArrowKeys = map[string]string{
 // an arrow key.
 //
 // This does not rebind anything. The pair is genuinely ambiguous, since a
-// shell wants ESC b and ESC f for word movement, so tuios keeps its hands off
+// shell wants ESC b and ESC f for word movement, so dartuios keeps its hands off
 // them and says what happened instead.
 func macRewrittenAltArrow(msg tea.KeyPressMsg) (got, arrow string, ok bool) {
 	if !runtimeIsDarwin() {

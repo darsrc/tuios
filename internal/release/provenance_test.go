@@ -15,13 +15,13 @@ func TestDetect(t *testing.T) {
 	}{
 		{
 			name:        "curl script into /usr/local/bin",
-			facts:       Facts{Path: "/usr/local/bin/tuios", BuiltBy: "goreleaser", Version: "v0.7.0"},
+			facts:       Facts{Path: "/usr/local/bin/dartuios", BuiltBy: "goreleaser", Version: "v0.7.0"},
 			want:        OriginRelease,
 			replaceable: true,
 		},
 		{
 			name:        "curl script into a home directory",
-			facts:       Facts{Path: "/home/x/.local/bin/tuios", BuiltBy: "goreleaser", Version: "v0.7.0"},
+			facts:       Facts{Path: "/home/x/.local/bin/dartuios", BuiltBy: "goreleaser", Version: "v0.7.0"},
 			want:        OriginRelease,
 			replaceable: true,
 		},
@@ -31,22 +31,22 @@ func TestDetect(t *testing.T) {
 			// path says a package manager owns it. This is the row that fails
 			// if the build stamp is consulted before the path.
 			name:  "AUR package in /usr/bin",
-			facts: Facts{Path: "/usr/bin/tuios", BuiltBy: "goreleaser", Version: "v0.7.0"},
+			facts: Facts{Path: "/usr/bin/dartuios", BuiltBy: "goreleaser", Version: "v0.7.0"},
 			want:  OriginSystemPackage,
 		},
 		{
 			name:  "nix store",
-			facts: Facts{Path: "/nix/store/abc123-tuios-0.7.0/bin/tuios", BuiltBy: "unknown", Version: "v0.7.0"},
+			facts: Facts{Path: "/nix/store/abc123-dartuios-0.7.0/bin/dartuios", BuiltBy: "unknown", Version: "v0.7.0"},
 			want:  OriginNixStore,
 		},
 		{
 			name:  "homebrew cellar on apple silicon",
-			facts: Facts{Path: "/opt/homebrew/Cellar/tuios/0.7.0/bin/tuios", BuiltBy: "goreleaser", GOOS: "darwin"},
+			facts: Facts{Path: "/opt/homebrew/Cellar/dartuios/0.7.0/bin/dartuios", BuiltBy: "goreleaser", GOOS: "darwin"},
 			want:  OriginHomebrew,
 		},
 		{
 			name:  "homebrew cask",
-			facts: Facts{Path: "/opt/homebrew/Caskroom/tuios/0.7.0/tuios", BuiltBy: "goreleaser", GOOS: "darwin"},
+			facts: Facts{Path: "/opt/homebrew/Caskroom/dartuios/0.7.0/dartuios", BuiltBy: "goreleaser", GOOS: "darwin"},
 			want:  OriginHomebrew,
 		},
 		{
@@ -55,25 +55,25 @@ func TestDetect(t *testing.T) {
 			// them, and only for <prefix>/bin.
 			name: "homebrew prefix on intel",
 			facts: Facts{
-				Path: "/usr/local/bin/tuios", BuiltBy: "goreleaser",
+				Path: "/usr/local/bin/dartuios", BuiltBy: "goreleaser",
 				GOOS: "darwin", BrewPrefix: "/usr/local",
 			},
 			want: OriginHomebrew,
 		},
 		{
 			name:  "linuxbrew",
-			facts: Facts{Path: "/home/linuxbrew/.linuxbrew/bin/tuios", BuiltBy: "goreleaser"},
+			facts: Facts{Path: "/home/linuxbrew/.linuxbrew/bin/dartuios", BuiltBy: "goreleaser"},
 			want:  OriginHomebrew,
 		},
 		{
 			name:  "built from source by scripts/install.sh",
-			facts: Facts{Path: "/home/x/.local/bin/tuios", BuiltBy: "install.sh", Version: "dev+abc123def456"},
+			facts: Facts{Path: "/home/x/.local/bin/dartuios", BuiltBy: "install.sh", Version: "dev+abc123def456"},
 			want:  OriginSourceScript,
 		},
 		{
 			name: "go install",
 			facts: Facts{
-				Path: "/home/x/go/bin/tuios", BuiltBy: "unknown",
+				Path: "/home/x/go/bin/dartuios", BuiltBy: "unknown",
 				Version: "dev", ModuleVersion: "v0.7.0",
 			},
 			want: OriginGoInstall,
@@ -83,14 +83,14 @@ func TestDetect(t *testing.T) {
 			// not a `go install` and not a release either.
 			name: "local go build",
 			facts: Facts{
-				Path: "/home/x/tuios/tuios", BuiltBy: "unknown",
+				Path: "/home/x/dartuios/dartuios", BuiltBy: "unknown",
 				Version: "dev", ModuleVersion: "(devel)",
 			},
 			want: OriginUnknown,
 		},
 		{
 			name:  "distroless container",
-			facts: Facts{Path: "/tuios", BuiltBy: "unknown", Version: "dev"},
+			facts: Facts{Path: "/dartuios", BuiltBy: "unknown", Version: "dev"},
 			want:  OriginUnknown,
 		},
 	}
@@ -114,11 +114,11 @@ func TestDetect(t *testing.T) {
 // Negative control: set Replaceable on any other branch and this fails.
 func TestOnlyAReleaseBuildIsReplaceable(t *testing.T) {
 	for _, f := range []Facts{
-		{Path: "/usr/local/bin/tuios", BuiltBy: "goreleaser"},
-		{Path: "/usr/bin/tuios", BuiltBy: "goreleaser"},
-		{Path: "/nix/store/x/bin/tuios", BuiltBy: "goreleaser"},
-		{Path: "/home/x/.local/bin/tuios", BuiltBy: "install.sh"},
-		{Path: "/tmp/tuios", BuiltBy: "unknown"},
+		{Path: "/usr/local/bin/dartuios", BuiltBy: "goreleaser"},
+		{Path: "/usr/bin/dartuios", BuiltBy: "goreleaser"},
+		{Path: "/nix/store/x/bin/dartuios", BuiltBy: "goreleaser"},
+		{Path: "/home/x/.local/bin/dartuios", BuiltBy: "install.sh"},
+		{Path: "/tmp/dartuios", BuiltBy: "unknown"},
 	} {
 		p := Detect(f)
 		if p.Replaceable != (p.Origin == OriginRelease) {
@@ -127,21 +127,21 @@ func TestOnlyAReleaseBuildIsReplaceable(t *testing.T) {
 	}
 }
 
-// TestHomebrewFixNamesFormulaOrCask. `brew install tuios` is the homebrew-core
+// TestHomebrewFixNamesFormulaOrCask. `brew install dartuios` is the homebrew-core
 // formula, which lives in the Cellar; the tap ships a cask, which lives in the
-// Caskroom. `brew upgrade --cask tuios` on a formula install fails, so the
+// Caskroom. `brew upgrade --cask dartuios` on a formula install fails, so the
 // command printed has to follow the path.
 //
-// Negative control: return "brew upgrade --cask tuios" for every Homebrew path
+// Negative control: return "brew upgrade --cask dartuios" for every Homebrew path
 // and the two Cellar rows fail.
 func TestHomebrewFixNamesFormulaOrCask(t *testing.T) {
 	cases := []struct {
 		path string
 		want string
 	}{
-		{"/opt/homebrew/Cellar/tuios/0.8.0/bin/tuios", "brew upgrade tuios"},
-		{"/home/linuxbrew/.linuxbrew/Cellar/tuios/0.8.0/bin/tuios", "brew upgrade tuios"},
-		{"/opt/homebrew/Caskroom/tuios/0.8.0/tuios", "brew upgrade --cask tuios"},
+		{"/opt/homebrew/Cellar/dartuios/0.8.0/bin/dartuios", "brew upgrade dartuios"},
+		{"/home/linuxbrew/.linuxbrew/Cellar/dartuios/0.8.0/bin/dartuios", "brew upgrade dartuios"},
+		{"/opt/homebrew/Caskroom/dartuios/0.8.0/dartuios", "brew upgrade --cask dartuios"},
 	}
 	for _, tc := range cases {
 		p := Detect(Facts{Path: tc.path, BuiltBy: "goreleaser", GOOS: "darwin"})

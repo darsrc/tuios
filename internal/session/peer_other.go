@@ -12,7 +12,7 @@ import "net"
 // docs/AGENT_STATE.md, "Who can act as the person".
 
 // peerPIDSupported is false here: the daemon cannot place a caller in its
-// pane by pid, so the tuios CLI presents the pane's token instead. See
+// pane by pid, so the dartuios CLI presents the pane's token instead. See
 // VerbClient.presentPaneToken.
 const peerPIDSupported = false
 

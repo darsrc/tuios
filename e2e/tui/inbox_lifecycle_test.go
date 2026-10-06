@@ -18,10 +18,10 @@ import (
 func TestInboxSnoozeUndoAndWake(t *testing.T) {
 	term, base := attachClientBase(t)
 
-	if out, err := tuiosCLI(t, base, "new", "e2e-snooze", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-snooze", "--detach"); err != nil {
 		t.Fatalf("create the second session: %v\n%s", err, out)
 	}
-	if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-snooze", "errored",
+	if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-snooze", "errored",
 		"--harness", "claude-code", "-m", "build failed on main"); err != nil {
 		t.Fatalf("set-agent-state errored: %v\n%s", err, out)
 	}
@@ -42,11 +42,11 @@ func TestInboxSnoozeUndoAndWake(t *testing.T) {
 	waitText(t, term, "the snoozed item gone from the list", "Nothing is waiting for you.", "1 snoozed. S shows it.")
 	saveFrame(t, term, "inbox-snoozed")
 
-	out, err := tuiosCLI(t, base, "list-attention")
+	out, err := dartuiosCLI(t, base, "list-attention")
 	if err != nil || !strings.Contains(out, "Nothing is waiting for you.") {
 		t.Fatalf("list-attention still lists the snoozed item: %v\n%s", err, out)
 	}
-	out, err = tuiosCLI(t, base, "list-attention", "--snoozed")
+	out, err = dartuiosCLI(t, base, "list-attention", "--snoozed")
 	if err != nil || !strings.Contains(out, "Snoozed") || !strings.Contains(out, "build failed on main") || !strings.Contains(out, "snoozed until") {
 		t.Fatalf("list-attention --snoozed does not list it: %v\n%s", err, out)
 	}
@@ -87,11 +87,11 @@ func TestInboxSnoozeUndoAndWake(t *testing.T) {
 func TestNextFinishedWalksUnseenTurns(t *testing.T) {
 	term, base := attachClientBase(t)
 	for _, name := range []string{"e2e-older", "e2e-newer"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create %s: %v\n%s", name, err, out)
 		}
 		for _, state := range []string{"working", "done"} {
-			if out, err := tuiosCLI(t, base, "set-agent-state", "-s", name, state, "--harness", "claude-code", "-m", "turn in "+name); err != nil {
+			if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", name, state, "--harness", "claude-code", "-m", "turn in "+name); err != nil {
 				t.Fatalf("set-agent-state %s in %s: %v\n%s", state, name, err, out)
 			}
 		}
@@ -144,11 +144,11 @@ func waitText(t *testing.T, term *tuitest.Terminal, what string, want ...string)
 // agents section, for every client and for the command line.
 func TestRailMarksAFinishedTurnUnread(t *testing.T) {
 	term, base := attachClientBase(t)
-	if out, err := tuiosCLI(t, base, "new", "e2e-unread", "--detach"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "e2e-unread", "--detach"); err != nil {
 		t.Fatalf("create the second session: %v\n%s", err, out)
 	}
 	for _, state := range []string{"working", "done"} {
-		if out, err := tuiosCLI(t, base, "set-agent-state", "-s", "e2e-unread", state, "--harness", "claude-code", "-m", "wrote the docs"); err != nil {
+		if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", "e2e-unread", state, "--harness", "claude-code", "-m", "wrote the docs"); err != nil {
 			t.Fatalf("set-agent-state %s: %v\n%s", state, err, out)
 		}
 	}
@@ -183,7 +183,7 @@ func TestRailMarksAFinishedTurnUnread(t *testing.T) {
 	waitText(t, term, "the dock's word", "unread", "Marked")
 	deadline := time.Now().Add(uiTimeout)
 	for {
-		out, _ := tuiosCLI(t, base, "list-attention", "--json")
+		out, _ := dartuiosCLI(t, base, "list-attention", "--json")
 		if strings.Contains(out, `"marked_unread": true`) || strings.Contains(out, `"marked_unread":true`) {
 			break
 		}
@@ -208,12 +208,12 @@ func TestAClickedFoldFoldsAgainOnPaneFocus(t *testing.T) {
 	writeConfig(t, base, "[appearance.sidebar]\nenabled = true\nagent_rest_fold = \"1s\"\n")
 	killDaemon(t, base)
 	for _, name := range []string{"e2e-fold", "e2e-fa", "e2e-fb", "e2e-fc"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create %s: %v\n%s", name, err, out)
 		}
 	}
 	for _, name := range []string{"e2e-fa", "e2e-fb", "e2e-fc"} {
-		if out, err := tuiosCLI(t, base, "set-agent-state", "-s", name, "idle", "--harness", "claude-code"); err != nil {
+		if out, err := dartuiosCLI(t, base, "set-agent-state", "-s", name, "idle", "--harness", "claude-code"); err != nil {
 			t.Fatalf("set-agent-state idle in %s: %v\n%s", name, err, out)
 		}
 	}

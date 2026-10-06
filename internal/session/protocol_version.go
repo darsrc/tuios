@@ -84,12 +84,12 @@ func clientProtocolRefusal(daemonVersion string, hello *HelloPayload) string {
 	client := peerProtocol(hello.Protocol)
 	if client > ProtocolVersion {
 		return fmt.Sprintf("This daemon (version %s) speaks wire protocol %d and the client (version %s) speaks %d. "+
-			"TUIOS was upgraded while the daemon kept running. "+
-			"Fix: run 'tuios kill-server', then start tuios again; sessions are saved and restored across the restart.",
+			"dartuios was upgraded while the daemon kept running. "+
+			"Fix: run 'dartuios kill-server', then start dartuios again; sessions are saved and restored across the restart.",
 			daemonVersion, ProtocolVersion, hello.Version, client)
 	}
 	return fmt.Sprintf("This daemon (version %s) no longer serves wire protocol %d, and the client (version %s) speaks it. "+
-		"Fix: upgrade tuios, or run 'tuios kill-server' and start again with the version you want.",
+		"Fix: upgrade dartuios, or run 'dartuios kill-server' and start again with the version you want.",
 		daemonVersion, client, hello.Version)
 }
 

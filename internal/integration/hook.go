@@ -1,13 +1,13 @@
-// Package integration connects coding-agent harnesses to tuios agent state.
+// Package integration connects coding-agent harnesses to dartuios agent state.
 //
 // It has two halves. The hook half translates the payload a harness hands its
 // lifecycle hooks into one set-agent-state report, one set-agent-session
 // report for a harness trusted with the conversation id alone, or a reason to
-// report nothing: `tuios agent-hook <harness>` reads the payload and sends what
+// report nothing: `dartuios agent-hook <harness>` reads the payload and sends what
 // Translate decides. The install half writes managed hook entries into each
 // harness's own configuration, removes only what it wrote, and says whether
-// what is installed is current: `tuios integration install|uninstall|status`
-// and `tuios doctor agents`.
+// what is installed is current: `dartuios integration install|uninstall|status`
+// and `dartuios doctor agents`.
 //
 // Every harness mapping in this package cites the documentation or working
 // code it was taken from, since a hook format is a thing other people change.
@@ -100,7 +100,7 @@ func HarnessIDs() []string {
 }
 
 // ManifestIDs lists every harness the bundled manifests describe, with or
-// without a hook mapping. A TUIOS_AGENT naming one of them names the pane's
+// without a hook mapping. A DARTUIOS_AGENT naming one of them names the pane's
 // owner even when that owner has no integration, so a hook from any other
 // harness in the pane is foreign. A test holds this to the manifests.
 var ManifestIDs = []string{
@@ -109,7 +109,7 @@ var ManifestIDs = []string{
 	"hermes", "kilo", "kimi", "kiro", "maki", "omp", "opencode", "pi", "qoder", "qwen",
 }
 
-// hintOwner resolves a TUIOS_AGENT value to a harness id: an alias this
+// hintOwner resolves a DARTUIOS_AGENT value to a harness id: an alias this
 // package knows, else a bundled manifest id. It reports false for a name
 // neither knows, which says nothing about who owns the pane.
 func hintOwner(hint string) (string, bool) {
@@ -211,7 +211,7 @@ func (in Input) env(name string) string {
 
 // AgentHintEnv is the variable a sandbox wrapper sets to say which harness
 // owns the pane. It is the same variable the daemon's detector reads.
-const AgentHintEnv = "TUIOS_AGENT"
+const AgentHintEnv = "DARTUIOS_AGENT"
 
 // Translate decides what one hook event reports.
 //
@@ -221,7 +221,7 @@ const AgentHintEnv = "TUIOS_AGENT"
 // every notification as needs_input is what this replaces. In particular a
 // failure never becomes done.
 //
-// The checks that apply to every harness run first: a TUIOS_AGENT naming a
+// The checks that apply to every harness run first: a DARTUIOS_AGENT naming a
 // different harness means this event comes from an agent nested inside the one
 // the pane belongs to, and it is dropped here rather than sent.
 func Translate(harnessName string, in Input) Decision {

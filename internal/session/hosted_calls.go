@@ -28,7 +28,7 @@ import (
 // connection the owner opened:
 //
 //  1. The owner sends its window id with open-pane. This machine exports it to
-//     the process as TUIOS_PANE_ID, and the reply carries a calls token that
+//     the process as DARTUIOS_PANE_ID, and the reply carries a calls token that
 //     only the owner sees.
 //  2. The owner opens one more connection, pane-calls, with the pane id and
 //     the token. From then on it is the pane's report channel: this machine
@@ -36,7 +36,7 @@ import (
 //     answer back, matched by id.
 //  3. The process calls this machine's daemon as usual, with the ordinary
 //     commands. A call of one of hostedCallVerbs that names the pane (window,
-//     to or from set to TUIOS_PANE_ID) is not run here. It is sent down the
+//     to or from set to DARTUIOS_PANE_ID) is not run here. It is sent down the
 //     channel and its answer is the owner's.
 //
 // What this grants, and how each limit is enforced:
@@ -70,9 +70,9 @@ import (
 //     the calls in flight per pane are capped.
 //
 // Version skew: an owner from before this sends no window id and opens no
-// channel. The process then has no TUIOS_PANE_ID, as before, and a call that
+// channel. The process then has no DARTUIOS_PANE_ID, as before, and a call that
 // names the pane id is answered with protocol_mismatch, which says to update
-// tuios on the owning machine. A far machine from before this checks open-pane
+// dartuios on the owning machine. A far machine from before this checks open-pane
 // against a schema with no window param and refuses the request with
 // invalid_params before it spawns anything. The owner then sends open-pane
 // again on the same stream without the window (openPaneReply), gets no token,
@@ -461,8 +461,8 @@ func (d *Daemon) forwardHostedCall(cs *connState, verb string, params json.RawMe
 	ch := hp.calls.current(wait)
 	if ch == nil {
 		if hp.window == "" {
-			return nil, hintedVerbError(ErrVerbProtocolMismatch, "the tuios that owns this pane is too old to take reports from it", &VerbHint{
-				Detail: "Update tuios on the machine that holds the session, then restart its daemon with 'tuios kill-server'. Until then the pane's agent is detected from here, not reported.",
+			return nil, hintedVerbError(ErrVerbProtocolMismatch, "the dartuios that owns this pane is too old to take reports from it", &VerbHint{
+				Detail: "Update dartuios on the machine that holds the session, then restart its daemon with 'dartuios kill-server'. Until then the pane's agent is detected from here, not reported.",
 			}), true
 		}
 		return nil, hostedChannelLost(), true
@@ -649,7 +649,7 @@ func (d *Daemon) runHostedCall(s *Session, windowID, host, verb string, params j
 		if from != "" && from != windowID {
 			return nil, hintedVerbError(ErrVerbForbidden, "a pane on another machine can send only as itself", &VerbHint{
 				Param:  "from",
-				Detail: "Nothing was sent. Send with from set to $TUIOS_PANE_ID. Only the person at an attached client can speak as human.",
+				Detail: "Nothing was sent. Send with from set to $DARTUIOS_PANE_ID. Only the person at an attached client can speak as human.",
 			})
 		}
 	}

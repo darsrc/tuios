@@ -21,7 +21,7 @@ func TestRailRightClickRenamesTheSessionUnderThePointer(t *testing.T) {
 	killDaemon(t, base)
 
 	for _, name := range []string{"alpha", "bravo"} {
-		if out, err := tuiosCLI(t, base, "new", name, "--detach"); err != nil {
+		if out, err := dartuiosCLI(t, base, "new", name, "--detach"); err != nil {
 			t.Fatalf("create %s: %v: %s", name, err, out)
 		}
 	}
@@ -81,14 +81,14 @@ func TestRailRightClickRenamesTheSessionUnderThePointer(t *testing.T) {
 	// the assertions that would fail if the rename had reached the attached one.
 	// session-info rather than ls: the label is display state, and ls lists the
 	// names sessions are addressed by, which a rename deliberately leaves alone.
-	out, err := tuiosCLI(t, base, "session-info", "--session", "bravo")
+	out, err := dartuiosCLI(t, base, "session-info", "--session", "bravo")
 	if err != nil {
 		t.Fatalf("session-info bravo: %v: %s", err, out)
 	}
 	if !strings.Contains(out, "Payments API") {
 		t.Errorf("the daemon never took bravo's rename:\n%s", out)
 	}
-	out, err = tuiosCLI(t, base, "session-info", "--session", "alpha")
+	out, err = dartuiosCLI(t, base, "session-info", "--session", "alpha")
 	if err != nil {
 		t.Fatalf("session-info alpha: %v: %s", err, out)
 	}

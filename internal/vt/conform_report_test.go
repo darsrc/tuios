@@ -18,7 +18,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // reply runs input into a fresh emulator and returns whatever the emulator
@@ -280,7 +280,7 @@ func TestConform_DECRQM(t *testing.T) {
 		{"SGR pixel mouse reports set after ?1016h", "\x1b[?1016h\x1b[?1016$p", "\x1b[?1016;1$y"},
 		{"in-band resize reports reset by default", "\x1b[?2048$p", "\x1b[?2048;2$y"},
 		// Setting 2048 sends the current size at once, ahead of the report.
-		{"in-band resize reports set after ?2048h", "\x1b[?2048h\x1b[?2048$p", "\x1b[48;24;80;0;0t\x1b[?2048;1$y"},
+		{"in-band resize reports set after ?2048h", "\x1b[?2048h\x1b[?2048$p", "\x1b[48;24;80;384;640t\x1b[?2048;1$y"},
 
 		// A mode nobody defines has to report 0, not 2. Reporting reset says
 		// the terminal knows the mode and has it off, which is a different

@@ -146,7 +146,7 @@ refresh = "push"
 	statsPath := filepath.Join(base, "tickstats")
 	term := startIn(t, base, startOpts{
 		out: &wire,
-		env: []string{"TUIOS_STATS_FILE=" + statsPath},
+		env: []string{"DARTUIOS_STATS_FILE=" + statsPath},
 	})
 	waitBoot(t, term)
 	newWindow(t, term)

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // The existing emulator benchmarks all run at 80x24 and none report
@@ -75,7 +75,7 @@ func BenchmarkEmulatorWriteHeavyOutput(b *testing.B) {
 // paying. A CPU profile of the real client with three panes flooding put half
 // of all time in the scroll path, which the long-line benchmark cannot see.
 func BenchmarkEmulatorShortLineScroll(b *testing.B) {
-	line := []byte("tuiosflood\r\n")
+	line := []byte("dartuiosflood\r\n")
 
 	b.Run("with-scrollback", func(b *testing.B) {
 		emu := vt.NewEmulator(perfCols, perfRows)

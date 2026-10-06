@@ -51,10 +51,10 @@ type Frecency struct {
 	now func() time.Time
 }
 
-// DefaultPath is where tuios keeps the launch history. It is read at call time
+// DefaultPath is where dartuios keeps the launch history. It is read at call time
 // rather than at init so a test that redirects XDG_STATE_HOME is obeyed.
 func DefaultPath() string {
-	return filepath.Join(xdg.StateHome, "tuios", "launcher.json")
+	return filepath.Join(xdg.StateHome, "dartuios", "launcher.json")
 }
 
 // LoadFrecency reads the history at path. A missing file is the ordinary

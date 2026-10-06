@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/harness"
+	"github.com/darsrc/tuios/internal/harness"
 )
 
 // Resuming an agent's conversation after the daemon restarts.
@@ -29,7 +29,7 @@ import (
 //
 //   - ask (the default): each restored pane with a resumable conversation gets
 //     a resume item in the Inbox. The person answers it with y in the Inbox or
-//     with tuios resume-agent, or dismisses it. Nothing is typed until then.
+//     with dartuios resume-agent, or dismisses it. Nothing is typed until then.
 //   - auto: the daemon types the resume command into each restored shell once
 //     the shell has drawn its prompt, 100 ms apart. A pane whose shell is not
 //     at its prompt by then gets the ask item instead.
@@ -355,7 +355,7 @@ func (d *Daemon) resumeError(sess *Session, plan resumePlan, err error) *verbErr
 	case errors.Is(err, errResumeBusy):
 		return hintedVerbError(ErrVerbNotReady, "the pane is running a program, so nothing was typed", &VerbHint{
 			Verb:    "capture-pane",
-			Command: "tuios capture-pane -w " + shortWindowID(plan.window.ID),
+			Command: "dartuios capture-pane -w " + shortWindowID(plan.window.ID),
 			Detail:  "resume-agent types only into a pane whose shell is at its prompt, so the command cannot land in an editor or another agent. Quit what runs there, or open a new pane, and try again.",
 		})
 	case errors.Is(err, errResumeRemote):
@@ -365,12 +365,12 @@ func (d *Daemon) resumeError(sess *Session, plan resumePlan, err error) *verbErr
 	case errors.Is(err, errResumeNothing):
 		return hintedVerbError(ErrVerbNotResumable, "no conversation is recorded for this pane", &VerbHint{
 			Verb:    "set-agent-session",
-			Command: "tuios integration install claude-code",
-			Detail:  "A pane has a conversation to resume once its harness's hook reported one (agent_session_id). tuios integration install sets that up for the harnesses that support it.",
+			Command: "dartuios integration install claude-code",
+			Detail:  "A pane has a conversation to resume once its harness's hook reported one (agent_session_id). dartuios integration install sets that up for the harnesses that support it.",
 		})
 	case errors.Is(err, harness.ErrNoResume):
 		return hintedVerbError(ErrVerbNotResumable, "harness "+echoName(plan.harness)+" has no resume command", &VerbHint{
-			Command: "tuios explain-agent-detect",
+			Command: "dartuios explain-agent-detect",
 			Detail:  "A harness manifest names its resume command in a [resume] block. Add one in a manifest under the user harness directory to resume this harness.",
 		})
 	case errors.Is(err, harness.ErrBadResumeID):

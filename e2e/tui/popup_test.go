@@ -12,7 +12,7 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// popupResult is what `tuios popup --json` prints.
+// popupResult is what `dartuios popup --json` prints.
 type popupResult struct {
 	WindowID string `json:"window_id"`
 	Name     string `json:"name"`
@@ -20,20 +20,20 @@ type popupResult struct {
 	Height   string `json:"height"`
 }
 
-// openPopup runs `tuios popup` against the daemon under base and returns what it
+// openPopup runs `dartuios popup` against the daemon under base and returns what it
 // reported. The command is an argv, exactly as a user types it after --.
 func openPopup(t *testing.T, base string, args ...string) popupResult {
 	t.Helper()
-	out, err := tuiosCLI(t, base, append([]string{"popup", "--json"}, args...)...)
+	out, err := dartuiosCLI(t, base, append([]string{"popup", "--json"}, args...)...)
 	if err != nil {
-		t.Fatalf("tuios popup %v: %v\n%s", args, err, out)
+		t.Fatalf("dartuios popup %v: %v\n%s", args, err, out)
 	}
 	var res popupResult
 	if err := json.Unmarshal([]byte(out), &res); err != nil {
-		t.Fatalf("tuios popup printed something that is not JSON: %v\n%s", err, out)
+		t.Fatalf("dartuios popup printed something that is not JSON: %v\n%s", err, out)
 	}
 	if res.WindowID == "" {
-		t.Fatalf("tuios popup reported no window id:\n%s", out)
+		t.Fatalf("dartuios popup reported no window id:\n%s", out)
 	}
 	return res
 }
@@ -71,7 +71,7 @@ func TestPopupOverEveryLayout(t *testing.T) {
 			waitWindowCount(t, term, 1, "after starting a new session")
 			// Through the daemon rather than by keystroke, so the test does not
 			// depend on which mode the client booted into.
-			if out, err := tuiosCLI(t, base, "run-command", "NewWindow"); err != nil {
+			if out, err := dartuiosCLI(t, base, "run-command", "NewWindow"); err != nil {
 				t.Fatalf("open a second pane: %v\n%s", err, out)
 			}
 			waitWindowCount(t, term, 2, "second pane")
@@ -81,7 +81,7 @@ func TestPopupOverEveryLayout(t *testing.T) {
 			panes := 2
 			if mode == "scrolling" {
 				for panes < 5 {
-					if out, err := tuiosCLI(t, base, "run-command", "NewWindow"); err != nil {
+					if out, err := dartuiosCLI(t, base, "run-command", "NewWindow"); err != nil {
 						t.Fatalf("open another pane: %v\n%s", err, out)
 					}
 					panes++
@@ -134,7 +134,7 @@ func TestPopupOverEveryLayout(t *testing.T) {
 				// The strip is longer than the view, and moving along it slides
 				// every column under the screen. A popup is placed on the screen
 				// and not on the strip, so it must not move with it.
-				if out, err := tuiosCLI(t, base, "focus-window", before[0].ID); err != nil {
+				if out, err := dartuiosCLI(t, base, "focus-window", before[0].ID); err != nil {
 					t.Fatalf("step along the strip: %v\n%s", err, out)
 				}
 				if err := term.WaitFor(func(s tuitest.Screen) bool {
@@ -178,7 +178,7 @@ func TestPopupClosesWhenItsCommandExits(t *testing.T) {
 // somewhere the caller can use.
 //
 // The selection goes to a file the popup's own command redirects into, because
-// that is the whole of what tuios promises here. A popup writes to its own
+// that is the whole of what dartuios promises here. A popup writes to its own
 // screen and never to the stdout of the command that opened it.
 func TestPopupRunsAPickerAndTheSelectionLands(t *testing.T) {
 	if _, err := os.Stat("/usr/bin/fzf"); err != nil {
@@ -198,16 +198,16 @@ func TestPopupRunsAPickerAndTheSelectionLands(t *testing.T) {
 	}, uiTimeout); err != nil {
 		t.Fatalf("fzf never drew its list in the popup: %v\n%s", err, term.Snapshot())
 	}
-	t.Logf("fzf running as a tuios overlay:\n%s", term.Snapshot())
+	t.Logf("fzf running as a dartuios overlay:\n%s", term.Snapshot())
 
-	if out, err := tuiosCLI(t, base, "send-text", "-w", res.WindowID, "bet"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-w", res.WindowID, "bet"); err != nil {
 		t.Fatalf("type into the popup: %v\n%s", err, out)
 	}
 	if err := term.WaitForText("1/3", uiTimeout); err != nil {
 		t.Fatalf("fzf never narrowed to one match: %v\n%s", err, term.Snapshot())
 	}
 	t.Logf("fzf narrowed to one match:\n%s", term.Snapshot())
-	if out, err := tuiosCLI(t, base, "send-text", "-w", res.WindowID, "\r"); err != nil {
+	if out, err := dartuiosCLI(t, base, "send-text", "-w", res.WindowID, "\r"); err != nil {
 		t.Fatalf("accept the fzf selection: %v\n%s", err, out)
 	}
 
@@ -263,7 +263,7 @@ func TestPopupIsSharedBetweenClients(t *testing.T) {
 	}
 
 	// Both clients drew it, and the daemon holds one popup, not two.
-	out, err := tuiosCLI(t, base, "list-windows", "--json", "--session", "shared")
+	out, err := dartuiosCLI(t, base, "list-windows", "--json", "--session", "shared")
 	if err != nil {
 		t.Fatalf("list-windows: %v\n%s", err, out)
 	}
@@ -280,10 +280,10 @@ func TestPopupIsSharedBetweenClients(t *testing.T) {
 func TestPopupNeedsAnAttachedClient(t *testing.T) {
 	base := t.TempDir()
 	killDaemon(t, base)
-	if out, err := tuiosCLI(t, base, "new", "-d", "detached"); err != nil {
+	if out, err := dartuiosCLI(t, base, "new", "-d", "detached"); err != nil {
 		t.Fatalf("create the detached session: %v\n%s", err, out)
 	}
-	out, err := tuiosCLI(t, base, "popup", "--", "true")
+	out, err := dartuiosCLI(t, base, "popup", "--", "true")
 	if err == nil {
 		t.Fatalf("popup on a detached session succeeded, output:\n%s", out)
 	}
@@ -298,7 +298,7 @@ func TestPopupNeedsAnAttachedClient(t *testing.T) {
 // keystroke can close it.
 //
 // Esc is pressed in window-management mode, which is the only mode it reaches
-// tuios in: the pane owns esc in terminal mode, because fzf, gum and vim all
+// dartuios in: the pane owns esc in terminal mode, because fzf, gum and vim all
 // quit on it.
 func TestEscClosesAPopupThatWillNotExit(t *testing.T) {
 	term, base := start(t, startOpts{cols: 100, rows: 32, args: []string{"new", "pop"}})
@@ -339,11 +339,11 @@ func TestAPopupShowsOverAZoomedPane(t *testing.T) {
 
 	term := startIn(t, base, startOpts{cols: 110, rows: 36, args: []string{"new", "pop"}})
 	waitWindowCount(t, term, 1, "after starting a new session")
-	if out, err := tuiosCLI(t, base, "run-command", "NewWindow"); err != nil {
+	if out, err := dartuiosCLI(t, base, "run-command", "NewWindow"); err != nil {
 		t.Fatalf("open a second pane: %v\n%s", err, out)
 	}
 	waitWindowCount(t, term, 2, "second pane")
-	if out, err := tuiosCLI(t, base, "run-command", "ToggleZoom"); err != nil {
+	if out, err := dartuiosCLI(t, base, "run-command", "ToggleZoom"); err != nil {
 		t.Fatalf("zoom a pane: %v\n%s", err, out)
 	}
 

@@ -5,8 +5,8 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/session"
 )
 
 // The machines as the attached daemon names them.
@@ -111,7 +111,7 @@ func localDaemonInstance() string {
 		return ""
 	}
 	defer func() { _ = c.Close() }()
-	raw, err := c.Call("hello", map[string]any{"client": "tuios"})
+	raw, err := c.Call("hello", map[string]any{"client": "dartuios"})
 	if err != nil {
 		return ""
 	}

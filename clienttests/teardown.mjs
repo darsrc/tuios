@@ -1,6 +1,6 @@
 // Reap the daemons the run started.
 //
-// tuios-web spawns a daemon and Playwright only knows about the servers it
+// dartuios-web spawns a daemon and Playwright only knows about the servers it
 // launched itself, so without this every run leaves one behind per server,
 // holding a socket in a temp directory that is about to be deleted.
 
@@ -18,7 +18,7 @@ const alive = (pid) => {
 };
 
 async function reap(home) {
-  const pidFile = join(home, 'run', 'tuios', 'tuios.sock.pid');
+  const pidFile = join(home, 'run', 'dartuios', 'dartuios.sock.pid');
   let pid = 0;
   try {
     pid = Number(readFileSync(pidFile, 'utf8').trim());

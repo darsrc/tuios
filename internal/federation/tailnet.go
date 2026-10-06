@@ -26,15 +26,15 @@ import (
 // reached the same way every other host is, by ssh, which already works over a
 // tailnet because MagicDNS names resolve like any other name. The tailnet is
 // how the name resolves and how the traffic is carried, not a second transport
-// inside tuios.
+// inside dartuios.
 
 // DefaultTailnetMax bounds the list. A large tailnet holds hundreds of
 // machines and a candidate list that long helps nobody.
 const DefaultTailnetMax = 50
 
 // DefaultTailnetOS are the operating systems offered by default: the ones that
-// can run a tuios daemon. A phone on the tailnet is a real machine and is
-// still listed by `tuios hosts tailnet`, marked with the reason it was not
+// can run a dartuios daemon. A phone on the tailnet is a real machine and is
+// still listed by `dartuios hosts tailnet`, marked with the reason it was not
 // offered, so nobody has to wonder where it went.
 var DefaultTailnetOS = []string{"linux", "macos", "windows", "freebsd", "openbsd", "netbsd"}
 
@@ -94,7 +94,7 @@ type TailnetOptions struct {
 	Socket string
 }
 
-// DefaultTailnetOptions is what tuios offers with nothing configured.
+// DefaultTailnetOptions is what dartuios offers with nothing configured.
 func DefaultTailnetOptions() TailnetOptions {
 	return TailnetOptions{
 		Addr: TailnetAddrDNS,
@@ -147,7 +147,7 @@ type TailnetMachine struct {
 }
 
 // ErrNoTailnet reports that this machine is not on a tailnet, or that
-// tailscaled is not running. It is not a failure of tuios and callers treat it
+// tailscaled is not running. It is not a failure of dartuios and callers treat it
 // as an empty list.
 var ErrNoTailnet = errors.New("no tailnet on this machine")
 
@@ -168,9 +168,9 @@ func TailnetAddrs(ctx context.Context, opt TailnetOptions) []string {
 }
 
 // TailnetAddrFor is the address of one machine by its short name, for
-// `tuios hosts add NAME --tailnet`. It reports whether the tailnet has it,
+// `dartuios hosts add NAME --tailnet`. It reports whether the tailnet has it,
 // and it ignores the offer filters: a name the user typed is a decision, and
-// refusing it because a filter would not have suggested it would be tuios
+// refusing it because a filter would not have suggested it would be dartuios
 // arguing with an instruction.
 func TailnetAddrFor(ctx context.Context, name string, opt TailnetOptions) (string, bool) {
 	machines, err := TailnetMachines(ctx, opt)
@@ -221,7 +221,7 @@ func tailnetSkipReason(m TailnetMachine, opt TailnetOptions) string {
 	case !m.Online && !opt.Offline:
 		return "offline"
 	case !tailnetOSAllowed(m.OS, opt.OS):
-		return "cannot run tuios (" + m.OS + ")"
+		return "cannot run dartuios (" + m.OS + ")"
 	case tailnetMatchesAny(m, opt.Exclude):
 		return "excluded"
 	case len(opt.Include) > 0 && !tailnetMatchesAny(m, opt.Include):

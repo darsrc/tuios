@@ -141,12 +141,12 @@ func agentWorkVerbs() map[string]verbEntry {
 			handler: (*Daemon).verbCompareFan,
 		},
 		"verify-fan": {
-			description: "Run one check in every attempt of a fan: a window named verify in each sibling session runs the command with sh -c and records whether it passed. The window holds no grants, so the check cannot call tuios. It closes when the check passes and stays open, so the output can be read, when it fails. The command is always the caller's; none is read from the repository. A check still running in a sibling is stopped first.",
+			description: "Run one check in every attempt of a fan: a window named verify in each sibling session runs the command with sh -c and records whether it passed. The window holds no grants, so the check cannot call dartuios. It closes when the check passes and stays open, so the output can be read, when it fails. The command is always the caller's; none is read from the repository. A check still running in a sibling is stopped first.",
 			params: []verbParam{
 				{Name: "session", Type: "string", Description: "Any session of the fan. Omit for the most recently active session."},
 				{Name: "command", Type: "string", Required: true, Description: "The command to run, as a shell line, at most 4096 bytes."},
 				{Name: "timeout_ms", Type: "int", Description: "How long a check may run before it counts as failed and its window is closed, in milliseconds. Omit for no limit."},
-				{Name: "env", Type: "object", Description: "Environment variables for the check, name to value, on top of the daemon's, with the rules of fan's env. The tuios CLI sends its PATH. A call from another machine may not pass env."},
+				{Name: "env", Type: "object", Description: "Environment variables for the check, name to value, on top of the daemon's, with the rules of fan's env. The dartuios CLI sends its PATH. A call from another machine may not pass env."},
 			},
 			returns: []verbParam{
 				{Name: "group", Type: "string", Description: "The fan's group."},
@@ -234,7 +234,7 @@ func agentWorkVerbs() map[string]verbEntry {
 			description: "Queue a message for the agent in a pane, typed as a prompt once the agent has been at rest for a second, and never over a prompt it is waiting on. One entry is typed per rest, and the prompt gate waits for the agent to show it took it; an entry it did not take is marked stalled, never typed again, and opens an Inbox question. A queue holds at most [agents.queue] max messages, and dies with the daemon, the pane, or the agent leaving the pane. It types into the pane, so a pane may queue only for a pane that holds nothing it does not, and its entry is checked against its grants again when it is typed. Who queued it (by) comes from the connection: human only with a live human_nonce, the pane's id for a pane, link:HOST over a link, shell otherwise.",
 			params: []verbParam{
 				sessionParam,
-				{Name: "window", Type: "string", Description: "The agent's window, by id or name. Omit to target the focused window. It must run an agent tuios knows of; human is refused with no_keyboard."},
+				{Name: "window", Type: "string", Description: "The agent's window, by id or name. Omit to target the focused window. It must run an agent dartuios knows of; human is refused with no_keyboard."},
 				{Name: "text", Type: "string", Required: true, Description: "The message, at most 16 KiB."},
 				{Name: "human_nonce", Type: "string", Description: "The attached client's nonce, to queue as the person (by human). One that does not verify is refused with not_human."},
 				{Name: "from", Type: "string", Description: "The window the message is from. From a pane, its own; omit it there. human needs human_nonce."},

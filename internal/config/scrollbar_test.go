@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // withScrollbarGlobals restores the scrollbar globals after a test that moves
@@ -63,7 +63,7 @@ func TestScrollbarKeysAbsentFromAnOlderConfig(t *testing.T) {
 		t.Errorf("older config resolved to style %q tint %q, want thin/quiet",
 			config.Global.ScrollbarStyle, config.Global.ScrollbarTint)
 	}
-	if thumb, track := config.Global.GetScrollbarThumbChar(), config.Global.GetScrollbarTrackChar(); thumb != "┃" || track != "│" {
-		t.Errorf("older config drew thumb %q track %q, want ┃ on │", thumb, track)
+	if thumb, track := config.Global.GetScrollbarThumbChar(), config.Global.GetScrollbarTrackChar(); thumb != "▍" || track != "│" {
+		t.Errorf("older config drew thumb %q track %q, want ▍ on │", thumb, track)
 	}
 }

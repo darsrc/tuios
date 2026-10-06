@@ -7,7 +7,7 @@ import (
 
 // Where a binary came from, and therefore whether it is ours to replace.
 //
-// This is the first question `tuios update` asks and the one it must not get
+// This is the first question `dartuios update` asks and the one it must not get
 // wrong. Writing over a file a package manager owns leaves that manager's
 // database describing a file that is no longer there: the next upgrade puts the
 // old build back, the next removal deletes a binary it did not install, and
@@ -18,7 +18,7 @@ import (
 // Detect is a pure function over Facts so every case below is a table row in a
 // test rather than a filesystem to be built.
 
-// Origin is how a tuios binary got onto this machine.
+// Origin is how a dartuios binary got onto this machine.
 type Origin int
 
 const (
@@ -74,7 +74,7 @@ type Facts struct {
 // Provenance is the answer, with the words to say when it is a refusal.
 type Provenance struct {
 	Origin Origin
-	// Replaceable is whether `tuios update` may write over this binary.
+	// Replaceable is whether `dartuios update` may write over this binary.
 	Replaceable bool
 	// What names the installer, for a message: "a Homebrew cask".
 	What string
@@ -98,15 +98,15 @@ func Detect(f Facts) Provenance {
 		return Provenance{
 			Origin: OriginNixStore,
 			What:   "the Nix store",
-			Fix:    "nix profile upgrade tuios",
+			Fix:    "nix profile upgrade dartuios",
 		}
 	case isHomebrewPath(p, f.BrewPrefix):
-		// `brew install tuios` is the homebrew-core formula, built from source
+		// `brew install dartuios` is the homebrew-core formula, built from source
 		// into the Cellar. The tap ships a cask of the release archive, which
 		// lives in the Caskroom. Each is upgraded by its own command.
-		fix := "brew upgrade tuios"
+		fix := "brew upgrade dartuios"
 		if strings.Contains(p, "/Caskroom/") {
-			fix = "brew upgrade --cask tuios"
+			fix = "brew upgrade --cask dartuios"
 		}
 		return Provenance{
 			Origin: OriginHomebrew,
@@ -117,7 +117,7 @@ func Detect(f Facts) Provenance {
 		return Provenance{
 			Origin: OriginSystemPackage,
 			What:   "a system package",
-			Fix:    "use your package manager, for example: yay -S tuios-bin",
+			Fix:    "use your package manager, for example: yay -S dartuios-bin",
 		}
 	case f.BuiltBy == "install.sh":
 		return Provenance{
@@ -135,7 +135,7 @@ func Detect(f Facts) Provenance {
 		return Provenance{
 			Origin: OriginGoInstall,
 			What:   "go install",
-			Fix:    "go install github.com/Gaurav-Gosain/tuios/cmd/tuios@latest",
+			Fix:    "go install github.com/darsrc/tuios/cmd/dartuios@latest",
 		}
 	}
 	return Provenance{

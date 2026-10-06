@@ -8,10 +8,10 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/federation"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/session"
-	"github.com/Gaurav-Gosain/tuios/internal/sessiontree"
+	"github.com/darsrc/tuios/internal/federation"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/session"
+	"github.com/darsrc/tuios/internal/sessiontree"
 )
 
 // Federation in the client: the rail draws every machine's sessions as one
@@ -102,7 +102,7 @@ type FederationHostsMsg struct {
 	// Pushed says the daemon pushes every change to every host that is up:
 	// it says events_push in list-hosts, and each such host's events are
 	// live. The rail then waits for the push instead of polling. A host whose
-	// tuios is too old to stream, or a daemon too old to push, keeps the poll.
+	// dartuios is too old to stream, or a daemon too old to push, keeps the poll.
 	Pushed bool
 }
 
@@ -830,7 +830,7 @@ func hostStatusLabel(status string) string {
 	case federation.StatusNoDaemon:
 		return "no daemon"
 	case federation.StatusNoBinary:
-		return "no tuios"
+		return "no dartuios"
 	case federation.StatusIncompatible:
 		return "version"
 	case federation.StatusConnecting:
@@ -846,7 +846,7 @@ func hostStatusLabel(status string) string {
 // dropped off the network after answering says when it was last heard from,
 // "seen 3m ago", since its rows under the header are that moment's listing. A
 // machine that answered and refused says why instead, because that is a thing
-// to fix: no daemon, no tuios, or the version.
+// to fix: no daemon, no dartuios, or the version.
 func hostDownLabel(status string, lastOK int64, now time.Time) string {
 	label := hostStatusLabel(status)
 	switch federation.Status(status) {
@@ -1005,7 +1005,7 @@ func (m *OS) sidebarHostRow(node sessiontree.Node, cw int, pal overlay.Palette, 
 	// A folded group hides the session row that wears the focus mark, so the
 	// header takes it: the fold must not make the attached session vanish from
 	// the rail without a trace.
-	gutter := sidebarGutter(here && collapsed, "", rowBg, pal, &m.Settings)
+	gutter := sidebarGutter(here && collapsed, st.Hover, "", rowBg, pal, &m.Settings)
 	return sidebarComposeRuledRow(0, gutter, glyph, name, right, cw, rowBg, pal, &m.Settings)
 }
 
@@ -1059,7 +1059,7 @@ func (m *OS) sidebarRemoteSessionRow(node sessiontree.Node, cw, variant int, pal
 	// sessions you can reach.
 	glyph := sidebarStyle(rowBg, pal.FgMute).Render(m.Settings.GetRailBullet())
 	if m.hostIsUp(node.Host) && agentStateIndicator(node.AgentState) != "" {
-		glyph = sidebarGlyph(node.AgentState, node.DoneSeen, rowBg, pal, &m.Settings)
+		glyph = sidebarGlyph(node.AgentState, node.DoneSeen, rowBg, pal, &m.Settings, m.filamentFrame)
 	}
 	return sidebarComposeGroupRow(indent, gutter, glyph, name, right, cw, rowBg)
 }

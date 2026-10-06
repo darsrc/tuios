@@ -66,7 +66,7 @@ func cmdView(s *shell, args []string) int {
 const vimSplash = `
                       VIM - Vi IMproved (demo)
 
-              A read-only viewer for the tuios tour
+              A read-only viewer for the dartuios tour
 
               type  :q<Enter>        to exit
               type  j and k          to scroll

@@ -178,9 +178,9 @@ func TestAnimationProbeTakesTwoAnswers(t *testing.T) {
 	}
 }
 
-// TestCellSizeOverrideReplacesTheHostsAnswer pins TUIOS_CELL_SIZE. A host that
+// TestCellSizeOverrideReplacesTheHostsAnswer pins DARTUIOS_CELL_SIZE. A host that
 // does not answer the pixel-geometry query gets a guessed cell, and everything
-// tuios draws in cells is then the wrong shape. This is how a user says the
+// dartuios draws in cells is then the wrong shape. This is how a user says the
 // real number, and it is what the end-to-end tests set so an assertion about a
 // placement box is arithmetic rather than a guess about the terminal running
 // them.

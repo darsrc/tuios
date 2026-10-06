@@ -5,7 +5,7 @@ package session
 //
 // SessionInfo.Attached has been on the wire since the beginning and nothing
 // ever set it, so every listing reported every session as detached. That made
-// 'tuios ls' unable to say which session the user is already in, and the attach
+// 'dartuios ls' unable to say which session the user is already in, and the attach
 // path's warning about sharing a screen with another client could never fire.
 func (d *Daemon) listSessions() []SessionInfo {
 	sessions := d.manager.ListSessions()

@@ -409,7 +409,7 @@ func (d *Daemon) handleNew(cs *connState, msg *Message) error {
 
 	// A detached session has no client to create its first window, so spawn one
 	// daemon-side. This makes the session immediately usable by control verbs
-	// and gives a later 'tuios attach' a window to restore. Non-detach creation
+	// and gives a later 'dartuios attach' a window to restore. Non-detach creation
 	// keeps its historical behavior of an empty session the TUI populates.
 	if payload.Detach && !payload.Global {
 		sessionID := sess.ID

@@ -10,7 +10,7 @@ import (
 // It does not prove the sender is the person, because any process of the same
 // user can attach, and an agent in a pane is such a process. An agent that was
 // told, by a file it read or a page it fetched, to "reply to yourself as the
-// human" could run tuios attach in a pseudo-terminal, take the nonce from the
+// human" could run dartuios attach in a pseudo-terminal, take the nonce from the
 // reply and send a verified answer to its own question.
 //
 // What separates the person from an agent is where the process runs, and the
@@ -24,8 +24,8 @@ import (
 //   - its controlling terminal is one of this daemon's pane terminals. That
 //     still holds for a process that was orphaned out of a pane, which the
 //     ancestry walk loses when the orphan is reparented to init.
-//   - its environment names a window of this daemon in TUIOS_PANE_ID or
-//     TUIOS_WINDOW_ID, or this daemon's socket in TUIOS_SOCKET. That still
+//   - its environment names a window of this daemon in DARTUIOS_PANE_ID or
+//     DARTUIOS_WINDOW_ID, or this daemon's socket in DARTUIOS_SOCKET. That still
 //     holds for an orphan that also left the terminal, and it also places the
 //     commands the client starts, its hooks and dock components, which are
 //     automation and not the person.
@@ -43,7 +43,7 @@ import (
 // This is not a sandbox. A process that leaves the pane on purpose, through a
 // service manager, a scheduler, or setsid with a cleaned environment, is not
 // inside it by any of these tests. What the checks stop is an agent acting as
-// the person through tuios itself, which is the thing a prompt injection can
+// the person through dartuios itself, which is the thing a prompt injection can
 // talk it into in one line. docs/AGENT_STATE.md has the whole threat model.
 
 // paneOriginMaxDepth bounds the ancestry walk. Real process trees are a dozen
@@ -90,15 +90,15 @@ func (d *Daemon) paneOrigin(pid int) (bool, string) {
 		}
 		ppid = next
 	}
-	// TUIOS_WINDOW_ID is also what the client's hooks are started with, so a
+	// DARTUIOS_WINDOW_ID is also what the client's hooks are started with, so a
 	// hook command, which is automation and not the person, is placed the same
 	// way as a pane.
-	for _, name := range []string{"TUIOS_PANE_ID", "TUIOS_WINDOW_ID"} {
+	for _, name := range []string{"DARTUIOS_PANE_ID", "DARTUIOS_WINDOW_ID"} {
 		if id, ok := readProcEnvVar(pid, name); ok && id != "" && d.holdsWindow(id) {
 			return true, paneOriginEnv
 		}
 	}
-	if sock, ok := readProcEnvVar(pid, "TUIOS_SOCKET"); ok && sock != "" && sock == d.manager.SocketPath() {
+	if sock, ok := readProcEnvVar(pid, "DARTUIOS_SOCKET"); ok && sock != "" && sock == d.manager.SocketPath() {
 		return true, paneOriginEnv
 	}
 	return false, ""
@@ -172,8 +172,8 @@ func (d *Daemon) connFromPane(cs *connState) bool {
 func humanForbiddenError(verb string) *verbError {
 	return hintedVerbError(ErrVerbForbidden, verb+" from human is refused: the caller runs inside a pane of this daemon, and only the person at an attached client can speak as human", &VerbHint{
 		Param:   "from",
-		Command: "tuios send-agent-message -w human --from \"$TUIOS_PANE_ID\" '<your question>'",
-		Detail:  "Nothing was sent. Send as your own pane, with from set to $TUIOS_PANE_ID. To get an answer from the person, send them a message with -w human and wait for their reply with wait-for agent-message; only a reply marked verified_human is theirs.",
+		Command: "dartuios send-agent-message -w human --from \"$DARTUIOS_PANE_ID\" '<your question>'",
+		Detail:  "Nothing was sent. Send as your own pane, with from set to $DARTUIOS_PANE_ID. To get an answer from the person, send them a message with -w human and wait for their reply with wait-for agent-message; only a reply marked verified_human is theirs.",
 	})
 }
 

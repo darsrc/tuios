@@ -12,7 +12,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/vt"
+	"github.com/darsrc/tuios/internal/vt"
 )
 
 // zlibCompress returns the zlib-compressed form of data, or nil on error. Used
@@ -76,7 +76,7 @@ func (kp *KittyPassthrough) ForwardCommand(
 	kp.mu.Lock()
 	defer kp.mu.Unlock()
 
-	if os.Getenv("TUIOS_DEBUG_INTERNAL") == "1" {
+	if os.Getenv("DARTUIOS_DEBUG_INTERNAL") == "1" {
 		log.Printf("[KP] ForwardCommand action=%c enabled=%v inline=%v imageID=%d more=%v dataLen=%d",
 			cmd.Action, kp.enabled, kp.inlineGraphics, cmd.ImageID, cmd.More, len(cmd.Data))
 	}
@@ -181,7 +181,7 @@ func (kp *KittyPassthrough) ForwardCommand(
 		//
 		// Not for a virtual placement. The reservation exists because an image
 		// placed at the cursor covers rows the guest does not know about, so
-		// tuios opens them; an application using Unicode placeholders prints
+		// dartuios opens them; an application using Unicode placeholders prints
 		// the cells the image occupies itself, and reserving rows on its
 		// behalf would push its own output down by the height of every image
 		// on the page.
@@ -266,7 +266,7 @@ func (kp *KittyPassthrough) forwardTransmit(cmd *vt.KittyCommand, rawData []byte
 	hasPendingData := kp.pendingDirectData[windowID] != nil
 	if !andPlace && !hasPendingData {
 		// Passed through as the guest wrote it, except for the image id. The
-		// host has one id namespace for every pane, and the ids tuios
+		// host has one id namespace for every pane, and the ids dartuios
 		// allocates start at 1, where guests start too: forwarded as is, a
 		// transmit-only image from one pane landed on another pane's host id
 		// and replaced its picture. The id is translated like every other
@@ -542,7 +542,7 @@ func (kp *KittyPassthrough) forwardFileTransmit(cmd *vt.KittyCommand, windowID s
 	// When the host terminal cannot read files on this machine, read the file
 	// ourselves and divert into the direct-transmission path so the bytes
 	// reach it inline. That is always the case for a browser target: the
-	// tuios-web build (inlineGraphics), and equally a native tuios whose own
+	// dartuios-web build (inlineGraphics), and equally a native dartuios whose own
 	// host happens to be a browser client such as sip's, which the capability
 	// probe reports through KittyFileTransfer. Critical for apps like youterm
 	// / mpv that use shared-memory frames (t=s, /dev/shm/...) and for any t=f
@@ -862,7 +862,7 @@ func (kp *KittyPassthrough) forwardFileTransmit(cmd *vt.KittyCommand, windowID s
 }
 
 // forwardFileTransmitInline handles file / shm / temp-file kitty transmits
-// when the host terminal cannot read server-local files (tuios-web's browser
+// when the host terminal cannot read server-local files (dartuios-web's browser
 // target). We read the file ourselves, base64 encode it, and emit a normal
 // direct (t=d) transmission so the bytes reach the browser through the sip
 // PTY. A placement entry is created in the standard hidden-until-refresh
@@ -883,7 +883,7 @@ func (kp *KittyPassthrough) forwardFileTransmitInline(
 	// cannot redraw over it. SetOverlayActive already deleted the on-screen image
 	// and cleared the frame hashes, so the stream re-places once the overlay
 	// closes. The overlay path is only for a real remote terminal; the inline
-	// overlay (tuios-web) manages its own visibility.
+	// overlay (dartuios-web) manages its own visibility.
 	if kp.overlayActive && kp.remoteClient {
 		return
 	}
@@ -1298,7 +1298,7 @@ func buildVideoReplace(hostID uint32, st *remoteVideoState) []byte {
 // U+10EEEE cells land, and those cells reach it through the ordinary text path
 // with their foreground rewritten to name the same id (see
 // internal/vt/kitty_placeholder.go). Because the position is carried by text,
-// tuios does not track, reposition or clip this image at all: scrolling the
+// dartuios does not track, reposition or clip this image at all: scrolling the
 // pane scrolls the cells, and the host redraws whatever is still on screen.
 //
 // The id is recorded so the image can be freed when the window goes, which the
@@ -1357,7 +1357,7 @@ func (kp *KittyPassthrough) forwardPlace(
 	// reason the protocol exists and why kitty points multiplexers at it.
 	//
 	// So this forwards the declaration and stops. Positioning it at the cursor
-	// the way a real placement is positioned, which is what tuios did before by
+	// the way a real placement is positioned, which is what dartuios did before by
 	// dropping the U=1, put the image wherever the guest's cursor happened to
 	// be when it declared the image, and left the placeholder cells pointing at
 	// nothing.
@@ -1428,7 +1428,7 @@ func (kp *KittyPassthrough) forwardPlace(
 		fmt.Fprintf(&buf, ",z=%d", cmd.ZIndex)
 	}
 	// No U=1 here: a virtual placement never reaches this far, and a real
-	// placement is one tuios positions itself.
+	// placement is one dartuios positions itself.
 	buf.WriteString(",q=2")
 	buf.WriteString("\x1b\\")
 	buf.WriteString("\x1b8") // Restore cursor position

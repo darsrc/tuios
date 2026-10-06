@@ -9,9 +9,9 @@ import (
 	"github.com/Gaurav-Gosain/tuitest"
 )
 
-// Finding tuios on a host where it is not on the PATH ssh gives a command.
+// Finding dartuios on a host where it is not on the PATH ssh gives a command.
 //
-// This is the failure the maintainer hit on the first host he added: tuios was
+// This is the failure the maintainer hit on the first host he added: dartuios was
 // installed by the project's own install script, in ~/.local/bin, and the
 // link said "command not found" because a non-interactive ssh shell does not
 // read the profile that adds that directory. Everything here is real: the CLI
@@ -45,63 +45,63 @@ func writeFakeSSHWithFarHome(t *testing.T, dir, home string) string {
 	return path
 }
 
-// TestHostLinkFindsTuiosOutsideThePath adds a host with no --command whose
-// tuios is only in ~/.local/bin, and proves the add, the running daemon's own
-// link and 'tuios hosts test' all find it and say where.
-func TestHostLinkFindsTuiosOutsideThePath(t *testing.T) {
+// TestHostLinkFindsDartuiosOutsideThePath adds a host with no --command whose
+// dartuios is only in ~/.local/bin, and proves the add, the running daemon's own
+// link and 'dartuios hosts test' all find it and say where.
+func TestHostLinkFindsDartuiosOutsideThePath(t *testing.T) {
 	base := t.TempDir()
 	farHome := filepath.Join(base, "far-home")
-	installed := filepath.Join(farHome, ".local", "bin", "tuios")
+	installed := filepath.Join(farHome, ".local", "bin", "dartuios")
 	if err := os.MkdirAll(filepath.Dir(installed), 0o700); err != nil {
 		t.Fatalf("mkdir: %v", err)
 	}
-	// The far tuios is this build. It reaches this test's own daemon because
+	// The far dartuios is this build. It reaches this test's own daemon because
 	// the XDG directories are inherited through the stand-in.
-	if err := os.Symlink(tuiosBin, installed); err != nil {
-		t.Fatalf("install the far tuios: %v", err)
+	if err := os.Symlink(dartuiosBin, installed); err != nil {
+		t.Fatalf("install the far dartuios: %v", err)
 	}
 	ssh := writeFakeSSHWithFarHome(t, base, farHome)
-	env := []string{"TUIOS_SSH=" + ssh}
+	env := []string{"DARTUIOS_SSH=" + ssh}
 
 	term := startIn(t, base, startOpts{args: []string{"new", "fed-resolve"}, env: env})
 	waitBoot(t, term)
 
 	// No --command. This is the command that failed before.
-	out, err := tuiosCLIEnv(t, base, env, "hosts", "add", "far", "someone@farbox", "--connect-timeout", "5")
+	out, err := dartuiosCLIEnv(t, base, env, "hosts", "add", "far", "someone@farbox", "--connect-timeout", "5")
 	if err != nil {
-		t.Fatalf("ASSERTION: 'tuios hosts add' failed: %v\n%s", err, out)
+		t.Fatalf("ASSERTION: 'dartuios hosts add' failed: %v\n%s", err, out)
 	}
 	if !strings.Contains(out, "The link runs "+installed+" on the host.") {
-		t.Errorf("ASSERTION: the add did not say which tuios the link found:\n%s", out)
+		t.Errorf("ASSERTION: the add did not say which dartuios the link found:\n%s", out)
 	}
-	t.Logf("tuios hosts add:\n%s", out)
+	t.Logf("dartuios hosts add:\n%s", out)
 
 	// The daemon's own link, over its own ssh, has to find it too.
 	listing := waitForHostListing(t, base, func(s string) bool {
 		return strings.Contains(s, "far") && strings.Contains(s, "up")
-	}, "the running daemon's link never found the tuios in ~/.local/bin")
-	t.Logf("tuios hosts:\n%s", listing)
+	}, "the running daemon's link never found the dartuios in ~/.local/bin")
+	t.Logf("dartuios hosts:\n%s", listing)
 
-	out, err = tuiosCLIEnv(t, base, env, "hosts", "test", "far")
+	out, err = dartuiosCLIEnv(t, base, env, "hosts", "test", "far")
 	if err != nil {
-		t.Fatalf("ASSERTION: 'tuios hosts test' failed against a host whose tuios is in ~/.local/bin: %v\n%s", err, out)
+		t.Fatalf("ASSERTION: 'dartuios hosts test' failed against a host whose dartuios is in ~/.local/bin: %v\n%s", err, out)
 	}
 	if !strings.Contains(out, "The link runs "+installed+" on the host.") {
-		t.Errorf("ASSERTION: 'tuios hosts test' did not report the path it found:\n%s", out)
+		t.Errorf("ASSERTION: 'dartuios hosts test' did not report the path it found:\n%s", out)
 	}
-	t.Logf("tuios hosts test:\n%s", out)
+	t.Logf("dartuios hosts test:\n%s", out)
 }
 
-// TestHostTestSaysWhereItLookedForTuios is the message that replaces "command
-// not found": a host with no tuios anywhere is reported as that, with every
+// TestHostTestSaysWhereItLookedForDartuios is the message that replaces "command
+// not found": a host with no dartuios anywhere is reported as that, with every
 // place the link looked and the flag that points it somewhere else.
-func TestHostTestSaysWhereItLookedForTuios(t *testing.T) {
+func TestHostTestSaysWhereItLookedForDartuios(t *testing.T) {
 	// The far HOME and PATH are this test's own, but the fixed list also
-	// names system directories, and a tuios in one of them would be found.
-	for _, p := range []string{"/usr/local/bin/tuios", "/usr/bin/tuios", "/opt/homebrew/bin/tuios",
-		"/home/linuxbrew/.linuxbrew/bin/tuios", "/nix/var/nix/profiles/default/bin/tuios", "/run/current-system/sw/bin/tuios"} {
+	// names system directories, and a dartuios in one of them would be found.
+	for _, p := range []string{"/usr/local/bin/dartuios", "/usr/bin/dartuios", "/opt/homebrew/bin/dartuios",
+		"/home/linuxbrew/.linuxbrew/bin/dartuios", "/nix/var/nix/profiles/default/bin/dartuios", "/run/current-system/sw/bin/dartuios"} {
 		if _, err := os.Stat(p); err == nil {
-			t.Skipf("tuios is installed at %s on this machine, so the probe would find it", p)
+			t.Skipf("dartuios is installed at %s on this machine, so the probe would find it", p)
 		}
 	}
 	base := t.TempDir()
@@ -109,52 +109,52 @@ func TestHostTestSaysWhereItLookedForTuios(t *testing.T) {
 	if err := os.MkdirAll(farHome, 0o700); err != nil {
 		t.Fatalf("mkdir: %v", err)
 	}
-	env := []string{"TUIOS_SSH=" + writeFakeSSHWithFarHome(t, base, farHome)}
+	env := []string{"DARTUIOS_SSH=" + writeFakeSSHWithFarHome(t, base, farHome)}
 
-	out, err := tuiosCLIEnv(t, base, env, "hosts", "add", "bare", "someone@barebox", "--connect-timeout", "5")
+	out, err := dartuiosCLIEnv(t, base, env, "hosts", "add", "bare", "someone@barebox", "--connect-timeout", "5")
 	if err != nil {
-		t.Fatalf("ASSERTION: 'tuios hosts add' failed; a host with no tuios must still be added: %v\n%s", err, out)
+		t.Fatalf("ASSERTION: 'dartuios hosts add' failed; a host with no dartuios must still be added: %v\n%s", err, out)
 	}
-	t.Logf("tuios hosts add:\n%s", out)
+	t.Logf("dartuios hosts add:\n%s", out)
 
-	out, err = tuiosCLIEnv(t, base, env, "hosts", "test", "bare")
+	out, err = dartuiosCLIEnv(t, base, env, "hosts", "test", "bare")
 	if err == nil {
-		t.Errorf("ASSERTION: 'tuios hosts test' succeeded against a host with no tuios:\n%s", out)
+		t.Errorf("ASSERTION: 'dartuios hosts test' succeeded against a host with no dartuios:\n%s", out)
 	}
 	for _, want := range []string{
-		"no_tuios",
-		"The link cannot find tuios on the host.",
-		"~/.local/bin/tuios",
-		"~/go/bin/tuios",
-		"/usr/local/bin/tuios",
+		"no_dartuios",
+		"The link cannot find dartuios on the host.",
+		"~/.local/bin/dartuios",
+		"~/go/bin/dartuios",
+		"/usr/local/bin/dartuios",
 		"--command PATH",
 	} {
 		if !strings.Contains(out, want) {
-			t.Errorf("ASSERTION: 'tuios hosts test' output lacks %q:\n%s", want, out)
+			t.Errorf("ASSERTION: 'dartuios hosts test' output lacks %q:\n%s", want, out)
 		}
 	}
 	if strings.Contains(out, "command not found") {
 		t.Errorf("ASSERTION: the shell's own 'command not found' is still what the user reads:\n%s", out)
 	}
-	t.Logf("tuios hosts test against a host with no tuios:\n%s", out)
+	t.Logf("dartuios hosts test against a host with no dartuios:\n%s", out)
 }
 
-// TestAttachOnAHostWithSSHFindsTuiosOutsideThePath keeps the ssh fallback on
-// the same footing as the link: with no --command and tuios only in
-// ~/.local/bin, 'tuios attach --host NAME SESSION --ssh' finds it and runs it.
-func TestAttachOnAHostWithSSHFindsTuiosOutsideThePath(t *testing.T) {
+// TestAttachOnAHostWithSSHFindsDartuiosOutsideThePath keeps the ssh fallback on
+// the same footing as the link: with no --command and dartuios only in
+// ~/.local/bin, 'dartuios attach --host NAME SESSION --ssh' finds it and runs it.
+func TestAttachOnAHostWithSSHFindsDartuiosOutsideThePath(t *testing.T) {
 	base := t.TempDir()
 	farHome := filepath.Join(base, "far-home")
-	installed := filepath.Join(farHome, ".local", "bin", "tuios")
+	installed := filepath.Join(farHome, ".local", "bin", "dartuios")
 	if err := os.MkdirAll(filepath.Dir(installed), 0o700); err != nil {
 		t.Fatalf("mkdir: %v", err)
 	}
-	if err := os.Symlink(tuiosBin, installed); err != nil {
-		t.Fatalf("install the far tuios: %v", err)
+	if err := os.Symlink(dartuiosBin, installed); err != nil {
+		t.Fatalf("install the far dartuios: %v", err)
 	}
-	env := []string{"TUIOS_SSH=" + writeFakeSSHWithFarHome(t, base, farHome)}
+	env := []string{"DARTUIOS_SSH=" + writeFakeSSHWithFarHome(t, base, farHome)}
 
-	dir := filepath.Join(base, "XDG_CONFIG_HOME", "tuios")
+	dir := filepath.Join(base, "XDG_CONFIG_HOME", "dartuios")
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		t.Fatalf("mkdir config: %v", err)
 	}
@@ -162,7 +162,7 @@ func TestAttachOnAHostWithSSHFindsTuiosOutsideThePath(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "config.toml"), []byte(body), 0o600); err != nil {
 		t.Fatalf("write config: %v", err)
 	}
-	if out, err := tuiosCLIEnv(t, base, env, "new", "ssh-far-target", "--detach"); err != nil {
+	if out, err := dartuiosCLIEnv(t, base, env, "new", "ssh-far-target", "--detach"); err != nil {
 		t.Fatalf("create the session to open: %v\n%s", err, out)
 	}
 
@@ -170,10 +170,10 @@ func TestAttachOnAHostWithSSHFindsTuiosOutsideThePath(t *testing.T) {
 	if err := term.WaitFor(func(s tuitest.Screen) bool {
 		return strings.Contains(s.Text(), "╰──")
 	}, bootTimeout); err != nil {
-		t.Fatalf("ASSERTION: the far tuios in ~/.local/bin never drew the session over --ssh: %v\n%s", err, term.Snapshot())
+		t.Fatalf("ASSERTION: the far dartuios in ~/.local/bin never drew the session over --ssh: %v\n%s", err, term.Snapshot())
 	}
 
-	// The proof that the probe ran the tuios it found: a plain attach process
+	// The proof that the probe ran the dartuios it found: a plain attach process
 	// whose program is the far install, not this test's binary by name.
 	lines := commandLinesContaining(t, "attach ssh-far-target")
 	found := false
@@ -183,7 +183,7 @@ func TestAttachOnAHostWithSSHFindsTuiosOutsideThePath(t *testing.T) {
 		}
 	}
 	if !found {
-		t.Fatalf("ASSERTION: --ssh did not run the tuios found at %s:\n%s", installed, strings.Join(lines, "\n"))
+		t.Fatalf("ASSERTION: --ssh did not run the dartuios found at %s:\n%s", installed, strings.Join(lines, "\n"))
 	}
-	alive(t, term, "after opening a session over ssh with a found tuios")
+	alive(t, term, "after opening a session over ssh with a found dartuios")
 }

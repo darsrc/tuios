@@ -147,6 +147,11 @@ func (m *OS) sidebarSignature() uint64 {
 	// The Inbox mirror: the agents header counts it while it is live.
 	mixU(m.Inbox.Gen)
 	mixB(m.Inbox.Live)
+	// The living filament: a working row burns it, so its glyph is a different
+	// rune every tick while one is alive. Without this the signature is
+	// unchanged by a tick and the cached rail is served with a frozen glyph.
+	// It is 0 and stable when no row is working, so the cache still hits then.
+	mixU(uint64(m.filamentFrame))
 
 	// The glyph set the rows are drawn from. ASCII mode swaps the collapse
 	// chevrons and the agent-state indicators for their fallbacks, and both it

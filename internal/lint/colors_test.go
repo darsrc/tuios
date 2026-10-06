@@ -23,7 +23,7 @@ var tokenFiles = map[string]bool{
 	"internal/overlay/oklab.go":    true,
 }
 
-const allowColor = "//tuios:allow-color"
+const allowColor = "//dartuios:allow-color"
 
 // TestNoHardCodedColoursInRenderCode is the colour lint. What it rejects:
 //
@@ -83,8 +83,8 @@ func f() {
 	_ = lipgloss.Color(setting)
 	_ = color.RGBA{R: uint8(r >> 8), A: 255}
 	_ = color.RGBA{}
-	_ = lipgloss.Color("#000000") //tuios:allow-color a test of the escape
-	//tuios:allow-color the line above counts too
+	_ = lipgloss.Color("#000000") //dartuios:allow-color a test of the escape
+	//dartuios:allow-color the line above counts too
 	_ = color.Black
 }
 `

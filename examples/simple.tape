@@ -1,4 +1,4 @@
-# Simple TUIOS Tape Script
+# Simple dartuios Tape Script
 # Basic example of tape syntax
 
 # Disable animations for consistent playback
@@ -11,7 +11,7 @@ NewWindow
 Sleep 500ms
 
 # Type some text
-Type "echo Hello from TUIOS"
+Type "echo Hello from dartuios"
 
 # Press Enter
 Enter

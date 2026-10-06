@@ -14,12 +14,12 @@ import (
 
 // The border box skips lipgloss's word wrap for a pane body the renderer says
 // is already exactly the pane's rectangle (internal/app, sizeContentBox). The
-// unit tests for that measure tuios's own strings, which is the kind of proof
+// unit tests for that measure dartuios's own strings, which is the kind of proof
 // that has already let a bug through here once: a differential harness agreed
 // on grid state while the host drew a coloured block behind every filename.
 //
 // So this asserts on the host's grid, built by a real emulator from the bytes
-// tuios actually wrote to its terminal, and on the cases where a skipped wrap
+// dartuios actually wrote to its terminal, and on the cases where a skipped wrap
 // goes wrong: a rune two columns wide, a combining mark that adds none, an
 // emoji made wide by a presentation selector, and lines that are exactly the
 // pane's width so there is no slack anywhere to absorb a mistake.
@@ -201,7 +201,7 @@ func blankGlyph(content string) bool {
 // TestWideRunesKeepThePaneRectangleOnScreen is the on-screen proof for the
 // skipped wrap.
 //
-// Every assertion is on the host's cells rather than on tuios's strings. A
+// Every assertion is on the host's cells rather than on dartuios's strings. A
 // width mistake in the body cannot hide from them: one column too many pushes
 // the right border out of its column on that row, one too few pulls it in, and
 // a body the box re-flowed by accident breaks the rows below it.
@@ -279,9 +279,9 @@ func rowOf(t *testing.T, s tuitest.Screen, rect paneRect, cluster string) int {
 }
 
 // TestSkippingTheWrapDrawsTheSameScreenAsWrapping is the differential, run on
-// the host's grid rather than on tuios's strings.
+// the host's grid rather than on dartuios's strings.
 //
-// TUIOS_NO_PRESHAPED=1 sends every pane body back through lipgloss's wrap, so
+// DARTUIOS_NO_PRESHAPED=1 sends every pane body back through lipgloss's wrap, so
 // the same fixture is painted twice by the same binary down the two paths. The
 // comparison includes each cell's colours, because the failure this is guarding
 // against is not only a shifted column: the bug that got through the last
@@ -289,7 +289,7 @@ func rowOf(t *testing.T, s tuitest.Screen, rect paneRect, cluster string) int {
 func TestSkippingTheWrapDrawsTheSameScreenAsWrapping(t *testing.T) {
 	script := writeWideRuneFixture(t)
 	fast := paintWideRunes(t, script)
-	slow := paintWideRunes(t, script, "TUIOS_NO_PRESHAPED=1")
+	slow := paintWideRunes(t, script, "DARTUIOS_NO_PRESHAPED=1")
 
 	fastRect := findPane(t, fast)
 	slowRect := findPane(t, slow)

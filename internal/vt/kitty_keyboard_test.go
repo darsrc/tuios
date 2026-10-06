@@ -140,7 +140,7 @@ func TestEncodeKeyCSIu(t *testing.T) {
 }
 
 // layoutKeyCases pin what a pane gets for a key on a non-Latin layout: "ш" is
-// the I key on a Ukrainian layout, so tuios holds the base-layout key 'i' (105)
+// the I key on a Ukrainian layout, so dartuios holds the base-layout key 'i' (105)
 // for it once the host reports alternate keys. Only a pane that asked for
 // alternate keys may see that base key.
 func layoutKeyCases() []struct {
@@ -187,7 +187,7 @@ func layoutKeyCases() []struct {
 
 // TestKittyFunctionalKeysKeepTheirNumbers round-trips every functional key the
 // protocol numbers (CapsLock at 57358 through ISO Level 5 Shift at 57454): the
-// host's report goes through the same decoder tuios reads it with, and the pane
+// host's report goes through the same decoder dartuios reads it with, and the pane
 // must be handed the same number. Before, these left as ultraviolet's private
 // codes, so keypad Enter reached the pane as \x1b[1114126u. 57364-57375 are
 // skipped: they decode as F1-F12, which the protocol spells in legacy form.

@@ -8,7 +8,7 @@ import (
 )
 
 // ANSI styling kept short on purpose. The shell draws with the 16 ANSI colours
-// so tuios themes recolour it the way they recolour a real shell.
+// so dartuios themes recolour it the way they recolour a real shell.
 const (
 	reset  = "\x1b[0m"
 	bold   = "\x1b[1m"
@@ -48,7 +48,7 @@ var summaries = [][2]string{
 	{"top", "a live process monitor (q quits)"},
 	{"rain", "digital rain (any key stops it)"},
 	{"neofetch", "system info, the pretty way"},
-	{"tuios tape play demo.tape", "watch tuios drive itself"},
+	{"dartuios tape play demo.tape", "watch dartuios drive itself"},
 	{"fortune, cowsay", "wisdom, delivered"},
 	{"colors", "the terminal palette"},
 	{"tree", "the files as a tree"},
@@ -73,7 +73,7 @@ func init() {
 	cat := func(s *shell, args []string, _ string) int { return s.cat(args[0], args[1:]) }
 	view := func(s *shell, args []string, _ string) int { return cmdView(s, args) }
 	shellNote := func(s *shell, args []string, _ string) int {
-		s.t.Print("You are already in a shell: " + bold + "webshell" + reset + ", made for the tuios tour.\r\n")
+		s.t.Print("You are already in a shell: " + bold + "webshell" + reset + ", made for the dartuios tour.\r\n")
 		return 0
 	}
 	editorNote := func(s *shell, args []string, _ string) int {
@@ -147,7 +147,7 @@ func init() {
 		"tree":      cmdTree,
 		"git":       func(s *shell, args []string, _ string) int { return cmdGit(s, args[1:]) },
 		"go":        cmdGo,
-		"tuios":     cmdTuios,
+		"dartuios":  cmdDartuios,
 		"claude":    cmdAgent,
 		"agent":     cmdAgent,
 		"neofetch":  fromTTY(cmdNeofetch),
@@ -161,8 +161,8 @@ func init() {
 		"fortune":   fromTTY(cmdFortune),
 		"cowsay":    fromTTY(cmdCowsay),
 		"whoami":    say("guest"),
-		"hostname":  say("tuios"),
-		"uname":     say("tuios js/wasm"),
+		"hostname":  say("dartuios"),
+		"uname":     say("dartuios js/wasm"),
 		"date": func(s *shell, _ []string, _ string) int {
 			s.t.Print(time.Now().Format(time.UnixDate) + "\r\n")
 			return 0
@@ -186,7 +186,7 @@ type Program struct {
 
 // Programs lists the commands worth starting as a pane of their own: the
 // full-screen and long-running ones. The browser build offers them in the
-// tuios launcher in place of $PATH.
+// dartuios launcher in place of $PATH.
 func Programs() []Program {
 	return []Program{
 		{"top", "Live process monitor"},
@@ -215,7 +215,7 @@ type shell struct {
 
 func runShell(t *TTY) int {
 	s := &shell{t: t, cwd: Home}
-	t.Print(bold + "tuios" + reset + dim + " web shell. Type " + reset + bold + "help" + reset + dim + " to see what it can do." + reset + "\r\n")
+	t.Print(bold + "dartuios" + reset + dim + " web shell. Type " + reset + bold + "help" + reset + dim + " to see what it can do." + reset + "\r\n")
 	s.prompt()
 	for chunk := range t.In {
 		if s.feed(chunk) {
@@ -246,7 +246,7 @@ func (s *shell) promptText() string {
 
 // OSC 133 marks, the ones a configured real shell prints: where a prompt
 // starts, where the typed command starts, where its output starts, and where
-// it ended with which status. tuios's scrollback browser splits the history
+// it ended with which status. dartuios's scrollback browser splits the history
 // into commands on them.
 const (
 	markPrompt = "\x1b]133;A\x07"
@@ -598,8 +598,8 @@ func (s *shell) cd(args []string, _ string) int {
 	}
 	s.cwd = target
 	s.t.Emit(EventCwd, map[string]any{"cwd": s.cwd})
-	// OSC 7 tells tuios the directory, the way a configured real shell does.
-	s.t.Print("\x1b]7;file://tuios" + s.cwd + "\x1b\\")
+	// OSC 7 tells dartuios the directory, the way a configured real shell does.
+	s.t.Print("\x1b]7;file://dartuios" + s.cwd + "\x1b\\")
 	return 0
 }
 
@@ -754,6 +754,6 @@ func cmdHelp(t *TTY) int {
 	for _, s := range summaries {
 		t.Printf("  %s%-26s%s %s\r\n", green, s[0], reset, s[1])
 	}
-	t.Print("\r\n" + dim + "tuios keys: Ctrl+B then ? shows every keybinding." + reset + "\r\n")
+	t.Print("\r\n" + dim + "dartuios keys: Ctrl+B then ? shows every keybinding." + reset + "\r\n")
 	return 0
 }

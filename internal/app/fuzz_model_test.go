@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/fuzz"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/fuzz"
 )
 
 // The entry points. Three of them, because the same engine has to run in three
@@ -20,11 +20,11 @@ import (
 //	  go test ./internal/app/ -run '^$' -fuzz FuzzModel -fuzztime 30m
 //
 //	locally, a wider seeded sweep without the fuzzing engine:
-//	  TUIOS_FUZZ_SEEDS=20000 TUIOS_FUZZ_STEPS=600 go test ./internal/app/ \
+//	  DARTUIOS_FUZZ_SEEDS=20000 DARTUIOS_FUZZ_STEPS=600 go test ./internal/app/ \
 //	    -run TestFuzzModelSweep -timeout 3h
 //
 // A failure from any of them prints a seed and a minimal script. Re-running the
-// seed reproduces it, and TUIOS_FUZZ_SCRIPT replays the script on its own.
+// seed reproduces it, and DARTUIOS_FUZZ_SCRIPT replays the script on its own.
 
 // fuzzSteps is the run length for the bounded entry points. It is short on
 // purpose: a bug that needs 2000 actions to appear almost always also appears
@@ -38,8 +38,8 @@ func TestFuzzModel(t *testing.T) {
 	if testing.Short() {
 		t.Skip("the fuzzer composes a frame per action")
 	}
-	seeds := envInt(t, "TUIOS_FUZZ_SEEDS", 12)
-	steps := envInt(t, "TUIOS_FUZZ_STEPS", fuzzSteps)
+	seeds := envInt(t, "DARTUIOS_FUZZ_SEEDS", 12)
+	steps := envInt(t, "DARTUIOS_FUZZ_STEPS", fuzzSteps)
 	runFuzzSeeds(t, 0, seeds, steps)
 }
 
@@ -47,18 +47,18 @@ func TestFuzzModel(t *testing.T) {
 // budget and a settable starting seed, so a run can pick up where the last one
 // stopped instead of re-walking ground already covered.
 func TestFuzzModelSweep(t *testing.T) {
-	if os.Getenv("TUIOS_FUZZ_SEEDS") == "" {
-		t.Skip("set TUIOS_FUZZ_SEEDS to run the sweep")
+	if os.Getenv("DARTUIOS_FUZZ_SEEDS") == "" {
+		t.Skip("set DARTUIOS_FUZZ_SEEDS to run the sweep")
 	}
-	first := uint64(envInt(t, "TUIOS_FUZZ_FIRST", 0))
-	runFuzzSeeds(t, first, envInt(t, "TUIOS_FUZZ_SEEDS", 1000), envInt(t, "TUIOS_FUZZ_STEPS", fuzzSteps))
+	first := uint64(envInt(t, "DARTUIOS_FUZZ_FIRST", 0))
+	runFuzzSeeds(t, first, envInt(t, "DARTUIOS_FUZZ_SEEDS", 1000), envInt(t, "DARTUIOS_FUZZ_STEPS", fuzzSteps))
 }
 
 // fuzzFloorW and fuzzFloorH are the host sizes the default campaigns stay above.
 // Below the layout's own minimum pane size the panes clamp, stack, and take
 // negative origins, and every finding there belongs to one class; with no floor
 // a run reports that class within two actions and never reaches anything else.
-// TUIOS_FUZZ_FLOOR_W=0 TUIOS_FUZZ_FLOOR_H=0 runs the campaign that hunts it.
+// DARTUIOS_FUZZ_FLOOR_W=0 DARTUIOS_FUZZ_FLOOR_H=0 runs the campaign that hunts it.
 const (
 	fuzzFloorW = 60
 	fuzzFloorH = 20
@@ -67,8 +67,8 @@ const (
 func runFuzzSeeds(t *testing.T, first uint64, count, steps int) {
 	t.Helper()
 	dir := fuzzScratch(t)
-	minW := envInt(t, "TUIOS_FUZZ_FLOOR_W", fuzzFloorW)
-	minH := envInt(t, "TUIOS_FUZZ_FLOOR_H", fuzzFloorH)
+	minW := envInt(t, "DARTUIOS_FUZZ_FLOOR_W", fuzzFloorW)
+	minH := envInt(t, "DARTUIOS_FUZZ_FLOOR_H", fuzzFloorH)
 	deadline := time.Now().Add(fuzzBudget(t))
 	for i := range uint64(count) {
 		seed := first + i
@@ -147,11 +147,11 @@ func FuzzModel(f *testing.F) {
 // TestFuzzScript replays a saved repro. This is how a maintainer confirms a
 // finding and, later, that a fix closed it:
 //
-//	TUIOS_FUZZ_SCRIPT=/tmp/repro.txt go test ./internal/app/ -run TestFuzzScript -v
+//	DARTUIOS_FUZZ_SCRIPT=/tmp/repro.txt go test ./internal/app/ -run TestFuzzScript -v
 func TestFuzzScript(t *testing.T) {
-	path := os.Getenv("TUIOS_FUZZ_SCRIPT")
+	path := os.Getenv("DARTUIOS_FUZZ_SCRIPT")
 	if path == "" {
-		t.Skip("set TUIOS_FUZZ_SCRIPT to a saved repro to replay it")
+		t.Skip("set DARTUIOS_FUZZ_SCRIPT to a saved repro to replay it")
 	}
 	raw, err := os.ReadFile(path)
 	if err != nil {

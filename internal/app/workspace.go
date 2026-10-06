@@ -1,9 +1,9 @@
 package app
 
 import (
-	"github.com/Gaurav-Gosain/tuios/internal/hooks"
-	"github.com/Gaurav-Gosain/tuios/internal/tape"
-	"github.com/Gaurav-Gosain/tuios/internal/terminal"
+	"github.com/darsrc/tuios/internal/hooks"
+	"github.com/darsrc/tuios/internal/tape"
+	"github.com/darsrc/tuios/internal/terminal"
 )
 
 // Workspace management methods

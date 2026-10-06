@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// Caller makes one tuios verb call. *session.VerbClient satisfies it.
+// Caller makes one dartuios verb call. *session.VerbClient satisfies it.
 type Caller interface {
 	Call(verb string, params any) (json.RawMessage, error)
 }
@@ -20,17 +20,17 @@ type Caller interface {
 type Shim struct {
 	// Caller reaches the daemon.
 	Caller Caller
-	// Session is the caller's tuios session, the one session the shim
+	// Session is the caller's dartuios session, the one session the shim
 	// serves. Required.
 	Session string
-	// Window is the caller's tuios window id (TUIOS_PANE_ID), "" outside a
+	// Window is the caller's dartuios window id (DARTUIOS_PANE_ID), "" outside a
 	// pane.
 	Window string
 	// TmuxPane is TMUX_PANE, the caller's pane as tmux names it.
 	TmuxPane string
 	// Cwd is the directory a new pane starts in when -c names none.
 	Cwd string
-	// Exe is the tuios binary, run as the pane holder for panes the shim
+	// Exe is the dartuios binary, run as the pane holder for panes the shim
 	// opens. Empty runs a pane's command directly, and such a pane cannot be
 	// respawned.
 	Exe string
@@ -76,7 +76,7 @@ var commands = map[string]handler{
 // specs are the flags each command accepts. A tmux flag missing here is
 // refused as unknown and logged, rather than accepted and not honoured. The
 // placement flags of split-window (-b -f -h -v -l -p -Z) are accepted and
-// leave placement to tuios's layout.
+// leave placement to dartuios's layout.
 var specs = map[string]spec{
 	"split-window":    {bools: "bdfhvPZ", values: "celpFt"},
 	"new-window":      {bools: "dP", values: "ceFnt"},
@@ -190,7 +190,7 @@ func knownCommand(name string) bool {
 	return false
 }
 
-// ignoredCommands are known and do nothing here, by design: tuios owns the
+// ignoredCommands are known and do nothing here, by design: dartuios owns the
 // layout, the styling and the options, so a tool setting them loses nothing
 // it needs. They succeed with any arguments.
 var ignoredCommands = []string{
@@ -260,7 +260,7 @@ var aliases = map[string]string{
 	"clearhist": "clear-history",
 }
 
-// refusedCommands end or replace tuios sessions, which the shim never does:
+// refusedCommands end or replace dartuios sessions, which the shim never does:
 // the caller's session is not the shim's to end, and another session is out
 // of its reach.
 var refusedCommands = []string{"kill-session", "kill-server", "new-session", "attach-session", "switch-client", "detach-client"}
@@ -279,7 +279,7 @@ func (s *Shim) Run(args []string) int {
 		detail = append(detail, "global flags ignored: "+strings.Join(g.Ignored, " "))
 	}
 	if g.Name != "" || (g.Socket != "" && s.Dir != "" && g.Socket != SocketPath(s.Dir)) {
-		return s.fail(full, OutcomeUnsupported, detail, errors.New("the tuios tmux shim answers only for its own server; -L and -S name another one"))
+		return s.fail(full, OutcomeUnsupported, detail, errors.New("the dartuios tmux shim answers only for its own server; -L and -S name another one"))
 	}
 	if g.Version {
 		fmt.Fprintf(s.Stdout, "tmux %s\n", Version)
@@ -287,11 +287,11 @@ func (s *Shim) Run(args []string) int {
 		return 0
 	}
 	if s.Session == "" {
-		return s.fail(full, OutcomeError, detail, errors.New("no tuios session: the tmux shim runs in a tuios pane (TUIOS_SESSION is unset)"))
+		return s.fail(full, OutcomeError, detail, errors.New("no dartuios session: the tmux shim runs in a dartuios pane (DARTUIOS_SESSION is unset)"))
 	}
 	cmds := SplitCommands(words)
 	if len(cmds) == 0 {
-		return s.fail(full, OutcomeUnsupported, detail, errors.New("the tuios tmux shim does not start or attach tmux sessions; give it a command"))
+		return s.fail(full, OutcomeUnsupported, detail, errors.New("the dartuios tmux shim does not start or attach tmux sessions; give it a command"))
 	}
 	outcome := OutcomeOK
 	for _, c := range cmds {
@@ -338,7 +338,7 @@ func (s *Shim) runOne(name string, args []string) (string, []string, error) {
 		return OutcomeIgnored, nil, nil
 	}
 	if slices.Contains(refusedCommands, name) {
-		return OutcomeUnsupported, nil, fmt.Errorf("%s: refused, the tuios tmux shim does not start, attach or end sessions", name)
+		return OutcomeUnsupported, nil, fmt.Errorf("%s: refused, the dartuios tmux shim does not start, attach or end sessions", name)
 	}
 	err := fmt.Errorf("unknown command: %s", name)
 	if !knownCommand(name) {
@@ -370,7 +370,7 @@ func logText(err error) string {
 func (s *Shim) println(line string) { fmt.Fprintln(s.Stdout, line) }
 
 // callerPane is the pane an empty target means: TMUX_PANE, then the caller's
-// tuios window, then the focused pane.
+// dartuios window, then the focused pane.
 func (s *Shim) callerPane(v *view) *pane {
 	if strings.HasPrefix(s.TmuxPane, "%") {
 		if p, err := v.paneByID(s.TmuxPane[1:]); err == nil {
@@ -426,7 +426,7 @@ func (s *Shim) paneCommand(cmd, env []string) []string {
 	return append(argv, cmd...)
 }
 
-// newPane opens a tuios window for split-window and new-window and returns
+// newPane opens a dartuios window for split-window and new-window and returns
 // its id.
 func (s *Shim) newPane(ws int, focus bool, cwd string, cmd, env []string) (string, error) {
 	if cwd == "" {
@@ -474,7 +474,7 @@ func (s *Shim) printNew(id, format string) []string {
 }
 
 // splitWindow opens a pane in the target pane's workspace. Where it lands is
-// tuios's layout's answer: -h, -v, -b, -f, -l and -p are accepted and do not
+// dartuios's layout's answer: -h, -v, -b, -f, -l and -p are accepted and do not
 // change it.
 func (s *Shim) splitWindow(name string, args []string) (string, []string, error) {
 	p, err := parseFlags(name, specs[name], args)
@@ -528,7 +528,7 @@ func (s *Shim) newWindow(name string, args []string) (string, []string, error) {
 	if win != "" {
 		n, err := strconv.Atoi(strings.TrimPrefix(win, "@"))
 		if err != nil || !slices.Contains(v.workspace, n) {
-			return OutcomeError, nil, fmt.Errorf("create window failed: tuios has no workspace %s", win)
+			return OutcomeError, nil, fmt.Errorf("create window failed: dartuios has no workspace %s", win)
 		}
 		if v.wsCount[n] > 0 {
 			return OutcomeError, nil, fmt.Errorf("create window failed: index %d in use", n)
@@ -542,7 +542,7 @@ func (s *Shim) newWindow(name string, args []string) (string, []string, error) {
 			}
 		}
 		if ws == 0 {
-			return OutcomeError, nil, errors.New("create window failed: every tuios workspace already holds panes")
+			return OutcomeError, nil, errors.New("create window failed: every dartuios workspace already holds panes")
 		}
 	}
 	cwd, _ := p.Value('c')
@@ -649,7 +649,7 @@ func (s *Shim) capturePane(name string, args []string) (string, []string, error)
 		return OutcomeUnsupported, nil, err
 	}
 	if !p.Has('p') {
-		return OutcomeUnsupported, nil, errors.New("capture-pane: only -p (print) is supported; the tuios tmux shim keeps no paste buffers")
+		return OutcomeUnsupported, nil, errors.New("capture-pane: only -p (print) is supported; the dartuios tmux shim keeps no paste buffers")
 	}
 	v, err := s.loadView()
 	if err != nil {
@@ -704,7 +704,7 @@ func (s *Shim) capturePane(name string, args []string) (string, []string, error)
 }
 
 // displayMessage prints a format with -p. Without -p tmux shows the message
-// in its status line, which tuios does not have, so it is ignored.
+// in its status line, which dartuios does not have, so it is ignored.
 func (s *Shim) displayMessage(name string, args []string) (string, []string, error) {
 	p, err := parseFlags(name, specs[name], args)
 	if err != nil {
@@ -982,7 +982,7 @@ func (s *Shim) renameWindow(name string, args []string) (string, []string, error
 }
 
 // respawnPane replaces the process of a pane the shim opened, keeping the
-// pane and its id. It needs -k, since every pane tuios shows is still
+// pane and its id. It needs -k, since every pane dartuios shows is still
 // running: a pane closes when its process ends.
 func (s *Shim) respawnPane(name string, args []string) (string, []string, error) {
 	p, err := parseFlags(name, specs[name], args)
@@ -1048,7 +1048,7 @@ func (s *Shim) mayRespawn(target string) error {
 	if !pg.Pane || slices.Contains(pg.Grants, "admin") || pg.Window == target {
 		return nil
 	}
-	return fmt.Errorf("pane %s holds %s, and replacing the process of another pane needs the admin grant (see tuios pane-grants)",
+	return fmt.Errorf("pane %s holds %s, and replacing the process of another pane needs the admin grant (see dartuios pane-grants)",
 		PaneID(pg.Window), strings.Join(pg.Grants, ","))
 }
 

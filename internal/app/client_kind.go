@@ -18,11 +18,11 @@ type ClientKind int
 const (
 	// ClientUnknown is a model built without saying who is looking at it.
 	ClientUnknown ClientKind = iota
-	// ClientLocal is a terminal on this machine: bare tuios, attach, new, tape.
+	// ClientLocal is a terminal on this machine: bare dartuios, attach, new, tape.
 	ClientLocal
-	// ClientSSH is a terminal at the far end of a `tuios ssh` connection.
+	// ClientSSH is a terminal at the far end of a `dartuios ssh` connection.
 	ClientSSH
-	// ClientBrowser is a tab served by tuios-web.
+	// ClientBrowser is a tab served by dartuios-web.
 	ClientBrowser
 )
 

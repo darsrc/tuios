@@ -1,4 +1,4 @@
-// Package worktree is what tuios knows about git worktrees: how to tell that a
+// Package worktree is what dartuios knows about git worktrees: how to tell that a
 // directory is one, how to make one, and how to take one away without losing
 // work that was never committed.
 //
@@ -25,11 +25,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/gitstate"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/gitstate"
 )
 
-// Info is what a worktree is, as far as the rest of tuios needs to know.
+// Info is what a worktree is, as far as the rest of dartuios needs to know.
 type Info struct {
 	// Repo is the repository's name: the base name of its main checkout.
 	Repo string `json:"repo"`
@@ -118,13 +118,13 @@ func Root(dir string) (string, error) {
 	return common, nil
 }
 
-// DefaultDir is where tuios puts the worktrees it creates:
-// $XDG_DATA_HOME/tuios/worktrees, one directory per repository under it.
+// DefaultDir is where dartuios puts the worktrees it creates:
+// $XDG_DATA_HOME/dartuios/worktrees, one directory per repository under it.
 func DefaultDir() string {
-	if override := os.Getenv("TUIOS_WORKTREE_DIR"); override != "" {
+	if override := os.Getenv("DARTUIOS_WORKTREE_DIR"); override != "" {
 		return override
 	}
-	return filepath.Join(xdg.DataHome, "tuios", "worktrees")
+	return filepath.Join(xdg.DataHome, "dartuios", "worktrees")
 }
 
 // PathFor is the directory a worktree of repoRoot on branch gets under dir.
@@ -148,7 +148,7 @@ func Slug(branch string) string {
 
 // SessionName is the session a worktree session is addressed by. A session
 // name cannot hold a slash, so the branch is slugged and joined to the
-// repository with a hyphen: "tuios" on "feat/retry" is "tuios-feat-retry".
+// repository with a hyphen: "dartuios" on "feat/retry" is "dartuios-feat-retry".
 func SessionName(repo, branch string) string {
 	return Slug(repo) + "-" + Slug(branch)
 }

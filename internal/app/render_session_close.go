@@ -3,8 +3,8 @@ package app
 import (
 	"strings"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // sessionCloseInnerWidth is the dialog's preferred inner width, sized so the
@@ -46,10 +46,12 @@ func (m *OS) renderSessionClose() (string, overlay.Geometry, []overlayRowHit) {
 		Title: "close session",
 		Width: width,
 		Body:  strings.Join(body, "\n"),
+		Hard:  true,
 		Hints: []overlay.Hint{
 			{Key: overlay.EnterKey(), Label: "run"},
 			{Key: "esc", Label: "cancel"},
 		},
+		ShownAt: m.dialogShownAt,
 	}.Render(pal)
 
 	// One rect per drawn row, in drawn order, so a click answers the dialog the

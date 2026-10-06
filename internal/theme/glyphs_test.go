@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
 	"github.com/adrg/xdg"
+	"github.com/darsrc/tuios/internal/overlay"
 )
 
 // glyphsTempDir points XDG at a fresh directory and returns the glyphs
@@ -19,7 +19,7 @@ func glyphsTempDir(t *testing.T) string {
 	t.Cleanup(xdg.Reload)
 	t.Setenv("XDG_CONFIG_HOME", dir)
 	xdg.Reload()
-	glyphs := filepath.Join(dir, "tuios", "glyphs")
+	glyphs := filepath.Join(dir, "dartuios", "glyphs")
 	if err := os.MkdirAll(glyphs, 0o755); err != nil {
 		t.Fatal(err)
 	}

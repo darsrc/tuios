@@ -106,7 +106,7 @@ func TestPlaceholdersAreDroppedByDefault(t *testing.T) {
 
 // TestThePlaceholderIDFollowsTheTranslator covers the one thing a multiplexer
 // has to do to this protocol. The cells name the image by the id the guest
-// chose; the host knows it by the id tuios allocated, and a cell naming an id
+// chose; the host knows it by the id dartuios allocated, and a cell naming an id
 // the host never heard of draws nothing. An image the host was sent under the
 // guest's own id, which is what a transmit-only command does, keeps that id.
 //

@@ -2,8 +2,8 @@ package integration
 
 // The opencode event map. opencode has no command hooks. It loads JavaScript
 // plugins from its plugins directory (https://opencode.ai/docs/plugins/), and
-// the plugin tuios installs (assets/opencode/tuios-agent-state.js) runs
-// `tuios agent-hook opencode` with a small JSON object on stdin for the bus
+// the plugin dartuios installs (assets/opencode/dartuios-agent-state.js) runs
+// `dartuios agent-hook opencode` with a small JSON object on stdin for the bus
 // events it listens to. The event names are opencode's own, as herdr's working
 // plugin handles them (src/integration/assets/opencode/herdr-agent-state.js).
 // The plugin drops events from child sessions, the subagents opencode starts,

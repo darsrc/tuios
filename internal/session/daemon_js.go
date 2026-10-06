@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-// The browser build never runs a daemon: tuios runs standalone in the page and
+// The browser build never runs a daemon: dartuios runs standalone in the page and
 // its panes are in-memory guests. These exist so the package compiles for
 // js/wasm; the standalone path does not call them.
 

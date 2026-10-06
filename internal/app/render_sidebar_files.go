@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/overlay"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/overlay"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The rail's files section, drawn beside the other sections rather than instead
@@ -179,7 +179,7 @@ func (m *OS) sidebarFilesHeaderCd(cw int, pal overlay.Palette, hoverX int, curso
 // it is on.
 //
 // The path is also the only thing on the rail that says which machine this is a
-// listing of, and it does not say so outright: under `tuios ssh` and `tuios-web`
+// listing of, and it does not say so outright: under `dartuios ssh` and `dartuios-web`
 // the panes and this client both run on the server, so this is the server's
 // filesystem. That is the right answer to "what is in the pane's directory" and
 // there is nothing to correct, but a remote viewer is not looking at their own
@@ -207,7 +207,7 @@ func (m *OS) sidebarFilesHeaderRow(cdTok string, hasCd bool, cw int, pal overlay
 // sidebarFilesEmptyRow says why the section is listing nothing.
 //
 // The section has a directory or it does not, and when it does not the listing
-// is empty for exactly one reason: nothing has told tuios where the focused
+// is empty for exactly one reason: nothing has told dartuios where the focused
 // pane is. That is worth a row. The alternative, which is what it used to do,
 // was to disappear, and a feature that disappears when it cannot answer is
 // indistinguishable from one that is broken.
@@ -254,7 +254,7 @@ func (m *OS) sidebarFileRow(row fileRowSpec, cw int, pal overlay.Palette, st sid
 		ink = pal.Fg
 	}
 
-	gutter := sidebarGutter(false, "", bg, pal, &m.Settings)
+	gutter := sidebarGutter(false, st.Hover, "", bg, pal, &m.Settings)
 	// The glyph is the one cell on the row allowed an ink of its own. A colour
 	// off the icon table is absolute, so it is measured against the ground this
 	// row actually draws on before it is burned; with the colour off, and on
@@ -292,7 +292,7 @@ func shortenHome(path string) string {
 // Every other truncation on the rail keeps the head, because a name's first
 // characters are what identify it. A path is the other way round: the last
 // component is the directory you are in and the ones before it are context, so
-// cutting the tail off "/home/u/dev/tuios/internal" would leave "/home/u/dev…"
+// cutting the tail off "/home/u/dev/dartuios/internal" would leave "/home/u/dev…"
 // and answer nothing.
 func truncPathLeft(path string, w int) string {
 	if w <= 0 {

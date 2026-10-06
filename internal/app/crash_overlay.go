@@ -4,7 +4,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-// The crash overlay: the screen tuios shows when it reaches a state it should
+// The crash overlay: the screen dartuios shows when it reaches a state it should
 // not have reached.
 //
 // It is not one of the pickers, and the difference is the point. Every other
@@ -68,7 +68,7 @@ func (m *OS) Crash() *CrashReport {
 
 // NoteCrash captures a recovered panic and puts the crash overlay on screen.
 //
-// where is the phrase the overlay shows: it completes "tuios hit a bug while
+// where is the phrase the overlay shows: it completes "dartuios hit a bug while
 // ...", so it reads as "handling an event", not as a function name.
 //
 // It never panics. Building the report reads the model that has just failed, so
@@ -121,7 +121,7 @@ func (m *OS) DismissCrash() {
 // The whole of it: the clipboard has no length limit worth working around, and
 // the trace this trims for the issue URL is exactly the part a maintainer
 // reads. OSC 52 lands on the terminal the client is drawing into, which is the
-// user's own on every deployment tuios has, so this is the one action that
+// user's own on every deployment dartuios has, so this is the one action that
 // behaves identically for a local, an SSH and a web client.
 func (m *OS) CopyCrashReport() tea.Cmd {
 	if m == nil || m.crash == nil {
@@ -198,7 +198,7 @@ func (m *OS) crashLogPath() string {
 // hideGraphicsForCrash takes kitty and sixel images off the screen while the
 // crash overlay is up.
 //
-// An image is drawn by the host terminal in its own pass, not into tuios' frame
+// An image is drawn by the host terminal in its own pass, not into dartuios' frame
 // buffer, so a placement left standing paints straight over the overlay. Every
 // other full-screen overlay hides them for the same reason (see
 // flushGraphicsForView), but that function is on the render path this overlay

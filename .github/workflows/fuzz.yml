@@ -114,7 +114,7 @@ jobs:
           if-no-files-found: ignore
 
   # The cgo boundary of the libghostty-vt backend. The two differential
-  # targets are not run: they skip unless TUIOS_DIFF_FUZZ is set, and with it
+  # targets are not run: they skip unless DARTUIOS_DIFF_FUZZ is set, and with it
   # set they report the divergences already pinned in
   # ghostty_differential_fuzz_test.go on almost every input, which would make
   # this job red every night for known reasons.

@@ -1,4 +1,4 @@
-// Package input routes keyboard and mouse input for TUIOS: the dispatch between
+// Package input routes keyboard and mouse input for dartuios: the dispatch between
 // Window Management and Terminal modes, the prefix commands, the encoding of
 // keys for the focused pane's PTY, mouse handling, copy mode and paste.
 package input
@@ -9,8 +9,8 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/Gaurav-Gosain/tuios/internal/app"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/app"
+	"github.com/darsrc/tuios/internal/config"
 )
 
 // HandleInput is the main input coordinator that routes messages to appropriate handlers
@@ -28,7 +28,7 @@ func HandleInput(msg tea.Msg, o *app.OS) (tea.Model, tea.Cmd) {
 		result, cmd = HandleKeyPress(msg, o)
 	case tea.KeyReleaseMsg:
 		// Releases only arrive once the host has been asked for event types, and
-		// tuios itself does one thing with one: end a hold. No binding acts on a
+		// dartuios itself does one thing with one: end a hold. No binding acts on a
 		// release, because acting on a release as well as a press would run every
 		// binding twice. What is left goes to a pane that asked for releases.
 		if o.ReleaseHoldKey(readKey(tea.KeyPressMsg(msg.Key()))) {
@@ -294,9 +294,9 @@ func HandleKeyPress(msg tea.KeyPressMsg, o *app.OS) (*app.OS, tea.Cmd) {
 	}
 	msg = o.StripHoldModifier(msg)
 
-	// A modifier pressed on its own arrives as a key while tuios asks for every
+	// A modifier pressed on its own arrives as a key while dartuios asks for every
 	// key as an escape code. Holding Shift for the key after the leader must
-	// not end the prefix, so it goes nowhere while tuios reads keys itself. The
+	// not end the prefix, so it goes nowhere while dartuios reads keys itself. The
 	// host can also still be in that mode for a moment after a pane has the
 	// keyboard back, so a pane only gets one when it asked for every key.
 	if isModifierKeyPress(msg) &&
@@ -304,7 +304,7 @@ func HandleKeyPress(msg tea.KeyPressMsg, o *app.OS) (*app.OS, tea.Cmd) {
 		return o, nil
 	}
 
-	// A chord that only resolved because tuios recognised the character macOS
+	// A chord that only resolved because dartuios recognised the character macOS
 	// composed out of it is proof the Option key is not being sent as Alt.
 	if chord, ok := macOptionChord(msg); ok && chord != msg.Keystroke() {
 		o.NoteComposedOptionChord(chord)

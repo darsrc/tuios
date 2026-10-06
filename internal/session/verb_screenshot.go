@@ -6,16 +6,16 @@ import (
 	"slices"
 	"time"
 
-	"github.com/Gaurav-Gosain/tuios/internal/capture"
-	"github.com/Gaurav-Gosain/tuios/internal/config"
-	"github.com/Gaurav-Gosain/tuios/internal/shot"
-	"github.com/Gaurav-Gosain/tuios/internal/theme"
+	"github.com/darsrc/tuios/internal/capture"
+	"github.com/darsrc/tuios/internal/config"
+	"github.com/darsrc/tuios/internal/shot"
+	"github.com/darsrc/tuios/internal/theme"
 )
 
 // The screenshot verb renders a window to a styled image and writes it.
 //
 // It runs in the daemon, for the reason capture-pane does: the daemon owns the
-// pane's emulator and its scrollback, so `tuios screenshot -w build` answers
+// pane's emulator and its scrollback, so `dartuios screenshot -w build` answers
 // on a detached session, from a script, with nobody attached. The window
 // chrome in the picture is drawn by the renderer rather than scraped off a
 // client's border, which looks better and removes the client dependency
