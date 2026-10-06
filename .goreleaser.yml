@@ -273,7 +273,7 @@ changelog:
 release:
   github:
     owner: darsrc
-    name: dartuios
+    name: tuios
   draft: false
   prerelease: auto
   mode: replace
